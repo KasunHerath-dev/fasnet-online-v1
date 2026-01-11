@@ -46,11 +46,15 @@ app.use('/api', limiter); // Apply to API routes
 const allowedOrigins = [
   'https://fasnet-online-frontend.vercel.app',
   'https://fasnet-online-v1-frontend.vercel.app', // Explicitly allow v1 deployment
+  'https://www.fasnet-online-v1-frontend.vercel.app', // Allow www subdomain
   'http://localhost:5173',  // Local Vite dev server
   'http://localhost:3000',  // Alternative local port
   'http://localhost:4173',  // Vite preview
   process.env.FRONTEND_URL, // Additional frontend URL from environment variables
 ].filter(Boolean); // Remove undefined values
+
+// Handle preflight requests for all routes
+app.options('*', cors());
 
 app.use(cors({
   origin: function (origin, callback) {
