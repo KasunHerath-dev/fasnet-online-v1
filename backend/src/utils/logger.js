@@ -12,7 +12,18 @@ const log = (level, message, data = {}) => {
   const timestamp = new Date().toISOString();
   const logEntry = `[${timestamp}] [${level}] ${message} ${Object.keys(data).length ? JSON.stringify(data) : ''}`;
   console.log(logEntry);
-  fs.appendFileSync(logFile, logEntry + '\n');
+
+  // Only write to file in development
+  if (process.env.NODE_ENV !== 'production') {
+    try {
+      if (!fs.existsSync(logDir)) {
+        fs.mkdirSync(logDir);
+      }
+      fs.appendFileSync(logFile, logEntry + '\n');
+    } catch (err) {
+      console.error('Failed to write to log file:', err.message);
+    }
+  }
 };
 
 module.exports = {
