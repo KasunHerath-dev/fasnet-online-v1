@@ -5,6 +5,7 @@ import StudentForm from '../components/StudentForm'
 import DeleteConfirmModal from '../components/DeleteConfirmModal'
 import AcademicProfile from '../components/AcademicProfile'
 import { authService } from '../services/authService'
+import Loader from '../components/Loader'
 
 export default function StudentDetailPage() {
   const { registrationNumber } = useParams()
