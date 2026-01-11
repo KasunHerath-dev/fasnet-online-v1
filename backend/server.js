@@ -6,6 +6,9 @@ const morgan = require('morgan');
 const logger = require('./src/utils/logger');
 
 // Prevent crashes from unhandled errors
+mongoose.set('strictQuery', false);
+mongoose.set('bufferCommands', false); // Fail immediately if disconnected (Serverless Best Practice)
+
 process.on('uncaughtException', (err) => {
   console.error('UNCAUGHT EXCEPTION! 💥 Shutting down gracefully...');
   console.error(err.name, err.message);
