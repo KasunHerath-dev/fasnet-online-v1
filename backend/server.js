@@ -44,7 +44,8 @@ app.use('/api', limiter); // Apply to API routes
 
 // CORS Configuration
 const allowedOrigins = [
-  'https://fasnet-online-frontend.vercel.app',  // Your Vercel frontend URL
+  'https://fasnet-online-frontend.vercel.app',
+  'https://fasnet-online-v1-frontend.vercel.app', // Explicitly allow v1 deployment
   'http://localhost:5173',  // Local Vite dev server
   'http://localhost:3000',  // Alternative local port
   'http://localhost:4173',  // Vite preview
