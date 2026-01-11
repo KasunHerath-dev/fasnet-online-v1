@@ -150,23 +150,28 @@ const startServer = () => {
 // MongoDB Connection Pattern for Serverless
 let cachedPromise = null;
 const connectDB = async () => {
-  if (cachedPromise) {
+  // If we have a promise and the connection is actually ALIVE (1 = connected), use it.
+  if (cachedPromise && mongoose.connection.readyState === 1) {
     return cachedPromise;
   }
+
   try {
     const uri = process.env.MONGO_URI || 'mongodb://localhost:27017/fas_db';
-    // Mongoose 6+ buffers by default, but explicit connect is safer
+
+    // Create new connection if none exists or previous one died
     cachedPromise = mongoose.connect(uri, {
       bufferCommands: false, // Return errors immediately if disconnected
       serverSelectionTimeoutMS: 5000 // Fail fast if Mongo is down
     });
+
     const conn = await cachedPromise;
     logger.info(`MongoDB Connected: ${conn.connection.host}`);
     return conn;
   } catch (error) {
-    logger.error(`Error: ${error.message}`);
-    cachedPromise = null; // Reset promise so we can retry
-    // Don't exit, just let the request fail
+    logger.error(`Error constructing DB connection: ${error.message}`);
+    cachedPromise = null; // Force retry next time
+    // We throw here so the middleware knows it failed
+    throw error;
   }
 };
 
