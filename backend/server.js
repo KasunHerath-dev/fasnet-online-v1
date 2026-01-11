@@ -135,7 +135,6 @@ const startServer = () => {
 };
 
 // MongoDB Connection
-// MongoDB Connection
 const connectDB = async () => {
   try {
     if (process.env.NODE_ENV === 'production' && !process.env.MONGO_URI) {
