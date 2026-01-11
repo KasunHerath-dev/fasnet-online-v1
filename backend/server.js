@@ -123,17 +123,30 @@ const startServer = () => {
 };
 
 // MongoDB Connection
+// MongoDB Connection
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/fas_db');
     logger.info(`MongoDB Connected: ${conn.connection.host}`);
-    startServer();
   } catch (error) {
     logger.error(`Error: ${error.message}`);
-    process.exit(1);
+    // In Vercel, we don't want to exit process immediately, let it retry or fail request
+    if (process.env.NODE_ENV !== 'production') {
+      process.exit(1);
+    }
   }
 };
 
-connectDB();
+// Start Server Logic
+if (require.main === module) {
+  // Local execution (node server.js)
+  connectDB().then(() => {
+    startServer();
+  });
+} else {
+  // Vercel/Production execution (module import)
+  // Just connect for side-effect
+  connectDB();
+}
 
 module.exports = app;
