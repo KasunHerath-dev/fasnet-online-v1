@@ -61,8 +61,7 @@ const allowedOrigins = [
   process.env.FRONTEND_URL, // Additional frontend URL from environment variables
 ].filter(Boolean); // Remove undefined values
 
-// Handle preflight requests for all routes
-app.options('*', cors());
+// Preflight handled by app.use(cors(...)) below
 
 app.use(cors({
   origin: function (origin, callback) {
