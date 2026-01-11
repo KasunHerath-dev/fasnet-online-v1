@@ -12,14 +12,14 @@ const log = (level, message, data = {}) => {
   console.log(logEntry);
 
   // Only write to file in development
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV === 'development') {
     try {
       if (!fs.existsSync(logDir)) {
         fs.mkdirSync(logDir);
       }
       fs.appendFileSync(logFile, logEntry + '\n');
     } catch (err) {
-      console.error('Failed to write to log file:', err.message);
+      // Ignore file write errors
     }
   }
 };

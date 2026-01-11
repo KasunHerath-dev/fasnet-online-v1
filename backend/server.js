@@ -98,7 +98,19 @@ app.use('/api/v1/resources', require('./src/routes/resourceRoutes'));
 
 // Health Check
 app.get('/api/v1/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+  const dbStatus = mongoose.connection.readyState;
+  const statusMap = {
+    0: 'Disconnected',
+    1: 'Connected',
+    2: 'Connecting',
+    3: 'Disconnecting',
+  };
+  res.json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    dbState: statusMap[dbStatus] || 'Unknown',
+    env: process.env.NODE_ENV
+  });
 });
 
 // 404 Handler
