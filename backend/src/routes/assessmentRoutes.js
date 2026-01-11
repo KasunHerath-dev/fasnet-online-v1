@@ -3,12 +3,12 @@ const router = express.Router();
 const assessmentController = require('../controllers/assessmentController');
 const { authMiddleware, roleMiddleware } = require('../middleware/auth');
 const multer = require('multer');
-const path = require('path');
+const os = require('os');
 
 // Configure Multer for Excel Uploads
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads/') // Ensure this directory exists or use /tmp
+        cb(null, os.tmpdir()) // Use system temp dir (writable in Vercel/Lambda)
     },
     filename: function (req, file, cb) {
         cb(null, 'assessment-' + Date.now() + path.extname(file.originalname))

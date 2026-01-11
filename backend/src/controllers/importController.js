@@ -155,14 +155,20 @@ const importStudents = async (req, res) => {
 
     logger.info('Import completed', { ...results });
 
-    // Save import file
-    const importDir = path.join(__dirname, '../../imports');
-    if (!fs.existsSync(importDir)) fs.mkdirSync(importDir, { recursive: true });
+    // Save import file (Only in development)
+    if (process.env.NODE_ENV !== 'production') {
+      try {
+        const importDir = path.join(__dirname, '../../imports');
+        if (!fs.existsSync(importDir)) fs.mkdirSync(importDir, { recursive: true });
 
-    fs.writeFileSync(
-      path.join(importDir, `import_${Date.now()}.xlsx`),
-      req.file.buffer
-    );
+        fs.writeFileSync(
+          path.join(importDir, `import_${Date.now()}.xlsx`),
+          req.file.buffer
+        );
+      } catch (err) {
+        logger.warn('Failed to archive import file', { error: err.message });
+      }
+    }
 
     res.json({
       message: 'Import completed',
