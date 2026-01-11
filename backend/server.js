@@ -4,6 +4,10 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
 const logger = require('./src/utils/logger');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const http = require('http');
+const { initializeSocket } = require('./src/socket');
 
 // Prevent crashes from unhandled errors
 mongoose.set('strictQuery', false);
@@ -12,7 +16,6 @@ mongoose.set('bufferCommands', false); // Fail immediately if disconnected (Serv
 process.on('uncaughtException', (err) => {
   console.error('UNCAUGHT EXCEPTION! 💥 Shutting down gracefully...');
   console.error(err.name, err.message);
-  // process.exit(1); // Don't exit in serverless, let the request fail
 });
 
 process.on('unhandledRejection', (err) => {
@@ -20,33 +23,70 @@ process.on('unhandledRejection', (err) => {
   console.error(err.name, err.message);
 });
 
-// Route Imports
-const authRoutes = require('./src/routes/authRoutes');
-const userRoutes = require('./src/routes/userRoutes');
-const studentRoutes = require('./src/routes/studentRoutes');
-const academicRoutes = require('./src/routes/academicRoutes');
-const progressionRoutes = require('./src/routes/progressionRoutes');
-const profileRequestRoutes = require('./src/routes/profileRequestRoutes');
-const importRoutes = require('./src/routes/importRoutes');
-const missingStudentRoutes = require('./src/routes/missingStudentRoutes');
-const batchYearRoutes = require('./src/routes/batchYearRoutes');
-
 const app = express();
 
-const helmet = require('helmet');
-// const xss = require('xss-clean'); // Commented out due to incompatibility
-// const mongoSanitize = require('express-mongo-sanitize'); // Commented out due to incompatibility
-const rateLimit = require('express-rate-limit');
+// ==========================================
+// MongoDB Connection Pattern for Serverless
+// ==========================================
+let cachedPromise = null;
+const connectDB = async () => {
+  // If we have a promise and the connection is actually ALIVE (1 = connected), use it.
+  if (cachedPromise && mongoose.connection.readyState === 1) {
+    return cachedPromise;
+  }
 
-// Middleware
+  try {
+    const uri = process.env.MONGO_URI || 'mongodb://localhost:27017/fas_db';
+
+    // Create new connection if none exists or previous one died
+    // Mongoose 6+ buffers by default, but explicit connect is safer
+    cachedPromise = mongoose.connect(uri, {
+      bufferCommands: false, // Return errors immediately if disconnected
+      serverSelectionTimeoutMS: 5000 // Fail fast if Mongo is down
+    });
+
+    const conn = await cachedPromise;
+    logger.info(`MongoDB Connected: ${conn.connection.host}`);
+    return conn;
+  } catch (error) {
+    logger.error(`Error constructing DB connection: ${error.message}`);
+    cachedPromise = null; // Force retry next time
+    // We throw here so the middleware knows it failed
+    throw error;
+  }
+};
+
+// Serverless Middleware: Ensure DB is connected before every request
+// (Only applies when not running locally, i.e. on Vercel)
+if (require.main !== module) {
+  app.use(async (req, res, next) => {
+    // Skip for health check if we want it to report disconnected state (optional)
+    if (mongoose.connection.readyState === 1) {
+      return next();
+    }
+    try {
+      await connectDB();
+      next();
+    } catch (err) {
+      console.error('Vercel DB Startup Error:', err);
+      // Determine if we should fail hard or let the route handle it
+      // For now, let's continue. If the route needs DB, it will fail there.
+      next();
+    }
+  });
+}
+
+// ==========================================
+// Middleware Configuration
+// ==========================================
 app.use(helmet()); // Set security headers
 app.use(express.json({ limit: '10kb' })); // Body limit
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 // Rate Limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: 'Too many requests from this IP, please try again in 15 minutes',
   standardHeaders: true,
   legacyHeaders: false,
@@ -56,21 +96,17 @@ const limiter = rateLimit({
 // CORS Configuration
 const allowedOrigins = [
   'https://fasnet-online-frontend.vercel.app',
-  'https://fasnet-online-v1-frontend.vercel.app', // Explicitly allow v1 deployment
-  'https://www.fasnet-online-v1-frontend.vercel.app', // Allow www subdomain
-  'http://localhost:5173',  // Local Vite dev server
-  'http://localhost:3000',  // Alternative local port
-  'http://localhost:4173',  // Vite preview
-  process.env.FRONTEND_URL, // Additional frontend URL from environment variables
-].filter(Boolean); // Remove undefined values
-
-// Preflight handled by app.use(cors(...)) below
+  'https://fasnet-online-v1-frontend.vercel.app',
+  'https://www.fasnet-online-v1-frontend.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://localhost:4173',
+  process.env.FRONTEND_URL,
+].filter(Boolean);
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
@@ -84,16 +120,18 @@ app.use(cors({
 
 app.use(morgan('combined'));
 
-// Mount Routes
-app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/users', userRoutes);
-app.use('/api/v1/students', studentRoutes);
-app.use('/api/v1/academic', academicRoutes);
-app.use('/api/v1/progression', progressionRoutes);
-app.use('/api/v1/profile-requests', profileRequestRoutes);
-app.use('/api/v1/import', importRoutes);
-app.use('/api/v1/missing-students', missingStudentRoutes);
-app.use('/api/v1/batch-years', batchYearRoutes);
+// ==========================================
+// Routes
+// ==========================================
+app.use('/api/v1/auth', require('./src/routes/authRoutes'));
+app.use('/api/v1/users', require('./src/routes/userRoutes'));
+app.use('/api/v1/students', require('./src/routes/studentRoutes'));
+app.use('/api/v1/academic', require('./src/routes/academicRoutes'));
+app.use('/api/v1/progression', require('./src/routes/progressionRoutes'));
+app.use('/api/v1/profile-requests', require('./src/routes/profileRequestRoutes'));
+app.use('/api/v1/import', require('./src/routes/importRoutes'));
+app.use('/api/v1/missing-students', require('./src/routes/missingStudentRoutes'));
+app.use('/api/v1/batch-years', require('./src/routes/batchYearRoutes'));
 app.use('/api/v1/assessments', require('./src/routes/assessmentRoutes'));
 app.use('/api/v1/system', require('./src/routes/systemRoutes'));
 app.use('/api/v1/resources', require('./src/routes/resourceRoutes'));
@@ -132,10 +170,9 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Database Connection & Server Start
-const http = require('http');
-const { initializeSocket } = require('./src/socket');
-
+// ==========================================
+// Server Start (Local vs Vercel)
+// ==========================================
 const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
 
@@ -150,16 +187,12 @@ const startServer = () => {
   });
 };
 
-// MongoDB Connection Pattern for Serverless
-let cachedPromise = null;
-const connectDB = async () => {
-  // If we have a promise and the connection is actually ALIVE (1 = connected), use it.
-  // Start Server Logic
-  if (require.main === module) {
-    // Local execution (node server.js)
-    connectDB().then(() => {
-      startServer();
-    });
-  }
+if (require.main === module) {
+  // Local execution
+  connectDB().then(() => {
+    startServer();
+  });
+}
 
-  module.exports = app;
+// Export app for Vercel
+module.exports = app;
