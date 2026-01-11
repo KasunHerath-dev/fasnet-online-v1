@@ -1,0 +1,253 @@
+import React, { useState, useEffect } from 'react';
+import {
+    BookOpen,
+    Download,
+    FileText,
+    Filter,
+    Search,
+    AlertCircle,
+    File,
+    CheckCircle
+} from 'lucide-react';
+import { academicService } from '../services/academicService';
+import { resourceService } from '../services/resourceService';
+import Loader from '../components/Loader';
+import Dropdown from '../components/Dropdown';
+
+export default function StudentResources() {
+    const [loading, setLoading] = useState(true);
+    const [modules, setModules] = useState([]);
+    const [selectedModuleId, setSelectedModuleId] = useState('');
+    const [resources, setResources] = useState([]);
+    const [fetchingResources, setFetchingResources] = useState(false);
+
+    // Load enrolled modules
+    useEffect(() => {
+        const loadModules = async () => {
+            try {
+                const res = await academicService.getMyEnrollments();
+                // res is the array of modules (from service wrapper)
+                if (Array.isArray(res) && res.length > 0) {
+                    setModules(res);
+                    // Auto-select first module
+                    setSelectedModuleId(res[0]._id);
+                } else {
+                    setModules([]);
+                }
+            } catch (error) {
+                console.error("Failed to fetch enrollments", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadModules();
+    }, []);
+
+    // Load resources when module changes
+    useEffect(() => {
+        if (!selectedModuleId) return;
+
+        const loadResources = async () => {
+            setFetchingResources(true);
+            try {
+                const res = await resourceService.getByModule(selectedModuleId);
+                // resourceService returns full axios response, so usage of res.data is correct here if backend wraps in data object
+                // Backend controller: res.status(200).json({ success: true, count: resources.length, data: resources });
+                // So res.data.data is correct.
+                setResources(res.data.data || []);
+            } catch (error) {
+                console.error("Failed to fetch resources", error);
+                setResources([]);
+            } finally {
+                setFetchingResources(false);
+            }
+        };
+
+        loadResources();
+    }, [selectedModuleId]);
+
+    const [activeTab, setActiveTab] = useState('tutorials');
+
+    // Categorize Resources
+    const categorizeResources = (list) => {
+        return {
+            tutorials: list.filter(r => r.type === 'tutorial' || (r.type === 'marking_scheme' && r.answerFor === 'tutorial')),
+            assignments: list.filter(r => r.type === 'assignment' || (r.type === 'marking_scheme' && r.answerFor === 'assignment')),
+            pastPapers: list.filter(r => r.type === 'past_paper' || (r.type === 'marking_scheme' && r.answerFor === 'past_paper')),
+            books: list.filter(r => r.type === 'book'),
+            other: list.filter(r => r.type === 'other')
+        };
+    };
+
+    const categorized = categorizeResources(resources);
+
+    // Tab Definitions
+    const tabs = [
+        { id: 'tutorials', label: 'Tutorials', icon: FileText, count: categorized.tutorials.length, color: 'indigo' },
+        { id: 'assignments', label: 'Assignments', icon: CheckCircle, count: categorized.assignments.length, color: 'orange' },
+        { id: 'pastPapers', label: 'Past Papers', icon: BookOpen, count: categorized.pastPapers.length, color: 'emerald' },
+        { id: 'books', label: 'Books', icon: BookOpen, count: categorized.books.length, color: 'rose' }
+    ];
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-full min-h-[400px]">
+                <Loader />
+            </div>
+        );
+    }
+
+    return (
+        <div className="p-4 md:p-8 animate-fadeIn max-w-[1400px] mx-auto space-y-8">
+            {/* Header Card */}
+            <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-3xl shadow-xl p-8 text-white relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-2xl"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24 blur-2xl"></div>
+
+                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div>
+                        <div className="flex items-center gap-3 mb-2">
+                            <span className="text-4xl">📚</span>
+                            <h1 className="text-3xl md:text-4xl font-black tracking-tight">Academic Resources</h1>
+                        </div>
+                        <p className="text-blue-100 font-medium text-lg max-w-xl">
+                            Access your comprehensive collection of lecture materials, tutorials, and past papers.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Module Selector & Controls */}
+            {modules.length === 0 ? (
+                <div className="bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-100 dark:border-yellow-900/30 rounded-3xl p-8 text-center max-w-2xl mx-auto mt-12">
+                    <div className="bg-yellow-100 dark:bg-yellow-900/30 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <AlertCircle className="w-10 h-10 text-yellow-600 dark:text-yellow-400" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-yellow-900 dark:text-yellow-100 mb-2">No Enrolled Modules Found</h3>
+                    <p className="text-yellow-700 dark:text-yellow-300">You are not currently enrolled in any modules.</p>
+                </div>
+            ) : (
+                <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 p-6 md:p-8">
+                    {/* Controls Header */}
+                    <div className="flex flex-col md:flex-row items-center gap-6 mb-8">
+                        <div className="w-full md:w-96 z-20">
+                            <label className="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Select Module</label>
+                            <Dropdown
+                                value={selectedModuleId}
+                                onChange={(e) => setSelectedModuleId(e.target.value)}
+                                options={modules.map(m => ({
+                                    value: m._id,
+                                    label: `${m.code} - ${m.title}`
+                                }))}
+                                icon={<BookOpen className="w-4 h-4" />}
+                                placeholder="Select Module"
+                                variant="default"
+                            />
+                        </div>
+
+                        <div className="hidden md:block h-12 w-px bg-gray-200 dark:bg-slate-700 mx-4"></div>
+
+                        {/* Tabs */}
+                        <div className="flex-1 w-full overflow-x-auto no-scrollbar">
+                            <label className="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Resource Category</label>
+                            <div className="flex gap-3">
+                                {tabs.map(tab => {
+                                    const Icon = tab.icon;
+                                    const isActive = activeTab === tab.id;
+                                    return (
+                                        <button
+                                            key={tab.id}
+                                            onClick={() => setActiveTab(tab.id)}
+                                            className={`
+                                                flex items-center gap-3 px-5 py-3 rounded-2xl font-bold text-sm whitespace-nowrap transition-all duration-300
+                                                ${isActive
+                                                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30 scale-105'
+                                                    : 'bg-gray-50 dark:bg-slate-700/50 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-700'
+                                                }
+                                            `}
+                                        >
+                                            <Icon className={`w-5 h-5 ${isActive ? 'text-white' : ''}`} />
+                                            {tab.label}
+                                            {tab.count > 0 && (
+                                                <span className={`ml-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${isActive ? 'bg-white/20 text-white' : 'bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-gray-300'}`}>
+                                                    {tab.count}
+                                                </span>
+                                            )}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Resources Grid */}
+                    {fetchingResources ? (
+                        <div className="text-center py-32 bg-gray-50 dark:bg-slate-800/50 rounded-3xl border-2 border-dashed border-gray-100 dark:border-slate-700">
+                            <div className="animate-spin rounded-full h-12 w-12 border-4 border-indigo-600 border-t-transparent mx-auto"></div>
+                            <p className="mt-4 text-gray-500 dark:text-gray-400 font-bold animate-pulse">Loading resources...</p>
+                        </div>
+                    ) : (
+                        <div className="min-h-[400px]">
+                            {categorized[activeTab].length === 0 ? (
+                                <div className="text-center py-24 bg-gray-50 dark:bg-slate-800/50 rounded-3xl border-2 border-dashed border-gray-100 dark:border-slate-700">
+                                    <div className="bg-white dark:bg-slate-700 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-sm">
+                                        <File className="w-12 h-12 text-gray-300 dark:text-gray-500" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No {tabs.find(t => t.id === activeTab).label} Found</h3>
+                                    <p className="text-gray-500 dark:text-gray-400">There are no resources available in this category yet.</p>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+                                    {categorized[activeTab].map(resource => (
+                                        <div key={resource._id} className="group bg-white dark:bg-slate-700 rounded-3xl p-2 shadow-sm border border-gray-100 dark:border-slate-600 hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
+                                            <div className="p-5 h-full flex flex-col">
+                                                <div className="flex items-start justify-between mb-4">
+                                                    <div className="p-3.5 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/50 transition-colors">
+                                                        <FileText className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
+                                                    </div>
+                                                    {resource.type === 'marking_scheme' && resource.answerFor && (
+                                                        <span className="px-3 py-1.5 rounded-xl bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-300 text-xs font-bold border border-teal-100 dark:border-teal-800 uppercase tracking-wide">
+                                                            {resource.answerFor.replace('_', ' ')} Answer
+                                                        </span>
+                                                    )}
+                                                </div>
+
+                                                <h4 className="font-bold text-gray-900 dark:text-white line-clamp-2 mb-3 text-lg group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">
+                                                    {resource.title}
+                                                </h4>
+
+                                                <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-6 mt-auto">
+                                                    <span>{new Date(resource.createdAt).toLocaleDateString()}</span>
+                                                    <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                                    <span>{formatFileSize(resource.size)}</span>
+                                                </div>
+
+                                                <a
+                                                    href={resource.webContentLink || resource.webViewLink}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="flex items-center justify-center gap-2 w-full py-3.5 bg-gray-50 dark:bg-slate-600 text-gray-700 dark:text-gray-200 rounded-2xl font-bold text-sm group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm group-hover:shadow-lg group-hover:shadow-indigo-500/30"
+                                                >
+                                                    <Download className="w-4 h-4" />
+                                                    Download
+                                                </a>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
