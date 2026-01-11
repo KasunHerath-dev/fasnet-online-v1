@@ -82,9 +82,11 @@ const login = async (req, res) => {
 
     const token = generateToken(user._id);
 
-    // Update lastActiveAt immediately
-    user.lastActiveAt = new Date();
-    await user.save();
+    // Update lastActiveAt immediately unless password change is required
+    if (!user.needsPasswordChange) {
+      user.lastActiveAt = new Date();
+      await user.save();
+    }
 
     logger.info('User logged in', { userId: user._id, username });
 
@@ -150,6 +152,7 @@ const changePassword = async (req, res) => {
     }
 
     user.passwordHash = newPassword; // Will be hashed by pre-save hook
+    user.needsPasswordChange = false; // clear the flag
     await user.save();
 
     logger.info('Password changed', { userId: user._id });

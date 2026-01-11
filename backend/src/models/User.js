@@ -58,7 +58,11 @@ const userSchema = new mongoose.Schema(
       darkMode: { type: Boolean, default: false },
       publicProfile: { type: Boolean, default: false },
       showGPA: { type: Boolean, default: true }
-    }
+    },
+    needsPasswordChange: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

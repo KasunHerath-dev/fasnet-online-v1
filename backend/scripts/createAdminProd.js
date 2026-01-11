@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const User = require('../models/User'); // Adjust path as needed
+const User = require('../src/models/User'); // Adjust path as needed
 require('dotenv').config();
 
 const seedAdmin = async () => {
@@ -12,29 +11,33 @@ const seedAdmin = async () => {
         await mongoose.connect(process.env.MONGO_URI);
         console.log('✅ Connected to MongoDB');
 
-        const adminExists = await User.findOne({ role: 'super-admin' });
+        // Check if superadmin exists. query 'roles' array for 'superadmin'
+        const adminExists = await User.findOne({ roles: 'superadmin' });
 
         if (adminExists) {
             console.log('⚠️  Super Admin already exists');
             process.exit(0);
         }
 
-        const hashedPassword = await bcrypt.hash('Fas@2024!', 10);
+        console.log('Creating Super Admin...');
 
+        // Create new super admin
+        // Note: User model pre-save hook will hash the passwordHash
         await User.create({
             username: 'admin',
             email: 'admin@fasnet.com',
-            password: hashedPassword,
-            role: 'super-admin',
+            passwordHash: 'Fas@2024!', // Plain text, will be hashed by model
+            roles: ['superadmin'],
             firstName: 'Super',
             lastName: 'Admin',
-            isActive: true
+            isActive: true,
+            needsPasswordChange: true
         });
 
         console.log('🎉 Super Admin created successfully!');
         process.exit(0);
     } catch (error) {
-        console.error('❌ Error:', error.message);
+        console.error('❌ Error:', error);
         process.exit(1);
     }
 };
