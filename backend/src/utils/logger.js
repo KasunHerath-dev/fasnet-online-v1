@@ -2,9 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const logDir = path.join(__dirname, '../../logs');
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir);
-}
+// Directory creation handled inside log function if needed
 
 const logFile = path.join(logDir, `${new Date().toISOString().split('T')[0]}.log`);
 
