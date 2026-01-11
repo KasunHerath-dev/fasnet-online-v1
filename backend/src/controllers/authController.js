@@ -82,11 +82,25 @@ const login = async (req, res) => {
 
     const token = generateToken(user._id);
 
-    // Update lastActiveAt immediately unless password change is required
-    if (!user.needsPasswordChange) {
-      user.lastActiveAt = new Date();
-      await user.save();
+    // If password change is required, return early with minimal data
+    // Do NOT update lastActiveAt (db save) and do NOT fetch extra data
+    if (user.needsPasswordChange) {
+      return res.json({
+        message: 'Please change your password',
+        token,
+        user: {
+          _id: user._id,
+          username: user.username,
+          roles: user.roles,
+          needsPasswordChange: true,
+          isActive: user.isActive
+        }
+      });
     }
+
+    // Update lastActiveAt immediately
+    user.lastActiveAt = new Date();
+    await user.save();
 
     logger.info('User logged in', { userId: user._id, username });
 
