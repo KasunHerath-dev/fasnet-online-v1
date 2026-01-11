@@ -144,7 +144,6 @@ const connectDB = async () => {
     const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/fas_db');
     logger.info(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-  } catch (error) {
     logger.error(`Error: ${error.message}`);
     // In Vercel, we don't want to exit process immediately, let it retry or fail request
     if (process.env.NODE_ENV !== 'production') {
