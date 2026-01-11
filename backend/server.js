@@ -137,8 +137,10 @@ const { initializeSocket } = require('./src/socket');
 const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
 
-// Initialize Socket.io
-initializeSocket(server);
+// Initialize Socket.io (Only in development/server mode, not Vercel serverless)
+if (process.env.NODE_ENV !== 'production') {
+  initializeSocket(server);
+}
 
 const startServer = () => {
   server.listen(PORT, () => {
@@ -149,10 +151,8 @@ const startServer = () => {
 // MongoDB Connection
 const connectDB = async () => {
   try {
-    if (process.env.NODE_ENV === 'production' && !process.env.MONGO_URI) {
-      throw new Error('FATAL: MONGO_URI is not defined in environment variables');
-    }
-    const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/fas_db');
+    const uri = process.env.MONGO_URI || 'mongodb://localhost:27017/fas_db';
+    const conn = await mongoose.connect(uri);
     logger.info(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     logger.error(`Error: ${error.message}`);
@@ -171,8 +171,8 @@ if (require.main === module) {
   });
 } else {
   // Vercel/Production execution (module import)
-  // Just connect for side-effect
-  connectDB();
+  // Connect quietly, don't crash loop if fails
+  connectDB().catch(err => console.error('Vercel DB Connect Error:', err));
 }
 
 module.exports = app;
