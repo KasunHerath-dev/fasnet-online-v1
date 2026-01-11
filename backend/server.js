@@ -28,10 +28,6 @@ app.use(helmet()); // Set security headers
 app.use(express.json({ limit: '10kb' })); // Body limit
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
-// Data Sanitization (Commented out)
-// app.use(mongoSanitize());
-// app.use(xss());
-
 // Rate Limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
