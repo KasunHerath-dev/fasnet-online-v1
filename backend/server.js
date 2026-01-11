@@ -156,10 +156,7 @@ const connectDB = async () => {
     logger.info(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     logger.error(`Error: ${error.message}`);
-    // In Vercel, we don't want to exit process immediately, let it retry or fail request
-    if (process.env.NODE_ENV !== 'production') {
-      process.exit(1);
-    }
+    // Never exit process in Vercel, just log it.
   }
 };
 
