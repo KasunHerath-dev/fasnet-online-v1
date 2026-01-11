@@ -1,9 +1,21 @@
-require('dotenv').config({ path: require('path').resolve(__dirname, '../secure_config/.env') });
+require('dotenv').config(); // Standard config, relies on Vercel Env Vars in production
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
 const logger = require('./src/utils/logger');
+
+// Prevent crashes from unhandled errors
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT EXCEPTION! 💥 Shutting down gracefully...');
+  console.error(err.name, err.message);
+  // process.exit(1); // Don't exit in serverless, let the request fail
+});
+
+process.on('unhandledRejection', (err) => {
+  console.error('UNHANDLED REJECTION! 💥');
+  console.error(err.name, err.message);
+});
 
 // Route Imports
 const authRoutes = require('./src/routes/authRoutes');
@@ -126,8 +138,12 @@ const startServer = () => {
 // MongoDB Connection
 const connectDB = async () => {
   try {
+    if (process.env.NODE_ENV === 'production' && !process.env.MONGO_URI) {
+      throw new Error('FATAL: MONGO_URI is not defined in environment variables');
+    }
     const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/fas_db');
     logger.info(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
   } catch (error) {
     logger.error(`Error: ${error.message}`);
     // In Vercel, we don't want to exit process immediately, let it retry or fail request
