@@ -48,7 +48,7 @@ const limiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
-app.use('/api', limiter); // Apply to API routes
+// app.use('/api', limiter); // Disabled for Vercel (Shared IPs cause false positives)
 
 // CORS Configuration
 const allowedOrigins = [
@@ -147,17 +147,41 @@ const startServer = () => {
   });
 };
 
-// MongoDB Connection
+// MongoDB Connection Pattern for Serverless
+let cachedPromise = null;
 const connectDB = async () => {
+  if (cachedPromise) {
+    return cachedPromise;
+  }
   try {
     const uri = process.env.MONGO_URI || 'mongodb://localhost:27017/fas_db';
-    const conn = await mongoose.connect(uri);
+    // Mongoose 6+ buffers by default, but explicit connect is safer
+    cachedPromise = mongoose.connect(uri, {
+      bufferCommands: false, // Return errors immediately if disconnected
+      serverSelectionTimeoutMS: 5000 // Fail fast if Mongo is down
+    });
+    const conn = await cachedPromise;
     logger.info(`MongoDB Connected: ${conn.connection.host}`);
+    return conn;
   } catch (error) {
     logger.error(`Error: ${error.message}`);
-    // Never exit process in Vercel, just log it.
+    cachedPromise = null; // Reset promise so we can retry
+    // Don't exit, just let the request fail
   }
 };
+
+// Serverless Middleware: Ensure DB is connected before every request
+// (Only applies when not running locally)
+if (require.main !== module) {
+  app.use(async (req, res, next) => {
+    // Skip for health check if we want it to report disconnected state (optional, but let's keep it simple)
+    if (mongoose.connection.readyState === 1) {
+      return next();
+    }
+    await connectDB();
+    next();
+  });
+}
 
 // Start Server Logic
 if (require.main === module) {
@@ -165,10 +189,6 @@ if (require.main === module) {
   connectDB().then(() => {
     startServer();
   });
-} else {
-  // Vercel/Production execution (module import)
-  // Connect quietly, don't crash loop if fails
-  connectDB().catch(err => console.error('Vercel DB Connect Error:', err));
 }
 
 module.exports = app;
