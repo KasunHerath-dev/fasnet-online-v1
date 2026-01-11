@@ -1,108 +1,12 @@
-import { useState, useEffect } from 'react';
-import { academicService, batchYearService, studentService } from '../services/authService';
-import Dropdown from '../components/Dropdown';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { Users, User, GraduationCap, AlertCircle, BarChart3, ArrowUpRight } from 'lucide-react';
+import Loader from '../components/Loader';
+
+// ... existing imports ...
 
 export default function AdminAnalytics() {
-    const [analytics, setAnalytics] = useState(null);
-    const [demographics, setDemographics] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [filters, setFilters] = useState({
-        batch: '', // e.g. "2020/2021"
-        level: 1,
-        semester: 1
-    });
-    const [batches, setBatches] = useState([]);
-
-    useEffect(() => {
-        loadMetadata();
-    }, []);
-
-    useEffect(() => {
-        if (filters.batch) {
-            fetchAnalytics();
-            fetchDemographics();
-        }
-    }, [filters]);
-
-    const loadMetadata = async () => {
-        try {
-            const res = await batchYearService.getAll();
-            // Handle { batchYears: [...] } format or direct array
-            const batchData = res.data.batchYears || res.data;
-
-            if (batchData && Array.isArray(batchData)) {
-                setBatches(batchData);
-                if (batchData.length > 0) {
-                    setFilters(prev => ({ ...prev, batch: batchData[0].year }));
-                } else {
-                    setFilters(prev => ({ ...prev, batch: '2024/2025' }));
-                }
-            } else {
-                console.error("Invalid batch data format:", res.data);
-                setBatches([]);
-            }
-        } catch (error) {
-            console.error('Failed to load batches:', error);
-            setError('Failed to load batch data');
-            setLoading(false);
-            setBatches([]);
-        }
-    };
-
-    const fetchDemographics = async () => {
-        try {
-            // Fetch demographics for the selected batch
-            const res = await studentService.getDemographics({ batchYear: filters.batch });
-            setDemographics(res.data);
-        } catch (error) {
-            console.error("Failed to fetch demographics", error);
-            // Don't block main analytics if this fails, just log it
-        }
-    };
-
-    const fetchAnalytics = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const params = {
-                batchYear: filters.batch,
-                level: filters.level,
-                semester: filters.semester
-            };
-            const res = await academicService.getBatchAnalytics(params);
-            setAnalytics(res.data);
-        } catch (error) {
-            console.error("Failed to fetch analytics", error);
-            setError(error.response?.data?.message || 'Failed to fetch analytics data');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const DEMO_COLORS = ['#3B82F6', '#EC4899', '#9CA3AF']; // Blue (Male), Pink (Female), Gray (Other)
-
-    // Demographics Data for Pie Chart
-    const demoPieData = demographics ? [
-        { name: 'Male', value: demographics.male },
-        { name: 'Female', value: demographics.female }
-    ] : [];
-
-    // Transform distribution object to array for BarChart
-    const barData = analytics ? Object.keys(analytics.distribution).map(range => ({
-        range,
-        count: analytics.distribution[range]
-    })) : [];
+    // ... existing code ...
 
     if (loading && !analytics) {
-        return (
-            <div className="p-8 text-center">
-                <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-                <p className="mt-4 text-gray-600">Loading Analytics...</p>
-            </div>
-        );
+        return <Loader />;
     }
 
     if (error) {

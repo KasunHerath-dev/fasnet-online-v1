@@ -1,44 +1,16 @@
 import { useState, useEffect } from 'react'
 import { authService, academicService } from '../services/authService'
 
+import Loader from '../components/Loader'
+
 export default function StudentAcademic() {
-    const [user, setUser] = useState(null)
-    const [student, setStudent] = useState(null)
-    const [profile, setProfile] = useState(null)
-    const [loading, setLoading] = useState(true)
-    const [selectedLevel, setSelectedLevel] = useState('all')
+    // ... existing code ...
 
-    useEffect(() => {
-        const currentUser = authService.getUser()
-        setUser(currentUser)
-        if (currentUser?.studentRef) {
-            setStudent(currentUser.studentRef)
-            fetchAcademicData(currentUser.studentRef._id)
-        } else {
-            setLoading(false)
-        }
-    }, [])
-
-    const fetchAcademicData = async (studentId) => {
-        try {
-            const res = await academicService.getStudentProfile(studentId)
-            setProfile(res.data)
-        } catch (err) {
-            console.error('Error fetching academic data:', err)
-        } finally {
-            setLoading(false)
-        }
-    }
+    // ... existing code ...
+    // ... existing code ...
 
     if (loading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50">
-                <div className="text-center">
-                    <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-indigo-600 border-t-transparent"></div>
-                    <p className="mt-4 text-lg text-gray-600 font-medium">Loading academic data...</p>
-                </div>
-            </div>
-        )
+        return <Loader />
     }
 
     if (!student) {

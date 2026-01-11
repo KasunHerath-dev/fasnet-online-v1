@@ -60,7 +60,7 @@ export default function StudentDetailPage() {
     }
   }
 
-  if (loading) return <div className="p-6">Loading...</div>
+  if (loading) return <Loader />
   if (error) return <div className="p-6 text-red-600">{error}</div>
   if (!student) return <div className="p-6">Student not found</div>
 

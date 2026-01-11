@@ -1,70 +1,14 @@
 import { useState, useEffect } from 'react'
 import { academicService, authService } from '../services/authService'
-import { LineChart, Line, BarChart, Bar, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from 'recharts'
+import Loader from '../components/Loader'
+
+// ... existing imports ...
 
 export default function StudentAnalytics() {
-    const [student, setStudent] = useState(null)
-    const [profile, setProfile] = useState(null)
-    const [semesterResults, setSemesterResults] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
-
-    useEffect(() => {
-        fetchStudentAnalytics()
-    }, [])
-
-    const fetchStudentAnalytics = async () => {
-        try {
-            const user = authService.getUser()
-            if (!user || !user.studentRef) {
-                setError('Student profile not found')
-                setLoading(false)
-                return
-            }
-
-            setStudent(user.studentRef)
-
-            // Fetch comprehensive academic profile
-            try {
-                const profileRes = await academicService.getStudentProfile(user.studentRef._id)
-                setProfile(profileRes.data)
-            } catch (err) {
-                console.warn('Could not fetch full profile:', err)
-            }
-
-            // Fetch semester results for progression charts
-            try {
-                const resultsRes = await academicService.getStudentHistory(user.studentRef._id)
-                const historyData = resultsRes.data.map(result => ({
-                    semester: `L${result.level}S${result.semester}`,
-                    level: result.level,
-                    gpa: result.gpa,
-                    credits: result.earnedCredits || result.totalCredits,
-                    status: result.status
-                }))
-                setSemesterResults(historyData)
-            } catch (apiErr) {
-                console.warn('No semester history available yet')
-                setSemesterResults([])
-            }
-
-            setLoading(false)
-        } catch (err) {
-            console.error('Failed to fetch analytics:', err)
-            setError('Failed to load your academic analytics')
-            setLoading(false)
-        }
-    }
+    // ... code ...
 
     if (loading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50">
-                <div className="text-center">
-                    <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-indigo-600 border-t-transparent"></div>
-                    <p className="mt-4 text-lg text-gray-600 font-medium">Loading Your Analytics...</p>
-                </div>
-            </div>
-        )
+        return <Loader />
     }
 
     if (error) {
