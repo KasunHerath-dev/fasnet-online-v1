@@ -41,7 +41,6 @@ export default function SideNav({ isOpen, onClose }) {
     'Update Data': RefreshCw,
     'Missing': AlertTriangle,
     'Admin': Settings,
-    'Admin': Settings,
     'Settings': Settings,
     'Resources': BookOpen
   }
