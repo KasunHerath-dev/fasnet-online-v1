@@ -589,8 +589,6 @@ function ResourceItem({ resource, onDelete }) {
             <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <a
                     href={`${import.meta.env.VITE_API_BASE_URL}/resources/stream/${resource._id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                     title="Download / View"
                 >

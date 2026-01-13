@@ -162,6 +162,7 @@ exports.streamResource = async (req, res) => {
 
         res.setHeader('Content-Disposition', `attachment; filename="${name}"`);
         res.setHeader('Content-Length', size);
+        res.setHeader('Content-Type', resource.mimeType || 'application/octet-stream');
 
         stream.pipe(res);
 
