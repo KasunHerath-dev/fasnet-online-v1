@@ -1,4 +1,7 @@
 const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
 const Resource = require('../models/Resource');
 const megaService = require('../services/megaService');
 const Module = require('../models/Module');
@@ -158,16 +161,37 @@ exports.streamResource = async (req, res) => {
             return res.status(404).send('Resource not found');
         }
 
-        const { stream, name, size } = await megaService.getFileStream(resource.fileId);
+        const { stream, name } = await megaService.getFileStream(resource.fileId);
 
-        res.setHeader('Content-Disposition', `attachment; filename="${name}"`);
-        res.setHeader('Content-Length', size);
-        res.setHeader('Content-Type', resource.mimeType || 'application/octet-stream');
+        // Setup temp file path
+        const tempFilePath = path.join(os.tmpdir(), `mega_${resource.fileId}_${Date.now()}_${name}`);
+        const writeStream = fs.createWriteStream(tempFilePath);
 
-        stream.pipe(res);
+        // Download to temp
+        await new Promise((resolve, reject) => {
+            stream.pipe(writeStream);
+            stream.on('error', reject);
+            writeStream.on('finish', resolve);
+            writeStream.on('error', reject);
+        });
+
+        // Send file to user
+        res.download(tempFilePath, name, (err) => {
+            // Cleanup temp file after sending
+            fs.unlink(tempFilePath, (unlinkErr) => {
+                if (unlinkErr) console.error('Error deleting temp file:', unlinkErr);
+            });
+
+            if (err) {
+                console.error('Error sending file:', err);
+                if (!res.headersSent) {
+                    res.status(500).send('Failed to send file');
+                }
+            }
+        });
 
     } catch (error) {
-        console.error('Stream Error:', error);
-        res.status(500).send('Failed to stream file');
+        console.error('Download Proxy Error:', error);
+        res.status(500).send('Failed to process download');
     }
 };
