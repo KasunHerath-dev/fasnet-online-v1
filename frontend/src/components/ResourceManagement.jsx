@@ -60,6 +60,76 @@ export default function ResourceManagement() {
         filterModules();
     }, [formData.level, formData.semester, modules]); // Re-filter when level or semester changes
 
+    useEffect(() => {
+        if (formData.moduleId) {
+            fetchResources(formData.moduleId);
+        } else {
+            setResources([]);
+        }
+    }, [formData.moduleId]);
+
+    const loadInitialData = async () => {
+        try {
+            const batchRes = await batchYearService.getAll();
+            const years = batchRes.data.batchYears || batchRes.data || [];
+            setBatchYears(years);
+
+            // Set default batch if available
+            if (years.length > 0 && !authService.getCurrentUser()?.batchScope) {
+                setFormData(prev => ({ ...prev, batchYear: years[0].year }));
+            }
+        } catch (error) {
+            console.error("Failed to load batches", error);
+        }
+    };
+
+    const fetchModules = async () => {
+        try {
+            const res = await academicService.getModules();
+            if (res.data && res.data.length > 0) {
+                setModules(res.data);
+            } else {
+                // Fallback if needed, or handled by API returning default list
+                setModules([]);
+            }
+        } catch (error) {
+            console.error("Failed to fetch modules", error);
+        }
+    };
+
+    const filterModules = () => {
+        let sourceModules = modules;
+
+        // Fallback to local list if API modules are absent
+        if (!sourceModules || sourceModules.length === 0) {
+            sourceModules = ALL_MODULES;
+        }
+
+        // Filter by Level AND Semester
+        const filtered = sourceModules.filter(m =>
+            m.level.toString() === formData.level &&
+            m.semester.toString() === formData.semester
+        );
+        setFilteredModules(filtered);
+
+        // Reset module selection if it's no longer in the list
+        if (formData.moduleId && !filtered.find(m => m._id === formData.moduleId)) {
+            setFormData(prev => ({ ...prev, moduleId: '' }));
+        }
+    };
+
+    const fetchResources = async (moduleId) => {
+        setLoading(true);
+        try {
+            const res = await resourceService.getByModule(moduleId);
+            setResources(res.data.data);
+        } catch (error) {
+            console.error("Failed to fetch resources", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
