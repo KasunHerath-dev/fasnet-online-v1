@@ -24,10 +24,33 @@ exports.uploadResource = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Please upload a file' });
         }
 
-        const { title, type, moduleId, answerFor } = req.body;
+        const { title, type, moduleId, answerFor, moduleContext } = req.body;
 
         // Verify module exists (By ID or Code)
-        const moduleDoc = await resolveModule(moduleId);
+        let moduleDoc = await resolveModule(moduleId);
+
+        // Auto-create module if missing and context provided (Handling Fallback Modules)
+        if (!moduleDoc && moduleContext) {
+            try {
+                const ctx = JSON.parse(moduleContext);
+                const department = ctx.code.substring(0, 4); // Extract dep from code e.g. CMIS
+
+                moduleDoc = await Module.create({
+                    code: ctx.code,
+                    title: ctx.title,
+                    credits: ctx.credits,
+                    level: ctx.level,
+                    semester: ctx.semester,
+                    department: department, // Assumes code matches department pattern
+                    isCompulsory: true
+                });
+                console.log(`Auto-created module: ${moduleDoc.code}`);
+            } catch (createErr) {
+                console.error("Failed to auto-create module:", createErr);
+                return res.status(400).json({ success: false, message: 'Module not found and could not be created' });
+            }
+        }
+
         if (!moduleDoc) {
             return res.status(404).json({ success: false, message: 'Module not found' });
         }
