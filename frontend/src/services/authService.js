@@ -204,5 +204,5 @@ export const resourceService = {
   }),
   getByModule: (moduleId) => api.get(`/resources/module/${moduleId}`),
   delete: (id) => api.delete(`/resources/${id}`),
-  getAuthUrl: () => api.get('/resources/auth/url'),
+  // Stream URL is /api/v1/resources/stream/:id (handled via direct link)
 }

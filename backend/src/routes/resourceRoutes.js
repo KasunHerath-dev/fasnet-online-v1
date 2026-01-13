@@ -6,13 +6,10 @@ const upload = multer({ storage: multer.memoryStorage() }); // Store in memory f
 
 const router = express.Router();
 
-// Auth setup routes
-router.get('/auth/url', protect, authorize('superadmin'), resourceController.getAuthUrl);
-router.get('/auth/callback', resourceController.authCallback);
-
 // Resource Management
 router.post('/', protect, authorize('admin', 'superadmin', 'editor'), upload.single('file'), resourceController.uploadResource);
 router.get('/module/:moduleId', protect, resourceController.getResourcesByModule);
 router.delete('/:id', protect, authorize('admin', 'superadmin'), resourceController.deleteResource);
+router.get('/stream/:id', resourceController.streamResource); // Public stream/download link
 
 module.exports = router;

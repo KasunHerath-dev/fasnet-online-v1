@@ -1,5 +1,5 @@
 const Resource = require('../models/Resource');
-const googleDriveService = require('../services/googleDriveService');
+const megaService = require('../services/megaService');
 const Module = require('../models/Module');
 
 // @desc    Upload a new resource (Tutorial/Past Paper)
@@ -11,7 +11,7 @@ exports.uploadResource = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Please upload a file' });
         }
 
-        const { title, type, moduleId } = req.body;
+        const { title, type, moduleId, answerFor } = req.body;
 
         // Verify module exists
         const moduleExists = await Module.findById(moduleId);
@@ -19,23 +19,25 @@ exports.uploadResource = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Module not found' });
         }
 
-        // Upload to Google Drive
-        // You might want to define specific folder IDs for each module or a general 'LMS Resources' folder
-        // For now, we upload to root (or user's default) but you can set a folderId in env
-        const driveFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
-        const driveFile = await googleDriveService.uploadFile(req.file, driveFolderId);
+        // Upload to Mega
+        const fileData = await megaService.uploadToMega(
+            req.file.buffer,
+            req.file.originalname,
+            req.file.size
+        );
 
         // Create Resource Record
         const resource = await Resource.create({
             title,
             type,
+            answerFor, // Add this if it's in the schema/request
             module: moduleId,
-            driveFileId: driveFile.id,
-            webViewLink: driveFile.webViewLink,
-            webContentLink: driveFile.webContentLink, // Direct download/view
+            fileId: fileData.nodeId, // Storing Mega Node ID
+            webViewLink: fileData.link,
+            webContentLink: fileData.link, // Mega links are universal
             mimeType: req.file.mimetype,
-            size: driveFile.size,
-            uploadedBy: req.user.id
+            size: req.file.size,
+            uploadedBy: req.user ? req.user.id : null // Handle potential missing user in dev
         });
 
         res.status(201).json({
@@ -83,8 +85,11 @@ exports.deleteResource = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Resource not found' });
         }
 
-        // Delete from Drive
-        await googleDriveService.deleteFile(resource.driveFileId);
+        // Delete from Mega
+        // Access fileId instead of driveFileId
+        if (resource.fileId) {
+            await megaService.deleteFromMega(resource.fileId);
+        }
 
         // Delete from DB
         await resource.deleteOne();
@@ -100,58 +105,25 @@ exports.deleteResource = async (req, res) => {
     }
 };
 
-const SystemSetting = require('../models/SystemSetting');
-
-// ... (other imports)
-
-// @desc    Generate Google Auth URL (One-time setup)
-// @route   GET /api/v1/resources/auth/url
-// @access  Private (Superadmin)
-exports.getAuthUrl = (req, res) => {
-    const url = googleDriveService.generateAuthUrl();
-    res.json({ success: true, url });
-};
-
-// @desc    Handle Google Auth Callback (One-time setup)
-// @route   GET /api/v1/resources/auth/callback
-// @access  Public (Callback from Google)
-exports.authCallback = async (req, res) => {
-    const { code } = req.query;
+// @desc    Stream a resource (Download Proxy)
+// @route   GET /api/v1/resources/stream/:id
+// @access  Public (or Private if you want)
+exports.streamResource = async (req, res) => {
     try {
-        const tokens = await googleDriveService.getTokens(code);
-
-        // Save Refresh Token to DB
-        if (tokens.refresh_token) {
-            await SystemSetting.findOneAndUpdate(
-                { key: 'GOOGLE_REFRESH_TOKEN' },
-                {
-                    value: tokens.refresh_token,
-                    description: 'Google Drive Refresh Token for Resource Uploads'
-                },
-                { upsert: true, new: true }
-            );
-
-            res.send(`
-                <div style="font-family: sans-serif; text-align: center; padding: 50px;">
-                    <h1 style="color: green;">Authorization Successful! ✅</h1>
-                    <p>The system has successfully connected to your Google Drive.</p>
-                    <p>You can verify this by checking the terminal log or listing 'SystemSetting' in DB.</p>
-                    <p>You may now close this window and return to the Admin Dashboard.</p>
-                </div>
-            `);
-        } else {
-            console.log('No refresh token returned (User might have already approved).');
-            res.send(`
-                <div style="font-family: sans-serif; text-align: center; padding: 50px;">
-                    <h1 style="color: blue;">Already Authorized ℹ️</h1>
-                    <p>Google didn't return a new Refresh Token, likely because you have already approved this app.</p>
-                    <p>If the app is working, you are good to go. If not, go to your Google Account > Security > Third-party apps and remove "FAS Database" then try again.</p>
-                </div>
-            `);
+        const resource = await Resource.findById(req.params.id);
+        if (!resource) {
+            return res.status(404).send('Resource not found');
         }
 
+        const { stream, name, size } = await megaService.getFileStream(resource.fileId);
+
+        res.setHeader('Content-Disposition', `attachment; filename="${name}"`);
+        res.setHeader('Content-Length', size);
+
+        stream.pipe(res);
+
     } catch (error) {
-        console.error('Auth Callback Error:', error);
-        res.status(500).send(`Auth Failed: ${error.message}`);
+        console.error('Stream Error:', error);
+        res.status(500).send('Failed to stream file');
     }
 };

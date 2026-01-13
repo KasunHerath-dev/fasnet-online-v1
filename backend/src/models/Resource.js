@@ -21,10 +21,11 @@ const resourceSchema = new mongoose.Schema({
         ref: 'Module',
         required: true
     },
-    driveFileId: {
+    fileId: {
         type: String,
         required: true
     },
+    // storageType: { type: String, enum: ['google_drive', 'mega'], default: 'mega' }, // Optional for dual support
     webViewLink: {
         type: String,
         required: true

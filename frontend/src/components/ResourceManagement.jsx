@@ -168,97 +168,11 @@ export default function ResourceManagement() {
 
         // Check internal module list vs API
         fetchModules();
-
-        if (currentUser?.roles?.includes('superadmin')) {
-            checkDriveAuth();
-        }
     }, []);
 
     useEffect(() => {
         filterModules();
     }, [formData.level, formData.semester, modules]); // Re-filter when level or semester changes
-
-    useEffect(() => {
-        if (formData.moduleId) {
-            fetchResources(formData.moduleId);
-        } else {
-            setResources([]);
-        }
-    }, [formData.moduleId]);
-
-    const loadInitialData = async () => {
-        try {
-            const batchRes = await batchYearService.getAll();
-            const years = batchRes.data.batchYears || batchRes.data || [];
-            setBatchYears(years);
-
-            // Set default batch if available
-            if (years.length > 0 && !authService.getCurrentUser()?.batchScope) {
-                setFormData(prev => ({ ...prev, batchYear: years[0].year }));
-            }
-        } catch (error) {
-            console.error("Failed to load batches", error);
-        }
-    };
-
-    const fetchModules = async () => {
-        try {
-            const res = await academicService.getModules();
-            if (res.data && res.data.length > 0) {
-                setModules(res.data);
-            } else {
-                // Fallback if needed, or handled by API returning default list
-                setModules([]);
-            }
-        } catch (error) {
-            console.error("Failed to fetch modules", error);
-        }
-    };
-
-    const filterModules = () => {
-        let sourceModules = modules;
-
-        // Fallback to local list if API modules are absent
-        if (!sourceModules || sourceModules.length === 0) {
-            sourceModules = ALL_MODULES;
-        }
-
-        // Filter by Level AND Semester
-        const filtered = sourceModules.filter(m =>
-            m.level.toString() === formData.level &&
-            m.semester.toString() === formData.semester
-        );
-        setFilteredModules(filtered);
-
-        // Reset module selection if it's no longer in the list
-        if (formData.moduleId && !filtered.find(m => m._id === formData.moduleId)) {
-            setFormData(prev => ({ ...prev, moduleId: '' }));
-        }
-    };
-
-    const fetchResources = async (moduleId) => {
-        setLoading(true);
-        try {
-            const res = await resourceService.getByModule(moduleId);
-            setResources(res.data.data);
-        } catch (error) {
-            console.error("Failed to fetch resources", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const checkDriveAuth = async () => {
-        try {
-            const res = await resourceService.getAuthUrl();
-            if (res.data.success) {
-                setAuthUrl(res.data.url);
-            }
-        } catch (error) {
-            // If 403 or error, strictly means not superadmin or other issue
-            console.log("Auth check skipped or failed");
-        }
-    };
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -327,26 +241,7 @@ export default function ResourceManagement() {
 
     return (
         <div className="space-y-8 animate-fadeIn">
-            {/* Header / Auth Status for Superadmin */}
-            {user?.roles?.includes('superadmin') && (
-                <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4 flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                        <HardDrive className="w-6 h-6 text-indigo-600" />
-                        <div>
-                            <h3 className="font-bold text-indigo-900">Google Drive Integration</h3>
-                            <p className="text-sm text-indigo-700">Connect to Google Drive to enable file uploads.</p>
-                        </div>
-                    </div>
-                    <a
-                        href={authUrl || '#'}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm"
-                    >
-                        {authUrl ? 'Connect Channel' : 'Loading...'}
-                    </a>
-                </div>
-            )}
+// Header removed (Mega auth is server-side)
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Upload Form */}
@@ -616,11 +511,11 @@ function ResourceItem({ resource, onDelete }) {
             </div>
             <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <a
-                    href={resource.webViewLink}
+                    href={`${import.meta.env.VITE_API_BASE_URL}/resources/stream/${resource._id}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                    title="View / Download"
+                    title="Download / View"
                 >
                     <ExternalLink className="w-5 h-5" />
                 </a>
