@@ -283,7 +283,10 @@ export default function ResourceManagement() {
             data.append('answerFor', finalAnswerFor);
         }
 
-        const selectedModule = modules.find(m => m._id === formData.moduleId);
+        // Find module in API list OR Fallback list
+        const selectedModule = modules.find(m => m._id === formData.moduleId) ||
+            ALL_MODULES.find(m => m._id === formData.moduleId);
+
         if (selectedModule) {
             data.append('moduleContext', JSON.stringify(selectedModule));
         }
