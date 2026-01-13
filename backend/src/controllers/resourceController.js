@@ -1,6 +1,19 @@
+const mongoose = require('mongoose');
 const Resource = require('../models/Resource');
 const megaService = require('../services/megaService');
 const Module = require('../models/Module');
+
+// Helper to resolve Module ID or Code -> Module Document
+const resolveModule = async (idOrCode) => {
+    let moduleDoc = null;
+    if (mongoose.Types.ObjectId.isValid(idOrCode)) {
+        moduleDoc = await Module.findById(idOrCode);
+    }
+    if (!moduleDoc) {
+        moduleDoc = await Module.findOne({ code: idOrCode });
+    }
+    return moduleDoc;
+};
 
 // @desc    Upload a new resource (Tutorial/Past Paper)
 // @route   POST /api/v1/resources
@@ -13,9 +26,9 @@ exports.uploadResource = async (req, res) => {
 
         const { title, type, moduleId, answerFor } = req.body;
 
-        // Verify module exists
-        const moduleExists = await Module.findById(moduleId);
-        if (!moduleExists) {
+        // Verify module exists (By ID or Code)
+        const moduleDoc = await resolveModule(moduleId);
+        if (!moduleDoc) {
             return res.status(404).json({ success: false, message: 'Module not found' });
         }
 
@@ -31,7 +44,7 @@ exports.uploadResource = async (req, res) => {
             title,
             type,
             answerFor, // Add this if it's in the schema/request
-            module: moduleId,
+            module: moduleDoc._id, // Use real ObjectId
             fileId: fileData.nodeId, // Storing Mega Node ID
             webViewLink: fileData.link,
             webContentLink: fileData.link, // Mega links are universal
@@ -60,7 +73,14 @@ exports.uploadResource = async (req, res) => {
 // @access  Private (Students/Admins)
 exports.getResourcesByModule = async (req, res) => {
     try {
-        const resources = await Resource.find({ module: req.params.moduleId })
+        const moduleDoc = await resolveModule(req.params.moduleId);
+
+        // If module not found (invalid code or ID), return empty list or 404
+        if (!moduleDoc) {
+            return res.status(404).json({ success: false, message: 'Module not found' });
+        }
+
+        const resources = await Resource.find({ module: moduleDoc._id })
             .sort({ createdAt: -1 }); // Newest first
 
         res.status(200).json({
