@@ -220,28 +220,28 @@ export default function StudentAcademic() {
         : (profile?.results || []).filter(r => r.module.level === parseInt(selectedLevel))
 
     return (
-        <div className="p-4 md:p-8 animate-fadeIn max-w-[1400px] mx-auto space-y-6">
+        <div className="p-4 md:p-6 lg:p-8 animate-fadeIn max-w-[1400px] mx-auto space-y-4 md:space-y-6">
             {/* Header */}
-            <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-3xl shadow-xl p-8 text-white relative overflow-hidden">
+            <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl md:rounded-3xl shadow-xl p-6 md:p-8 text-white relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
 
                 <div className="relative z-10">
-                    <div className="flex items-center gap-3 mb-2">
-                        <span className="text-5xl">🎓</span>
-                        <h1 className="text-3xl md:text-4xl font-bold">Academic Records</h1>
+                    <div className="flex items-center gap-2 md:gap-3 mb-2">
+                        <span className="text-4xl md:text-5xl">🎓</span>
+                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">Academic Records</h1>
                     </div>
-                    <p className="text-xl md:text-2xl font-medium opacity-90 mb-4">
+                    <p className="text-lg md:text-xl lg:text-2xl font-medium opacity-90 mb-3 md:mb-4">
                         {student.fullName}
                     </p>
-                    <div className="flex flex-wrap gap-3 text-sm">
-                        <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">
+                    <div className="flex flex-wrap gap-2 md:gap-3 text-xs md:text-sm">
+                        <span className="px-3 md:px-4 py-1.5 md:py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">
                             📋 {student.registrationNumber}
                         </span>
-                        <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">
+                        <span className="px-3 md:px-4 py-1.5 md:py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">
                             📅 {student.batchYear}
                         </span>
-                        <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">
+                        <span className="px-3 md:px-4 py-1.5 md:py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">
                             🎓 Level {student.level}
                         </span>
                     </div>
@@ -249,52 +249,52 @@ export default function StudentAcademic() {
             </div>
 
             {/* Academic Status & Honours */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 {/* Academic Status */}
-                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
-                    <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                <div className="bg-white dark:bg-slate-800 rounded-xl md:rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-4 md:p-6">
+                    <h3 className="text-base md:text-lg font-bold text-gray-800 dark:text-white mb-3 md:mb-4 flex items-center gap-2">
                         <span>📊</span> Academic Status
                     </h3>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-3 md:gap-4">
                         <div>
-                            <p className="text-sm text-gray-500 dark:text-gray-400 mb-1 font-medium">Degree Programme</p>
-                            <p className="font-semibold text-gray-900 dark:text-white">{profile?.studentDetails?.degreeProgramme || 'Not Selected'}</p>
+                            <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mb-1 font-medium">Degree Programme</p>
+                            <p className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">{profile?.studentDetails?.degreeProgramme || 'Not Selected'}</p>
                         </div>
                         <div>
-                            <p className="text-sm text-gray-500 dark:text-gray-400 mb-1 font-medium">Combination</p>
-                            <p className="font-semibold text-gray-900 dark:text-white">{profile?.studentDetails?.combination || 'Not Selected'}</p>
+                            <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mb-1 font-medium">Combination</p>
+                            <p className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">{profile?.studentDetails?.combination || 'Not Selected'}</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Projected Honours */}
-                <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-2xl shadow-sm border-2 border-amber-200 dark:border-amber-800 p-6">
-                    <h3 className="text-lg font-bold text-amber-900 dark:text-amber-200 mb-2 flex items-center gap-2">
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl md:rounded-2xl shadow-sm border-2 border-amber-200 dark:border-amber-800 p-4 md:p-6">
+                    <h3 className="text-base md:text-lg font-bold text-amber-900 dark:text-amber-200 mb-2 flex items-center gap-2">
                         <span>🎖️</span> Projected Honours
                     </h3>
                     <div className="flex justify-between items-center">
                         <div>
-                            <p className="text-3xl font-bold text-amber-600 dark:text-amber-400">{profile?.honours || 'Pass Degree'}</p>
-                            <p className="text-sm text-amber-800 dark:text-amber-300 mt-1">Based on GPA: {profile?.gpa?.overall?.toFixed(2) || '0.00'}</p>
+                            <p className="text-2xl md:text-3xl font-bold text-amber-600 dark:text-amber-400">{profile?.honours || 'Pass Degree'}</p>
+                            <p className="text-xs md:text-sm text-amber-800 dark:text-amber-300 mt-1">Based on GPA: {profile?.gpa?.overall?.toFixed(2) || '0.00'}</p>
                         </div>
-                        <span className="text-5xl">🏆</span>
+                        <span className="text-4xl md:text-5xl">🏆</span>
                     </div>
                 </div>
             </div>
 
             {/* Dean's List Eligibility */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
-                <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+            <div className="bg-white dark:bg-slate-800 rounded-xl md:rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-4 md:p-6">
+                <h3 className="text-base md:text-lg font-bold text-gray-800 dark:text-white mb-3 md:mb-4 flex items-center gap-2">
                     <span>⭐</span> Dean's List Eligibility
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                     {[1, 2, 3, 4].map(level => (
-                        <div key={level} className={`p-4 rounded-xl border-2 ${profile?.deansList?.[`level${level}`] === 'ELIGIBLE'
+                        <div key={level} className={`p-3 md:p-4 rounded-lg md:rounded-xl border-2 ${profile?.deansList?.[`level${level}`] === 'ELIGIBLE'
                             ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-800 shadow-sm'
                             : 'bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600'
                             }`}>
-                            <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1">Level {level}</p>
-                            <p className={`font-bold text-sm ${profile?.deansList?.[`level${level}`] === 'ELIGIBLE'
+                            <p className="text-xs md:text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1">Level {level}</p>
+                            <p className={`font-bold text-xs md:text-sm ${profile?.deansList?.[`level${level}`] === 'ELIGIBLE'
                                 ? 'text-green-600 dark:text-green-400'
                                 : 'text-gray-400 dark:text-gray-500'
                                 }`}>
