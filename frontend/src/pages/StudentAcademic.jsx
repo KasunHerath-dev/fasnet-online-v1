@@ -8,29 +8,180 @@ export default function StudentAcademic() {
     const [student, setStudent] = useState(null)
     const [profile, setProfile] = useState(null)
     const [loading, setLoading] = useState(true)
-    const [selectedLevel, setSelectedLevel] = useState('all')
+    const [selectedLevel, setSelectedLevel] = useState('1');
+    const [showDegreeRules, setShowDegreeRules] = useState(false);
+    const [showGradingScale, setShowGradingScale] = useState(false);
 
     useEffect(() => {
-        const currentUser = authService.getUser()
-        setUser(currentUser)
-        if (currentUser?.studentRef) {
-            setStudent(currentUser.studentRef)
-            fetchAcademicData(currentUser.studentRef._id)
-        } else {
-            setLoading(false)
-        }
-    }, [])
+        const fetchProfile = async () => {
+            try {
+                const res = await authService.getProfile();
+                if (res.success) {
+                    setUser(res.user);
+                    setStudent(res.studentProfile?.studentDetails); // Set student from studentProfile
+                    setProfile(res.studentProfile);
+                    // Default to student's level or 1
+                    setSelectedLevel(res.studentProfile?.studentDetails?.level?.toString() || '1');
+                }
+            } catch (error) {
+                console.error("Failed to fetch profile", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProfile();
+    }, []);
 
-    const fetchAcademicData = async (studentId) => {
-        try {
-            const res = await academicService.getStudentProfile(studentId)
-            setProfile(res.data)
-        } catch (err) {
-            console.error('Error fetching academic data:', err)
-        } finally {
-            setLoading(false)
-        }
-    }
+    // Helper: Calculate GPA for a specific level or cumulative
+    const calculateGPA = (profile, moduleData, level) => {
+        if (!profile || !profile.results) return '0.00';
+
+        const targetModules = moduleData.filter(m => level === 'all' || m.level === parseInt(level));
+        let totalWeightedGP = 0;
+        let totalCredits = 0;
+
+        targetModules.forEach(module => {
+            const result = profile.results.find(r =>
+                r.module && r.module.code && r.module.code.replace(/\s+/g, '').toUpperCase() === module.code.replace(/\s+/g, '').toUpperCase()
+            );
+
+            // Only count if grade is not I, and has a gradePoint
+            if (result && result.gradePoint !== undefined && result.grade !== 'I') {
+                totalWeightedGP += (result.gradePoint * module.credits);
+                totalCredits += module.credits;
+            }
+        });
+
+        // GPA = Sum(GP * Credits) / Sum(Credits)
+        return totalCredits > 0 ? (totalWeightedGP / totalCredits).toFixed(2) : '0.00';
+    };
+
+    // Helper: Calculate Completed Credits
+    const calculateCompletedCredits = (profile, moduleData, level) => {
+        if (!profile || !profile.results) return 0;
+
+        const targetModules = moduleData.filter(m => level === 'all' || m.level === parseInt(level));
+        let completedCredits = 0;
+
+        targetModules.forEach(module => {
+            const result = profile.results.find(r =>
+                r.module && r.module.code && r.module.code.replace(/\s+/g, '').toUpperCase() === module.code.replace(/\s+/g, '').toUpperCase()
+            );
+            // Count if grade is valid pass (C or better technically for degree, but any pass D or better gives credits usually? 
+            // WUSL Rules: D+, D, E are fail grades - check doc.
+            // Doc says "Grades D+, D, E = Fail grades". So only >= C- (1.7) count??
+            // Wait, "Grade C = Minimum pass grade (2.0)". "Grades D+, D, E = Fail grades".
+            // Actually checking doc: "Grades D+, D, E = Fail grades" (Line 306).
+            // So need to check if gradePoint >= 1.7 (C-) or 2.0 (C)?
+            // Doc "Grade C = Minimum pass grade".
+            // Doc says "Pass Degree Requirements... Grade C or better".
+            // But usually credits are earned for D? 
+            // WUSL Doc Line 306: "Grades D+, D, E = Fail grades". 
+            // So if grade is D+ (1.3), it is Fail.
+            // So only Grade Point >= 1.7 (C-) is pass? 
+            // Line 298: "C- : Satisfactory".
+            // So let's assume >= C- earns credits. But usually for General Degree "Grade C or better" is needed for major credits.
+            // For simple "Completed Credits" display, I will sum anything that is NOT (D+, D, E, I, F).
+
+            if (result && result.grade && !['D+', 'D', 'E', 'F', 'N', 'I'].includes(result.grade)) {
+                completedCredits += module.credits;
+            }
+        });
+
+        return completedCredits;
+    };
+
+    // Render function for Degree Rules Modal
+    const renderDegreeRulesModal = () => {
+        if (!showDegreeRules) return null;
+        return (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                    <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-slate-700">
+                        <h3 className="text-xl font-bold text-gray-800 dark:text-white">Degree Rules & Requirements</h3>
+                        <button onClick={() => setShowDegreeRules(false)} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                            <span className="sr-only">Close</span>
+                            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div className="p-4 text-gray-700 dark:text-gray-300 space-y-4">
+                        <p>This section would detail the specific requirements for your degree program, including:</p>
+                        <ul className="list-disc list-inside space-y-1">
+                            <li>Minimum GPA requirements (e.g., 2.0 for Pass, 3.3 for First Class Honours)</li>
+                            <li>Total credit requirements (e.g., 120 credits for a general degree)</li>
+                            <li>Specific module requirements (core, optional, electives)</li>
+                            <li>Level-wise credit distribution</li>
+                            <li>Rules for repeating modules or supplementary exams</li>
+                        </ul>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                            Please refer to the official university handbook or your faculty for the most accurate and up-to-date information.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    // Render function for Grading Scale Modal
+    const renderGradingScaleModal = () => {
+        if (!showGradingScale) return null;
+        return (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                    <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-slate-700">
+                        <h3 className="text-xl font-bold text-gray-800 dark:text-white">WUSL Grading Scale</h3>
+                        <button onClick={() => setShowGradingScale(false)} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                            <span className="sr-only">Close</span>
+                            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div className="p-4 text-gray-700 dark:text-gray-300">
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
+                                <thead className="bg-gray-50 dark:bg-slate-700">
+                                    <tr>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                            Grade
+                                        </th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                            Grade Point (GP)
+                                        </th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                            Description
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
+                                    <tr><td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">A+</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">4.0</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Excellent</td></tr>
+                                    <tr><td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">A</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">4.0</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Excellent</td></tr>
+                                    <tr><td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">A-</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">3.7</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Very Good</td></tr>
+                                    <tr><td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">B+</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">3.3</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Good</td></tr>
+                                    <tr><td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">B</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">3.0</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Good</td></tr>
+                                    <tr><td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">B-</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">2.7</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Satisfactory</td></tr>
+                                    <tr><td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">C+</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">2.3</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Satisfactory</td></tr>
+                                    <tr><td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">C</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">2.0</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Minimum Pass Grade</td></tr>
+                                    <tr><td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">C-</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">1.7</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Satisfactory (Fail for degree credit)</td></tr>
+                                    <tr><td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">D+</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">1.3</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Fail</td></tr>
+                                    <tr><td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">D</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">1.0</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Fail</td></tr>
+                                    <tr><td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">E</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">0.0</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Fail</td></tr>
+                                    <tr><td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">F</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">0.0</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Fail (Absent/Disqualified)</td></tr>
+                                    <tr><td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">I</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">N/A</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Incomplete</td></tr>
+                                    <tr><td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">N</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">N/A</td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Not Graded</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+                            Note: A minimum grade of 'C' (2.0 GP) is generally required for a module to count towards degree credit. Grades C-, D+, D, E, F, I, N do not typically earn degree credits.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    };
 
     if (loading) {
         return <Loader />
@@ -232,6 +383,55 @@ export default function StudentAcademic() {
                     </div>
                 </div>
 
+                {/* WUSL Academic Info & GPA Summary */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    {/* Level GPA Card */}
+                    <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-gray-100 dark:border-slate-700 shadow-sm relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 dark:bg-indigo-900/20 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/30 transition-all"></div>
+                        <h3 className="text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider text-sm mb-1">
+                            {selectedLevel === 'all' ? 'Cumulative GPA' : `Level ${selectedLevel} GPA`}
+                        </h3>
+                        <div className="flex items-baseline gap-2">
+                            <span className="text-4xl font-black text-gray-900 dark:text-white">
+                                {calculateGPA(profile, MODULE_DATA, selectedLevel)}
+                            </span>
+                            <span className="text-sm font-bold text-gray-400 dark:text-gray-500">
+                                / 4.00
+                            </span>
+                        </div>
+                        <div className="mt-4 pt-4 border-t border-gray-100 dark:border-slate-700 flex justify-between items-center">
+                            <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">
+                                {`Completed: ${calculateCompletedCredits(profile, MODULE_DATA, selectedLevel)} Credits`}
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Action Buttons for Rules */}
+                    <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button
+                            onClick={() => setShowGradingScale(true)}
+                            className="flex flex-col justify-center items-center p-6 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/10 dark:to-teal-900/10 border border-emerald-100 dark:border-emerald-800 rounded-3xl hover:shadow-md transition-all group cursor-pointer"
+                        >
+                            <div className="bg-white dark:bg-emerald-900/30 p-3 rounded-full mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                                <span className="text-2xl">📊</span>
+                            </div>
+                            <span className="font-bold text-emerald-800 dark:text-emerald-300">View Grading Scale</span>
+                            <span className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">WUSL GPA Reference</span>
+                        </button>
+
+                        <button
+                            onClick={() => setShowDegreeRules(true)}
+                            className="flex flex-col justify-center items-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 border border-blue-100 dark:border-blue-800 rounded-3xl hover:shadow-md transition-all group cursor-pointer"
+                        >
+                            <div className="bg-white dark:bg-blue-900/30 p-3 rounded-full mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                                <span className="text-2xl">🎓</span>
+                            </div>
+                            <span className="font-bold text-blue-800 dark:text-blue-300">Degree Requirements</span>
+                            <span className="text-xs text-blue-600 dark:text-blue-400 mt-1">General vs Special</span>
+                        </button>
+                    </div>
+                </div>
+
                 {/* Content Table using Static List + DB Grades */}
                 <div className="overflow-x-auto">
                     <table className="w-full">
@@ -288,6 +488,8 @@ export default function StudentAcademic() {
                     </table>
                 </div>
             </div>
+            {renderDegreeRulesModal()}
+            {renderGradingScaleModal()}
         </div>
     )
 }
