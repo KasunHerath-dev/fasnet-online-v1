@@ -141,6 +141,39 @@ const updateStudent = async (req, res) => {
     logger.error('Update student error', { error: error.message });
     res.status(500).json({ error: { message: 'Failed to update student', code: 'UPDATE_STUDENT_FAILED', details: error.message } });
   }
+  res.status(500).json({ error: { message: 'Failed to update student', code: 'UPDATE_STUDENT_FAILED', details: error.message } });
+}
+};
+
+const updateMyProfile = async (req, res) => {
+  try {
+    if (!req.user.studentRef) {
+      return res.status(403).json({ error: { message: 'Not a student user', code: 'NOT_STUDENT' } });
+    }
+
+    const { firstName, lastName } = req.body;
+
+    // Only allow updating specific fields
+    const updates = {};
+    if (firstName !== undefined) updates.firstName = firstName;
+    if (lastName !== undefined) updates.lastName = lastName;
+
+    const student = await Student.findByIdAndUpdate(
+      req.user.studentRef,
+      { $set: updates },
+      { new: true, runValidators: true }
+    );
+
+    if (!student) {
+      return res.status(404).json({ error: { message: 'Student profile not found', code: 'PROFILE_NOT_FOUND' } });
+    }
+
+    logger.info('Student updated own profile', { studentId: student._id });
+    res.json({ message: 'Profile updated successfully', student });
+  } catch (error) {
+    logger.error('Update own profile error', { error: error.message });
+    res.status(500).json({ error: { message: 'Failed to update profile', code: 'UPDATE_FAILED', details: error.message } });
+  }
 };
 
 const deleteStudent = async (req, res) => {
@@ -338,4 +371,5 @@ module.exports = {
   deleteAllStudents,
   createMissingUserAccounts,
   getDemographics,
+  updateMyProfile,
 };

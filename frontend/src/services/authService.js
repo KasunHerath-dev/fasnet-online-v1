@@ -92,6 +92,9 @@ export const studentService = {
   // Profile Requests
   createProfileRequest: (data) => api.post('/profile-requests', data),
   getProfileRequests: (params) => api.get('/profile-requests', { params }),
+
+  // Direct Updates
+  updateMyProfile: (data) => api.put('/students/me', data),
 };
 
 export const importService = {

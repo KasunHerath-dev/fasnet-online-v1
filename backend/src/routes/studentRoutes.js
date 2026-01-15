@@ -11,6 +11,7 @@ router.use(applyBatchScope);
 router.get('/', studentController.getAllStudents);
 router.get('/demographics', studentController.getDemographics);
 router.get('/birthdays/upcoming', studentController.getUpcomingBirthdays);
+router.put('/me', studentController.updateMyProfile);
 router.get('/:registrationNumber', studentController.getStudentByRegNum);
 router.post('/', roleMiddleware('superadmin', 'admin'), validateBatchScope, studentController.createStudent);
 router.put('/:registrationNumber', roleMiddleware('superadmin', 'admin'), validateBatchScope, studentController.updateStudent);

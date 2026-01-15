@@ -5,8 +5,10 @@ export default function StudentProfile() {
     const [student, setStudent] = useState(null)
     const [loading, setLoading] = useState(true)
     const [showEditModal, setShowEditModal] = useState(false)
+    const [showNameModal, setShowNameModal] = useState(false)
     const [pendingRequest, setPendingRequest] = useState(null)
     const [formData, setFormData] = useState({})
+    const [nameForm, setNameForm] = useState({ firstName: '', lastName: '' })
     const [requestReason, setRequestReason] = useState('')
 
     useEffect(() => {
@@ -36,8 +38,6 @@ export default function StudentProfile() {
 
     const handleEditClick = () => {
         setFormData({
-            firstName: student.firstName || '',
-            lastName: student.lastName || '',
             address: student.address || '',
             contactNumber: student.contactNumber || '',
             email: student.email || '',
@@ -46,6 +46,33 @@ export default function StudentProfile() {
             district: student.district || ''
         })
         setShowEditModal(true)
+    }
+
+    const handleNameEditClick = () => {
+        setNameForm({
+            firstName: student.firstName || '',
+            lastName: student.lastName || ''
+        })
+        setShowNameModal(true)
+    }
+
+    const handleNameSubmit = async (e) => {
+        e.preventDefault()
+        try {
+            await studentService.updateMyProfile(nameForm)
+            alert('Name updated successfully!')
+            setShowNameModal(false)
+            fetchProfile()
+            // Update local user storage to reflect name change immediately if needed
+            const user = authService.getUser()
+            if (user.studentRef) {
+                user.studentRef.firstName = nameForm.firstName
+                user.studentRef.lastName = nameForm.lastName
+                authService.setUser(user)
+            }
+        } catch (err) {
+            alert('Failed to update name: ' + (err.response?.data?.error?.message || err.message))
+        }
     }
 
     const handleSubmitRequest = async (e) => {
@@ -189,9 +216,17 @@ export default function StudentProfile() {
                     <div className="md:w-2/3 p-8">
                         {/* Personal Details */}
                         <div className="mb-8">
-                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 pb-3 border-b-2 border-gray-100 dark:border-slate-700 flex items-center gap-2">
-                                <span>👤</span> Personal Information
-                            </h3>
+                            <div className="flex justify-between items-center mb-6 pb-3 border-b-2 border-gray-100 dark:border-slate-700">
+                                <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                    <span>👤</span> Personal Information
+                                </h3>
+                                <button
+                                    onClick={handleNameEditClick}
+                                    className="text-indigo-600 hover:text-indigo-700 font-medium text-sm flex items-center gap-1 bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1.5 rounded-lg transition-colors border border-indigo-100 dark:border-indigo-800"
+                                >
+                                    <span>✏️</span> Edit Name
+                                </button>
+                            </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <InfoField label="First Name" value={student.firstName} isMissing={!student.firstName} />
                                 <InfoField label="Last Name" value={student.lastName} isMissing={!student.lastName} />
