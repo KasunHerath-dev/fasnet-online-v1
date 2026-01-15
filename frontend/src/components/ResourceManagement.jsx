@@ -163,7 +163,7 @@ export default function ResourceManagement() {
 
 
     useEffect(() => {
-        const currentUser = authService.getCurrentUser();
+        const currentUser = authService.getUser();
         setUser(currentUser);
         loadInitialData();
 
