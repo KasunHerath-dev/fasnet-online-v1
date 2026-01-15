@@ -253,17 +253,25 @@ export default function StudentDashboard() {
                                     const comb = combination.toLowerCase();
                                     const dept = m.department; // 'CMIS', 'ELTN', 'MATH', 'IMGT', 'STAT'
 
-                                    // Mapping Logic
-                                    if (dept === 'CMIS' && (comb.includes('computer') || comb.includes('cmis'))) return true;
-                                    if (dept === 'ELTN' && (comb.includes('electronic') || comb.includes('eltn'))) return true;
-                                    if (dept === 'MATH' && (comb.includes('math') || comb.includes('mathematics'))) return true;
-                                    if (dept === 'IMGT' && (comb.includes('management') || comb.includes('imgt') || comb.includes('industrial'))) return true;
-                                    if (dept === 'STAT' && (comb.includes('statistic') || comb.includes('stat'))) return true;
+                                    // Define keys for strict filtering
+                                    const isComputing = comb.includes('computer') || comb.includes('cmis');
+                                    const isElectronics = comb.includes('electronic') || comb.includes('eltn');
+                                    const isMath = comb.includes('math') || comb.includes('mathematics');
+                                    const isManagement = comb.includes('management') || comb.includes('imgt') || comb.includes('industrial');
+                                    const isStats = comb.includes('statistic') || comb.includes('stat');
 
-                                    // If strict combination is set but module doesn't match, hide it?
-                                    // Let's assume common/foundation modules might not have a specific dept or apply to all.
-                                    // But for now, user requested "related to thire combination".
-                                    return false;
+                                    // If combination has recognizable keywords, apply strict filter
+                                    if (isComputing || isElectronics || isMath || isManagement || isStats) {
+                                        if (dept === 'CMIS' && isComputing) return true;
+                                        if (dept === 'ELTN' && isElectronics) return true;
+                                        if (dept === 'MATH' && isMath) return true;
+                                        if (dept === 'IMGT' && isManagement) return true;
+                                        if (dept === 'STAT' && isStats) return true;
+                                        return false; // Has keywords but this department doesn't match
+                                    }
+
+                                    // If combination is unknown (e.g. "COMB 1", "Bio Science"), show everything as fallback
+                                    return true;
                                 });
 
                                 if (semesterModules.length === 0) return null;
