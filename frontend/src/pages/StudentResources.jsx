@@ -26,16 +26,17 @@ export default function StudentResources() {
     // Load enrolled modules from Static Data
     useEffect(() => {
         const loadModules = () => {
-            const user = authService.getUser();
-            const level = user?.studentRef?.level || 1; // Default to 1 if not set
+            // Load ALL modules, sorted by Level -> Semester -> Code
+            const allModules = [...MODULE_DATA].sort((a, b) => {
+                if (a.level !== b.level) return a.level - b.level;
+                if (a.semester !== b.semester) return a.semester - b.semester;
+                return a.code.localeCompare(b.code);
+            });
 
-            // Filter by Level from static list
-            const levelModules = MODULE_DATA.filter(m => m.level === level);
-
-            if (levelModules.length > 0) {
-                setModules(levelModules);
+            if (allModules.length > 0) {
+                setModules(allModules);
                 // Auto-select first module (Use Code as ID)
-                setSelectedModuleId(levelModules[0].code);
+                setSelectedModuleId(allModules[0].code);
             } else {
                 setModules([]);
             }
@@ -138,7 +139,7 @@ export default function StudentResources() {
                                 onChange={(e) => setSelectedModuleId(e.target.value)}
                                 options={modules.map(m => ({
                                     value: m.code,
-                                    label: `${m.code} - ${m.title}`
+                                    label: `(L${m.level}) ${m.code} - ${m.title}`
                                 }))}
                                 icon={<BookOpen className="w-4 h-4" />}
                                 placeholder="Select Module"
