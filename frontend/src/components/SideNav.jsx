@@ -98,8 +98,8 @@ export default function SideNav({ isOpen, onClose }) {
       links.push({ label: 'Update Data', path: '/update-students', icon: 'Update Data' })
     }
 
-    // Resource Manager - for all admins
-    if (isSuperAdminUser || user?.roles?.includes('admin')) {
+    // Resource Manager - for admins only (Hidden for Super Admin as per request)
+    if (!isSuperAdminUser && user?.roles?.includes('admin')) {
       links.push({ label: 'Resource Manager', path: '/admin/resources', icon: 'Resources' })
     }
 
