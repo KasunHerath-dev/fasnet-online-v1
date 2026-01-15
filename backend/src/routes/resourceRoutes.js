@@ -2,7 +2,10 @@ const express = require('express');
 const { protect, authorize } = require('../middleware/auth');
 const resourceController = require('../controllers/resourceController');
 const multer = require('multer');
-const upload = multer({ storage: multer.memoryStorage() }); // Store in memory for direct stream to Drive
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 50 * 1024 * 1024 } // 50MB Limit
+}); // Store in memory for direct stream to Drive
 
 const router = express.Router();
 

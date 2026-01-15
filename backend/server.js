@@ -80,8 +80,8 @@ if (require.main !== module) {
 // Middleware Configuration
 // ==========================================
 app.use(helmet()); // Set security headers
-app.use(express.json({ limit: '10kb' })); // Body limit
-app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+app.use(express.json({ limit: '50mb' })); // Body limit increased for larger uploads
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Rate Limiting
 const limiter = rateLimit({

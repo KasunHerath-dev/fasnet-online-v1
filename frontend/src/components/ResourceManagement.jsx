@@ -248,6 +248,11 @@ export default function ResourceManagement() {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
+            if (file.size > 50 * 1024 * 1024) {
+                alert('File size must be less than 50MB');
+                e.target.value = ''; // Reset input
+                return;
+            }
             setFormData(prev => ({ ...prev, file }));
             // Auto-set title if empty
             if (!formData.title) {
@@ -423,7 +428,7 @@ export default function ResourceManagement() {
                                             <Upload className="w-6 h-6" />
                                         </div>
                                         <p className="font-bold">Click to upload or drag and drop</p>
-                                        <p className="text-xs">PDF, Word, PPT (Max 10MB)</p>
+                                        <p className="text-xs">PDF, Word, PPT (Max 50MB)</p>
                                     </div>
                                 )}
                             </div>
