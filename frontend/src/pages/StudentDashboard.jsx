@@ -108,7 +108,7 @@ export default function StudentDashboard() {
                         <h1 className="text-3xl md:text-4xl font-bold">{greeting}!</h1>
                     </div>
                     <p className="text-xl md:text-2xl font-medium opacity-90 mb-4">
-                        {user?.studentRef?.fullName || 'Student'}
+                        {(user?.studentRef?.firstName && user?.studentRef?.lastName) ? `${user.studentRef.firstName} ${user.studentRef.lastName}` : (user?.studentRef?.fullName || 'Student')}
                     </p>
                     <div className="flex flex-wrap gap-3 text-sm">
                         <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">

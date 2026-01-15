@@ -224,7 +224,9 @@ export default function SideNav({ isOpen, onClose }) {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-white font-semibold text-sm truncate">
-                      {user?.username || 'User'}
+                      {(user?.studentRef?.firstName && user?.studentRef?.lastName)
+                        ? `${user.studentRef.firstName} ${user.studentRef.lastName}`
+                        : (user?.username || 'User')}
                     </p>
                     <p className="text-indigo-300 text-xs truncate">
                       {isStudent ? 'Student' : isSuperAdminUser ? 'Super Admin' : 'Administrator'}
