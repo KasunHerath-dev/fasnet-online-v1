@@ -13,6 +13,7 @@ export default function StudentDashboard() {
     const [loadingComb, setLoadingComb] = useState(false)
     const [fetchingProfile, setFetchingProfile] = useState(true)
     const [modules, setModules] = useState([])
+    const [isExpanded, setIsExpanded] = useState(false)
 
     useEffect(() => {
         const currentUser = authService.getUser()
