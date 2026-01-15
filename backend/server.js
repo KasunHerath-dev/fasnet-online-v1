@@ -98,6 +98,8 @@ const allowedOrigins = [
   'https://fasnet-online-frontend.vercel.app',
   'https://fasnet-online-v1-frontend.vercel.app',
   'https://www.fasnet-online-v1-frontend.vercel.app',
+  'https://fasnet.online',
+  'https://www.fasnet.online',
   'http://localhost:5173',
   'http://localhost:3000',
   'http://localhost:4173',
