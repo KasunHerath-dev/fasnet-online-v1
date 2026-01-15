@@ -337,11 +337,19 @@ export default function StudentResources() {
 
                                                 <a
                                                     href={(() => {
-                                                        const baseUrl = import.meta.env.VITE_API_BASE_URL
-                                                            ? `${import.meta.env.VITE_API_BASE_URL}/api/v1`
-                                                            : '/api/v1';
-                                                        return `${baseUrl}/resources/stream/${resource._id}`;
+                                                        const baseUrl = import.meta.env.VITE_API_BASE_URL || '';
+                                                        // Ensure we have /api/v1 if not already there, assuming standard setup
+                                                        // If VITE_API_BASE_URL ends in /api/v1, don't append. 
+                                                        // But usually it's just the host.
+                                                        // For safety, let's stick to the pattern used, but safer.
+                                                        const url = baseUrl.includes('/api/v1')
+                                                            ? baseUrl
+                                                            : `${baseUrl}/api/v1`;
+
+                                                        return `${url}/resources/stream/${resource._id}`;
                                                     })()}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
                                                     download
                                                     className="flex items-center justify-center gap-2 w-full py-3.5 bg-gray-50 dark:bg-slate-600 text-gray-700 dark:text-gray-200 rounded-2xl font-bold text-sm group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm group-hover:shadow-lg group-hover:shadow-indigo-500/30 cursor-pointer"
                                                 >
