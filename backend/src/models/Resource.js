@@ -21,6 +21,10 @@ const resourceSchema = new mongoose.Schema({
         ref: 'Module',
         required: true
     },
+    academicYear: {
+        type: String, // e.g. "2021/2022" or "21/22"
+        required: false
+    },
     fileId: {
         type: String,
         required: true

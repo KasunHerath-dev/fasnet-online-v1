@@ -323,6 +323,11 @@ export default function StudentResources() {
                                                             {resource.answerFor.replace('_', ' ')} Answer
                                                         </span>
                                                     )}
+                                                    {resource.academicYear && (
+                                                        <span className="px-3 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 text-xs font-bold border border-purple-100 dark:border-purple-800 uppercase tracking-wide ml-2">
+                                                            {resource.academicYear}
+                                                        </span>
+                                                    )}
                                                 </div>
 
                                                 <h4 className="font-bold text-gray-900 dark:text-white line-clamp-2 mb-3 text-lg group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">

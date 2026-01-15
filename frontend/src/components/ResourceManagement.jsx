@@ -298,6 +298,11 @@ export default function ResourceManagement() {
             data.append('moduleContext', JSON.stringify(selectedModule));
         }
 
+        // Append Academic Year for specific types
+        if ((finalType === 'past_paper' || (finalType === 'marking_scheme' && finalAnswerFor === 'past_paper')) && formData.batchYear) {
+            data.append('academicYear', formData.batchYear);
+        }
+
         try {
             await resourceService.upload(data);
             alert('File uploaded successfully!');
@@ -405,6 +410,19 @@ export default function ResourceManagement() {
                                         value={formData.context}
                                         onChange={(e) => setFormData({ ...formData, context: e.target.value })}
                                         options={contexts}
+                                    />
+                                </div>
+                            )}
+
+                            {/* Academic Year Selection (Only for Past Papers) */}
+                            {((formData.context === 'past_paper') || (formData.category === 'answer' && formData.context === 'past_paper')) && (
+                                <div className="animate-fadeIn">
+                                    <label className="block text-sm font-bold text-gray-700 mb-2">Academic Year</label>
+                                    <Dropdown
+                                        value={formData.batchYear}
+                                        onChange={(e) => setFormData({ ...formData, batchYear: e.target.value })}
+                                        options={batchYears.map(y => ({ value: y.year, label: y.name || y.year }))}
+                                        placeholder="Select Academic Year"
                                     />
                                 </div>
                             )}

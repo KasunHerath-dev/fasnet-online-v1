@@ -27,7 +27,7 @@ exports.uploadResource = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Please upload a file' });
         }
 
-        const { title, type, moduleId, answerFor, moduleContext } = req.body;
+        const { title, type, moduleId, answerFor, moduleContext, academicYear } = req.body;
 
         // Verify module exists (By ID or Code)
         let moduleDoc = await resolveModule(moduleId);
@@ -70,6 +70,7 @@ exports.uploadResource = async (req, res) => {
             title,
             type,
             answerFor, // Add this if it's in the schema/request
+            academicYear, // Optional: e.g. "2021/2022"
             module: moduleDoc._id, // Use real ObjectId
             fileId: fileData.nodeId, // Storing Mega Node ID
             webViewLink: fileData.link,
