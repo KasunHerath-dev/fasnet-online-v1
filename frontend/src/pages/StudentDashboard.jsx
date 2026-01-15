@@ -103,28 +103,28 @@ export default function StudentDashboard() {
     }
 
     return (
-        <div className="p-4 md:p-8 animate-fadeIn max-w-[1400px] mx-auto space-y-8">
+        <div className="p-4 md:p-6 lg:p-8 animate-fadeIn max-w-[1400px] mx-auto space-y-6 md:space-y-8">
             {/* Greeting Card */}
-            <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-3xl shadow-xl p-8 text-white relative overflow-hidden">
+            <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl md:rounded-3xl shadow-xl p-6 md:p-8 text-white relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
 
                 <div className="relative z-10">
-                    <div className="flex items-center gap-3 mb-2">
-                        <span className="text-5xl">{greetingEmoji}</span>
-                        <h1 className="text-3xl md:text-4xl font-bold">{greeting}!</h1>
+                    <div className="flex items-center gap-2 md:gap-3 mb-2">
+                        <span className="text-4xl md:text-5xl">{greetingEmoji}</span>
+                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">{greeting}!</h1>
                     </div>
-                    <p className="text-xl md:text-2xl font-medium opacity-90 mb-4">
+                    <p className="text-lg md:text-xl lg:text-2xl font-medium opacity-90 mb-3 md:mb-4">
                         {(user?.studentRef?.firstName && user?.studentRef?.lastName) ? `${user.studentRef.firstName} ${user.studentRef.lastName}` : (user?.studentRef?.fullName || 'Student')}
                     </p>
-                    <div className="flex flex-wrap gap-3 text-sm">
-                        <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">
+                    <div className="flex flex-wrap gap-2 md:gap-3 text-xs md:text-sm">
+                        <span className="px-3 md:px-4 py-1.5 md:py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">
                             📋 {user?.studentRef?.registrationNumber}
                         </span>
-                        <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">
+                        <span className="px-3 md:px-4 py-1.5 md:py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">
                             🎓 Level {user?.studentRef?.level}
                         </span>
-                        <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">
+                        <span className="px-3 md:px-4 py-1.5 md:py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">
                             📅 {user?.studentRef?.batchYear}
                         </span>
                     </div>
@@ -134,65 +134,65 @@ export default function StudentDashboard() {
             {/* QUICK STATS GRID - 4 Columns */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 {/* Academic Status */}
-                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6 hover:shadow-md transition-shadow">
+                <div className="bg-white dark:bg-slate-800 rounded-xl md:rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-4 md:p-6 hover:shadow-md transition-shadow">
                     <div className="flex items-center justify-between mb-3">
                         <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Academic Status</p>
-                        <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl flex items-center justify-center text-xl">
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg md:rounded-xl flex items-center justify-center text-lg md:text-xl">
                             ✅
                         </div>
                     </div>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <p className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                         {user?.studentRef?.academicStatus || 'Regular'}
                     </p>
                 </div>
 
                 {/* Cumulative GPA */}
-                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6 hover:shadow-md transition-shadow">
+                <div className="bg-white dark:bg-slate-800 rounded-xl md:rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-4 md:p-6 hover:shadow-md transition-shadow">
                     <div className="flex items-center justify-between mb-3">
                         <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Cumulative GPA</p>
-                        <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl flex items-center justify-center text-xl">
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-lg md:rounded-xl flex items-center justify-center text-lg md:text-xl">
                             🎯
                         </div>
                     </div>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <p className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                         {user?.studentRef?.cumulativeGPA > 0
                             ? user.studentRef.cumulativeGPA.toFixed(2)
-                            : <span className="text-gray-400 dark:text-gray-500 text-lg">Not Calculated</span>}
+                            : <span className="text-gray-400 dark:text-gray-500 text-base md:text-lg">Not Calculated</span>}
                     </p>
                 </div>
 
                 {/* Credits Earned */}
-                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6 hover:shadow-md transition-shadow">
+                <div className="bg-white dark:bg-slate-800 rounded-xl md:rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-4 md:p-6 hover:shadow-md transition-shadow">
                     <div className="flex items-center justify-between mb-3">
                         <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Credits Earned</p>
-                        <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center text-xl">
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg md:rounded-xl flex items-center justify-center text-lg md:text-xl">
                             ⭐
                         </div>
                     </div>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <p className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                         {user?.studentRef?.totalCreditsEarned || 0}
                     </p>
                 </div>
 
                 {/* Current Level */}
-                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6 hover:shadow-md transition-shadow">
+                <div className="bg-white dark:bg-slate-800 rounded-xl md:rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-4 md:p-6 hover:shadow-md transition-shadow">
                     <div className="flex items-center justify-between mb-3">
                         <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Current Level</p>
-                        <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl flex items-center justify-center text-xl">
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg md:rounded-xl flex items-center justify-center text-lg md:text-xl">
                             📚
                         </div>
                     </div>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <p className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
                         Level {user?.studentRef?.level || 1}
                     </p>
                 </div>
             </div>
 
             {/* SUBJECT COMBINATION - Interactive Accordion */}
-            <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 p-8">
-                <div className="flex items-center gap-3 mb-6">
-                    <span className="text-3xl">🧩</span>
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Subject Combination</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 p-6 md:p-8">
+                <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                    <span className="text-2xl md:text-3xl">🧩</span>
+                    <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">Subject Combination</h2>
                 </div>
 
                 {!fetchingProfile ? (
