@@ -802,13 +802,23 @@ exports.getMyEnrollments = async (req, res) => {
         // 3. Fetch via Combination (Secondary/Fallback Source)
         let combinationModules = [];
         if (student.combination) {
-            const combo = student.combination.toUpperCase().trim();
+            // Normalize: Remove non-alphanumeric, convert to uppercase
+            // e.g. "Comb-1" -> "COMB1", "Combination 1" -> "COMBINATION1"
+            const rawCombo = student.combination.toUpperCase();
+            const normalizedCombo = rawCombo.replace(/[^A-Z0-9]/g, '');
+
             let targetDepartments = [];
 
-            // Define Mappings
-            if (combo === 'COMB 1') targetDepartments = ['MATH', 'CMIS', 'ELTN'];
-            if (combo === 'COMB 2') targetDepartments = ['MATH', 'ELTN', 'IMGT'];
-            if (combo === 'COMB 3') targetDepartments = ['MATH', 'IMGT', 'CMIS'];
+            // Robust Matching
+            if (normalizedCombo.includes('COMB1') || rawCombo.includes('1')) {
+                targetDepartments = ['MATH', 'CMIS', 'ELTN', 'STAT'];
+            } else if (normalizedCombo.includes('COMB2') || rawCombo.includes('2')) {
+                targetDepartments = ['MATH', 'ELTN', 'IMGT', 'STAT'];
+            } else if (normalizedCombo.includes('COMB3') || rawCombo.includes('3')) {
+                targetDepartments = ['MATH', 'IMGT', 'CMIS', 'STAT'];
+            } else if (normalizedCombo.includes('PHYSICAL') || normalizedCombo.includes('PHY')) {
+                targetDepartments = ['MATH', 'PHY', 'CHEM', 'CMIS']; // Assuming typical Mapping
+            }
 
             if (targetDepartments.length > 0) {
                 combinationModules = await Module.find({

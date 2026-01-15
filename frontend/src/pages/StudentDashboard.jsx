@@ -11,6 +11,7 @@ export default function StudentDashboard() {
     const [isLocked, setIsLocked] = useState(false)
     const [loadingComb, setLoadingComb] = useState(false)
     const [fetchingProfile, setFetchingProfile] = useState(true)
+    const [modules, setModules] = useState([])
 
     useEffect(() => {
         const currentUser = authService.getUser()
@@ -43,6 +44,10 @@ export default function StudentDashboard() {
             if (details) {
                 setCombination(details.combination || '')
                 setIsLocked(!!details.isCombinationLocked)
+
+                // Fetch enrolled/combination modules
+                const modulesRes = await academicService.getMyEnrollments()
+                setModules(modulesRes || [])
             }
         } catch (err) {
             console.error(err)
@@ -218,165 +223,155 @@ export default function StudentDashboard() {
                                 <span>📖</span> My Subjects
                             </h3>
                             <div className="space-y-3">
-                                {(() => {
-                                    const SUBJECT_COMBINATIONS = {
-                                        'COMB 1': [
-                                            { code: 'MATH', name: 'Mathematics & Statistics', icon: '📐', color: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-200 dark:border-blue-800' },
-                                            { code: 'CMIS', name: 'Computing', icon: '💻', color: 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-200 dark:border-purple-800' },
-                                            { code: 'ELTN', name: 'Electronics', icon: '⚡', color: 'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-200 dark:border-yellow-800' }
-                                        ],
-                                        'COMB 2': [
-                                            { code: 'MATH', name: 'Mathematics & Statistics', icon: '📐', color: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-200 dark:border-blue-800' },
-                                            { code: 'ELTN', name: 'Electronics', icon: '⚡', color: 'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-200 dark:border-yellow-800' },
-                                            { code: 'IMGT', name: 'Management', icon: '💼', color: 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-200 dark:border-green-800' }
-                                        ],
-                                        'COMB 3': [
-                                            { code: 'MATH', name: 'Mathematics & Statistics', icon: '📐', color: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-200 dark:border-blue-800' },
-                                            { code: 'IMGT', name: 'Management', icon: '💼', color: 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-200 dark:border-green-800' },
-                                            { code: 'CMIS', name: 'Computing', icon: '💻', color: 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-200 dark:border-purple-800' }
-                                        ]
-                                    };
-
-                                    const subjects = SUBJECT_COMBINATIONS[combination] || [];
-
-                                    if (subjects.length === 0) {
-                                        return (
-                                            <div className="text-center py-8">
-                                                <p className="text-gray-400 dark:text-gray-500 text-sm italic">Subjects will appear once combination is assigned</p>
-                                            </div>
-                                        );
-                                    }
-
-                                    return subjects.map((sub, idx) => (
-                                        <div key={idx} className={`flex items-center gap-4 p-4 rounded-xl border-2 ${sub.color} hover:shadow-sm transition-all`}>
-                                            <span className="text-2xl">{sub.icon}</span>
-                                            <div>
-                                                <p className="font-bold text-sm">{sub.name}</p>
-                                                <p className="text-xs opacity-75">{sub.code}</p>
-                                            </div>
+                                <div className="space-y-3">
+                                    {modules.length === 0 ? (
+                                        <div className="text-center py-8">
+                                            <p className="text-gray-400 dark:text-gray-500 text-sm italic">
+                                                {combination ? 'Loading subjects...' : 'Subjects will appear once combination is assigned'}
+                                            </p>
                                         </div>
-                                    ));
-                                })()}
+                                    ) : (
+                                        modules.map((sub, idx) => {
+                                            // Determine styling based on department (simple mapping)
+                                            let colorClass = 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700';
+                                            let icon = '📘';
+
+                                            if (sub.department === 'MATH') { colorClass = 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-200 dark:border-blue-800'; icon = '📐'; }
+                                            else if (sub.department === 'CMIS') { colorClass = 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-200 dark:border-purple-800'; icon = '💻'; }
+                                            else if (sub.department === 'ELTN') { colorClass = 'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-200 dark:border-yellow-800'; icon = '⚡'; }
+                                            else if (sub.department === 'IMGT') { colorClass = 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-200 dark:border-green-800'; icon = '💼'; }
+
+                                            return (
+                                                <div key={idx} className={`flex items-center gap-4 p-4 rounded-xl border-2 ${colorClass} hover:shadow-sm transition-all`}>
+                                                    <span className="text-2xl">{icon}</span>
+                                                    <div>
+                                                        <p className="font-bold text-sm">{sub.title}</p>
+                                                        <p className="text-xs opacity-75">{sub.code}</p>
+                                                    </div>
+                                                </div>
+                                            )
+                                        })
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        ) : (
+                        <div className="animate-pulse grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="h-32 bg-gray-200 dark:bg-slate-700 rounded-2xl"></div>
+                            <div className="space-y-3">
+                                <div className="h-16 bg-gray-200 dark:bg-slate-700 rounded-xl"></div>
+                                <div className="h-16 bg-gray-200 dark:bg-slate-700 rounded-xl"></div>
+                                <div className="h-16 bg-gray-200 dark:bg-slate-700 rounded-xl"></div>
+                            </div>
+                        </div>
+                )}
+                    </div>
+
+            {/* NEW: Notices / Recent Updates Section & Calendar */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {/* Academic Calendar */}
+                    <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 p-8">
+                        <div className="flex items-center gap-3 mb-6">
+                            <span className="text-3xl">📅</span>
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Academic Calendar</h2>
+                        </div>
+
+                        <div className="space-y-4">
+                            {specialDates.slice(0, 3).map((item, idx) => {
+                                let itemColor = getEventColor(item.type);
+                                // Adjust for dark mode manually as function returns string
+                                if (item.type === 'exam') itemColor = "border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200";
+                                else if (item.type === 'holiday') itemColor = "border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200";
+                                else if (item.type === 'academic') itemColor = "border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-200";
+                                else itemColor = "border-gray-200 bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300";
+
+                                return (
+                                    <div
+                                        key={idx}
+                                        className={`p-4 rounded-xl border-l-4 ${itemColor} hover:shadow-sm transition-all`}
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <p className="font-bold text-gray-900 dark:text-white">{item.event}</p>
+                                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                                    {new Date(item.date).toLocaleDateString('en-US', {
+                                                        month: 'long',
+                                                        day: 'numeric',
+                                                        year: 'numeric'
+                                                    })}
+                                                </p>
+                                            </div>
+                                            <span className="text-xl">{getEventIcon(item.type)}</span>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+
+                    {/* Recent Notifications */}
+                    <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 p-8">
+                        <div className="flex items-center gap-3 mb-6">
+                            <span className="text-3xl">📢</span>
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Notice Board</h2>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-xl border-l-4 border-orange-400 dark:border-orange-600">
+                                <h4 className="font-bold text-orange-900 dark:text-orange-200">📝 Exam Registration Open</h4>
+                                <p className="text-sm text-orange-800 dark:text-orange-300 mt-1">Registrations for End Semester Exams close on Dec 20.</p>
+                                <span className="text-xs text-orange-600 dark:text-orange-400 font-medium mt-2 block">2 hours ago</span>
+                            </div>
+
+                            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border-l-4 border-blue-400 dark:border-blue-600">
+                                <h4 className="font-bold text-blue-900 dark:text-blue-200">🎓 Special Degree Selection</h4>
+                                <p className="text-sm text-blue-800 dark:text-blue-300 mt-1">Applications for Level 3 Special Degree selection are now open.</p>
+                                <span className="text-xs text-blue-600 dark:text-blue-400 font-medium mt-2 block">Yesterday</span>
+                            </div>
+
+                            <div className="p-4 bg-gray-50 dark:bg-slate-700/50 rounded-xl border-l-4 border-gray-400 dark:border-slate-500">
+                                <h4 className="font-bold text-gray-900 dark:text-white">ℹ️ System Maintenance</h4>
+                                <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">System will be down for upgrades on Sunday 10 PM.</p>
+                                <span className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-2 block">2 days ago</span>
                             </div>
                         </div>
                     </div>
-                ) : (
-                    <div className="animate-pulse grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div className="h-32 bg-gray-200 dark:bg-slate-700 rounded-2xl"></div>
-                        <div className="space-y-3">
-                            <div className="h-16 bg-gray-200 dark:bg-slate-700 rounded-xl"></div>
-                            <div className="h-16 bg-gray-200 dark:bg-slate-700 rounded-xl"></div>
-                            <div className="h-16 bg-gray-200 dark:bg-slate-700 rounded-xl"></div>
-                        </div>
-                    </div>
-                )}
-            </div>
+                </div>
 
-            {/* NEW: Notices / Recent Updates Section & Calendar */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Academic Calendar */}
+                {/* Quick Links */}
                 <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 p-8">
-                    <div className="flex items-center gap-3 mb-6">
-                        <span className="text-3xl">📅</span>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Academic Calendar</h2>
-                    </div>
-
-                    <div className="space-y-4">
-                        {specialDates.slice(0, 3).map((item, idx) => {
-                            let itemColor = getEventColor(item.type);
-                            // Adjust for dark mode manually as function returns string
-                            if (item.type === 'exam') itemColor = "border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200";
-                            else if (item.type === 'holiday') itemColor = "border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200";
-                            else if (item.type === 'academic') itemColor = "border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-200";
-                            else itemColor = "border-gray-200 bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300";
-
-                            return (
-                                <div
-                                    key={idx}
-                                    className={`p-4 rounded-xl border-l-4 ${itemColor} hover:shadow-sm transition-all`}
-                                >
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="font-bold text-gray-900 dark:text-white">{item.event}</p>
-                                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                                                {new Date(item.date).toLocaleDateString('en-US', {
-                                                    month: 'long',
-                                                    day: 'numeric',
-                                                    year: 'numeric'
-                                                })}
-                                            </p>
-                                        </div>
-                                        <span className="text-xl">{getEventIcon(item.type)}</span>
-                                    </div>
-                                </div>
-                            )
-                        })}
-                    </div>
-                </div>
-
-                {/* Recent Notifications */}
-                <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 p-8">
-                    <div className="flex items-center gap-3 mb-6">
-                        <span className="text-3xl">📢</span>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Notice Board</h2>
-                    </div>
-
-                    <div className="space-y-4">
-                        <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-xl border-l-4 border-orange-400 dark:border-orange-600">
-                            <h4 className="font-bold text-orange-900 dark:text-orange-200">📝 Exam Registration Open</h4>
-                            <p className="text-sm text-orange-800 dark:text-orange-300 mt-1">Registrations for End Semester Exams close on Dec 20.</p>
-                            <span className="text-xs text-orange-600 dark:text-orange-400 font-medium mt-2 block">2 hours ago</span>
-                        </div>
-
-                        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border-l-4 border-blue-400 dark:border-blue-600">
-                            <h4 className="font-bold text-blue-900 dark:text-blue-200">🎓 Special Degree Selection</h4>
-                            <p className="text-sm text-blue-800 dark:text-blue-300 mt-1">Applications for Level 3 Special Degree selection are now open.</p>
-                            <span className="text-xs text-blue-600 dark:text-blue-400 font-medium mt-2 block">Yesterday</span>
-                        </div>
-
-                        <div className="p-4 bg-gray-50 dark:bg-slate-700/50 rounded-xl border-l-4 border-gray-400 dark:border-slate-500">
-                            <h4 className="font-bold text-gray-900 dark:text-white">ℹ️ System Maintenance</h4>
-                            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">System will be down for upgrades on Sunday 10 PM.</p>
-                            <span className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-2 block">2 days ago</span>
-                        </div>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Quick Access</h2>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <a
+                            href="/profile"
+                            className="p-6 rounded-2xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-100 dark:border-purple-800 hover:shadow-lg transition-all group text-center"
+                        >
+                            <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">👤</div>
+                            <p className="font-bold text-gray-900 dark:text-white">My Profile</p>
+                        </a>
+                        <a
+                            href="/academic"
+                            className="p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-100 dark:border-blue-800 hover:shadow-lg transition-all group text-center"
+                        >
+                            <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">📊</div>
+                            <p className="font-bold text-gray-900 dark:text-white">Academic</p>
+                        </a>
+                        <a
+                            href="/academic"
+                            className="p-6 rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-100 dark:border-green-800 hover:shadow-lg transition-all group text-center"
+                        >
+                            <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">📈</div>
+                            <p className="font-bold text-gray-900 dark:text-white">Results</p>
+                        </a>
+                        <a
+                            href="/help"
+                            className="p-6 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-100 dark:border-amber-800 hover:shadow-lg transition-all group text-center"
+                        >
+                            <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">❓</div>
+                            <p className="font-bold text-gray-900 dark:text-white">Help</p>
+                        </a>
                     </div>
                 </div>
             </div>
-
-            {/* Quick Links */}
-            <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 p-8">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Quick Access</h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <a
-                        href="/profile"
-                        className="p-6 rounded-2xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-100 dark:border-purple-800 hover:shadow-lg transition-all group text-center"
-                    >
-                        <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">👤</div>
-                        <p className="font-bold text-gray-900 dark:text-white">My Profile</p>
-                    </a>
-                    <a
-                        href="/academic"
-                        className="p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-100 dark:border-blue-800 hover:shadow-lg transition-all group text-center"
-                    >
-                        <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">📊</div>
-                        <p className="font-bold text-gray-900 dark:text-white">Academic</p>
-                    </a>
-                    <a
-                        href="/academic"
-                        className="p-6 rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-100 dark:border-green-800 hover:shadow-lg transition-all group text-center"
-                    >
-                        <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">📈</div>
-                        <p className="font-bold text-gray-900 dark:text-white">Results</p>
-                    </a>
-                    <a
-                        href="/help"
-                        className="p-6 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-100 dark:border-amber-800 hover:shadow-lg transition-all group text-center"
-                    >
-                        <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">❓</div>
-                        <p className="font-bold text-gray-900 dark:text-white">Help</p>
-                    </a>
-                </div>
-            </div>
-        </div>
-    )
+            )
 }
