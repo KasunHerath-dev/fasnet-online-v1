@@ -111,27 +111,27 @@ export default function StudentSettings() {
     }
 
     return (
-        <div className="p-4 md:p-8 animate-fadeIn max-w-[1400px] mx-auto space-y-6">
+        <div className="p-4 md:p-6 lg:p-8 animate-fadeIn max-w-[1400px] mx-auto space-y-4 md:space-y-6">
             {/* Header */}
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl shadow-xl p-8 text-white relative overflow-hidden">
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl md:rounded-3xl shadow-xl p-6 md:p-8 text-white relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32"></div>
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -ml-24 -mb-24"></div>
 
-                <div className="relative z-10 flex items-center gap-4">
-                    <span className="text-5xl">⚙️</span>
+                <div className="relative z-10 flex items-center gap-3 md:gap-4">
+                    <span className="text-4xl md:text-5xl">⚙️</span>
                     <div>
-                        <h1 className="text-3xl md:text-4xl font-bold">Settings</h1>
-                        <p className="text-gray-400 mt-1">Manage your account security and preferences</p>
+                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">Settings</h1>
+                        <p className="text-sm md:text-base text-gray-400 mt-1">Manage your account security and preferences</p>
                     </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
                 {/* Password Change Card */}
-                <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-                    <div className="flex items-center gap-3 mb-6">
-                        <span className="text-2xl">🔐</span>
-                        <h2 className="text-xl font-bold text-gray-900">Change Password</h2>
+                <div className="lg:col-span-2 bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                    <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                        <span className="text-xl md:text-2xl">🔐</span>
+                        <h2 className="text-lg md:text-xl font-bold text-gray-900">Change Password</h2>
                     </div>
 
                     {alert.message && (
@@ -146,30 +146,30 @@ export default function StudentSettings() {
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit} className="space-y-6 max-w-xl">
+                    <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6 max-w-xl">
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">Current Password</label>
+                            <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">Current Password</label>
                             <input
                                 type="password"
                                 name="currentPassword"
                                 value={formData.currentPassword}
                                 onChange={handleChange}
                                 required
-                                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none"
+                                className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none"
                                 placeholder="Enter current password"
                             />
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                             <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">New Password</label>
+                                <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">New Password</label>
                                 <input
                                     type="password"
                                     name="newPassword"
                                     value={formData.newPassword}
                                     onChange={handleChange}
                                     required
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none"
+                                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none"
                                     placeholder="Enter new password"
                                 />
                                 <p className="text-xs text-gray-500 mt-2">
@@ -178,14 +178,14 @@ export default function StudentSettings() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">Confirm New Password</label>
+                                <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">Confirm New Password</label>
                                 <input
                                     type="password"
                                     name="confirmPassword"
                                     value={formData.confirmPassword}
                                     onChange={handleChange}
                                     required
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none"
+                                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none"
                                     placeholder="Confirm new password"
                                 />
                             </div>
@@ -195,7 +195,7 @@ export default function StudentSettings() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className={`px-8 py-3 rounded-xl bg-gray-900 text-white font-bold hover:bg-black transition-colors shadow-lg shadow-gray-200 flex items-center gap-2 ${loading ? 'opacity-70 cursor-not-allowed' : ''
+                                className={`min-h-[44px] px-6 md:px-8 py-2.5 md:py-3 text-sm md:text-base rounded-xl bg-gray-900 text-white font-bold hover:bg-black transition-colors shadow-lg shadow-gray-200 flex items-center gap-2 active:scale-95 ${loading ? 'opacity-70 cursor-not-allowed' : ''
                                     }`}
                             >
                                 {loading ? (
@@ -214,12 +214,12 @@ export default function StudentSettings() {
                 </div>
 
                 {/* Preferences Sidebar */}
-                <div className="space-y-6">
+                <div className="space-y-4 md:space-y-6">
                     {/* General Preferences */}
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                        <div className="flex items-center gap-3 mb-6">
-                            <span className="text-2xl">⚡</span>
-                            <h2 className="text-xl font-bold text-gray-900">Preferences</h2>
+                    <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-100 p-4 md:p-6">
+                        <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                            <span className="text-xl md:text-2xl">⚡</span>
+                            <h2 className="text-lg md:text-xl font-bold text-gray-900">Preferences</h2>
                         </div>
 
                         <div className="space-y-4">
@@ -252,10 +252,10 @@ export default function StudentSettings() {
                     </div>
 
                     {/* Privacy Settings */}
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                        <div className="flex items-center gap-3 mb-6">
-                            <span className="text-2xl">🛡️</span>
-                            <h2 className="text-xl font-bold text-gray-900">Privacy & Data</h2>
+                    <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-100 p-4 md:p-6">
+                        <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                            <span className="text-xl md:text-2xl">🛡️</span>
+                            <h2 className="text-lg md:text-xl font-bold text-gray-900">Privacy & Data</h2>
                         </div>
 
                         <div className="space-y-4">
@@ -272,14 +272,14 @@ export default function StudentSettings() {
                                 </div>
                             </div>
 
-                            <div className="p-4 rounded-xl bg-red-50 border border-red-100 mt-6">
-                                <p className="text-sm font-bold text-red-800 mb-2">Request Data Deletion</p>
+                            <div className="p-4 rounded-xl bg-red-50 border border-red-100 mt-4 md:mt-6">
+                                <p className="text-xs md:text-sm font-bold text-red-800 mb-2">Request Data Deletion</p>
                                 <p className="text-xs text-red-600 mb-3">
                                     Permanently delete your account and all associated data. This action cannot be undone.
                                 </p>
                                 <button
                                     onClick={handleRequestDeletion}
-                                    className="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-3 py-2 rounded-lg font-bold transition-colors w-full"
+                                    className="min-h-[44px] text-xs md:text-sm bg-red-100 hover:bg-red-200 text-red-700 px-3 py-2 rounded-lg font-bold transition-colors w-full active:scale-95"
                                 >
                                     Request Deletion
                                 </button>
