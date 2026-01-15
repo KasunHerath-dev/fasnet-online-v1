@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { authService, academicService } from '../services/authService'
 import Loader from '../components/Loader'
+import { MODULE_DATA } from '../data/moduleList'
 
 export default function StudentAcademic() {
     const [user, setUser] = useState(null)
@@ -231,57 +232,61 @@ export default function StudentAcademic() {
                     </div>
                 </div>
 
-                {!profile?.results || profile.results.length === 0 ? (
-                    <div className="text-center py-16">
-                        <div className="text-6xl mb-4">📚</div>
-                        <p className="text-lg font-medium text-gray-700 dark:text-gray-300">No results recorded yet</p>
-                        <p className="text-sm mt-2 text-gray-500 dark:text-gray-400">Your module results will appear here once they are entered by the administration.</p>
-                    </div>
-                ) : filteredResults.length === 0 ? (
-                    <div className="text-center py-16">
-                        <div className="text-6xl mb-4">🔍</div>
-                        <p className="text-lg font-medium text-gray-700 dark:text-gray-300">No results for this level</p>
-                        <p className="text-sm mt-2 text-gray-500 dark:text-gray-400">Try selecting a different level filter.</p>
-                    </div>
-                ) : (
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-b-2 border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700/50">
-                                    <th className="text-left py-4 px-4 text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wide">Level</th>
-                                    <th className="text-left py-4 px-4 text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wide">Code</th>
-                                    <th className="text-left py-4 px-4 text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wide">Module Title</th>
-                                    <th className="text-center py-4 px-4 text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wide">Credits</th>
-                                    <th className="text-center py-4 px-4 text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wide">Marks</th>
-                                    <th className="text-center py-4 px-4 text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wide">Grade</th>
-                                    <th className="text-center py-4 px-4 text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wide">GP</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredResults.map((result, idx) => (
-                                    <tr key={idx} className="border-b border-gray-100 dark:border-slate-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/10 transition-colors">
-                                        <td className="py-4 px-4 font-medium text-gray-700 dark:text-gray-300">L{result.module.level}</td>
-                                        <td className="py-4 px-4 font-semibold text-indigo-600 dark:text-indigo-400">{result.module.code}</td>
-                                        <td className="py-4 px-4 text-gray-700 dark:text-gray-300">{result.module.title}</td>
-                                        <td className="py-4 px-4 text-center text-gray-700 dark:text-gray-300 font-medium">{result.module.credits}</td>
-                                        <td className="py-4 px-4 text-center font-semibold text-gray-900 dark:text-white">{result.marks}</td>
-                                        <td className="py-4 px-4 text-center">
-                                            <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold shadow-sm ${result.grade.startsWith('A') ? 'bg-green-100 text-green-700 border border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800' :
-                                                result.grade.startsWith('B') ? 'bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800' :
-                                                    result.grade.startsWith('C') ? 'bg-yellow-100 text-yellow-700 border border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800' :
-                                                        result.grade.startsWith('D') ? 'bg-orange-100 text-orange-700 border border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800' :
-                                                            'bg-red-100 text-red-700 border border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800'
-                                                }`}>
-                                                {result.grade}
-                                            </span>
-                                        </td>
-                                        <td className="py-4 px-4 text-center font-bold text-gray-900 dark:text-white">{result.gradePoint.toFixed(2)}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
+                {/* Content Table using Static List + DB Grades */}
+                <div className="overflow-x-auto">
+                    <table className="w-full">
+                        <thead>
+                            <tr className="border-b-2 border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700/50">
+                                <th className="text-left py-4 px-4 text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wide">Sem</th>
+                                <th className="text-left py-4 px-4 text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wide">Code</th>
+                                <th className="text-left py-4 px-4 text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wide">Module Title</th>
+                                <th className="text-center py-4 px-4 text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wide">Credits</th>
+                                <th className="text-center py-4 px-4 text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wide">Grade</th>
+                                <th className="text-center py-4 px-4 text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wide">GP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {/* Filter and map modules */}
+                            {MODULE_DATA
+                                .filter(m => selectedLevel === 'all' || m.level === parseInt(selectedLevel))
+                                .map((module, idx) => {
+                                    // Find result in DB profile
+                                    // Robust check: Compare codes (case-insensitive/trim)
+                                    const result = profile?.results?.find(r =>
+                                        r.module && r.module.code && r.module.code.replace(/\s+/g, '').toUpperCase() === module.code.replace(/\s+/g, '').toUpperCase()
+                                    );
+
+                                    return (
+                                        <tr key={idx} className={`border-b border-gray-100 dark:border-slate-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/10 transition-colors ${!result ? 'opacity-70 grayscale-[0.5]' : ''}`}>
+                                            <td className="py-4 px-4 font-medium text-gray-700 dark:text-gray-300">
+                                                <span className="text-xs bg-gray-200 dark:bg-slate-600 px-2 py-1 rounded">S{module.semester}</span>
+                                            </td>
+                                            <td className="py-4 px-4 font-semibold text-indigo-600 dark:text-indigo-400 whitespace-nowrap">{module.code}</td>
+                                            <td className="py-4 px-4 text-gray-700 dark:text-gray-300">{module.title}</td>
+                                            <td className="py-4 px-4 text-center text-gray-700 dark:text-gray-300 font-bold">{module.credits}</td>
+                                            <td className="py-4 px-4 text-center">
+                                                {result ? (
+                                                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold shadow-sm ${(result.grade || '').startsWith('A') ? 'bg-green-100 text-green-700 border border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800' :
+                                                        (result.grade || '').startsWith('B') ? 'bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800' :
+                                                            (result.grade || '').startsWith('C') ? 'bg-yellow-100 text-yellow-700 border border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800' :
+                                                                (result.grade || '').startsWith('D') ? 'bg-orange-100 text-orange-700 border border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800' :
+                                                                    'bg-red-100 text-red-700 border border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800'
+                                                        }`}>
+                                                        {result.grade || '-'}
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-gray-300 dark:text-gray-600 font-medium">-</span>
+                                                )}
+                                            </td>
+                                            <td className="py-4 px-4 text-center font-bold text-gray-900 dark:text-white">
+                                                {result?.gradePoint !== undefined ? result.gradePoint.toFixed(2) : '-'}
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     )
