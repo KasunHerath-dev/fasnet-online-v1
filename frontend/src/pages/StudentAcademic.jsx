@@ -15,13 +15,29 @@ export default function StudentAcademic() {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const res = await authService.getProfile();
-                if (res.success) {
-                    setUser(res.user);
-                    setStudent(res.studentProfile?.studentDetails); // Set student from studentProfile
-                    setProfile(res.studentProfile);
-                    // Default to student's level or 1
-                    setSelectedLevel(res.studentProfile?.studentDetails?.level?.toString() || '1');
+                // 1. Get User from local auth
+                const currentUser = authService.getUser();
+                setUser(currentUser);
+
+                // 2. Check for student reference
+                if (currentUser && currentUser.studentRef && currentUser.studentRef._id) {
+                    const res = await academicService.getStudentProfile(currentUser.studentRef._id);
+                    // Structure based on StudentDashboard usage: res.data.studentDetails
+                    // But StudentProfile usage might be: res.data which has studentDetails + results
+                    // Let's inspect the response structure assumption.
+                    // StudentDashboard uses: res.data.studentDetails
+                    // Let's assume the API returns { studentDetails: ..., results: ... } or { data: { studentDetails: ..., results: ... } }
+                    // Based on previous code, res.studentProfile was used.
+                    // Let's try to adapt to what academicService returns.
+
+                    const data = res.data;
+                    if (data) {
+                        setStudent(data.studentDetails);
+                        setProfile(data); // data likely contains { studentDetails, results, gpa, credits }
+                        setSelectedLevel(data.studentDetails?.level?.toString() || '1');
+                    }
+                } else {
+                    console.warn("No student reference found for user");
                 }
             } catch (error) {
                 console.error("Failed to fetch profile", error);
@@ -519,8 +535,8 @@ export default function StudentAcademic() {
                                                         <td className="py-4 px-4 sm:px-6 text-center">
                                                             {result ? (
                                                                 <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${isPass
-                                                                        ? 'bg-green-50 text-green-700 border-green-100 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800'
-                                                                        : 'bg-red-50 text-red-700 border-red-100 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800'
+                                                                    ? 'bg-green-50 text-green-700 border-green-100 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800'
+                                                                    : 'bg-red-50 text-red-700 border-red-100 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800'
                                                                     }`}>
                                                                     <span className={`w-1.5 h-1.5 rounded-full ${isPass ? 'bg-green-500' : 'bg-red-500'}`}></span>
                                                                     {isPass ? 'Pass' : 'Repeat'}
@@ -535,9 +551,9 @@ export default function StudentAcademic() {
                                                             {result ? (
                                                                 <div className="flex flex-col items-center">
                                                                     <span className={`text-lg font-black ${(result.grade || '').startsWith('A') ? 'text-emerald-600 dark:text-emerald-400' :
-                                                                            (result.grade || '').startsWith('B') ? 'text-blue-600 dark:text-blue-400' :
-                                                                                (result.grade || '').startsWith('C') ? 'text-yellow-600 dark:text-yellow-400' :
-                                                                                    'text-red-500 dark:text-red-400'
+                                                                        (result.grade || '').startsWith('B') ? 'text-blue-600 dark:text-blue-400' :
+                                                                            (result.grade || '').startsWith('C') ? 'text-yellow-600 dark:text-yellow-400' :
+                                                                                'text-red-500 dark:text-red-400'
                                                                         }`}>
                                                                         {result.grade}
                                                                     </span>

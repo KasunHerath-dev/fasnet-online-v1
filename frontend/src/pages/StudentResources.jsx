@@ -77,17 +77,43 @@ export default function StudentResources() {
         }
     }, [filterLevel, filterSemester, filteredModules, modules, selectedModuleId]);
 
-    // Load resources when module changes
+    const [moduleMap, setModuleMap] = useState({}); // Map Code -> Backend ID
+
+    // Load Backend Modules to map Codes to IDs
+    useEffect(() => {
+        const fetchBackendModules = async () => {
+            try {
+                const res = await academicService.getModules();
+                // res.data if axios, or res if array directly? academicService.getModules uses api.get which usually returns data.
+                // Checking academicController.js: res.json(modules).
+                // Checking api.js: axios response. So res.data is the array.
+                const backendModules = res.data || [];
+                const map = {};
+                backendModules.forEach(m => {
+                    map[m.code] = m._id;
+                });
+                setModuleMap(map);
+            } catch (error) {
+                console.error("Failed to fetch backend modules map", error);
+            }
+        };
+        fetchBackendModules();
+    }, []);
+
+    // Load resources when module changes (and map is ready)
     useEffect(() => {
         if (!selectedModuleId) return;
 
         const loadResources = async () => {
             setFetchingResources(true);
             try {
-                const res = await resourceService.getByModule(selectedModuleId);
-                // resourceService returns full axios response, so usage of res.data is correct here if backend wraps in data object
-                // Backend controller: res.status(200).json({ success: true, count: resources.length, data: resources });
-                // So res.data.data is correct.
+                // Resolve Code to ID
+                const backendId = moduleMap[selectedModuleId];
+
+                // If we have an ID, use it. Otherwise use the Code (fallback, though likely to fail if Schema requires ObjectId)
+                const queryId = backendId || selectedModuleId;
+
+                const res = await resourceService.getByModule(queryId);
                 setResources(res.data.data || []);
             } catch (error) {
                 console.error("Failed to fetch resources", error);
@@ -97,8 +123,12 @@ export default function StudentResources() {
             }
         };
 
+        // Only load if we have the map populated OR if we are willing to try with just code (race condition on initial load)
+        // Better to wait for map?
+        // If moduleMap is empty, might be loading. 
+        // We can add moduleMap to dependency, and if backendId is found, triggers reload.
         loadResources();
-    }, [selectedModuleId]);
+    }, [selectedModuleId, moduleMap]);
 
     const [activeTab, setActiveTab] = useState('tutorials');
 

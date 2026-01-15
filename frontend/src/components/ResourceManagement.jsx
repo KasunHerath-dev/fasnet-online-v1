@@ -211,11 +211,13 @@ export default function ResourceManagement() {
     };
 
     const filterModules = () => {
-        let sourceModules = modules;
+        let sourceModules = ALL_MODULES;
 
-        // Fallback to local list if API modules are absent
-        if (!sourceModules || sourceModules.length === 0) {
-            sourceModules = ALL_MODULES;
+        // Fallback to local list if API modules are absent (Consolidated)
+        // Only use API modules if they are significantly different? 
+        // For now, ALL_MODULES is the source of truth for the dropdown structure.
+        if (modules && modules.length > ALL_MODULES.length) {
+            sourceModules = modules;
         }
 
         // Filter by Level AND Semester
