@@ -41,10 +41,7 @@ export default function StudentProfile() {
             email: student.email || '',
             whatsapp: student.whatsapp || '',
             nearestCity: student.nearestCity || '',
-            district: student.district || '',
-            guardianName: student.guardianName || '',
-            guardianRelationship: student.guardianRelationship || '',
-            guardianPhone: student.guardianPhone || ''
+            district: student.district || ''
         })
         setShowEditModal(true)
     }
@@ -216,18 +213,6 @@ export default function StudentProfile() {
                             </div>
                         </div>
 
-                        {/* Guardian Information */}
-                        <div className="mb-8">
-                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 pb-3 border-b-2 border-gray-100 dark:border-slate-700 flex items-center gap-2">
-                                <span>👨‍👩‍👧</span> Guardian Information
-                            </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <InfoField label="Guardian Name" value={student.guardianName} isMissing={!student.guardianName} />
-                                <InfoField label="Relationship" value={student.guardianRelationship} isMissing={!student.guardianRelationship} />
-                                <InfoField label="Guardian Phone" value={student.guardianPhone} isMissing={!student.guardianPhone} />
-                            </div>
-                        </div>
-
                         {/* Academic Information */}
                         <div>
                             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 pb-3 border-b-2 border-gray-100 dark:border-slate-700 flex items-center gap-2">
@@ -327,40 +312,6 @@ export default function StudentProfile() {
                                             className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                                             value={formData.district}
                                             onChange={(e) => setFormData({ ...formData, district: e.target.value })}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Guardian Information */}
-                            <div>
-                                <h4 className="font-bold text-gray-900 dark:text-white mb-4 text-lg">Guardian Information</h4>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Guardian Name</label>
-                                        <input
-                                            type="text"
-                                            className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                            value={formData.guardianName}
-                                            onChange={(e) => setFormData({ ...formData, guardianName: e.target.value })}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Relationship</label>
-                                        <input
-                                            type="text"
-                                            className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                            value={formData.guardianRelationship}
-                                            onChange={(e) => setFormData({ ...formData, guardianRelationship: e.target.value })}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Guardian Phone</label>
-                                        <input
-                                            type="text"
-                                            className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                            value={formData.guardianPhone}
-                                            onChange={(e) => setFormData({ ...formData, guardianPhone: e.target.value })}
                                         />
                                     </div>
                                 </div>
