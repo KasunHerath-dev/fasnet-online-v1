@@ -240,10 +240,31 @@ export default function StudentDashboard() {
                             </h3>
 
                             {[1, 2].map(semester => {
-                                const semesterModules = MODULE_DATA.filter(m =>
-                                    m.level === (user?.studentRef?.level || 1) &&
-                                    m.semester === semester
-                                );
+                                const semesterModules = MODULE_DATA.filter(m => {
+                                    // 1. Level Check
+                                    if (m.level !== (user?.studentRef?.level || 1)) return false;
+                                    if (m.semester !== semester) return false;
+
+                                    // 2. Combination Check
+                                    // If no combination is assigned, show all (or maybe none? Showing all is safer for now)
+                                    if (!combination) return true;
+
+                                    // Normalize strings
+                                    const comb = combination.toLowerCase();
+                                    const dept = m.department; // 'CMIS', 'ELTN', 'MATH', 'IMGT', 'STAT'
+
+                                    // Mapping Logic
+                                    if (dept === 'CMIS' && (comb.includes('computer') || comb.includes('cmis'))) return true;
+                                    if (dept === 'ELTN' && (comb.includes('electronic') || comb.includes('eltn'))) return true;
+                                    if (dept === 'MATH' && (comb.includes('math') || comb.includes('mathematics'))) return true;
+                                    if (dept === 'IMGT' && (comb.includes('management') || comb.includes('imgt') || comb.includes('industrial'))) return true;
+                                    if (dept === 'STAT' && (comb.includes('statistic') || comb.includes('stat'))) return true;
+
+                                    // If strict combination is set but module doesn't match, hide it?
+                                    // Let's assume common/foundation modules might not have a specific dept or apply to all.
+                                    // But for now, user requested "related to thire combination".
+                                    return false;
+                                });
 
                                 if (semesterModules.length === 0) return null;
 
@@ -253,7 +274,7 @@ export default function StudentDashboard() {
                                             <span className="w-2 h-2 bg-indigo-500 rounded-full"></span>
                                             Semester {semester}
                                         </h4>
-                                        <div className="grid grid-cols-1 gap-3">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             {semesterModules.map((sub, idx) => {
                                                 let colorClass = 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700';
                                                 let icon = '📘';
@@ -264,10 +285,10 @@ export default function StudentDashboard() {
                                                 else if (sub.department === 'IMGT') { colorClass = 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-200 dark:border-green-800'; icon = '💼'; }
 
                                                 return (
-                                                    <div key={idx} className={`flex items-center gap-4 p-4 rounded-xl border-l-4 border-y border-r ${colorClass} hover:shadow-md transition-all cursor-default`}>
+                                                    <div key={idx} className={`flex items-center gap-4 p-4 rounded-xl border-l-4 border-y border-r ${colorClass} hover:shadow-md transition-all cursor-default h-full`}>
                                                         <span className="text-2xl">{icon}</span>
-                                                        <div>
-                                                            <p className="font-bold text-base">{sub.code} - {sub.title}</p>
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className="font-bold text-base truncate" title={sub.title}>{sub.code} - {sub.title}</p>
                                                             <p className="text-xs opacity-75 font-semibold mt-0.5">{sub.credits} Credits • {sub.department}</p>
                                                         </div>
                                                     </div>
