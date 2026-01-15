@@ -169,6 +169,7 @@ export default function App() {
                           <Route path="/update-students" element={<UpdateStudentsPage />} />
                           <Route path="/admin" element={<AdminPage />} />
                           <Route path="/admin/users" element={<SystemUsersPage />} />
+                          <Route path="/admin/resources" element={<AdminResourcesPage />} />
                           <Route path="/admin/bulk-combination" element={<BulkCombinationPage />} />
                           <Route path="/admin/analytics" element={<AdminAnalytics />} />
 

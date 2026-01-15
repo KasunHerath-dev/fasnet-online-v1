@@ -187,7 +187,7 @@ export default function StudentDashboard() {
                 </div>
             </div>
 
-            {/* SUBJECT COMBINATION - Full Width Card */}
+            {/* SUBJECT COMBINATION - Interactive Accordion */}
             <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 p-8">
                 <div className="flex items-center gap-3 mb-6">
                     <span className="text-3xl">🧩</span>
@@ -195,22 +195,36 @@ export default function StudentDashboard() {
                 </div>
 
                 {!fetchingProfile ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* Combination Display */}
-                        <div>
+                    <div className="w-full max-w-2xl mx-auto">
+                        {/* Combination Card - Clickable Trigger */}
+                        <div
+                            onClick={combination ? () => setIsExpanded(!isExpanded) : null}
+                            className={`
+                                relative p-8 rounded-2xl text-center transition-all duration-300 transform
+                                ${combination
+                                    ? 'bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 border-2 border-indigo-200 dark:border-indigo-800 cursor-pointer hover:shadow-lg hover:scale-[1.01]'
+                                    : 'bg-gray-50 dark:bg-slate-700/50 border-2 border-gray-200 dark:border-slate-600'}
+                            `}
+                        >
                             {combination ? (
-                                <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 border-2 border-indigo-200 dark:border-indigo-800 p-6 rounded-2xl text-center">
-                                    <p className="text-sm text-indigo-600 dark:text-indigo-300 font-bold uppercase mb-2">Your Assigned Combination</p>
-                                    <p className="text-3xl md:text-4xl font-black text-indigo-900 dark:text-indigo-100 mb-2">{combination}</p>
-                                    {isLocked && (
-                                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-100 dark:bg-indigo-900/50 rounded-full">
-                                            <span className="text-indigo-600 dark:text-indigo-300">🔒</span>
-                                            <span className="text-xs text-indigo-600 dark:text-indigo-300 font-semibold">Locked by System</span>
+                                <>
+                                    <p className="text-sm text-indigo-600 dark:text-indigo-300 font-bold uppercase mb-3 tracking-widest">Your Assigned Combination</p>
+                                    <p className="text-4xl md:text-5xl font-black text-indigo-900 dark:text-indigo-100 mb-4">{combination}</p>
+
+                                    <div className="flex items-center justify-center gap-3">
+                                        {isLocked && (
+                                            <div className="inline-flex items-center gap-1 px-3 py-1 bg-indigo-100 dark:bg-indigo-900/50 rounded-full">
+                                                <span className="text-indigo-600 dark:text-indigo-300 text-xs">🔒 Locked</span>
+                                            </div>
+                                        )}
+                                        <div className={`flex items-center gap-2 px-4 py-1.5 rounded-full transition-colors ${isExpanded ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600 border border-indigo-200'}`}>
+                                            <span className="text-sm font-bold">{isExpanded ? 'Hide Subjects' : 'View Subjects'}</span>
+                                            <span className={`transform transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>▼</span>
                                         </div>
-                                    )}
-                                </div>
+                                    </div>
+                                </>
                             ) : (
-                                <div className="bg-gray-50 dark:bg-slate-700/50 border-2 border-gray-200 dark:border-slate-600 p-6 rounded-2xl text-center">
+                                <div className="py-4">
                                     <div className="text-5xl mb-3">🎓</div>
                                     <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">No combination assigned yet</p>
                                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Contact administration for assignment</p>
@@ -218,51 +232,55 @@ export default function StudentDashboard() {
                             )}
                         </div>
 
-                        {/* Subjects List */}
-                        <div>
-                            <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-                                <span>📖</span> My Subjects (Level {user?.studentRef?.level || '-'})
+                        {/* Expandable Subjects List */}
+                        <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isExpanded ? 'max-h-[1000px] opacity-100 mt-8' : 'max-h-0 opacity-0 mt-0'}`}>
+                            <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-2 border-b border-gray-100 pb-4">
+                                <span>📖</span> Level {user?.studentRef?.level || '-'} Subjects
                             </h3>
-                            <div className="space-y-3">
-                                {MODULE_DATA.filter(m => m.level === (user?.studentRef?.level || 1)).length === 0 ? (
-                                    <div className="text-center py-8">
-                                        <p className="text-gray-400 dark:text-gray-500 text-sm italic">
-                                            No modules found for Level {user?.studentRef?.level}
-                                        </p>
+
+                            {[1, 2].map(semester => {
+                                const semesterModules = MODULE_DATA.filter(m =>
+                                    m.level === (user?.studentRef?.level || 1) &&
+                                    m.semester === semester
+                                );
+
+                                if (semesterModules.length === 0) return null;
+
+                                return (
+                                    <div key={semester} className="mb-8 last:mb-0">
+                                        <h4 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                            <span className="w-2 h-2 bg-indigo-500 rounded-full"></span>
+                                            Semester {semester}
+                                        </h4>
+                                        <div className="grid grid-cols-1 gap-3">
+                                            {semesterModules.map((sub, idx) => {
+                                                let colorClass = 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700';
+                                                let icon = '📘';
+
+                                                if (sub.department === 'MATH') { colorClass = 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-200 dark:border-blue-800'; icon = '📐'; }
+                                                else if (sub.department === 'CMIS') { colorClass = 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-200 dark:border-purple-800'; icon = '💻'; }
+                                                else if (sub.department === 'ELTN') { colorClass = 'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-200 dark:border-yellow-800'; icon = '⚡'; }
+                                                else if (sub.department === 'IMGT') { colorClass = 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-200 dark:border-green-800'; icon = '💼'; }
+
+                                                return (
+                                                    <div key={idx} className={`flex items-center gap-4 p-4 rounded-xl border-l-4 border-y border-r ${colorClass} hover:shadow-md transition-all cursor-default`}>
+                                                        <span className="text-2xl">{icon}</span>
+                                                        <div>
+                                                            <p className="font-bold text-base">{sub.code} - {sub.title}</p>
+                                                            <p className="text-xs opacity-75 font-semibold mt-0.5">{sub.credits} Credits • {sub.department}</p>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
                                     </div>
-                                ) : (
-                                    MODULE_DATA.filter(m => m.level === (user?.studentRef?.level || 1)).map((sub, idx) => {
-                                        // Determine styling based on department (simple mapping)
-                                        let colorClass = 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700';
-                                        let icon = '📘';
-
-                                        if (sub.department === 'MATH') { colorClass = 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-200 dark:border-blue-800'; icon = '📐'; }
-                                        else if (sub.department === 'CMIS') { colorClass = 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-200 dark:border-purple-800'; icon = '💻'; }
-                                        else if (sub.department === 'ELTN') { colorClass = 'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-200 dark:border-yellow-800'; icon = '⚡'; }
-                                        else if (sub.department === 'IMGT') { colorClass = 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-200 dark:border-green-800'; icon = '💼'; }
-
-                                        return (
-                                            <div key={idx} className={`flex items-center gap-4 p-4 rounded-xl border-2 ${colorClass} hover:shadow-sm transition-all`}>
-                                                <span className="text-2xl">{icon}</span>
-                                                <div>
-                                                    <p className="font-bold text-sm">{sub.title}</p>
-                                                    <p className="text-xs opacity-75">{sub.code}</p>
-                                                </div>
-                                            </div>
-                                        )
-                                    })
-                                )}
-                            </div>
+                                )
+                            })}
                         </div>
                     </div>
                 ) : (
-                    <div className="animate-pulse grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div className="h-32 bg-gray-200 dark:bg-slate-700 rounded-2xl"></div>
-                        <div className="space-y-3">
-                            <div className="h-16 bg-gray-200 dark:bg-slate-700 rounded-xl"></div>
-                            <div className="h-16 bg-gray-200 dark:bg-slate-700 rounded-xl"></div>
-                            <div className="h-16 bg-gray-200 dark:bg-slate-700 rounded-xl"></div>
-                        </div>
+                    <div className="animate-pulse w-full max-w-2xl mx-auto">
+                        <div className="h-48 bg-gray-200 dark:bg-slate-700 rounded-2xl mb-8"></div>
                     </div>
                 )}
             </div>

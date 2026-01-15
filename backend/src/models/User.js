@@ -45,7 +45,9 @@ const userSchema = new mongoose.Schema(
         'manage_users',
         'system_settings',
         'bulk_import',
-        'bulk_update'
+        'bulk_update',
+        'manage_resources',
+        'manage_assessments'
       ],
     },
     batchScope: {

@@ -22,10 +22,25 @@ export default function StudentResources() {
     const [selectedModuleId, setSelectedModuleId] = useState('');
     const [resources, setResources] = useState([]);
     const [fetchingResources, setFetchingResources] = useState(false);
+    const [filterLevel, setFilterLevel] = useState('1');
+    const [filterSemester, setFilterSemester] = useState('1');
 
     // Load enrolled modules from Static Data
     useEffect(() => {
-        const loadModules = () => {
+        const loadModules = async () => {
+            // Get user info for smart default
+            let userLevel = 1;
+            try {
+                const userRes = await authService.getProfile();
+                if (userRes.success && userRes.studentProfile) {
+                    userLevel = userRes.studentProfile.level || 1;
+                }
+            } catch (e) { console.error("Failed to get profile for smart default", e); }
+
+            // Set defaults
+            setFilterLevel(userLevel.toString());
+            setFilterSemester('1');
+
             // Load ALL modules, sorted by Level -> Semester -> Code
             const allModules = [...MODULE_DATA].sort((a, b) => {
                 if (a.level !== b.level) return a.level - b.level;
@@ -35,8 +50,10 @@ export default function StudentResources() {
 
             if (allModules.length > 0) {
                 setModules(allModules);
-                // Auto-select first module (Use Code as ID)
-                setSelectedModuleId(allModules[0].code);
+
+                // Smart Default: Find first module of student's current level & sem 1
+                const defaultModule = allModules.find(m => m.level === parseInt(userLevel) && m.semester === 1) || allModules[0];
+                setSelectedModuleId(defaultModule.code);
             } else {
                 setModules([]);
             }
@@ -44,6 +61,21 @@ export default function StudentResources() {
         };
         loadModules();
     }, []);
+
+    // Filter modules based on selection
+    const filteredModules = modules.filter(m =>
+        m.level.toString() === filterLevel &&
+        m.semester.toString() === filterSemester
+    );
+
+    // Auto-select first module when filters change if current selection is invalid
+    useEffect(() => {
+        const currentModule = modules.find(m => m.code === selectedModuleId);
+        if (currentModule && (currentModule.level.toString() !== filterLevel || currentModule.semester.toString() !== filterSemester)) {
+            const firstMatch = filteredModules[0];
+            if (firstMatch) setSelectedModuleId(firstMatch.code);
+        }
+    }, [filterLevel, filterSemester, filteredModules, modules, selectedModuleId]);
 
     // Load resources when module changes
     useEffect(() => {
@@ -113,8 +145,46 @@ export default function StudentResources() {
                             <h1 className="text-3xl md:text-4xl font-black tracking-tight">Academic Resources</h1>
                         </div>
                         <p className="text-blue-100 font-medium text-lg max-w-xl">
-                            Access your comprehensive collection of lecture materials, tutorials, and past papers.
+                            Access lecture materials, tutorials, and past papers, filtered by your academic year.
                         </p>
+                    </div>
+                    {/* Quick Filters in Header */}
+                    <div className="flex gap-3 bg-white/10 p-2 rounded-2xl backdrop-blur-sm border border-white/20">
+                        <div className="flex flex-col px-2">
+                            <span className="text-[10px] font-bold text-blue-200 uppercase tracking-wider mb-1">Academic Level</span>
+                            <div className="flex gap-1">
+                                {[1, 2, 3, 4].map(l => (
+                                    <button
+                                        key={l}
+                                        onClick={() => setFilterLevel(l.toString())}
+                                        className={`w-8 h-8 rounded-lg text-sm font-bold transition-all ${filterLevel === l.toString()
+                                            ? 'bg-white text-indigo-600 shadow-lg'
+                                            : 'text-white hover:bg-white/20'
+                                            }`}
+                                    >
+                                        {l}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="w-px bg-white/20 my-1"></div>
+                        <div className="flex flex-col px-2">
+                            <span className="text-[10px] font-bold text-blue-200 uppercase tracking-wider mb-1">Semester</span>
+                            <div className="flex gap-1">
+                                {[1, 2].map(s => (
+                                    <button
+                                        key={s}
+                                        onClick={() => setFilterSemester(s.toString())}
+                                        className={`w-8 h-8 rounded-lg text-sm font-bold transition-all ${filterSemester === s.toString()
+                                            ? 'bg-white text-indigo-600 shadow-lg'
+                                            : 'text-white hover:bg-white/20'
+                                            }`}
+                                    >
+                                        {s}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -132,17 +202,24 @@ export default function StudentResources() {
                 <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 p-6 md:p-8">
                     {/* Controls Header */}
                     <div className="flex flex-col md:flex-row items-center gap-6 mb-8">
-                        <div className="w-full md:w-96 z-20">
-                            <label className="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Select Module</label>
+                        <div className="w-full md:w-[400px] z-20">
+                            <div className="flex justify-between items-baseline mb-2">
+                                <label className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                                    Select Module
+                                </label>
+                                <span className="text-xs font-medium text-indigo-600 dark:text-indigo-400">
+                                    L{filterLevel} Semester {filterSemester}
+                                </span>
+                            </div>
                             <Dropdown
                                 value={selectedModuleId}
                                 onChange={(e) => setSelectedModuleId(e.target.value)}
-                                options={modules.map(m => ({
+                                options={filteredModules.map(m => ({
                                     value: m.code,
-                                    label: `(L${m.level}) ${m.code} - ${m.title}`
+                                    label: `${m.code} - ${m.title}`
                                 }))}
                                 icon={<BookOpen className="w-4 h-4" />}
-                                placeholder="Select Module"
+                                placeholder={filteredModules.length > 0 ? "Select a module..." : "No modules found"}
                                 variant="default"
                             />
                         </div>

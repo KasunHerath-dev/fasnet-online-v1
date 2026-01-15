@@ -357,13 +357,23 @@ export default function ResourceManagement() {
 
                             {/* Module Selection */}
                             <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Module</label>
+                                <div className="flex justify-between items-baseline mb-2">
+                                    <label className="text-sm font-bold text-gray-700">Module</label>
+                                    <span className="text-xs font-medium text-indigo-600">
+                                        Filtering: L{formData.level} S{formData.semester}
+                                    </span>
+                                </div>
                                 <Dropdown
                                     value={formData.moduleId}
                                     onChange={(e) => setFormData({ ...formData, moduleId: e.target.value })}
                                     options={filteredModules.map(m => ({ value: m._id, label: `${m.code} - ${m.title}` }))}
-                                    placeholder="Select Module"
+                                    placeholder={filteredModules.length > 0 ? "Select Module" : "No modules found for this selection"}
                                 />
+                                {filteredModules.length === 0 && (
+                                    <p className="text-xs text-red-500 mt-1">
+                                        No modules match Level {formData.level} & Semester {formData.semester}.
+                                    </p>
+                                )}
                             </div>
 
                             {/* Updated Workflow: Category -> Context */}
