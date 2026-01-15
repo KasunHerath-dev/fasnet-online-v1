@@ -250,27 +250,43 @@ export default function StudentDashboard() {
                                     if (!combination) return true;
 
                                     // Normalize strings
-                                    const comb = combination.toLowerCase();
+                                    const comb = combination.toUpperCase();
                                     const dept = m.department; // 'CMIS', 'ELTN', 'MATH', 'IMGT', 'STAT'
 
-                                    // Define keys for strict filtering
-                                    const isComputing = comb.includes('computer') || comb.includes('cmis');
-                                    const isElectronics = comb.includes('electronic') || comb.includes('eltn');
-                                    const isMath = comb.includes('math') || comb.includes('mathematics');
-                                    const isManagement = comb.includes('management') || comb.includes('imgt') || comb.includes('industrial');
-                                    const isStats = comb.includes('statistic') || comb.includes('stat');
+                                    // WUSL Combination Definitions
+                                    const COMB_1 = ['CMIS', 'ELTN', 'MATH', 'STAT'];
+                                    const COMB_2 = ['ELTN', 'IMGT', 'MATH', 'STAT'];
+                                    const COMB_3 = ['IMGT', 'CMIS', 'MATH', 'STAT'];
 
-                                    // If combination has recognizable keywords, apply strict filter
+                                    // Exact Combination Match
+                                    if (comb.includes('COMB 1') || comb.includes('COMB1')) {
+                                        return COMB_1.includes(dept);
+                                    }
+                                    if (comb.includes('COMB 2') || comb.includes('COMB2')) {
+                                        return COMB_2.includes(dept);
+                                    }
+                                    if (comb.includes('COMB 3') || comb.includes('COMB3')) {
+                                        return COMB_3.includes(dept);
+                                    }
+
+                                    // Keyword Logic (Fallback for non-standard names)
+                                    const combLower = combination.toLowerCase();
+                                    const isComputing = combLower.includes('computer') || combLower.includes('cmis');
+                                    const isElectronics = combLower.includes('electronic') || combLower.includes('eltn');
+                                    const isMath = combLower.includes('math') || combLower.includes('mathematics');
+                                    const isManagement = combLower.includes('management') || combLower.includes('imgt') || combLower.includes('industrial');
+                                    const isStats = combLower.includes('statistic') || combLower.includes('stat');
+
                                     if (isComputing || isElectronics || isMath || isManagement || isStats) {
                                         if (dept === 'CMIS' && isComputing) return true;
                                         if (dept === 'ELTN' && isElectronics) return true;
                                         if (dept === 'MATH' && isMath) return true;
                                         if (dept === 'IMGT' && isManagement) return true;
                                         if (dept === 'STAT' && isStats) return true;
-                                        return false; // Has keywords but this department doesn't match
+                                        return false;
                                     }
 
-                                    // If combination is unknown (e.g. "COMB 1", "Bio Science"), show everything as fallback
+                                    // Unknown code? Show all.
                                     return true;
                                 });
 
