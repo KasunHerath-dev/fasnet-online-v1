@@ -433,60 +433,132 @@ export default function StudentAcademic() {
                 </div>
 
                 {/* Content Table using Static List + DB Grades */}
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead>
-                            <tr className="border-b-2 border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700/50">
-                                <th className="text-left py-4 px-4 text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wide">Sem</th>
-                                <th className="text-left py-4 px-4 text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wide">Code</th>
-                                <th className="text-left py-4 px-4 text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wide">Module Title</th>
-                                <th className="text-center py-4 px-4 text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wide">Credits</th>
-                                <th className="text-center py-4 px-4 text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wide">Grade</th>
-                                <th className="text-center py-4 px-4 text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wide">GP</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {/* Filter and map modules */}
-                            {MODULE_DATA
-                                .filter(m => selectedLevel === 'all' || m.level === parseInt(selectedLevel))
-                                .map((module, idx) => {
-                                    // Find result in DB profile
-                                    // Robust check: Compare codes (case-insensitive/trim)
-                                    const result = profile?.results?.find(r =>
-                                        r.module && r.module.code && r.module.code.replace(/\s+/g, '').toUpperCase() === module.code.replace(/\s+/g, '').toUpperCase()
-                                    );
+                {/* Semester-wise Module Organization */}
+                {[1, 2].map((semester) => {
+                    // Filter modules for this Level + Semester
+                    const semesterModules = MODULE_DATA.filter(m =>
+                        (selectedLevel === 'all' || m.level === parseInt(selectedLevel)) &&
+                        m.semester === semester
+                    );
 
-                                    return (
-                                        <tr key={idx} className={`border-b border-gray-100 dark:border-slate-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/10 transition-colors ${!result ? 'opacity-70 grayscale-[0.5]' : ''}`}>
-                                            <td className="py-4 px-4 font-medium text-gray-700 dark:text-gray-300">
-                                                <span className="text-xs bg-gray-200 dark:bg-slate-600 px-2 py-1 rounded">S{module.semester}</span>
-                                            </td>
-                                            <td className="py-4 px-4 font-semibold text-indigo-600 dark:text-indigo-400 whitespace-nowrap">{module.code}</td>
-                                            <td className="py-4 px-4 text-gray-700 dark:text-gray-300">{module.title}</td>
-                                            <td className="py-4 px-4 text-center text-gray-700 dark:text-gray-300 font-bold">{module.credits}</td>
-                                            <td className="py-4 px-4 text-center">
-                                                {result ? (
-                                                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold shadow-sm ${(result.grade || '').startsWith('A') ? 'bg-green-100 text-green-700 border border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800' :
-                                                        (result.grade || '').startsWith('B') ? 'bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800' :
-                                                            (result.grade || '').startsWith('C') ? 'bg-yellow-100 text-yellow-700 border border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800' :
-                                                                (result.grade || '').startsWith('D') ? 'bg-orange-100 text-orange-700 border border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800' :
-                                                                    'bg-red-100 text-red-700 border border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800'
-                                                        }`}>
-                                                        {result.grade || '-'}
-                                                    </span>
-                                                ) : (
-                                                    <span className="text-gray-300 dark:text-gray-600 font-medium">-</span>
-                                                )}
-                                            </td>
-                                            <td className="py-4 px-4 text-center font-bold text-gray-900 dark:text-white">
-                                                {result?.gradePoint !== undefined ? result.gradePoint.toFixed(2) : '-'}
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                        </tbody>
-                    </table>
-                </div>
+                    if (semesterModules.length === 0) return null;
+
+                    // Calculate Semester Stats
+                    const currentSemGPA = calculateGPA(profile, semesterModules, 'all');
+                    const currentSemCredits = calculateCompletedCredits(profile, semesterModules, 'all');
+                    const totalSemCredits = semesterModules.reduce((acc, m) => acc + m.credits, 0);
+
+                    return (
+                        <div key={semester} className="mb-8 last:mb-0">
+                            <div className="flex items-center justify-between mb-4 px-2">
+                                <h3 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                                    <span className="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 w-8 h-8 rounded-lg flex items-center justify-center text-sm shadow-sm border border-indigo-200 dark:border-indigo-800">
+                                        S{semester}
+                                    </span>
+                                    Semester {semester === 1 ? 'dI' : 'II'} &nbsp;
+                                    <span className="text-xs font-normal text-gray-500 dark:text-gray-400 self-center hidden sm:inline-block">
+                                        (Level {selectedLevel === 'all' ? 'All' : selectedLevel})
+                                    </span>
+                                </h3>
+                                <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm">
+                                    <div className="bg-white dark:bg-slate-700 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-slate-600 shadow-sm flex items-center gap-2">
+                                        <span className="text-gray-500 dark:text-gray-400">Credits:</span>
+                                        <span className="font-bold text-gray-900 dark:text-white">{currentSemCredits}/{totalSemCredits}</span>
+                                    </div>
+                                    <div className="bg-white dark:bg-slate-700 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-slate-600 shadow-sm flex items-center gap-2">
+                                        <span className="text-gray-500 dark:text-gray-400">SGPA:</span>
+                                        <span className={`font-bold ${parseFloat(currentSemGPA) >= 2.0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>
+                                            {currentSemGPA}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm overflow-hidden">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full">
+                                        <thead>
+                                            <tr className="border-b border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-700/30">
+                                                <th className="text-left py-3 px-4 sm:px-6 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Code</th>
+                                                <th className="text-left py-3 px-4 sm:px-6 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Module Title</th>
+                                                <th className="text-center py-3 px-4 sm:px-6 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Credits</th>
+                                                <th className="text-center py-3 px-4 sm:px-6 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                                                <th className="text-center py-3 px-4 sm:px-6 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Grade</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
+                                            {semesterModules.map((module, idx) => {
+                                                const result = profile?.results?.find(r =>
+                                                    r.module && r.module.code && r.module.code.replace(/\s+/g, '').toUpperCase() === module.code.replace(/\s+/g, '').toUpperCase()
+                                                );
+
+                                                const isPass = result && result.grade && !['D+', 'D', 'E', 'F', 'N', 'I'].includes(result.grade);
+
+                                                return (
+                                                    <tr key={idx} className={`hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors ${!result ? 'opacity-60' : ''}`}>
+                                                        <td className="py-4 px-4 sm:px-6">
+                                                            <div className="flex flex-col">
+                                                                <span className="font-bold text-indigo-600 dark:text-indigo-400 font-mono text-xs sm:text-sm">
+                                                                    {module.code}
+                                                                </span>
+                                                                <span className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5 inline-block bg-gray-100 dark:bg-slate-700/50 px-1.5 py-0.5 rounded uppercase tracking-wide w-fit">
+                                                                    {module.department}
+                                                                </span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="py-4 px-4 sm:px-6">
+                                                            <div className="font-medium text-gray-900 dark:text-white text-sm line-clamp-2">
+                                                                {module.title}
+                                                            </div>
+                                                        </td>
+                                                        <td className="py-4 px-4 sm:px-6 text-center">
+                                                            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 dark:bg-slate-700 text-xs font-bold text-gray-600 dark:text-gray-300">
+                                                                {module.credits}
+                                                            </span>
+                                                        </td>
+                                                        <td className="py-4 px-4 sm:px-6 text-center">
+                                                            {result ? (
+                                                                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${isPass
+                                                                        ? 'bg-green-50 text-green-700 border-green-100 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800'
+                                                                        : 'bg-red-50 text-red-700 border-red-100 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800'
+                                                                    }`}>
+                                                                    <span className={`w-1.5 h-1.5 rounded-full ${isPass ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                                                                    {isPass ? 'Pass' : 'Repeat'}
+                                                                </span>
+                                                            ) : (
+                                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-gray-50 text-gray-400 border border-gray-100 dark:bg-slate-700/50 dark:text-gray-500 dark:border-slate-700">
+                                                                    Pending
+                                                                </span>
+                                                            )}
+                                                        </td>
+                                                        <td className="py-4 px-4 sm:px-6 text-center">
+                                                            {result ? (
+                                                                <div className="flex flex-col items-center">
+                                                                    <span className={`text-lg font-black ${(result.grade || '').startsWith('A') ? 'text-emerald-600 dark:text-emerald-400' :
+                                                                            (result.grade || '').startsWith('B') ? 'text-blue-600 dark:text-blue-400' :
+                                                                                (result.grade || '').startsWith('C') ? 'text-yellow-600 dark:text-yellow-400' :
+                                                                                    'text-red-500 dark:text-red-400'
+                                                                        }`}>
+                                                                        {result.grade}
+                                                                    </span>
+                                                                    <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500">
+                                                                        GP: {result.gradePoint?.toFixed(2)}
+                                                                    </span>
+                                                                </div>
+                                                            ) : (
+                                                                <span className="text-gray-200 dark:text-gray-700 font-bold text-xl">-</span>
+                                                            )}
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
             {renderDegreeRulesModal()}
             {renderGradingScaleModal()}
