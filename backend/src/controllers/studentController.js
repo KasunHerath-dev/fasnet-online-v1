@@ -141,8 +141,6 @@ const updateStudent = async (req, res) => {
     logger.error('Update student error', { error: error.message });
     res.status(500).json({ error: { message: 'Failed to update student', code: 'UPDATE_STUDENT_FAILED', details: error.message } });
   }
-  res.status(500).json({ error: { message: 'Failed to update student', code: 'UPDATE_STUDENT_FAILED', details: error.message } });
-}
 };
 
 const updateMyProfile = async (req, res) => {
