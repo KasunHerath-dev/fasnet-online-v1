@@ -90,7 +90,10 @@ export default function StudentResources() {
                 const backendModules = res.data || [];
                 const map = {};
                 backendModules.forEach(m => {
-                    map[m.code] = m._id;
+                    // Normalize: Remove spaces to ensure matching (e.g. "CMIS 1113" or "CMIS1113")
+                    if (m.code) {
+                        map[m.code.replace(/\s+/g, '')] = m._id;
+                    }
                 });
                 setModuleMap(map);
             } catch (error) {
@@ -107,11 +110,12 @@ export default function StudentResources() {
         const loadResources = async () => {
             setFetchingResources(true);
             try {
-                // Resolve Code to ID
-                const backendId = moduleMap[selectedModuleId];
+                // Resolve Code to ID using Normalized Key
+                const normalizedCode = selectedModuleId.replace(/\s+/g, '');
+                const backendId = moduleMap[normalizedCode];
 
-                // If we have an ID, use it. Otherwise use the Code (fallback, though likely to fail if Schema requires ObjectId)
-                const queryId = backendId || selectedModuleId;
+                // If we have an ID, use it. Otherwise use the Normalized Code
+                const queryId = backendId || normalizedCode || selectedModuleId;
 
                 const res = await resourceService.getByModule(queryId);
                 setResources(res.data.data || []);
