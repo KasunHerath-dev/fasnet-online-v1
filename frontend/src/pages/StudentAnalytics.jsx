@@ -109,28 +109,28 @@ export default function StudentAnalytics() {
     const hasData = semesterResults.length > 0 || (profile?.results && profile.results.length > 0)
 
     return (
-        <div className="p-4 md:p-8 animate-fadeIn max-w-[1400px] mx-auto space-y-8">
+        <div className="p-4 md:p-6 lg:p-8 animate-fadeIn max-w-[1400px] mx-auto space-y-4 md:space-y-6 lg:space-y-8">
             {/* Header */}
-            <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-3xl shadow-xl p-8 text-white relative overflow-hidden">
+            <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl md:rounded-3xl shadow-xl p-6 md:p-8 text-white relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
 
                 <div className="relative z-10">
-                    <div className="flex items-center gap-3 mb-2">
-                        <span className="text-5xl">📊</span>
-                        <h1 className="text-3xl md:text-4xl font-bold">Academic Analytics</h1>
+                    <div className="flex items-center gap-2 md:gap-3 mb-2">
+                        <span className="text-4xl md:text-5xl">📊</span>
+                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">Academic Analytics</h1>
                     </div>
-                    <p className="text-xl md:text-2xl font-medium opacity-90 mb-4">
+                    <p className="text-lg md:text-xl lg:text-2xl font-medium opacity-90 mb-3 md:mb-4">
                         {student?.fullName}
                     </p>
-                    <div className="flex flex-wrap gap-3 text-sm">
-                        <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">
+                    <div className="flex flex-wrap gap-2 md:gap-3 text-xs md:text-sm">
+                        <span className="px-3 md:px-4 py-1.5 md:py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">
                             📋 {student?.registrationNumber}
                         </span>
-                        <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">
+                        <span className="px-3 md:px-4 py-1.5 md:py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">
                             🎓 Level {student?.level}
                         </span>
-                        <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">
+                        <span className="px-3 md:px-4 py-1.5 md:py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">
                             📅 {student?.batchYear}
                         </span>
                     </div>
@@ -138,22 +138,22 @@ export default function StudentAnalytics() {
             </div>
 
             {/* Key Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-white rounded-2xl shadow-sm border-2 border-indigo-200 p-6 hover:shadow-md transition-shadow">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border-2 border-indigo-200 p-4 md:p-6 hover:shadow-md transition-shadow">
                     <div className="flex justify-between items-start mb-2">
-                        <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Current Level</p>
-                        <span className="text-3xl">📚</span>
+                        <p className="text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wide">Current Level</p>
+                        <span className="text-2xl md:text-3xl">📚</span>
                     </div>
-                    <p className="text-4xl font-bold text-indigo-600">{student?.level || 1}</p>
+                    <p className="text-3xl md:text-4xl font-bold text-indigo-600">{student?.level || 1}</p>
                     <p className="text-xs text-gray-500 mt-1">Academic Year {student?.batchYear}</p>
                 </div>
 
-                <div className="bg-white rounded-2xl shadow-sm border-2 border-purple-200 p-6 hover:shadow-md transition-shadow">
+                <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border-2 border-purple-200 p-4 md:p-6 hover:shadow-md transition-shadow">
                     <div className="flex justify-between items-start mb-2">
-                        <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Overall GPA</p>
-                        <span className="text-3xl">🎯</span>
+                        <p className="text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wide">Overall GPA</p>
+                        <span className="text-2xl md:text-3xl">🎯</span>
                     </div>
-                    <p className="text-4xl font-bold text-purple-600">
+                    <p className="text-3xl md:text-4xl font-bold text-purple-600">
                         {profile?.gpa?.overall > 0 ? profile.gpa.overall.toFixed(2) : student?.cumulativeGPA?.toFixed(2) || '0.00'}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
@@ -161,26 +161,26 @@ export default function StudentAnalytics() {
                     </p>
                 </div>
 
-                <div className="bg-white rounded-2xl shadow-sm border-2 border-green-200 p-6 hover:shadow-md transition-shadow">
+                <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border-2 border-green-200 p-4 md:p-6 hover:shadow-md transition-shadow">
                     <div className="flex justify-between items-start mb-2">
-                        <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Total Credits</p>
-                        <span className="text-3xl">⭐</span>
+                        <p className="text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wide">Total Credits</p>
+                        <span className="text-2xl md:text-3xl">⭐</span>
                     </div>
-                    <p className="text-4xl font-bold text-green-600">
+                    <p className="text-3xl md:text-4xl font-bold text-green-600">
                         {profile?.credits?.total || student?.totalCreditsEarned || 0}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">Out of 120 required</p>
                 </div>
 
-                <div className="bg-white rounded-2xl shadow-sm border-2 border-amber-200 p-6 hover:shadow-md transition-shadow">
+                <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border-2 border-amber-200 p-4 md:p-6 hover:shadow-md transition-shadow">
                     <div className="flex justify-between items-start mb-2">
-                        <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Academic Status</p>
-                        <span className="text-3xl">
+                        <p className="text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wide">Academic Status</p>
+                        <span className="text-2xl md:text-3xl">
                             {student?.academicStatus === 'Regular' ? '✅' :
                                 student?.academicStatus === 'Probation' ? '⚠️' : '📌'}
                         </span>
                     </div>
-                    <p className="text-2xl font-bold text-amber-600">
+                    <p className="text-xl md:text-2xl font-bold text-amber-600">
                         {student?.academicStatus || 'Regular'}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">Current standing</p>
@@ -191,10 +191,10 @@ export default function StudentAnalytics() {
                 <>
                     {/* GPA Progression Chart */}
                     {semesterResults.length > 0 && (
-                        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-                            <div className="flex items-center gap-3 mb-6">
-                                <span className="text-3xl">📈</span>
-                                <h2 className="text-2xl font-bold text-gray-900">GPA Progression</h2>
+                        <div className="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 p-6 md:p-8">
+                            <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                                <span className="text-2xl md:text-3xl">📈</span>
+                                <h2 className="text-xl md:text-2xl font-bold text-gray-900">GPA Progression</h2>
                             </div>
                             <ResponsiveContainer width="100%" height={350}>
                                 <LineChart data={semesterResults}>
