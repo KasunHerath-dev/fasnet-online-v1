@@ -53,10 +53,10 @@ export default function StudentsPage() {
   const hasActiveFilters = query || district || batch
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-indigo-50/30 p-4 md:p-8">
-      <div className="max-w-7xl mx-auto space-y-6 animate-fadeIn">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-indigo-50/30 p-4 md:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto space-y-4 md:space-y-6 animate-fadeIn">
         {/* Enhanced Header */}
-        <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-3xl p-6 md:p-8 shadow-2xl">
+        <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-2xl md:rounded-3xl p-6 md:p-8 shadow-2xl">
           {/* Decorative elements - hidden on mobile */}
           <div className="hidden md:block absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
           <div className="hidden md:block absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
@@ -69,37 +69,37 @@ export default function StudentsPage() {
                     <span className="text-2xl md:text-3xl">👥</span>
                   </div>
                   <div>
-                    <h1 className="text-2xl md:text-4xl font-black text-white mb-1">Students</h1>
-                    <p className="text-xs md:text-base text-indigo-100 font-medium">Manage your student records with ease</p>
+                    <h1 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mb-1">Students</h1>
+                    <p className="text-xs md:text-sm lg:text-base text-indigo-100 font-medium">Manage your student records with ease</p>
                   </div>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2 md:gap-3">
                 {selectedIds.length > 0 && (
                   <>
                     <button
                       onClick={() => setShowDeleteModal(true)}
-                      className="flex items-center gap-2 px-5 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all hover:scale-105"
+                      className="min-h-[44px] flex items-center gap-2 px-4 md:px-5 py-2.5 md:py-3 text-sm md:text-base bg-red-500 hover:bg-red-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95"
                     >
-                      <Trash2 className="w-5 h-5" />
+                      <Trash2 className="w-4 h-4 md:w-5 md:h-5" />
                       Delete ({selectedIds.length})
                     </button>
                     <button
                       onClick={handleExport}
-                      className="flex items-center gap-2 px-5 py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all hover:scale-105"
+                      className="min-h-[44px] flex items-center gap-2 px-4 md:px-5 py-2.5 md:py-3 text-sm md:text-base bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95"
                     >
-                      <Download className="w-5 h-5" />
+                      <Download className="w-4 h-4 md:w-5 md:h-5" />
                       Export
                     </button>
                   </>
                 )}
                 <a
                   href="/students/new"
-                  className="flex items-center gap-2 px-6 py-3 bg-white text-indigo-600 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105"
+                  className="min-h-[44px] flex items-center gap-2 px-4 md:px-6 py-2.5 md:py-3 text-sm md:text-base bg-white text-indigo-600 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95"
                 >
-                  <UserPlus className="w-5 h-5" />
+                  <UserPlus className="w-4 h-4 md:w-5 md:h-5" />
                   Add Student
                 </a>
               </div>
@@ -108,7 +108,7 @@ export default function StudentsPage() {
         </div>
 
         {/* Filters & View Controls */}
-        <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-100">
+        <div className="bg-white rounded-xl md:rounded-2xl shadow-xl border-2 border-gray-100">
           {/* Filter Header */}
           <div className="bg-gradient-to-r from-gray-50 to-indigo-50/50 px-4 md:px-6 py-3 md:py-4 border-b-2 border-gray-100">
             <div className="flex items-center justify-between flex-wrap gap-3">
@@ -123,7 +123,7 @@ export default function StudentsPage() {
               </div>
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 bg-white border-2 border-gray-200 rounded-xl hover:bg-gray-50 transition-all font-medium text-gray-700 text-sm"
+                className="min-h-[44px] flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 text-xs md:text-sm bg-white border-2 border-gray-200 rounded-xl hover:bg-gray-50 transition-all font-medium text-gray-700 active:scale-95"
               >
                 {showFilters ? 'Hide' : 'Show'} Filters
               </button>
@@ -136,14 +136,14 @@ export default function StudentsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 relative z-30">
                 {/* Search */}
                 <div className="lg:col-span-2">
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                  <label className="block text-xs md:text-sm font-bold text-gray-700 mb-2">
                     Search Students
                   </label>
                   <div className="relative">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
                     <input
                       type="text"
-                      className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border-2 border-gray-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all font-medium text-gray-900 placeholder-gray-400"
+                      className="w-full pl-10 md:pl-12 pr-4 py-2.5 md:py-3.5 text-sm md:text-base bg-gray-50 border-2 border-gray-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all font-medium text-gray-900 placeholder-gray-400"
                       placeholder="Search by name, registration number..."
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
@@ -153,7 +153,7 @@ export default function StudentsPage() {
 
                 {/* District */}
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                  <label className="block text-xs md:text-sm font-bold text-gray-700 mb-2">
                     District
                   </label>
                   <div className="relative">
@@ -173,12 +173,12 @@ export default function StudentsPage() {
 
                 {/* Batch Year */}
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                  <label className="block text-xs md:text-sm font-bold text-gray-700 mb-2">
                     Batch Year
                   </label>
                   <input
                     type="text"
-                    className="w-full px-4 py-3.5 bg-gray-50 border-2 border-gray-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all font-medium text-gray-900 placeholder-gray-400"
+                    className="w-full px-3 md:px-4 py-2.5 md:py-3.5 text-sm md:text-base bg-gray-50 border-2 border-gray-200 rounded-xl focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all font-medium text-gray-900 placeholder-gray-400"
                     placeholder="e.g. 2024"
                     value={batch}
                     onChange={(e) => setBatch(e.target.value)}
@@ -188,12 +188,12 @@ export default function StudentsPage() {
 
               {/* Active Filters & Clear */}
               {hasActiveFilters && (
-                <div className="mt-6 pt-6 border-t-2 border-gray-100">
-                  <div className="flex items-center justify-between">
+                <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t-2 border-gray-100">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-sm font-bold text-gray-700">Active Filters:</span>
+                      <span className="text-xs md:text-sm font-bold text-gray-700">Active Filters:</span>
                       {query && (
-                        <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-100 text-indigo-700 rounded-lg text-sm font-semibold">
+                        <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-100 text-indigo-700 rounded-lg text-xs md:text-sm font-semibold">
                           Search: "{query}"
                           <button onClick={() => setQuery('')} className="hover:bg-indigo-200 rounded p-0.5">
                             <X className="w-3 h-3" />
@@ -201,7 +201,7 @@ export default function StudentsPage() {
                         </span>
                       )}
                       {district && (
-                        <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg text-sm font-semibold">
+                        <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg text-xs md:text-sm font-semibold">
                           District: {district}
                           <button onClick={() => setDistrict('')} className="hover:bg-blue-200 rounded p-0.5">
                             <X className="w-3 h-3" />
@@ -209,7 +209,7 @@ export default function StudentsPage() {
                         </span>
                       )}
                       {batch && (
-                        <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-100 text-purple-700 rounded-lg text-sm font-semibold">
+                        <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-100 text-purple-700 rounded-lg text-xs md:text-sm font-semibold">
                           Batch: {batch}
                           <button onClick={() => setBatch('')} className="hover:bg-purple-200 rounded p-0.5">
                             <X className="w-3 h-3" />
@@ -219,7 +219,7 @@ export default function StudentsPage() {
                     </div>
                     <button
                       onClick={clearFilters}
-                      className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold transition-all"
+                      className="min-h-[44px] flex items-center gap-2 px-4 py-2 text-xs md:text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold transition-all active:scale-95"
                     >
                       <X className="w-4 h-4" />
                       Clear All
