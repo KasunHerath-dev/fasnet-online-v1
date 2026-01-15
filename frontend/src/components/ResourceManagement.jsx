@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { academicService, authService, batchYearService, resourceService } from '../services/authService';
 import Dropdown from './Dropdown';
-import { Upload, FileText, Trash2, ExternalLink, CheckCircle, AlertCircle } from 'lucide-react';
+import BatchYearModal from './BatchYearModal';
+import { Upload, FileText, Trash2, ExternalLink, CheckCircle, AlertCircle, Plus } from 'lucide-react';
 
 // Using the same module list for fallback/consistency
 const ALL_MODULES = [
@@ -129,6 +130,7 @@ export default function ResourceManagement() {
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [user, setUser] = useState(null);
+    const [showBatchModal, setShowBatchModal] = useState(false);
 
     // Form States
     const [formData, setFormData] = useState({
@@ -188,11 +190,18 @@ export default function ResourceManagement() {
             setBatchYears(years);
 
             // Set default batch if available
-            if (years.length > 0 && !authService.getCurrentUser()?.batchScope) {
+            if (years.length > 0 && !authService.getCurrentUser()?.batchScope && !formData.batchYear) {
                 setFormData(prev => ({ ...prev, batchYear: years[0].year }));
             }
         } catch (error) {
             console.error("Failed to load batches", error);
+        }
+    };
+
+    const handleBatchYearCreated = (year) => {
+        loadInitialData(); // Refresh list
+        if (year) {
+            setFormData(prev => ({ ...prev, batchYear: year })); // Select new year
         }
     };
 
@@ -418,12 +427,22 @@ export default function ResourceManagement() {
                             {((formData.context === 'past_paper') || (formData.category === 'answer' && formData.context === 'past_paper')) && (
                                 <div className="animate-fadeIn">
                                     <label className="block text-sm font-bold text-gray-700 mb-2">Academic Year</label>
-                                    <Dropdown
-                                        value={formData.batchYear}
-                                        onChange={(e) => setFormData({ ...formData, batchYear: e.target.value })}
-                                        options={batchYears.map(y => ({ value: y.year, label: y.name || y.year }))}
-                                        placeholder="Select Academic Year"
-                                    />
+                                    <div className="flex gap-2">
+                                        <Dropdown
+                                            value={formData.batchYear}
+                                            onChange={(e) => setFormData({ ...formData, batchYear: e.target.value })}
+                                            options={batchYears.map(y => ({ value: y.year, label: y.name || y.year }))}
+                                            placeholder="Select Academic Year"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowBatchModal(true)}
+                                            className="w-12 h-12 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl transition-all flex items-center justify-center border-2 border-indigo-100"
+                                            title="Add New Academic Year"
+                                        >
+                                            <Plus className="w-5 h-5" />
+                                        </button>
+                                    </div>
                                 </div>
                             )}
 
@@ -596,7 +615,27 @@ export default function ResourceManagement() {
                     )}
                 </div>
             </div>
-        </div>
+
+            {/* Batch Year Modal */}
+            {
+                showBatchModal && (
+                    <BatchYearModal
+                        onClose={() => setShowBatchModal(false)}
+                        onSuccess={handleBatchYearCreated}
+                    />
+                )
+            }
+
+            <style jsx>{`
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .animate-fadeIn {
+                    animation: fadeIn 0.5s ease-out;
+                }
+            `}</style>
+        </div >
     );
 }
 
@@ -606,6 +645,7 @@ function ResourceItem({ resource, onDelete }) {
             <div className="flex items-center gap-4">
                 <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
                     <span className="text-xs font-bold text-gray-500 uppercase">{resource.mimeType?.split('/')[1] || 'FILE'}</span>
+
                 </div>
                 <div>
                     <h4 className="font-bold text-gray-800 flex items-center gap-2">
