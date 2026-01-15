@@ -310,61 +310,38 @@ export default function StudentResources() {
                                     <p className="text-gray-500 dark:text-gray-400">There are no resources available in this category yet.</p>
                                 </div>
                             ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
-                                    {categorized[activeTab].map(resource => (
-                                        <div key={resource._id} className="group bg-white dark:bg-slate-700 rounded-3xl p-2 shadow-sm border border-gray-100 dark:border-slate-600 hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
-                                            <div className="p-5 h-full flex flex-col">
-                                                <div className="flex items-start justify-between mb-4">
-                                                    <div className="p-3.5 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/50 transition-colors">
-                                                        <FileText className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
+                                <>
+                                    {activeTab === 'pastPapers' ? (
+                                        <div className="space-y-10">
+                                            {Object.entries(categorized.pastPapers.reduce((acc, resource) => {
+                                                const year = resource.academicYear || 'Unknown Academic Year';
+                                                if (!acc[year]) acc[year] = [];
+                                                acc[year].push(resource);
+                                                return acc;
+                                            }, {})).sort((a, b) => b[0].localeCompare(a[0])) // Sort by year descending (2024 > 2023)
+                                                .map(([year, yearResources]) => (
+                                                    <div key={year} className="animate-fadeIn">
+                                                        <div className="flex items-center gap-4 mb-4">
+                                                            <div className="h-px flex-1 bg-gray-200 dark:bg-slate-700"></div>
+                                                            <h3 className="text-lg font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">{year}</h3>
+                                                            <div className="h-px flex-1 bg-gray-200 dark:bg-slate-700"></div>
+                                                        </div>
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+                                                            {yearResources.map(resource => (
+                                                                <ResourceCard key={resource._id} resource={resource} />
+                                                            ))}
+                                                        </div>
                                                     </div>
-                                                    {resource.type === 'marking_scheme' && resource.answerFor && (
-                                                        <span className="px-3 py-1.5 rounded-xl bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-300 text-xs font-bold border border-teal-100 dark:border-teal-800 uppercase tracking-wide">
-                                                            {resource.answerFor.replace('_', ' ')} Answer
-                                                        </span>
-                                                    )}
-                                                    {resource.academicYear && (
-                                                        <span className="px-3 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 text-xs font-bold border border-purple-100 dark:border-purple-800 uppercase tracking-wide ml-2">
-                                                            {resource.academicYear}
-                                                        </span>
-                                                    )}
-                                                </div>
-
-                                                <h4 className="font-bold text-gray-900 dark:text-white line-clamp-2 mb-3 text-lg group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">
-                                                    {resource.title}
-                                                </h4>
-
-                                                <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-6 mt-auto">
-                                                    <span>{new Date(resource.createdAt).toLocaleDateString()}</span>
-                                                    <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-                                                    <span>{formatFileSize(resource.size)}</span>
-                                                </div>
-
-                                                <a
-                                                    href={(() => {
-                                                        const baseUrl = import.meta.env.VITE_API_BASE_URL || '';
-                                                        // Ensure we have /api/v1 if not already there, assuming standard setup
-                                                        // If VITE_API_BASE_URL ends in /api/v1, don't append. 
-                                                        // But usually it's just the host.
-                                                        // For safety, let's stick to the pattern used, but safer.
-                                                        const url = baseUrl.includes('/api/v1')
-                                                            ? baseUrl
-                                                            : `${baseUrl}/api/v1`;
-
-                                                        return `${url}/resources/stream/${resource._id}`;
-                                                    })()}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    download
-                                                    className="flex items-center justify-center gap-2 w-full py-3.5 bg-gray-50 dark:bg-slate-600 text-gray-700 dark:text-gray-200 rounded-2xl font-bold text-sm group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm group-hover:shadow-lg group-hover:shadow-indigo-500/30 cursor-pointer"
-                                                >
-                                                    <Download className="w-4 h-4" />
-                                                    Download
-                                                </a>
-                                            </div>
+                                                ))}
                                         </div>
-                                    ))}
-                                </div>
+                                    ) : (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+                                            {categorized[activeTab].map(resource => (
+                                                <ResourceCard key={resource._id} resource={resource} />
+                                            ))}
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </div>
                     )}

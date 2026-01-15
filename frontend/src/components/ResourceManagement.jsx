@@ -433,6 +433,7 @@ export default function ResourceManagement() {
                                             onChange={(e) => setFormData({ ...formData, batchYear: e.target.value })}
                                             options={batchYears.map(y => ({ value: y.year, label: y.name || y.year }))}
                                             placeholder="Select Academic Year"
+                                            className="flex-1"
                                         />
                                         {user?.roles?.includes('superadmin') && (
                                             <button
