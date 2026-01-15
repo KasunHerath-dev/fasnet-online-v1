@@ -345,43 +345,41 @@ export default function StudentProfile() {
                                     />
                                 </div>
                             </div>
-                    </div>
 
-                    {/* Reason */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Reason for Change <span className="text-red-500">*</span>
-                        </label>
-                        <textarea
-                            className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                            rows="3"
-                            placeholder="e.g., Updated contact information, moved to new address, etc."
-                            value={requestReason}
-                            onChange={(e) => setRequestReason(e.target.value)}
-                            required
-                        ></textarea>
-                    </div>
+                            {/* Reason */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Reason for Change <span className="text-red-500">*</span>
+                                </label>
+                                <textarea
+                                    className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                                    rows="3"
+                                    placeholder="e.g., Updated contact information, moved to new address, etc."
+                                    value={requestReason}
+                                    onChange={(e) => setRequestReason(e.target.value)}
+                                    required
+                                ></textarea>
+                            </div>
 
-                    <div className="pt-4 flex justify-end gap-3 border-t border-gray-100 dark:border-slate-700">
-                        <button
-                            type="button"
-                            onClick={() => setShowEditModal(false)}
-                            className="px-6 py-3 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-slate-600 font-medium transition-colors"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            className="px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-medium shadow-lg hover:shadow-xl transition-all"
-                        >
-                            Submit Request
-                        </button>
+                            <div className="pt-4 flex justify-end gap-3 border-t border-gray-100 dark:border-slate-700">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowEditModal(false)}
+                                    className="px-6 py-3 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-slate-600 font-medium transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-medium shadow-lg hover:shadow-xl transition-all"
+                                >
+                                    Submit Request
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                </form>
-            </div>
-        </div >
+                </div>
+            )}
+        </div>
     )
-}
-</div >
-)
 }
