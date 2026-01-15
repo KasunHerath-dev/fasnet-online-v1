@@ -434,14 +434,16 @@ export default function ResourceManagement() {
                                             options={batchYears.map(y => ({ value: y.year, label: y.name || y.year }))}
                                             placeholder="Select Academic Year"
                                         />
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowBatchModal(true)}
-                                            className="w-12 h-12 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl transition-all flex items-center justify-center border-2 border-indigo-100"
-                                            title="Add New Academic Year"
-                                        >
-                                            <Plus className="w-5 h-5" />
-                                        </button>
+                                        {user?.roles?.includes('superadmin') && (
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowBatchModal(true)}
+                                                className="w-12 h-12 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl transition-all flex items-center justify-center border-2 border-indigo-100"
+                                                title="Add New Academic Year"
+                                            >
+                                                <Plus className="w-5 h-5" />
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             )}
