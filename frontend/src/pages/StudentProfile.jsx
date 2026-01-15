@@ -415,6 +415,74 @@ export default function StudentProfile() {
                     </div>
                 </div>
             )}
+
+            {/* Name Edit Modal */}
+            {showNameModal && (
+                <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fadeIn">
+                    <div className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-md shadow-2xl animate-scaleIn overflow-hidden">
+                        <div className="p-6 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-slate-700 dark:to-slate-700 flex justify-between items-center">
+                            <div>
+                                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Update Name</h3>
+                                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Change your display name</p>
+                            </div>
+                            <button
+                                onClick={() => setShowNameModal(false)}
+                                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/50 transition-colors"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleNameSubmit} className="p-6 space-y-4">
+                            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-3 rounded-xl flex items-start gap-3">
+                                <span className="text-xl">ℹ️</span>
+                                <p className="text-xs text-blue-800 dark:text-blue-200">
+                                    This will update your display name immediately. Your official full name remains unchanged.
+                                </p>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">First Name</label>
+                                <input
+                                    type="text"
+                                    className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                                    value={nameForm.firstName}
+                                    onChange={(e) => setNameForm({ ...nameForm, firstName: e.target.value })}
+                                    placeholder="Enter First Name"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Last Name</label>
+                                <input
+                                    type="text"
+                                    className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                                    value={nameForm.lastName}
+                                    onChange={(e) => setNameForm({ ...nameForm, lastName: e.target.value })}
+                                    placeholder="Enter Last Name"
+                                    required
+                                />
+                            </div>
+
+                            <div className="pt-2 flex justify-end gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowNameModal(false)}
+                                    className="px-4 py-2 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-slate-600 font-medium text-sm transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium text-sm shadow-md hover:shadow-lg transition-all"
+                                >
+                                    Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
