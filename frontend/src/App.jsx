@@ -17,6 +17,7 @@ import AdminPage from './pages/AdminPage'
 import SystemUsersPage from './pages/SystemUsersPage'
 import MissingStudentsPage from './pages/MissingStudentsPage'
 import AdminAnalytics from './pages/AdminAnalytics'
+import AdminResourcesPage from './pages/AdminResourcesPage'
 import BulkCombinationPage from './pages/BulkCombinationPage'
 import StudentProfile from './pages/StudentProfile'
 import StudentAcademic from './pages/StudentAcademic'
@@ -191,6 +192,7 @@ export default function App() {
                           <Route path="/admin" element={<AdminPage />} />
                           <Route path="/admin/users" element={<SystemUsersPage />} />
                           <Route path="/admin" element={<AdminPage />} />
+                          <Route path="/admin/resources" element={<AdminResourcesPage />} />
                           <Route path="/admin/users" element={<SystemUsersPage />} />
                           <Route path="/admin/analytics" element={<AdminAnalytics />} />
                           <Route path="/admin/bulk-combination" element={<BulkCombinationPage />} />
