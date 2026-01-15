@@ -10,6 +10,8 @@ import {
     CheckCircle
 } from 'lucide-react';
 import { academicService } from '../services/academicService';
+import { authService } from '../services/authService';
+import { MODULE_DATA } from '../data/moduleList';
 import { resourceService } from '../services/resourceService';
 import Loader from '../components/Loader';
 import Dropdown from '../components/Dropdown';
@@ -21,24 +23,23 @@ export default function StudentResources() {
     const [resources, setResources] = useState([]);
     const [fetchingResources, setFetchingResources] = useState(false);
 
-    // Load enrolled modules
+    // Load enrolled modules from Static Data
     useEffect(() => {
-        const loadModules = async () => {
-            try {
-                const res = await academicService.getMyEnrollments();
-                // res is the array of modules (from service wrapper)
-                if (Array.isArray(res) && res.length > 0) {
-                    setModules(res);
-                    // Auto-select first module
-                    setSelectedModuleId(res[0]._id);
-                } else {
-                    setModules([]);
-                }
-            } catch (error) {
-                console.error("Failed to fetch enrollments", error);
-            } finally {
-                setLoading(false);
+        const loadModules = () => {
+            const user = authService.getUser();
+            const level = user?.studentRef?.level || 1; // Default to 1 if not set
+
+            // Filter by Level from static list
+            const levelModules = MODULE_DATA.filter(m => m.level === level);
+
+            if (levelModules.length > 0) {
+                setModules(levelModules);
+                // Auto-select first module (Use Code as ID)
+                setSelectedModuleId(levelModules[0].code);
+            } else {
+                setModules([]);
             }
+            setLoading(false);
         };
         loadModules();
     }, []);
@@ -136,7 +137,7 @@ export default function StudentResources() {
                                 value={selectedModuleId}
                                 onChange={(e) => setSelectedModuleId(e.target.value)}
                                 options={modules.map(m => ({
-                                    value: m._id,
+                                    value: m.code,
                                     label: `${m.code} - ${m.title}`
                                 }))}
                                 icon={<BookOpen className="w-4 h-4" />}

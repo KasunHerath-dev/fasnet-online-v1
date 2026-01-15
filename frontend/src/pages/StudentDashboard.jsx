@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { authService, academicService } from '../services/authService'
+import { MODULE_DATA } from '../data/moduleList'
 
 export default function StudentDashboard() {
     const [user, setUser] = useState(null)
@@ -220,17 +221,17 @@ export default function StudentDashboard() {
                         {/* Subjects List */}
                         <div>
                             <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-                                <span>📖</span> My Subjects
+                                <span>📖</span> My Subjects (Level {user?.studentRef?.level || '-'})
                             </h3>
                             <div className="space-y-3">
-                                {modules.length === 0 ? (
+                                {MODULE_DATA.filter(m => m.level === (user?.studentRef?.level || 1)).length === 0 ? (
                                     <div className="text-center py-8">
                                         <p className="text-gray-400 dark:text-gray-500 text-sm italic">
-                                            {combination ? 'Loading subjects...' : 'Subjects will appear once combination is assigned'}
+                                            No modules found for Level {user?.studentRef?.level}
                                         </p>
                                     </div>
                                 ) : (
-                                    modules.map((sub, idx) => {
+                                    MODULE_DATA.filter(m => m.level === (user?.studentRef?.level || 1)).map((sub, idx) => {
                                         // Determine styling based on department (simple mapping)
                                         let colorClass = 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700';
                                         let icon = '📘';
