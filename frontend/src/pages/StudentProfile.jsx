@@ -5,10 +5,8 @@ export default function StudentProfile() {
     const [student, setStudent] = useState(null)
     const [loading, setLoading] = useState(true)
     const [showEditModal, setShowEditModal] = useState(false)
-    const [showNameModal, setShowNameModal] = useState(false)
     const [pendingRequest, setPendingRequest] = useState(null)
     const [formData, setFormData] = useState({})
-    const [nameForm, setNameForm] = useState({ firstName: '', lastName: '' })
     const [requestReason, setRequestReason] = useState('')
 
     useEffect(() => {
@@ -38,6 +36,8 @@ export default function StudentProfile() {
 
     const handleEditClick = () => {
         setFormData({
+            firstName: student.firstName || '',
+            lastName: student.lastName || '',
             address: student.address || '',
             contactNumber: student.contactNumber || '',
             email: student.email || '',
@@ -48,53 +48,67 @@ export default function StudentProfile() {
         setShowEditModal(true)
     }
 
-    const handleNameEditClick = () => {
-        setNameForm({
-            firstName: student.firstName || '',
-            lastName: student.lastName || ''
-        })
-        setShowNameModal(true)
-    }
-
-    const handleNameSubmit = async (e) => {
-        e.preventDefault()
-        try {
-            await studentService.updateMyProfile(nameForm)
-            alert('Name updated successfully!')
-            setShowNameModal(false)
-            fetchProfile()
-            // Update local user storage to reflect name change immediately if needed
-            const user = authService.getUser()
-            if (user.studentRef) {
-                user.studentRef.firstName = nameForm.firstName
-                user.studentRef.lastName = nameForm.lastName
-                authService.setUser(user)
-            }
-        } catch (err) {
-            alert('Failed to update name: ' + (err.response?.data?.error?.message || err.message))
-        }
-    }
-
     const handleSubmitRequest = async (e) => {
         e.preventDefault()
         try {
-            if (!requestReason) {
-                alert('Please provide a reason for the change.')
+            // 1. Handle Direct Name Update
+            const nameUpdates = {}
+            if (formData.firstName !== student.firstName) nameUpdates.firstName = formData.firstName
+            if (formData.lastName !== student.lastName) nameUpdates.lastName = formData.lastName
+
+            let nameUpdated = false
+            if (Object.keys(nameUpdates).length > 0) {
+                await studentService.updateMyProfile(nameUpdates)
+                nameUpdated = true
+
+                // Update local user storage
+                const user = authService.getUser()
+                if (user.studentRef) {
+                    user.studentRef.firstName = formData.firstName
+                    user.studentRef.lastName = formData.lastName
+                    authService.setUser(user)
+                }
+            }
+
+            // 2. Handle Profile Request (Other Fields)
+            const otherUpdates = { ...formData }
+            delete otherUpdates.firstName
+            delete otherUpdates.lastName
+
+            // Check if any other fields changed
+            // Helper to check equality loosely
+            const hasOtherChanges = Object.keys(otherUpdates).some(key => {
+                const original = student[key] || ''
+                const current = otherUpdates[key] || ''
+                return original !== current
+            })
+
+            if (hasOtherChanges) {
+                if (!requestReason) {
+                    alert('Please provide a reason for the contact details change.')
+                    return
+                }
+
+                await studentService.createProfileRequest({
+                    studentId: student._id,
+                    changes: otherUpdates,
+                    reason: requestReason
+                })
+                alert(nameUpdated
+                    ? 'Name updated successfully! Contact details request submitted for approval.'
+                    : 'Change request submitted for approval!')
+            } else if (nameUpdated) {
+                alert('Name updated successfully!')
+            } else {
+                alert('No changes detected.')
                 return
             }
 
-            await studentService.createProfileRequest({
-                studentId: student._id,
-                changes: formData,
-                reason: requestReason
-            })
-
-            alert('Change request submitted for approval!')
             setShowEditModal(false)
             setRequestReason('')
             fetchProfile()
         } catch (err) {
-            alert('Failed to submit request: ' + (err.response?.data?.error || err.message))
+            alert('Failed to submit: ' + (err.response?.data?.error || err.message))
         }
     }
 
@@ -216,17 +230,9 @@ export default function StudentProfile() {
                     <div className="md:w-2/3 p-8">
                         {/* Personal Details */}
                         <div className="mb-8">
-                            <div className="flex justify-between items-center mb-6 pb-3 border-b-2 border-gray-100 dark:border-slate-700">
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                    <span>👤</span> Personal Information
-                                </h3>
-                                <button
-                                    onClick={handleNameEditClick}
-                                    className="text-indigo-600 hover:text-indigo-700 font-medium text-sm flex items-center gap-1 bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1.5 rounded-lg transition-colors border border-indigo-100 dark:border-indigo-800"
-                                >
-                                    <span>✏️</span> Edit Name
-                                </button>
-                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 pb-3 border-b-2 border-gray-100 dark:border-slate-700 flex items-center gap-2">
+                                <span>👤</span> Personal Information
+                            </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <InfoField label="First Name" value={student.firstName} isMissing={!student.firstName} />
                                 <InfoField label="Last Name" value={student.lastName} isMissing={!student.lastName} />
@@ -416,73 +422,7 @@ export default function StudentProfile() {
                 </div>
             )}
 
-            {/* Name Edit Modal */}
-            {showNameModal && (
-                <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fadeIn">
-                    <div className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-md shadow-2xl animate-scaleIn overflow-hidden">
-                        <div className="p-6 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-slate-700 dark:to-slate-700 flex justify-between items-center">
-                            <div>
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Update Name</h3>
-                                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Change your display name</p>
-                            </div>
-                            <button
-                                onClick={() => setShowNameModal(false)}
-                                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/50 transition-colors"
-                            >
-                                ✕
-                            </button>
-                        </div>
 
-                        <form onSubmit={handleNameSubmit} className="p-6 space-y-4">
-                            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-3 rounded-xl flex items-start gap-3">
-                                <span className="text-xl">ℹ️</span>
-                                <p className="text-xs text-blue-800 dark:text-blue-200">
-                                    This will update your display name immediately. Your official full name remains unchanged.
-                                </p>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">First Name</label>
-                                <input
-                                    type="text"
-                                    className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                    value={nameForm.firstName}
-                                    onChange={(e) => setNameForm({ ...nameForm, firstName: e.target.value })}
-                                    placeholder="Enter First Name"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Last Name</label>
-                                <input
-                                    type="text"
-                                    className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                    value={nameForm.lastName}
-                                    onChange={(e) => setNameForm({ ...nameForm, lastName: e.target.value })}
-                                    placeholder="Enter Last Name"
-                                    required
-                                />
-                            </div>
-
-                            <div className="pt-2 flex justify-end gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => setShowNameModal(false)}
-                                    className="px-4 py-2 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-slate-600 font-medium text-sm transition-colors"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium text-sm shadow-md hover:shadow-lg transition-all"
-                                >
-                                    Save Changes
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
         </div>
     )
 }
