@@ -14,6 +14,14 @@ const studentSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    firstName: {
+      type: String,
+      trim: true,
+    },
+    lastName: {
+      type: String,
+      trim: true,
+    },
     nicNumber: {
       type: String,
       trim: true,

@@ -36,6 +36,8 @@ export default function StudentProfile() {
 
     const handleEditClick = () => {
         setFormData({
+            firstName: student.firstName || '',
+            lastName: student.lastName || '',
             address: student.address || '',
             contactNumber: student.contactNumber || '',
             email: student.email || '',
@@ -135,7 +137,11 @@ export default function StudentProfile() {
                         {/* Middle Section - Student Info */}
                         <div className="relative z-10 flex-1 flex flex-col justify-center space-y-4">
                             <div>
-                                <h2 className="text-3xl font-bold mb-2 leading-tight">{student?.fullName}</h2>
+                                <h2 className="text-3xl font-bold mb-2 leading-tight">
+                                    {(student.firstName && student.lastName)
+                                        ? `${student.firstName} ${student.lastName}`
+                                        : student.fullName}
+                                </h2>
                                 <p className="text-white/90 text-lg font-medium">{student?.registrationNumber}</p>
                             </div>
 
@@ -187,7 +193,9 @@ export default function StudentProfile() {
                                 <span>👤</span> Personal Information
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <InfoField label="Full Name" value={student.fullName} />
+                                <InfoField label="First Name" value={student.firstName} isMissing={!student.firstName} />
+                                <InfoField label="Last Name" value={student.lastName} isMissing={!student.lastName} />
+                                <InfoField label="Full Name (Official)" value={student.fullName} />
                                 <InfoField label="NIC Number" value={student.nicNumber} isMissing={!student.nicNumber} />
                                 <InfoField label="Gender" value={student.gender} isMissing={!student.gender} />
                                 <InfoField
@@ -256,101 +264,124 @@ export default function StudentProfile() {
                                 </p>
                             </div>
 
-                            {/* Contact Information */}
-                            <div>
-                                <h4 className="font-bold text-gray-900 dark:text-white mb-4 text-lg">Contact Information</h4>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
-                                        <input
-                                            type="email"
-                                            className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                            value={formData.email}
-                                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone Number</label>
-                                        <input
-                                            type="text"
-                                            className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                            value={formData.contactNumber}
-                                            onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">WhatsApp</label>
-                                        <input
-                                            type="text"
-                                            className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                            value={formData.whatsapp}
-                                            onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Address</label>
-                                        <input
-                                            type="text"
-                                            className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                            value={formData.address}
-                                            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nearest City</label>
-                                        <input
-                                            type="text"
-                                            className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                            value={formData.nearestCity}
-                                            onChange={(e) => setFormData({ ...formData, nearestCity: e.target.value })}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">District</label>
-                                        <input
-                                            type="text"
-                                            className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                            value={formData.district}
-                                            onChange={(e) => setFormData({ ...formData, district: e.target.value })}
-                                        />
-                                    </div>
+                            <h4 className="font-bold text-gray-900 dark:text-white mb-4 text-lg">Personal Details</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">First Name</label>
+                                    <input
+                                        type="text"
+                                        className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                                        value={formData.firstName}
+                                        onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                                        placeholder="Enter your first name"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Last Name</label>
+                                    <input
+                                        type="text"
+                                        className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                                        value={formData.lastName}
+                                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                                        placeholder="Enter your last name"
+                                    />
                                 </div>
                             </div>
 
-                            {/* Reason */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Reason for Change <span className="text-red-500">*</span>
-                                </label>
-                                <textarea
-                                    className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                    rows="3"
-                                    placeholder="e.g., Updated contact information, moved to new address, etc."
-                                    value={requestReason}
-                                    onChange={(e) => setRequestReason(e.target.value)}
-                                    required
-                                ></textarea>
+                            <h4 className="font-bold text-gray-900 dark:text-white mb-4 text-lg">Contact Information</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                                    <input
+                                        type="email"
+                                        className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone Number</label>
+                                    <input
+                                        type="text"
+                                        className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                                        value={formData.contactNumber}
+                                        onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">WhatsApp</label>
+                                    <input
+                                        type="text"
+                                        className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                                        value={formData.whatsapp}
+                                        onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Address</label>
+                                    <input
+                                        type="text"
+                                        className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                                        value={formData.address}
+                                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nearest City</label>
+                                    <input
+                                        type="text"
+                                        className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                                        value={formData.nearestCity}
+                                        onChange={(e) => setFormData({ ...formData, nearestCity: e.target.value })}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">District</label>
+                                    <input
+                                        type="text"
+                                        className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                                        value={formData.district}
+                                        onChange={(e) => setFormData({ ...formData, district: e.target.value })}
+                                    />
+                                </div>
                             </div>
-
-                            <div className="pt-4 flex justify-end gap-3 border-t border-gray-100 dark:border-slate-700">
-                                <button
-                                    type="button"
-                                    onClick={() => setShowEditModal(false)}
-                                    className="px-6 py-3 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-slate-600 font-medium transition-colors"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-medium shadow-lg hover:shadow-xl transition-all"
-                                >
-                                    Submit Request
-                                </button>
-                            </div>
-                        </form>
                     </div>
-                </div>
-            )}
-        </div>
+
+                    {/* Reason */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Reason for Change <span className="text-red-500">*</span>
+                        </label>
+                        <textarea
+                            className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                            rows="3"
+                            placeholder="e.g., Updated contact information, moved to new address, etc."
+                            value={requestReason}
+                            onChange={(e) => setRequestReason(e.target.value)}
+                            required
+                        ></textarea>
+                    </div>
+
+                    <div className="pt-4 flex justify-end gap-3 border-t border-gray-100 dark:border-slate-700">
+                        <button
+                            type="button"
+                            onClick={() => setShowEditModal(false)}
+                            className="px-6 py-3 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-slate-600 font-medium transition-colors"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-medium shadow-lg hover:shadow-xl transition-all"
+                        >
+                            Submit Request
+                        </button>
+                    </div>
+                </form>
+                    </div>
+                </div >
+            )
+}
+        </div >
     )
 }
