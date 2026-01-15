@@ -166,34 +166,34 @@ export default function StudentResources() {
     }
 
     return (
-        <div className="p-4 md:p-8 animate-fadeIn max-w-[1400px] mx-auto space-y-8">
+        <div className="p-4 md:p-6 lg:p-8 animate-fadeIn max-w-[1400px] mx-auto space-y-6 md:space-y-8">
             {/* Header Card */}
-            <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-3xl shadow-xl p-8 text-white relative overflow-hidden">
+            <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-2xl md:rounded-3xl shadow-xl p-6 md:p-8 text-white relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-2xl"></div>
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24 blur-2xl"></div>
 
-                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4 md:gap-6">
                     <div>
-                        <div className="flex items-center gap-3 mb-2">
-                            <span className="text-4xl">📚</span>
-                            <h1 className="text-3xl md:text-4xl font-black tracking-tight">Academic Resources</h1>
+                        <div className="flex items-center gap-2 md:gap-3 mb-2">
+                            <span className="text-3xl md:text-4xl">📚</span>
+                            <h1 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tight">Academic Resources</h1>
                         </div>
-                        <p className="text-blue-100 font-medium text-lg max-w-xl">
+                        <p className="text-blue-100 font-medium text-sm md:text-base lg:text-lg max-w-xl">
                             Access lecture materials, tutorials, and past papers, filtered by your academic year.
                         </p>
                     </div>
                     {/* Quick Filters in Header */}
-                    <div className="flex gap-3 bg-white/10 p-2 rounded-2xl backdrop-blur-sm border border-white/20">
+                    <div className="flex flex-wrap sm:flex-nowrap gap-2 md:gap-3 bg-white/10 p-2 md:p-3 rounded-xl md:rounded-2xl backdrop-blur-sm border border-white/20">
                         <div className="flex flex-col px-2">
-                            <span className="text-[10px] font-bold text-blue-200 uppercase tracking-wider mb-1">Academic Level</span>
-                            <div className="flex gap-1">
+                            <span className="text-[10px] md:text-xs font-bold text-blue-200 uppercase tracking-wider mb-1">Academic Level</span>
+                            <div className="flex gap-1.5">
                                 {[1, 2, 3, 4].map(l => (
                                     <button
                                         key={l}
                                         onClick={() => setFilterLevel(l.toString())}
-                                        className={`w-8 h-8 rounded-lg text-sm font-bold transition-all ${filterLevel === l.toString()
-                                            ? 'bg-white text-indigo-600 shadow-lg'
-                                            : 'text-white hover:bg-white/20'
+                                        className={`min-w-[40px] min-h-[40px] w-10 h-10 md:w-11 md:h-11 rounded-lg md:rounded-xl text-sm md:text-base font-bold transition-all ${filterLevel === l.toString()
+                                            ? 'bg-white text-indigo-600 shadow-lg scale-105'
+                                            : 'text-white hover:bg-white/20 active:scale-95'
                                             }`}
                                     >
                                         {l}
@@ -201,17 +201,17 @@ export default function StudentResources() {
                                 ))}
                             </div>
                         </div>
-                        <div className="w-px bg-white/20 my-1"></div>
+                        <div className="hidden sm:block w-px bg-white/20 my-1"></div>
                         <div className="flex flex-col px-2">
-                            <span className="text-[10px] font-bold text-blue-200 uppercase tracking-wider mb-1">Semester</span>
-                            <div className="flex gap-1">
+                            <span className="text-[10px] md:text-xs font-bold text-blue-200 uppercase tracking-wider mb-1">Semester</span>
+                            <div className="flex gap-1.5">
                                 {[1, 2].map(s => (
                                     <button
                                         key={s}
                                         onClick={() => setFilterSemester(s.toString())}
-                                        className={`w-8 h-8 rounded-lg text-sm font-bold transition-all ${filterSemester === s.toString()
-                                            ? 'bg-white text-indigo-600 shadow-lg'
-                                            : 'text-white hover:bg-white/20'
+                                        className={`min-w-[40px] min-h-[40px] w-10 h-10 md:w-11 md:h-11 rounded-lg md:rounded-xl text-sm md:text-base font-bold transition-all ${filterSemester === s.toString()
+                                            ? 'bg-white text-indigo-600 shadow-lg scale-105'
+                                            : 'text-white hover:bg-white/20 active:scale-95'
                                             }`}
                                     >
                                         {s}
@@ -262,8 +262,8 @@ export default function StudentResources() {
 
                         {/* Tabs */}
                         <div className="flex-1 w-full overflow-x-auto no-scrollbar">
-                            <label className="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Resource Category</label>
-                            <div className="flex gap-3">
+                            <label className="block text-xs md:text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Resource Category</label>
+                            <div className="flex gap-2 md:gap-3">
                                 {tabs.map(tab => {
                                     const Icon = tab.icon;
                                     const isActive = activeTab === tab.id;
@@ -272,17 +272,18 @@ export default function StudentResources() {
                                             key={tab.id}
                                             onClick={() => setActiveTab(tab.id)}
                                             className={`
-                                                flex items-center gap-3 px-5 py-3 rounded-2xl font-bold text-sm whitespace-nowrap transition-all duration-300
+                                                flex items-center gap-2 md:gap-3 px-4 md:px-5 py-2.5 md:py-3 min-h-[44px] rounded-xl md:rounded-2xl font-bold text-xs md:text-sm whitespace-nowrap transition-all duration-300
                                                 ${isActive
                                                     ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30 scale-105'
-                                                    : 'bg-gray-50 dark:bg-slate-700/50 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-700'
+                                                    : 'bg-gray-50 dark:bg-slate-700/50 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-700 active:scale-95'
                                                 }
                                             `}
                                         >
-                                            <Icon className={`w-5 h-5 ${isActive ? 'text-white' : ''}`} />
-                                            {tab.label}
+                                            <Icon className={`w-4 h-4 md:w-5 md:h-5 flex-shrink-0 ${isActive ? 'text-white' : ''}`} />
+                                            <span className="hidden sm:inline">{tab.label}</span>
+                                            <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
                                             {tab.count > 0 && (
-                                                <span className={`ml-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${isActive ? 'bg-white/20 text-white' : 'bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-gray-300'}`}>
+                                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${isActive ? 'bg-white/20 text-white' : 'bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-gray-300'}`}>
                                                     {tab.count}
                                                 </span>
                                             )}
