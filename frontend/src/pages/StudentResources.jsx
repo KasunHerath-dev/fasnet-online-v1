@@ -223,10 +223,14 @@ export default function StudentResources() {
                                                 </div>
 
                                                 <a
-                                                    href={resource.webContentLink || resource.webViewLink}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="flex items-center justify-center gap-2 w-full py-3.5 bg-gray-50 dark:bg-slate-600 text-gray-700 dark:text-gray-200 rounded-2xl font-bold text-sm group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm group-hover:shadow-lg group-hover:shadow-indigo-500/30"
+                                                    href={(() => {
+                                                        const baseUrl = import.meta.env.VITE_API_BASE_URL
+                                                            ? `${import.meta.env.VITE_API_BASE_URL}/api/v1`
+                                                            : '/api/v1';
+                                                        return `${baseUrl}/resources/stream/${resource._id}`;
+                                                    })()}
+                                                    download
+                                                    className="flex items-center justify-center gap-2 w-full py-3.5 bg-gray-50 dark:bg-slate-600 text-gray-700 dark:text-gray-200 rounded-2xl font-bold text-sm group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm group-hover:shadow-lg group-hover:shadow-indigo-500/30 cursor-pointer"
                                                 >
                                                     <Download className="w-4 h-4" />
                                                     Download
