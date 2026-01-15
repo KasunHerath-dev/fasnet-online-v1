@@ -355,10 +355,10 @@ export default function ResourceManagement() {
                             </div>
                         </div>
 
-                        <form onSubmit={handleUpload} className="space-y-4">
+                        <form onSubmit={handleUpload} className="space-y-4 md:space-y-6">
                             {/* Level Selection */}
                             <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Level</label>
+                                <label className="block text-xs md:text-sm font-bold text-gray-700 mb-2">Level</label>
                                 <Dropdown
                                     value={formData.level}
                                     onChange={(e) => setFormData({ ...formData, level: e.target.value })}
@@ -368,7 +368,7 @@ export default function ResourceManagement() {
 
                             {/* Semester Selection */}
                             <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Semester</label>
+                                <label className="block text-xs md:text-sm font-bold text-gray-700 mb-2">Semester</label>
                                 <Dropdown
                                     value={formData.semester}
                                     onChange={(e) => setFormData({ ...formData, semester: e.target.value })}
@@ -379,8 +379,8 @@ export default function ResourceManagement() {
                             {/* Module Selection */}
                             <div>
                                 <div className="flex justify-between items-baseline mb-2">
-                                    <label className="text-sm font-bold text-gray-700">Module</label>
-                                    <span className="text-xs font-medium text-indigo-600">
+                                    <label className="text-xs md:text-sm font-bold text-gray-700">Module</label>
+                                    <span className="text-[10px] md:text-xs font-medium text-indigo-600">
                                         Filtering: L{formData.level} S{formData.semester}
                                     </span>
                                 </div>
@@ -401,7 +401,7 @@ export default function ResourceManagement() {
 
                             {/* Resource Category Selection */}
                             <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Resource Category</label>
+                                <label className="block text-xs md:text-sm font-bold text-gray-700 mb-2">Resource Category</label>
                                 <Dropdown
                                     value={formData.category}
                                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
@@ -412,7 +412,7 @@ export default function ResourceManagement() {
                             {/* Resource Context Selection (Tutorial, Past Paper, etc.) */}
                             {formData.category !== 'book' && (
                                 <div className="animate-fadeIn">
-                                    <label className="block text-sm font-bold text-gray-700 mb-2">
+                                    <label className="block text-xs md:text-sm font-bold text-gray-700 mb-2">
                                         {formData.category === 'question' ? 'Document Type' : 'Answer For'}
                                     </label>
                                     <Dropdown
@@ -426,7 +426,7 @@ export default function ResourceManagement() {
                             {/* Academic Year Selection (Only for Past Papers) */}
                             {((formData.context === 'past_paper') || (formData.category === 'answer' && formData.context === 'past_paper')) && (
                                 <div className="animate-fadeIn">
-                                    <label className="block text-sm font-bold text-gray-700 mb-2">Academic Year</label>
+                                    <label className="block text-xs md:text-sm font-bold text-gray-700 mb-2">Academic Year</label>
                                     <div className="flex gap-2">
                                         <Dropdown
                                             value={formData.batchYear}
@@ -439,10 +439,10 @@ export default function ResourceManagement() {
                                             <button
                                                 type="button"
                                                 onClick={() => setShowBatchModal(true)}
-                                                className="w-12 h-12 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl transition-all flex items-center justify-center border-2 border-indigo-100"
+                                                className="min-w-[44px] min-h-[44px] w-11 h-11 md:w-12 md:h-12 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl transition-all flex items-center justify-center border-2 border-indigo-100 flex-shrink-0"
                                                 title="Add New Academic Year"
                                             >
-                                                <Plus className="w-5 h-5" />
+                                                <Plus className="w-4 h-4 md:w-5 md:h-5" />
                                             </button>
                                         )}
                                     </div>
@@ -450,7 +450,7 @@ export default function ResourceManagement() {
                             )}
 
                             {/* File Upload */}
-                            <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:bg-gray-50 transition-colors cursor-pointer relative group">
+                            <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 md:p-6 text-center hover:bg-gray-50 transition-colors cursor-pointer relative group">
                                 <input
                                     type="file"
                                     onChange={handleFileChange}
@@ -458,16 +458,16 @@ export default function ResourceManagement() {
                                 />
                                 {formData.file ? (
                                     <div className="flex flex-col items-center">
-                                        <CheckCircle className="w-8 h-8 text-green-500 mb-2" />
-                                        <p className="font-bold text-gray-700">{formData.file.name}</p>
+                                        <CheckCircle className="w-7 h-7 md:w-8 md:h-8 text-green-500 mb-2" />
+                                        <p className="font-bold text-sm md:text-base text-gray-700 truncate max-w-full px-2">{formData.file.name}</p>
                                         <p className="text-xs text-gray-500">{(formData.file.size / 1024 / 1024).toFixed(2)} MB</p>
                                     </div>
                                 ) : (
                                     <div className="flex flex-col items-center text-gray-400 group-hover:text-gray-600">
-                                        <div className="p-3 bg-gray-100 rounded-full mb-3 group-hover:scale-110 transition-transform">
-                                            <Upload className="w-6 h-6" />
+                                        <div className="p-2.5 md:p-3 bg-gray-100 rounded-full mb-2 md:mb-3 group-hover:scale-110 transition-transform">
+                                            <Upload className="w-5 h-5 md:w-6 md:h-6" />
                                         </div>
-                                        <p className="font-bold">Click to upload or drag and drop</p>
+                                        <p className="font-bold text-sm md:text-base">Click to upload or drag and drop</p>
                                         <p className="text-xs">PDF, Word, PPT (Max 50MB)</p>
                                     </div>
                                 )}
@@ -475,12 +475,12 @@ export default function ResourceManagement() {
 
                             {/* Title Input */}
                             <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Title</label>
+                                <label className="block text-xs md:text-sm font-bold text-gray-700 mb-2">Title</label>
                                 <input
                                     type="text"
                                     value={formData.title}
                                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                    className="w-full p-3 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-blue-500 focus:ring-0 font-bold text-gray-700 transition-all outline-none"
+                                    className="w-full p-2.5 md:p-3 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-blue-500 focus:ring-0 font-bold text-sm md:text-base text-gray-700 transition-all outline-none"
                                     placeholder="e.g. Lecture 1 Slides"
                                     required
                                 />
@@ -489,13 +489,13 @@ export default function ResourceManagement() {
                             <button
                                 type="submit"
                                 disabled={uploading || !formData.file || !formData.moduleId}
-                                className={`w-full py-4 rounded-xl font-bold text-white shadow-lg flex items-center justify-center gap-2 transition-all
+                                className={`w-full min-h-[44px] py-3 md:py-4 rounded-xl font-bold text-sm md:text-base text-white shadow-lg flex items-center justify-center gap-2 transition-all
                                     ${uploading || !formData.file
                                         ? 'bg-gray-300 cursor-not-allowed'
-                                        : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-blue-200 hover:scale-[1.02]'}`}
+                                        : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-blue-200 hover:scale-[1.02] active:scale-95'}`}
                             >
                                 {uploading ? 'Uploading...' : 'Upload Resource'}
-                                {!uploading && <Upload className="w-5 h-5" />}
+                                {!uploading && <Upload className="w-4 h-4 md:w-5 md:h-5" />}
                             </button>
                         </form>
                     </div>
