@@ -378,10 +378,10 @@ export default function StudentProfile() {
                         </button>
                     </div>
                 </form>
-                    </div>
-                </div >
-            )
-}
+            </div>
         </div >
     )
+}
+</div >
+)
 }
