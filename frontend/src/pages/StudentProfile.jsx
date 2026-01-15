@@ -126,20 +126,20 @@ export default function StudentProfile() {
     )
 
     return (
-        <div className="p-4 md:p-8 animate-fadeIn max-w-[1400px] mx-auto space-y-6">
+        <div className="p-4 md:p-6 lg:p-8 animate-fadeIn max-w-[1400px] mx-auto space-y-4 md:space-y-6">
             {/* Header */}
-            <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 p-4 md:p-6">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Profile</h1>
-                        <p className="text-gray-500 dark:text-gray-400 mt-1">View and manage your personal information</p>
+                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">My Profile</h1>
+                        <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 mt-1">View and manage your personal information</p>
                     </div>
                     <button
                         onClick={handleEditClick}
                         disabled={!!pendingRequest}
-                        className={`px-6 py-3 rounded-xl font-medium transition-all ${pendingRequest
+                        className={`min-h-[44px] px-4 md:px-6 py-2.5 md:py-3 rounded-xl text-sm md:text-base font-medium transition-all ${pendingRequest
                             ? 'bg-yellow-100 text-yellow-700 cursor-not-allowed dark:bg-yellow-900/50 dark:text-yellow-400'
-                            : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg hover:shadow-xl'
+                            : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg hover:shadow-xl active:scale-95'
                             }`}
                     >
                         {pendingRequest ? '⏳ Update Pending' : '✏️ Request Edit'}
@@ -149,20 +149,20 @@ export default function StudentProfile() {
 
             {/* Pending Request Alert */}
             {pendingRequest && (
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-200 p-5 rounded-2xl flex items-start gap-4 animate-fadeIn">
-                    <span className="text-3xl">⏳</span>
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-200 p-4 md:p-5 rounded-xl md:rounded-2xl flex items-start gap-3 md:gap-4 animate-fadeIn">
+                    <span className="text-2xl md:text-3xl flex-shrink-0">⏳</span>
                     <div className="flex-1">
-                        <p className="font-bold text-lg">Profile Update Pending</p>
-                        <p className="text-sm mt-1">Your profile change request is awaiting admin approval. You'll be notified once it's reviewed.</p>
+                        <p className="font-bold text-base md:text-lg">Profile Update Pending</p>
+                        <p className="text-xs md:text-sm mt-1">Your profile change request is awaiting admin approval. You'll be notified once it's reviewed.</p>
                     </div>
                 </div>
             )}
 
             {/* Profile Card */}
-            <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden">
                 <div className="md:flex">
                     {/* Sidebar - Full Area Design */}
-                    <div className="md:w-1/3 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 p-8 text-white flex flex-col justify-between relative overflow-hidden min-h-[600px]">
+                    <div className="md:w-1/3 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 p-6 md:p-8 text-white flex flex-col justify-between relative overflow-hidden min-h-[500px] md:min-h-[600px]">
                         {/* Decorative Elements */}
                         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
                         <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
@@ -170,70 +170,70 @@ export default function StudentProfile() {
 
                         {/* Top Section - Initial */}
                         <div className="relative z-10">
-                            <div className="w-24 h-24 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-5xl font-bold border-2 border-white/30 shadow-xl mb-4">
+                            <div className="w-20 h-20 md:w-24 md:h-24 bg-white/20 backdrop-blur-md rounded-xl md:rounded-2xl flex items-center justify-center text-4xl md:text-5xl font-bold border-2 border-white/30 shadow-xl mb-4">
                                 {student?.fullName?.charAt(0) || 'S'}
                             </div>
                         </div>
 
                         {/* Middle Section - Student Info */}
-                        <div className="relative z-10 flex-1 flex flex-col justify-center space-y-4">
+                        <div className="relative z-10 flex-1 flex flex-col justify-center space-y-3 md:space-y-4">
                             <div>
-                                <h2 className="text-3xl font-bold mb-2 leading-tight">
+                                <h2 className="text-2xl md:text-3xl font-bold mb-2 leading-tight">
                                     {(student.firstName && student.lastName)
                                         ? `${student.firstName} ${student.lastName}`
                                         : student.fullName}
                                 </h2>
-                                <p className="text-white/90 text-lg font-medium">{student?.registrationNumber}</p>
+                                <p className="text-white/90 text-base md:text-lg font-medium">{student?.registrationNumber}</p>
                             </div>
 
                             <div className="h-px bg-white/20 my-2"></div>
 
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-3">
-                                    <span className="text-2xl">🎓</span>
+                            <div className="space-y-2 md:space-y-3">
+                                <div className="flex items-center gap-2 md:gap-3">
+                                    <span className="text-xl md:text-2xl">🎓</span>
                                     <div className="text-left">
                                         <p className="text-xs text-white/70 uppercase tracking-wide">Batch Year</p>
-                                        <p className="font-semibold">{student?.batchYear}</p>
+                                        <p className="text-sm md:text-base font-semibold">{student?.batchYear}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <span className="text-2xl">📚</span>
+                                <div className="flex items-center gap-2 md:gap-3">
+                                    <span className="text-xl md:text-2xl">📚</span>
                                     <div className="text-left">
                                         <p className="text-xs text-white/70 uppercase tracking-wide">Current Level</p>
-                                        <p className="font-semibold">Level {student?.level}</p>
+                                        <p className="text-sm md:text-base font-semibold">Level {student?.level}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <span className="text-2xl">🎯</span>
+                                <div className="flex items-center gap-2 md:gap-3">
+                                    <span className="text-xl md:text-2xl">🎯</span>
                                     <div className="text-left">
                                         <p className="text-xs text-white/70 uppercase tracking-wide">Programme</p>
-                                        <p className="font-semibold text-sm">{student?.course || 'B.Sc. Applied Sciences'}</p>
+                                        <p className="text-xs md:text-sm font-semibold">{student?.course || 'B.Sc. Applied Sciences'}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         {/* Bottom Section - Stats */}
-                        <div className="relative z-10 grid grid-cols-2 gap-3">
-                            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+                        <div className="relative z-10 grid grid-cols-2 gap-2 md:gap-3">
+                            <div className="bg-white/10 backdrop-blur-sm rounded-lg md:rounded-xl p-2.5 md:p-3 border border-white/20">
                                 <p className="text-xs text-white/70 uppercase tracking-wide mb-1">GPA</p>
-                                <p className="text-2xl font-bold">{student?.cumulativeGPA?.toFixed(2) || '0.00'}</p>
+                                <p className="text-xl md:text-2xl font-bold">{student?.cumulativeGPA?.toFixed(2) || '0.00'}</p>
                             </div>
-                            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+                            <div className="bg-white/10 backdrop-blur-sm rounded-lg md:rounded-xl p-2.5 md:p-3 border border-white/20">
                                 <p className="text-xs text-white/70 uppercase tracking-wide mb-1">Credits</p>
-                                <p className="text-2xl font-bold">{student?.totalCreditsEarned || 0}</p>
+                                <p className="text-xl md:text-2xl font-bold">{student?.totalCreditsEarned || 0}</p>
                             </div>
                         </div>
                     </div>
 
                     {/* Details Area */}
-                    <div className="md:w-2/3 p-8">
+                    <div className="md:w-2/3 p-6 md:p-8">
                         {/* Personal Details */}
-                        <div className="mb-8">
-                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 pb-3 border-b-2 border-gray-100 dark:border-slate-700 flex items-center gap-2">
+                        <div className="mb-6 md:mb-8">
+                            <h3 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6 pb-3 border-b-2 border-gray-100 dark:border-slate-700 flex items-center gap-2">
                                 <span>👤</span> Personal Information
                             </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                                 <InfoField label="First Name" value={student.firstName} isMissing={!student.firstName} />
                                 <InfoField label="Last Name" value={student.lastName} isMissing={!student.lastName} />
                                 <InfoField label="Full Name (Official)" value={student.fullName} />
