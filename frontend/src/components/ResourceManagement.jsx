@@ -318,7 +318,7 @@ export default function ResourceManagement() {
 
     return (
         <div className="space-y-8 animate-fadeIn">
-// Header removed (Mega auth is server-side)
+
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Upload Form */}
