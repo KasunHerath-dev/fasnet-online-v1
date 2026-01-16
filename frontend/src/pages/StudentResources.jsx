@@ -16,6 +16,109 @@ import { resourceService } from '../services/resourceService';
 import Loader from '../components/Loader';
 import Dropdown from '../components/Dropdown';
 
+// ResourceCard Component
+const ResourceCard = ({ resource }) => {
+    const getTypeColor = (type) => {
+        const colors = {
+            tutorial: 'from-blue-500 to-indigo-600',
+            assignment: 'from-orange-500 to-amber-600',
+            past_paper: 'from-emerald-500 to-teal-600',
+            book: 'from-rose-500 to-pink-600',
+            marking_scheme: 'from-purple-500 to-violet-600',
+            other: 'from-gray-500 to-slate-600'
+        };
+        return colors[type] || colors.other;
+    };
+
+    const getTypeIcon = (type) => {
+        const icons = {
+            tutorial: FileText,
+            assignment: CheckCircle,
+            past_paper: BookOpen,
+            book: BookOpen,
+            marking_scheme: FileText,
+            other: File
+        };
+        const Icon = icons[type] || File;
+        return <Icon className="w-5 h-5" />;
+    };
+
+    const formatFileSize = (bytes) => {
+        if (!bytes || bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    };
+
+    const handleDownload = () => {
+        if (resource.downloadUrl) {
+            window.open(resource.downloadUrl, '_blank');
+        } else if (resource._id) {
+            window.open(`/api/v1/resources/stream/${resource._id}`, '_blank');
+        }
+    };
+
+    return (
+        <div className="group bg-white dark:bg-slate-800 rounded-2xl shadow-sm border-2 border-gray-100 dark:border-slate-700 hover:shadow-xl hover:border-indigo-200 dark:hover:border-indigo-600 transition-all duration-300 overflow-hidden">
+            {/* Header with gradient */}
+            <div className={`bg-gradient-to-r ${getTypeColor(resource.type)} p-4 text-white`}>
+                <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-base md:text-lg line-clamp-2 mb-1">
+                            {resource.title}
+                        </h3>
+                        {resource.academicYear && (
+                            <span className="inline-block px-2 py-0.5 bg-white/20 rounded-full text-xs font-semibold">
+                                {resource.academicYear}
+                            </span>
+                        )}
+                    </div>
+                    <div className="flex-shrink-0">
+                        {getTypeIcon(resource.type)}
+                    </div>
+                </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-4 space-y-3">
+                {/* File Info */}
+                <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-500 dark:text-gray-400">
+                        {resource.fileName || 'Resource File'}
+                    </span>
+                    {resource.fileSize && (
+                        <span className="text-gray-400 dark:text-gray-500 text-xs">
+                            {formatFileSize(resource.fileSize)}
+                        </span>
+                    )}
+                </div>
+
+                {/* Type Badge */}
+                <div className="flex items-center gap-2">
+                    <span className="px-3 py-1 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-full text-xs font-semibold capitalize">
+                        {resource.type.replace('_', ' ')}
+                    </span>
+                    {resource.answerFor && (
+                        <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-xs font-semibold">
+                            Answer Key
+                        </span>
+                    )}
+                </div>
+
+                {/* Download Button */}
+                <button
+                    onClick={handleDownload}
+                    className="w-full min-h-[44px] flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-xl transition-all shadow-md hover:shadow-lg active:scale-95"
+                >
+                    <Download className="w-4 h-4" />
+                    <span>Download</span>
+                </button>
+            </div>
+        </div>
+    );
+};
+
 export default function StudentResources() {
     const [loading, setLoading] = useState(true);
     const [modules, setModules] = useState([]);
@@ -84,13 +187,9 @@ export default function StudentResources() {
         const fetchBackendModules = async () => {
             try {
                 const res = await academicService.getModules();
-                // res.data if axios, or res if array directly? academicService.getModules uses api.get which usually returns data.
-                // Checking academicController.js: res.json(modules).
-                // Checking api.js: axios response. So res.data is the array.
                 const backendModules = res.data || [];
                 const map = {};
                 backendModules.forEach(m => {
-                    // Normalize: Remove spaces to ensure matching (e.g. "CMIS 1113" or "CMIS1113")
                     if (m.code) {
                         map[m.code.replace(/\s+/g, '')] = m._id;
                     }
@@ -110,11 +209,8 @@ export default function StudentResources() {
         const loadResources = async () => {
             setFetchingResources(true);
             try {
-                // Resolve Code to ID using Normalized Key
                 const normalizedCode = selectedModuleId.replace(/\s+/g, '');
                 const backendId = moduleMap[normalizedCode];
-
-                // If we have an ID, use it. Otherwise use the Normalized Code
                 const queryId = backendId || normalizedCode || selectedModuleId;
 
                 const res = await resourceService.getByModule(queryId);
@@ -127,10 +223,6 @@ export default function StudentResources() {
             }
         };
 
-        // Only load if we have the map populated OR if we are willing to try with just code (race condition on initial load)
-        // Better to wait for map?
-        // If moduleMap is empty, might be loading. 
-        // We can add moduleMap to dependency, and if backendId is found, triggers reload.
         loadResources();
     }, [selectedModuleId, moduleMap]);
 
@@ -201,7 +293,9 @@ export default function StudentResources() {
                                 ))}
                             </div>
                         </div>
-                        <div className="hidden sm:block w-px bg-white/20 my-1"></div>
+
+                        <div className="hidden sm:block w-px h-16 bg-white/20"></div>
+
                         <div className="flex flex-col px-2">
                             <span className="text-[10px] md:text-xs font-bold text-blue-200 uppercase tracking-wider mb-1">Semester</span>
                             <div className="flex gap-1.5">
@@ -223,28 +317,22 @@ export default function StudentResources() {
                 </div>
             </div>
 
-            {/* Module Selector & Controls */}
-            {modules.length === 0 ? (
-                <div className="bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-100 dark:border-yellow-900/30 rounded-3xl p-8 text-center max-w-2xl mx-auto mt-12">
-                    <div className="bg-yellow-100 dark:bg-yellow-900/30 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <AlertCircle className="w-10 h-10 text-yellow-600 dark:text-yellow-400" />
+            {/* Main Content Card */}
+            {filteredModules.length === 0 ? (
+                <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl border-2 border-gray-100 dark:border-slate-700 p-12 text-center">
+                    <div className="bg-gray-100 dark:bg-slate-700 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                        <AlertCircle className="w-12 h-12 text-gray-400 dark:text-gray-500" />
                     </div>
-                    <h3 className="text-2xl font-bold text-yellow-900 dark:text-yellow-100 mb-2">No Enrolled Modules Found</h3>
-                    <p className="text-yellow-700 dark:text-yellow-300">You are not currently enrolled in any modules.</p>
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">No Modules Found</h3>
+                    <p className="text-gray-500 dark:text-gray-400">No modules available for Level {filterLevel}, Semester {filterSemester}.</p>
                 </div>
             ) : (
-                <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 p-6 md:p-8">
-                    {/* Controls Header */}
-                    <div className="flex flex-col md:flex-row items-center gap-6 mb-8">
-                        <div className="w-full md:w-[400px] z-20">
-                            <div className="flex justify-between items-baseline mb-2">
-                                <label className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                                    Select Module
-                                </label>
-                                <span className="text-xs font-medium text-indigo-600 dark:text-indigo-400">
-                                    L{filterLevel} Semester {filterSemester}
-                                </span>
-                            </div>
+                <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl border-2 border-gray-100 dark:border-slate-700 p-6 md:p-8 space-y-8">
+                    {/* Module Selector & Tabs */}
+                    <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+                        {/* Module Dropdown */}
+                        <div className="flex-1">
+                            <label className="block text-xs md:text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Select Module</label>
                             <Dropdown
                                 value={selectedModuleId}
                                 onChange={(e) => setSelectedModuleId(e.target.value)}
@@ -319,7 +407,7 @@ export default function StudentResources() {
                                                 if (!acc[year]) acc[year] = [];
                                                 acc[year].push(resource);
                                                 return acc;
-                                            }, {})).sort((a, b) => b[0].localeCompare(a[0])) // Sort by year descending (2024 > 2023)
+                                            }, {})).sort((a, b) => b[0].localeCompare(a[0]))
                                                 .map(([year, yearResources]) => (
                                                     <div key={year} className="animate-fadeIn">
                                                         <div className="flex items-center gap-4 mb-4">
