@@ -52,11 +52,26 @@ const ResourceCard = ({ resource }) => {
     };
 
     const handleDownload = () => {
+        // Create a temporary anchor element to trigger download
+        const link = document.createElement('a');
+
         if (resource.downloadUrl) {
-            window.open(resource.downloadUrl, '_blank');
+            link.href = resource.downloadUrl;
         } else if (resource._id) {
-            window.open(`/api/v1/resources/stream/${resource._id}`, '_blank');
+            // Use the backend stream endpoint
+            link.href = `/api/v1/resources/stream/${resource._id}`;
+        } else {
+            console.error('No download URL or resource ID available');
+            return;
         }
+
+        // Set download attribute with filename
+        link.download = resource.fileName || resource.title || 'download';
+
+        // Append to body, click, and remove
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     return (
