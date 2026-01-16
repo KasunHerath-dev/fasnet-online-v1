@@ -14,4 +14,7 @@ export const resourceService = {
 
     // Get Auth URL
     getAuthUrl: () => api.get('/resources/auth/url'),
+
+    // Download resource (Blob)
+    download: (id) => api.get(`/resources/stream/${id}`, { responseType: 'blob' }),
 };
