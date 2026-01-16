@@ -51,27 +51,46 @@ const ResourceCard = ({ resource }) => {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     };
 
-    const handleDownload = () => {
-        // Create a temporary anchor element to trigger download
-        const link = document.createElement('a');
+    const handleDownload = async () => {
+        try {
+            if (resource.downloadUrl) {
+                window.open(resource.downloadUrl, '_blank');
+                return;
+            }
 
-        if (resource.downloadUrl) {
-            link.href = resource.downloadUrl;
-        } else if (resource._id) {
-            // Use the backend stream endpoint
-            link.href = `/api/v1/resources/stream/${resource._id}`;
-        } else {
-            console.error('No download URL or resource ID available');
-            return;
+            if (!resource._id) {
+                console.error('No resource ID');
+                return;
+            }
+
+            // Use resourceService to download as blob
+            const response = await resourceService.download(resource._id);
+
+            // Check content type to avoid downloading HTML errors
+            const contentType = response.headers['content-type'];
+            if (contentType && contentType.includes('text/html')) {
+                console.error('Download failed: Backend returned HTML (likely 404 or error)');
+                alert('Failed to download file. Please try again later.');
+                return;
+            }
+
+            // Create blob and download
+            const blob = new Blob([response.data], {
+                type: contentType || 'application/octet-stream'
+            });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = resource.fileName || resource.title || 'download';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+        } catch (error) {
+            console.error("Download failed", error);
+            alert("Failed to download file.");
         }
-
-        // Set download attribute with filename
-        link.download = resource.fileName || resource.title || 'download';
-
-        // Append to body, click, and remove
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
     };
 
     return (
