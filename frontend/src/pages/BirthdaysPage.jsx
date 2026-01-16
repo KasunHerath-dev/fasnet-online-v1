@@ -82,8 +82,8 @@ export default function BirthdaysPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 p-4 md:p-8">
-      <div className="max-w-7xl mx-auto space-y-8 animate-fadeIn">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 p-4 md:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto space-y-4 md:space-y-6 lg:space-y-8 animate-fadeIn">
         {/* Enhanced Header */}
         {/* Enhanced Header */}
         <div className="relative shadow-2xl rounded-2xl md:rounded-3xl">
@@ -423,95 +423,7 @@ export default function BirthdaysPage() {
             <div className="p-4 bg-gray-50 border-t border-gray-100">
               <button
                 onClick={() => setSelectedStudent(null)}
-                className="w-full py-2.5 bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-colors"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* Birthday Details Modal */}
-      {selectedStudent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn" onClick={() => setSelectedStudent(null)}>
-          <div
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-scaleIn"
-            onClick={e => e.stopPropagation()}
-          >
-            {/* Header with Avatar */}
-            <div className="bg-gradient-to-r from-pink-500 to-purple-600 p-6 flex flex-col items-center">
-              <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-purple-600 font-bold text-3xl shadow-lg mb-3 border-4 border-white/30">
-                {selectedStudent.fullName.charAt(0)}
-              </div>
-              <h3 className="text-white font-bold text-lg text-center leading-tight">
-                {selectedStudent.fullName}
-              </h3>
-              <p className="text-pink-100 text-sm font-medium mt-1">
-                Reg: {selectedStudent.registrationNumber}
-              </p>
-            </div>
-
-            {/* Content */}
-            <div className="p-6 space-y-4">
-
-              {/* Birthday */}
-              <div className="flex items-center gap-3 p-3 bg-pink-50 rounded-xl border border-pink-100">
-                <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Cake className="w-5 h-5 text-pink-600" />
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 font-bold uppercase tracking-wide">Birthday</p>
-                  <p className="font-bold text-gray-900">
-                    {new Date(selectedStudent.birthday).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                  </p>
-                </div>
-              </div>
-
-              {/* Whatsapp */}
-              <div className="flex items-center gap-3 p-3 bg-green-50 rounded-xl border border-green-100">
-                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="w-5 h-5 text-green-600"
-                  >
-                    <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" />
-                    <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0 .5-.5l.14-.3A7.7 7.7 0 0 0 6.6 7H7a.5.5 0 0 0 .5-.5V6a.5.5 0 0 0-.5-.5H6a.5.5 0 0 0-.5.5v.5e.5a.5.5 0 0 0 .5.5H7z" opacity="0" />
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 font-bold uppercase tracking-wide">WhatsApp / Phone</p>
-                  <p className="font-bold text-gray-900 font-mono">
-                    {selectedStudent.whatsapp || selectedStudent.contactNumber || 'Not provided'}
-                  </p>
-                </div>
-              </div>
-
-              {/* Index Number (Registration) */}
-              <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-xl border border-purple-100">
-                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Users className="w-5 h-5 text-purple-600" />
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 font-bold uppercase tracking-wide">Index Number</p>
-                  <p className="font-bold text-gray-900">
-                    {selectedStudent.registrationNumber}
-                  </p>
-                </div>
-              </div>
-
-            </div>
-
-            <div className="p-4 bg-gray-50 border-t border-gray-100">
-              <button
-                onClick={() => setSelectedStudent(null)}
-                className="w-full py-2.5 bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-colors"
+                className="min-h-[44px] w-full py-2.5 bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-colors active:scale-95"
               >
                 Close
               </button>
