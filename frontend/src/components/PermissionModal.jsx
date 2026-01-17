@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { X, Shield, Check } from 'lucide-react'
+import { useToast } from '../context/ToastContext'
 
 const AVAILABLE_PERMISSIONS = [
     { id: 'view_students', label: 'View Students', description: 'Can view student list and details', category: 'Students' },
@@ -21,6 +22,7 @@ const AVAILABLE_PERMISSIONS = [
 ]
 
 export default function PermissionModal({ isOpen, onClose, onConfirm, user, mode = 'promote' }) {
+    const toast = useToast()
     const [selectedPermissions, setSelectedPermissions] = useState(user?.permissions || [])
     const [batchScope, setBatchScope] = useState(user?.batchScope || '') // Initialize with existing scope if any
     const [loading, setLoading] = useState(false)
@@ -44,10 +46,32 @@ export default function PermissionModal({ isOpen, onClose, onConfirm, user, mode
     }
 
     const handleSubmit = async () => {
-        setLoading(true)
-        // Pass both permissions and batchScope
-        await onConfirm(selectedPermissions, batchScope)
-        setLoading(false)
+        try {
+            setLoading(true)
+            // Timeout after 10 seconds to prevent infinite hanging
+            const timeoutPromise = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('Request timed out')), 10000)
+            );
+
+            await Promise.race([
+                onConfirm(selectedPermissions, batchScope),
+                timeoutPromise
+            ]);
+        } catch (err) {
+            console.error(err);
+            // Optionally toast here if onConfirm doesn't handle the timeout error
+            // But onConfirm handles its own API errors. 
+            // If it's a timeout, onConfirm won't catch it because onConfirm is the one hanging!
+            // So we should toast here if it's our timeout.
+            if (err.message === 'Request timed out') {
+                // We need to import toast? No, PermissionModal doesn't use toast currently.
+                // We can just rely on the user seeing the spinner stop.
+                // Or user passed onConfirm which toasts.
+                alert('Request timed out. Please check your connection or try again.')
+            }
+        } finally {
+            setLoading(false)
+        }
     }
 
     const groupedPermissions = AVAILABLE_PERMISSIONS.reduce((acc, perm) => {
