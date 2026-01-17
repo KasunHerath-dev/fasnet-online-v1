@@ -391,7 +391,7 @@ export default function StudentResources() {
                                 }
                             `}</style>
                             <label className="block text-xs md:text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Resource Category</label>
-                            <div className="flex gap-2 md:gap-3 p-1 hide-scroll">
+                            <div className="flex gap-2 md:gap-3 p-2 hide-scroll">
                                 {tabs.map(tab => {
                                     const Icon = tab.icon;
                                     const isActive = activeTab === tab.id;
