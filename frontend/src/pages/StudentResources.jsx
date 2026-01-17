@@ -384,14 +384,9 @@ export default function StudentResources() {
 
                         {/* Tabs */}
                         {/* Tabs */}
-                        <div className="flex-1 w-full overflow-x-auto pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                            <style>{`
-                                .hide-scroll::-webkit-scrollbar {
-                                    display: none;
-                                }
-                            `}</style>
+                        <div className="flex-1 w-full">
                             <label className="block text-xs md:text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Resource Category</label>
-                            <div className="flex gap-2 md:gap-3 p-2 hide-scroll">
+                            <div className="flex flex-wrap gap-2 md:gap-3">
                                 {tabs.map(tab => {
                                     const Icon = tab.icon;
                                     const isActive = activeTab === tab.id;
@@ -400,16 +395,15 @@ export default function StudentResources() {
                                             key={tab.id}
                                             onClick={() => setActiveTab(tab.id)}
                                             className={`
-                                                flex items-center gap-2 md:gap-3 px-4 md:px-5 py-2.5 md:py-3 min-h-[44px] rounded-xl md:rounded-2xl font-bold text-xs md:text-sm whitespace-nowrap transition-all duration-300
+                                                flex items-center justify-center gap-2 md:gap-3 px-4 md:px-5 py-2.5 md:py-3 min-h-[44px] rounded-xl md:rounded-2xl font-bold text-xs md:text-sm transition-all duration-300 flex-grow sm:flex-grow-0
                                                 ${isActive
-                                                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30 scale-105 ring-2 ring-indigo-500 ring-offset-2 ring-offset-white dark:ring-offset-slate-800'
+                                                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30 ring-2 ring-indigo-500 ring-offset-2 ring-offset-white dark:ring-offset-slate-800'
                                                     : 'bg-gray-50 dark:bg-slate-700/50 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-700 active:scale-95'
                                                 }
                                             `}
                                         >
                                             <Icon className={`w-4 h-4 md:w-5 md:h-5 flex-shrink-0 ${isActive ? 'text-white' : ''}`} />
-                                            <span className="hidden sm:inline">{tab.label}</span>
-                                            <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
+                                            <span>{tab.label}</span>
                                             {tab.count > 0 && (
                                                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${isActive ? 'bg-white/20 text-white' : 'bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-gray-300'}`}>
                                                     {tab.count}
