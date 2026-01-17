@@ -383,9 +383,15 @@ export default function StudentResources() {
                         <div className="hidden md:block h-12 w-px bg-gray-200 dark:bg-slate-700 mx-4"></div>
 
                         {/* Tabs */}
-                        <div className="flex-1 w-full overflow-x-auto no-scrollbar">
+                        {/* Tabs */}
+                        <div className="flex-1 w-full overflow-x-auto pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                            <style>{`
+                                .hide-scroll::-webkit-scrollbar {
+                                    display: none;
+                                }
+                            `}</style>
                             <label className="block text-xs md:text-sm font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Resource Category</label>
-                            <div className="flex gap-2 md:gap-3">
+                            <div className="flex gap-2 md:gap-3 p-1 hide-scroll">
                                 {tabs.map(tab => {
                                     const Icon = tab.icon;
                                     const isActive = activeTab === tab.id;
@@ -396,7 +402,7 @@ export default function StudentResources() {
                                             className={`
                                                 flex items-center gap-2 md:gap-3 px-4 md:px-5 py-2.5 md:py-3 min-h-[44px] rounded-xl md:rounded-2xl font-bold text-xs md:text-sm whitespace-nowrap transition-all duration-300
                                                 ${isActive
-                                                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30 scale-105'
+                                                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30 scale-105 ring-2 ring-indigo-500 ring-offset-2 ring-offset-white dark:ring-offset-slate-800'
                                                     : 'bg-gray-50 dark:bg-slate-700/50 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-700 active:scale-95'
                                                 }
                                             `}
