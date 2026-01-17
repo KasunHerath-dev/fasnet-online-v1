@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { authService } from './services/authService'
+import { ToastProvider } from './context/ToastContext'
 import { IdleTimerProvider } from './context/IdleTimerContext'
 import IdleWarningModal from './components/IdleWarningModal'
 import TopNav from './components/TopNav'
@@ -38,10 +39,12 @@ function ProtectedRoute({ children }) {
     // Validation check if needed
   }
   return token ? (
-    <IdleTimerProvider>
-      <IdleWarningModal />
-      {children}
-    </IdleTimerProvider>
+    <ToastProvider>
+      <IdleTimerProvider>
+        <IdleWarningModal />
+        {children}
+      </IdleTimerProvider>
+    </ToastProvider>
   ) : <Navigate to="/login" />
 }
 

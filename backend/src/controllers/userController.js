@@ -120,27 +120,25 @@ exports.getOnlineUsers = async (req, res) => {
 exports.promoteUser = async (req, res) => {
   try {
     const { id } = req.params
-    const { permissions } = req.body
+    const { permissions, batchScope } = req.body
 
-    const user = await User.findById(id)
+    const updateOps = {
+      $addToSet: { roles: 'admin' },
+      $set: { permissions: permissions || [] }
+    }
+
+    if (batchScope !== undefined) {
+      updateOps.$set.batchScope = batchScope ? parseInt(batchScope) : null
+    }
+
+    const user = await User.findByIdAndUpdate(id, updateOps, {
+      new: true,
+      runValidators: true
+    })
+
     if (!user) {
       return res.status(404).json({ error: { message: 'User not found' } })
     }
-
-    // Add admin role if not already present
-    if (!user.roles.includes('admin')) {
-      user.roles.push('admin')
-    }
-
-    // Set permissions
-    user.permissions = permissions || []
-
-    // Set batch scope if provided
-    if (req.body.batchScope !== undefined) {
-      user.batchScope = req.body.batchScope ? parseInt(req.body.batchScope) : null
-    }
-
-    await user.save()
 
     logger.info(`User ${user.username} promoted to admin${user.batchScope ? ` (Batch ${user.batchScope})` : ''}`)
     res.json({
@@ -164,24 +162,22 @@ exports.demoteUser = async (req, res) => {
   try {
     const { id } = req.params
 
-    const user = await User.findById(id)
+    // Reset to basic 'user' role, clear permissions and batchScope
+    const user = await User.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          roles: ['user'],
+          permissions: [],
+          batchScope: null
+        }
+      },
+      { new: true, runValidators: true }
+    )
+
     if (!user) {
       return res.status(404).json({ error: { message: 'User not found' } })
     }
-
-    // Remove admin role
-    user.roles = user.roles.filter(role => role !== 'admin' && role !== 'superadmin')
-
-    // Ensure user role exists
-    if (!user.roles.includes('user')) {
-      user.roles.push('user')
-    }
-
-    // Clear permissions and batch scope
-    user.permissions = []
-    user.batchScope = null
-
-    await user.save()
 
     logger.info(`User ${user.username} demoted to regular user`)
     res.json({
@@ -203,21 +199,24 @@ exports.demoteUser = async (req, res) => {
 exports.updatePermissions = async (req, res) => {
   try {
     const { id } = req.params
-    const { permissions } = req.body
+    const { permissions, batchScope } = req.body
 
-    const user = await User.findById(id)
+    const updateOps = {
+      $set: { permissions: permissions || [] }
+    }
+
+    if (batchScope !== undefined) {
+      updateOps.$set.batchScope = batchScope ? parseInt(batchScope) : null
+    }
+
+    const user = await User.findByIdAndUpdate(id, updateOps, {
+      new: true,
+      runValidators: true
+    })
+
     if (!user) {
       return res.status(404).json({ error: { message: 'User not found' } })
     }
-
-    user.permissions = permissions || []
-
-    // Update batch scope if provided
-    if (req.body.batchScope !== undefined) {
-      user.batchScope = req.body.batchScope ? parseInt(req.body.batchScope) : null
-    }
-
-    await user.save()
 
     logger.info(`Permissions updated for user ${user.username}${user.batchScope ? ` (Batch ${user.batchScope})` : ''}`)
     res.json({
@@ -226,7 +225,8 @@ exports.updatePermissions = async (req, res) => {
         _id: user._id,
         username: user.username,
         roles: user.roles,
-        permissions: user.permissions
+        permissions: user.permissions,
+        batchScope: user.batchScope
       }
     })
   } catch (error) {
