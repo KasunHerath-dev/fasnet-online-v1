@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { authService } from './services/authService'
+import { IdleTimerProvider } from './context/IdleTimerContext'
+import IdleWarningModal from './components/IdleWarningModal'
 import TopNav from './components/TopNav'
 import SideNav from './components/SideNav'
 import Loader from './components/Loader'
@@ -35,7 +37,12 @@ function ProtectedRoute({ children }) {
   if (token) {
     // Validation check if needed
   }
-  return token ? children : <Navigate to="/login" />
+  return token ? (
+    <IdleTimerProvider>
+      <IdleWarningModal />
+      {children}
+    </IdleTimerProvider>
+  ) : <Navigate to="/login" />
 }
 
 // Role Protection Wrapper
