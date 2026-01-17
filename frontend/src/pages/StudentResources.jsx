@@ -15,9 +15,9 @@ import { MODULE_DATA } from '../data/moduleList';
 import { resourceService } from '../services/resourceService';
 import Loader from '../components/Loader';
 import Dropdown from '../components/Dropdown';
-
-// ResourceCard Component
+import { useToast } from '../context/ToastContext';
 const ResourceCard = ({ resource }) => {
+    const toast = useToast();
     const getTypeColor = (type) => {
         const colors = {
             tutorial: 'from-blue-500 to-indigo-600',
@@ -70,7 +70,7 @@ const ResourceCard = ({ resource }) => {
             const contentType = response.headers['content-type'];
             if (contentType && contentType.includes('text/html')) {
                 console.error('Download failed: Backend returned HTML (likely 404 or error)');
-                alert('Failed to download file. Please try again later.');
+                toast.error('Failed to download file. Please try again later.');
                 return;
             }
 
@@ -89,7 +89,7 @@ const ResourceCard = ({ resource }) => {
 
         } catch (error) {
             console.error("Download failed", error);
-            alert("Failed to download file.");
+            toast.error("Failed to download file.");
         }
     };
 
