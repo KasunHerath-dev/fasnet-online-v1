@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { authService, studentService } from '../services/authService'
+import { useToast } from '../context/ToastContext'
 import PageHeader from '../components/PageHeader'
 import PermissionModal from '../components/PermissionModal'
 import { Shield, ShieldOff, Edit, Trash2, MoreVertical, ChevronDown, Key } from 'lucide-react'
@@ -8,6 +9,7 @@ import api from '../services/api'
 import Dropdown from '../components/Dropdown'
 
 export default function SystemUsersPage() {
+    const toast = useToast()
     const [users, setUsers] = useState([])
     const [filteredUsers, setFilteredUsers] = useState([])
     const [loading, setLoading] = useState(true)
@@ -61,10 +63,10 @@ export default function SystemUsersPage() {
         if (!window.confirm('This will create user accounts for all students who do not have one. Continue?')) return;
         try {
             const res = await studentService.createMissingUsers();
-            alert(res.data.message);
+            toast.success(res.data.message);
             fetchUsers();
         } catch (err) {
-            alert('Error: ' + (err.response?.data?.error?.message || err.message));
+            toast.error('Error: ' + (err.response?.data?.error?.message || err.message));
         }
     }
 
@@ -87,10 +89,10 @@ export default function SystemUsersPage() {
 
         try {
             await api.post(`/users/${user._id}/demote`)
-            alert('User demoted successfully')
+            toast.success('User demoted successfully')
             fetchUsers()
         } catch (err) {
-            alert('Error: ' + (err.response?.data?.error?.message || err.message))
+            toast.error('Error: ' + (err.response?.data?.error?.message || err.message))
         }
         setOpenMenuId(null)
     }
@@ -98,13 +100,13 @@ export default function SystemUsersPage() {
     const handleResetPassword = async (user) => {
         const newPassword = window.prompt(`Enter new password for ${user.username}:`, 'fas1234');
         if (newPassword === null) return; // Cancelled
-        if (!newPassword.trim()) return alert('Password cannot be empty');
+        if (!newPassword.trim()) return toast.warning('Password cannot be empty');
 
         try {
             await authService.updateUser(user._id, { password: newPassword });
-            alert(`Password for ${user.username} has been updated.`);
+            toast.success(`Password for ${user.username} has been updated.`);
         } catch (err) {
-            alert('Error: ' + (err.response?.data?.error?.message || err.message));
+            toast.error('Error: ' + (err.response?.data?.error?.message || err.message));
         }
         setOpenMenuId(null);
     }
@@ -116,19 +118,19 @@ export default function SystemUsersPage() {
                     permissions,
                     batchScope: batchScope ? parseInt(batchScope) : null
                 })
-                alert('User promoted successfully')
+                toast.success('User promoted successfully')
             } else {
                 await api.put(`/users/${selectedUser._id}/permissions`, {
                     permissions,
                     batchScope: batchScope ? parseInt(batchScope) : null
                 })
-                alert('Permissions updated successfully')
+                toast.success('Permissions updated successfully')
             }
             setShowPermissionModal(false)
             setSelectedUser(null)
             fetchUsers()
         } catch (err) {
-            alert('Error: ' + (err.response?.data?.error?.message || err.message))
+            toast.error('Error: ' + (err.response?.data?.error?.message || err.message))
         }
     }
 
@@ -153,9 +155,9 @@ export default function SystemUsersPage() {
                                     if (window.confirm('Lock ALL non-admin users? They will not be able to login.')) {
                                         try {
                                             const res = await authService.lockAllUsers()
-                                            alert(res.data.message)
+                                            toast.success(res.data.message)
                                             fetchUsers()
-                                        } catch (e) { alert('Error: ' + e.message) }
+                                        } catch (e) { toast.error('Error: ' + e.message) }
                                     }
                                 }}
                                 className="px-3 py-2 text-sm font-medium text-red-600 hover:bg-white hover:shadow-sm rounded-md transition-all flex items-center gap-2"
@@ -168,9 +170,9 @@ export default function SystemUsersPage() {
                                     if (window.confirm('Unlock ALL users?')) {
                                         try {
                                             const res = await authService.unlockAllUsers()
-                                            alert(res.data.message)
+                                            toast.success(res.data.message)
                                             fetchUsers()
-                                        } catch (e) { alert('Error: ' + e.message) }
+                                        } catch (e) { toast.error('Error: ' + e.message) }
                                     }
                                 }}
                                 className="px-3 py-2 text-sm font-medium text-emerald-600 hover:bg-white hover:shadow-sm rounded-md transition-all flex items-center gap-2"
@@ -329,7 +331,7 @@ export default function SystemUsersPage() {
                                                                     try {
                                                                         await authService.updateUser(user._id, { isActive: !user.isActive })
                                                                         fetchUsers()
-                                                                    } catch (e) { alert(e.message) }
+                                                                    } catch (e) { toast.error(e.message) }
                                                                 }
                                                             }}
                                                             className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-all flex items-center gap-3 text-sm font-semibold ${user.isActive ? 'text-red-600' : 'text-emerald-600'}`}
