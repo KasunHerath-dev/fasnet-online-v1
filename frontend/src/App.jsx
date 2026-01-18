@@ -29,6 +29,7 @@ import StudentSettings from './pages/StudentSettings'
 import StudentResources from './pages/StudentResources'
 import PromotedUserDashboard from './pages/PromotedUserDashboard'
 import ProfileRequestsPage from './pages/ProfileRequestsPage'
+import ExamTimeTablePage from './pages/ExamTimeTablePage'
 import { socketService } from './services/socketService'
 import './styles/globals.css'
 
@@ -142,6 +143,7 @@ export default function App() {
                           <Route path="/resources" element={<StudentResources />} />
                           <Route path="/analytics" element={<StudentAnalytics />} />
                           <Route path="/settings" element={<StudentSettings />} />
+                          <Route path="/exams" element={<ExamTimeTablePage />} />
                           <Route path="/" element={<Navigate to="/dashboard" replace />} />
                           {/* Redirect any admin routes to student dashboard */}
                           <Route path="/admin/*" element={<Navigate to="/dashboard" replace />} />
@@ -166,6 +168,7 @@ export default function App() {
                               <Route path="/resources" element={<StudentResources />} />
                               <Route path="/analytics" element={<StudentAnalytics />} />
                               <Route path="/settings" element={<StudentSettings />} />
+                              <Route path="/exams" element={<ExamTimeTablePage />} />
                             </>
                           )}
 

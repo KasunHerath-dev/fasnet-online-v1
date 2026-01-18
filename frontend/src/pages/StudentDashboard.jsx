@@ -77,11 +77,10 @@ export default function StudentDashboard() {
     }
 
     const specialDates = [
-        { date: '2025-01-15', event: 'Semester 1 Begins', type: 'academic' },
-        { date: '2025-03-20', event: 'Mid-term Exams', type: 'exam' },
-        { date: '2025-05-10', event: 'End-term Exams', type: 'exam' },
-        { date: '2025-06-01', event: 'Semester Break', type: 'holiday' },
-        { date: '2025-07-15', event: 'Semester 2 Begins', type: 'academic' },
+        { date: '2026-01-19', event: 'Study Leave Begins', type: 'academic' },
+        { date: '2026-02-02', event: 'Semester I Exams Begin', type: 'exam' },
+        { date: '2026-03-02', event: 'Semester Break', type: 'holiday' },
+        { date: '2026-03-09', event: 'Semester II Begins', type: 'academic' }, // Assumed start after 1 week break
     ]
 
     const getEventIcon = (type) => {
@@ -412,6 +411,13 @@ export default function StudentDashboard() {
                     >
                         <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">👤</div>
                         <p className="font-bold text-gray-900 dark:text-white">My Profile</p>
+                    </a>
+                    <a
+                        href="/exams"
+                        className="p-6 rounded-2xl bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 border border-red-100 dark:border-red-800 hover:shadow-lg transition-all group text-center"
+                    >
+                        <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">🗓️</div>
+                        <p className="font-bold text-gray-900 dark:text-white">Exam Table</p>
                     </a>
                     <a
                         href="/academic"
