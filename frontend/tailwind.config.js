@@ -11,6 +11,17 @@ module.exports = {
         secondary: '#10B981',
         danger: '#EF4444',
         warning: '#F59E0B',
+        // Stitch Theme Colors
+        'stitch-blue': '#1313ec',
+        'stitch-pink': '#ec1378',
+        'stitch-bg-light': '#f6f6f8',
+        'stitch-bg-dark': '#101022',
+        'stitch-card-dark': '#1a1a2e',
+        'stitch-card-border': '#323267',
+        'stitch-success': '#0bda68',
+      },
+      fontFamily: {
+        'display': ['Lexend', 'sans-serif'],
       },
       animation: {
         blob: "blob 7s infinite",
