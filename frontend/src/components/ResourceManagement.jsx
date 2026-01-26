@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { academicService, authService, batchYearService, resourceService } from '../services/authService';
 import Dropdown from './Dropdown';
 import BatchYearModal from './BatchYearModal';
-import { Upload, FileText, Trash2, ExternalLink, CheckCircle, AlertCircle, Plus } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
+import { Upload, FileText, Trash2, ExternalLink, CheckCircle, AlertCircle, Plus, Book, FileQuestion, PenTool } from 'lucide-react';
 
 // Using the same module list for fallback/consistency
 const ALL_MODULES = [
@@ -123,6 +124,7 @@ const ALL_MODULES = [
 ];
 
 export default function ResourceManagement() {
+    const toast = useToast();
     const [modules, setModules] = useState([]);
     const [filteredModules, setFilteredModules] = useState([]);
     const [batchYears, setBatchYears] = useState([]);
@@ -258,7 +260,7 @@ export default function ResourceManagement() {
         const file = e.target.files[0];
         if (file) {
             if (file.size > 50 * 1024 * 1024) {
-                alert('File size must be less than 50MB');
+                toast.error('File size must be less than 50MB');
                 e.target.value = ''; // Reset input
                 return;
             }
@@ -314,14 +316,14 @@ export default function ResourceManagement() {
 
         try {
             await resourceService.upload(data);
-            alert('File uploaded successfully!');
+            toast.success('File uploaded successfully!');
             // Reset form file part
             setFormData(prev => ({ ...prev, file: null, title: '' }));
             fetchResources(formData.moduleId);
         } catch (error) {
             const serverError = error.response?.data?.error;
             const message = error.response?.data?.message || error.message;
-            alert(`Upload failed: ${message}\nDetails: ${serverError || ''}`);
+            toast.error(`Upload failed: ${message}`);
         } finally {
             setUploading(false);
         }
@@ -331,94 +333,99 @@ export default function ResourceManagement() {
         if (!window.confirm('Are you sure you want to delete this resource?')) return;
         try {
             await resourceService.delete(id);
+            toast.success('Resource deleted successfully');
             fetchResources(formData.moduleId);
         } catch (error) {
-            alert('Delete failed');
+            toast.error('Delete failed');
         }
     };
 
     return (
         <div className="space-y-8 animate-fadeIn">
-
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                 {/* Upload Form */}
-                <div className="lg:col-span-1">
-                    <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-100 p-6 sticky top-6">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="p-3 bg-blue-100 rounded-xl">
-                                <Upload className="w-6 h-6 text-blue-600" />
+                <div className="xl:col-span-1">
+                    <div className="bg-white dark:bg-stitch-card-dark rounded-[2rem] shadow-xl border border-slate-100 dark:border-white/5 p-6 md:p-8 sticky top-6">
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30">
+                                <Upload className="w-7 h-7 text-white" />
                             </div>
                             <div>
-                                <h2 className="text-xl font-black text-gray-800">Upload Resource</h2>
-                                <p className="text-sm text-gray-500 font-bold">Add materials for students</p>
+                                <h2 className="text-xl font-black text-slate-900 dark:text-white">Upload</h2>
+                                <p className="text-sm font-bold text-slate-500 dark:text-slate-400">Add new materials</p>
                             </div>
                         </div>
 
-                        <form onSubmit={handleUpload} className="space-y-4 md:space-y-6">
+                        <form onSubmit={handleUpload} className="space-y-6">
                             {/* Level Selection */}
                             <div>
-                                <label className="block text-xs md:text-sm font-bold text-gray-700 mb-2">Level</label>
+                                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">Academic Level</label>
                                 <Dropdown
                                     value={formData.level}
                                     onChange={(e) => setFormData({ ...formData, level: e.target.value })}
                                     options={levels.map(l => ({ value: l, label: `Level ${l}` }))}
+                                    className="w-full"
                                 />
                             </div>
 
                             {/* Semester Selection */}
                             <div>
-                                <label className="block text-xs md:text-sm font-bold text-gray-700 mb-2">Semester</label>
+                                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">Semester</label>
                                 <Dropdown
                                     value={formData.semester}
                                     onChange={(e) => setFormData({ ...formData, semester: e.target.value })}
                                     options={semesters.map(s => ({ value: s, label: `Semester ${s}` }))}
+                                    className="w-full"
                                 />
                             </div>
 
                             {/* Module Selection */}
                             <div>
                                 <div className="flex justify-between items-baseline mb-2">
-                                    <label className="text-xs md:text-sm font-bold text-gray-700">Module</label>
-                                    <span className="text-[10px] md:text-xs font-medium text-indigo-600">
-                                        Filtering: L{formData.level} S{formData.semester}
+                                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Target Module</label>
+                                    <span className="text-[10px] font-bold text-stitch-blue">
+                                        L{formData.level} • S{formData.semester}
                                     </span>
                                 </div>
                                 <Dropdown
                                     value={formData.moduleId}
                                     onChange={(e) => setFormData({ ...formData, moduleId: e.target.value })}
                                     options={filteredModules.map(m => ({ value: m._id, label: `${m.code} - ${m.title}` }))}
-                                    placeholder={filteredModules.length > 0 ? "Select Module" : "No modules found for this selection"}
+                                    placeholder={filteredModules.length > 0 ? "Select Module" : "No modules found"}
+                                    className="w-full"
                                 />
                                 {filteredModules.length === 0 && (
-                                    <p className="text-xs text-red-500 mt-1">
-                                        No modules match Level {formData.level} & Semester {formData.semester}.
-                                    </p>
+                                    <div className="flex items-center gap-2 mt-2 text-red-500 dark:text-red-400">
+                                        <AlertCircle className="w-4 h-4" />
+                                        <p className="text-xs font-bold">No modules available</p>
+                                    </div>
                                 )}
                             </div>
 
-                            {/* Updated Workflow: Category -> Context */}
+                            <div className="h-px bg-slate-100 dark:bg-white/5 my-2"></div>
 
                             {/* Resource Category Selection */}
                             <div>
-                                <label className="block text-xs md:text-sm font-bold text-gray-700 mb-2">Resource Category</label>
+                                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">Category</label>
                                 <Dropdown
                                     value={formData.category}
                                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                                     options={categories}
+                                    className="w-full"
                                 />
                             </div>
 
                             {/* Resource Context Selection (Tutorial, Past Paper, etc.) */}
                             {formData.category !== 'book' && (
                                 <div className="animate-fadeIn">
-                                    <label className="block text-xs md:text-sm font-bold text-gray-700 mb-2">
+                                    <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">
                                         {formData.category === 'question' ? 'Document Type' : 'Answer For'}
                                     </label>
                                     <Dropdown
                                         value={formData.context}
                                         onChange={(e) => setFormData({ ...formData, context: e.target.value })}
                                         options={contexts}
+                                        className="w-full"
                                     />
                                 </div>
                             )}
@@ -426,23 +433,23 @@ export default function ResourceManagement() {
                             {/* Academic Year Selection (Only for Past Papers) */}
                             {((formData.context === 'past_paper') || (formData.category === 'answer' && formData.context === 'past_paper')) && (
                                 <div className="animate-fadeIn">
-                                    <label className="block text-xs md:text-sm font-bold text-gray-700 mb-2">Academic Year</label>
+                                    <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">Academic Year</label>
                                     <div className="flex gap-2">
                                         <Dropdown
                                             value={formData.batchYear}
                                             onChange={(e) => setFormData({ ...formData, batchYear: e.target.value })}
                                             options={batchYears.map(y => ({ value: y.year, label: y.name || y.year }))}
-                                            placeholder="Select Academic Year"
+                                            placeholder="Select Year"
                                             className="flex-1"
                                         />
                                         {user?.roles?.includes('superadmin') && (
                                             <button
                                                 type="button"
                                                 onClick={() => setShowBatchModal(true)}
-                                                className="min-w-[44px] min-h-[44px] w-11 h-11 md:w-12 md:h-12 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl transition-all flex items-center justify-center border-2 border-indigo-100 flex-shrink-0"
+                                                className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-xl transition-all flex items-center justify-center border-2 border-indigo-100 dark:border-indigo-500/20 flex-shrink-0"
                                                 title="Add New Academic Year"
                                             >
-                                                <Plus className="w-4 h-4 md:w-5 md:h-5" />
+                                                <Plus className="w-5 h-5" />
                                             </button>
                                         )}
                                     </div>
@@ -450,38 +457,40 @@ export default function ResourceManagement() {
                             )}
 
                             {/* File Upload */}
-                            <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 md:p-6 text-center hover:bg-gray-50 transition-colors cursor-pointer relative group">
+                            <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-black/20 rounded-2xl p-6 text-center hover:bg-slate-100 dark:hover:bg-white/5 transition-all cursor-pointer relative group">
                                 <input
                                     type="file"
                                     onChange={handleFileChange}
-                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                 />
                                 {formData.file ? (
-                                    <div className="flex flex-col items-center">
-                                        <CheckCircle className="w-7 h-7 md:w-8 md:h-8 text-green-500 mb-2" />
-                                        <p className="font-bold text-sm md:text-base text-gray-700 truncate max-w-full px-2">{formData.file.name}</p>
-                                        <p className="text-xs text-gray-500">{(formData.file.size / 1024 / 1024).toFixed(2)} MB</p>
+                                    <div className="flex flex-col items-center animate-fadeIn">
+                                        <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-3">
+                                            <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
+                                        </div>
+                                        <p className="font-bold text-slate-900 dark:text-white truncate max-w-full px-2">{formData.file.name}</p>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400">{(formData.file.size / 1024 / 1024).toFixed(2)} MB</p>
                                     </div>
                                 ) : (
-                                    <div className="flex flex-col items-center text-gray-400 group-hover:text-gray-600">
-                                        <div className="p-2.5 md:p-3 bg-gray-100 rounded-full mb-2 md:mb-3 group-hover:scale-110 transition-transform">
-                                            <Upload className="w-5 h-5 md:w-6 md:h-6" />
+                                    <div className="flex flex-col items-center">
+                                        <div className="w-12 h-12 bg-white dark:bg-white/10 rounded-full flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition-transform">
+                                            <Upload className="w-6 h-6 text-stitch-blue" />
                                         </div>
-                                        <p className="font-bold text-sm md:text-base">Click to upload or drag and drop</p>
-                                        <p className="text-xs">PDF, Word, PPT (Max 50MB)</p>
+                                        <p className="font-bold text-slate-900 dark:text-slate-200">Tap to upload file</p>
+                                        <p className="text-xs text-slate-400">PDF, Word, PPT • Max 50MB</p>
                                     </div>
                                 )}
                             </div>
 
                             {/* Title Input */}
                             <div>
-                                <label className="block text-xs md:text-sm font-bold text-gray-700 mb-2">Title</label>
+                                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">Resource Title</label>
                                 <input
                                     type="text"
                                     value={formData.title}
                                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                    className="w-full p-2.5 md:p-3 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-blue-500 focus:ring-0 font-bold text-sm md:text-base text-gray-700 transition-all outline-none"
-                                    placeholder="e.g. Lecture 1 Slides"
+                                    className="w-full p-4 bg-white dark:bg-black/20 border-2 border-slate-200 dark:border-white/10 rounded-2xl focus:border-stitch-blue dark:focus:border-stitch-blue font-bold text-slate-900 dark:text-white transition-all outline-none"
+                                    placeholder="e.g. Lecture 01 Slides"
                                     required
                                 />
                             </div>
@@ -489,132 +498,98 @@ export default function ResourceManagement() {
                             <button
                                 type="submit"
                                 disabled={uploading || !formData.file || !formData.moduleId}
-                                className={`w-full min-h-[44px] py-3 md:py-4 rounded-xl font-bold text-sm md:text-base text-white shadow-lg flex items-center justify-center gap-2 transition-all
+                                className={`w-full py-4 rounded-xl font-black text-white shadow-lg shadow-stitch-blue/20 flex items-center justify-center gap-3 transition-all transform hover:translate-y-[-2px]
                                     ${uploading || !formData.file
-                                        ? 'bg-gray-300 cursor-not-allowed'
-                                        : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-blue-200 hover:scale-[1.02] active:scale-95'}`}
+                                        ? 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed shadow-none'
+                                        : 'bg-gradient-to-r from-stitch-blue to-blue-600 hover:shadow-xl active:scale-95'}`}
                             >
-                                {uploading ? 'Uploading...' : 'Upload Resource'}
-                                {!uploading && <Upload className="w-4 h-4 md:w-5 md:h-5" />}
+                                {uploading ? (
+                                    <>
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                        <span>Uploading...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Upload className="w-5 h-5" />
+                                        <span>Upload Resource</span>
+                                    </>
+                                )}
                             </button>
                         </form>
                     </div>
                 </div>
 
                 {/* Resource List */}
-                <div className="lg:col-span-2 space-y-6">
+                <div className="xl:col-span-2 space-y-8">
                     {!formData.moduleId ? (
-                        <div className="h-64 flex flex-col items-center justify-center text-gray-400 border-2 border-dashed border-gray-200 rounded-3xl bg-gray-50/50">
-                            <FileText className="w-12 h-12 mb-4 opacity-50" />
-                            <p className="font-bold">Select a module to view resources</p>
+                        <div className="h-96 flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 border-3 border-dashed border-slate-200 dark:border-slate-800 rounded-[2.5rem] bg-slate-50/50 dark:bg-white/5 p-8 text-center">
+                            <div className="w-24 h-24 bg-slate-100 dark:bg-white/5 rounded-full flex items-center justify-center mb-6">
+                                <FileText className="w-10 h-10 opacity-50" />
+                            </div>
+                            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2">No Module Selected</h3>
+                            <p className="font-medium max-w-sm mx-auto">Please select a Level, Semester, and Module from the left panel to view and manage resources.</p>
                         </div>
                     ) : (
-                        <>
-                            {/* Tutorials Section */}
-                            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-                                <div className="p-4 bg-indigo-50 border-b border-indigo-100 flex items-center gap-3">
-                                    <div className="p-2 bg-white rounded-lg shadow-sm">
-                                        <FileText className="w-5 h-5 text-indigo-600" />
-                                    </div>
-                                    <h3 className="font-bold text-indigo-900">Tutorials</h3>
-                                    <span className="ml-auto bg-white px-3 py-1 rounded-full text-xs font-bold text-indigo-600 shadow-sm border border-indigo-100">
-                                        {resources.filter(r => r.type === 'tutorial').length}
-                                    </span>
-                                </div>
-                                <div className="divide-y divide-gray-100">
-                                    {resources.filter(r => r.type === 'tutorial').map(resource => (
-                                        <ResourceItem key={resource._id} resource={resource} onDelete={handleDelete} />
-                                    ))}
-                                    {resources.filter(r => r.type === 'tutorial').length === 0 && (
-                                        <div className="p-8 text-center text-gray-400 font-medium">No tutorials uploaded yet</div>
-                                    )}
-                                </div>
+                        loading ? (
+                            <div className="h-96 flex flex-col items-center justify-center">
+                                <div className="w-12 h-12 border-4 border-stitch-blue/30 border-t-stitch-blue rounded-full animate-spin mb-4"></div>
+                                <p className="font-bold text-slate-500 dark:text-slate-400">Loading resources...</p>
                             </div>
+                        ) : (
+                            <>
+                                {/* Tutorials Section */}
+                                <ResourceSection
+                                    title="Tutorials"
+                                    resources={resources.filter(r => r.type === 'tutorial')}
+                                    icon={<FileQuestion className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />}
+                                    color="indigo"
+                                    onDelete={handleDelete}
+                                />
 
-                            {/* Assignments Section */}
-                            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-                                <div className="p-4 bg-orange-50 border-b border-orange-100 flex items-center gap-3">
-                                    <div className="p-2 bg-white rounded-lg shadow-sm">
-                                        <FileText className="w-5 h-5 text-orange-600" />
-                                    </div>
-                                    <h3 className="font-bold text-orange-900">Assignments</h3>
-                                    <span className="ml-auto bg-white px-3 py-1 rounded-full text-xs font-bold text-orange-600 shadow-sm border border-orange-100">
-                                        {resources.filter(r => r.type === 'assignment').length}
-                                    </span>
-                                </div>
-                                <div className="divide-y divide-gray-100">
-                                    {resources.filter(r => r.type === 'assignment').map(resource => (
-                                        <ResourceItem key={resource._id} resource={resource} onDelete={handleDelete} />
-                                    ))}
-                                    {resources.filter(r => r.type === 'assignment').length === 0 && (
-                                        <div className="p-8 text-center text-gray-400 font-medium">No assignments uploaded yet</div>
-                                    )}
-                                </div>
-                            </div>
+                                {/* Assignments Section */}
+                                <ResourceSection
+                                    title="Assignments"
+                                    resources={resources.filter(r => r.type === 'assignment')}
+                                    icon={<PenTool className="w-5 h-5 text-orange-600 dark:text-orange-400" />}
+                                    color="orange"
+                                    onDelete={handleDelete}
+                                />
 
-                            {/* Past Papers Section */}
-                            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-                                <div className="p-4 bg-purple-50 border-b border-purple-100 flex items-center gap-3">
-                                    <div className="p-2 bg-white rounded-lg shadow-sm">
-                                        <FileText className="w-5 h-5 text-purple-600" />
-                                    </div>
-                                    <h3 className="font-bold text-purple-900">Question Papers</h3>
-                                    <span className="ml-auto bg-white px-3 py-1 rounded-full text-xs font-bold text-purple-600 shadow-sm border border-purple-100">
-                                        {resources.filter(r => r.type === 'past_paper').length}
-                                    </span>
-                                </div>
-                                <div className="divide-y divide-gray-100">
-                                    {resources.filter(r => r.type === 'past_paper').map(resource => (
-                                        <ResourceItem key={resource._id} resource={resource} onDelete={handleDelete} />
-                                    ))}
-                                    {resources.filter(r => r.type === 'past_paper').length === 0 && (
-                                        <div className="p-8 text-center text-gray-400 font-medium">No question papers uploaded yet</div>
-                                    )}
-                                </div>
-                            </div>
+                                {/* Past Papers Section */}
+                                <ResourceSection
+                                    title="Question Papers"
+                                    resources={resources.filter(r => r.type === 'past_paper')}
+                                    icon={<FileText className="w-5 h-5 text-purple-600 dark:text-purple-400" />}
+                                    color="purple"
+                                    onDelete={handleDelete}
+                                />
 
-                            {/* Marking Schemes Section */}
-                            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-                                <div className="p-4 bg-teal-50 border-b border-teal-100 flex items-center gap-3">
-                                    <div className="p-2 bg-white rounded-lg shadow-sm">
-                                        <CheckCircle className="w-5 h-5 text-teal-600" />
-                                    </div>
-                                    <h3 className="font-bold text-teal-900">Answers / Marking Schemes</h3>
-                                    <span className="ml-auto bg-white px-3 py-1 rounded-full text-xs font-bold text-teal-600 shadow-sm border border-teal-100">
-                                        {resources.filter(r => r.type === 'marking_scheme').length}
-                                    </span>
-                                </div>
-                                <div className="divide-y divide-gray-100">
-                                    {resources.filter(r => r.type === 'marking_scheme').map(resource => (
-                                        <ResourceItem key={resource._id} resource={resource} onDelete={handleDelete} />
-                                    ))}
-                                    {resources.filter(r => r.type === 'marking_scheme').length === 0 && (
-                                        <div className="p-8 text-center text-gray-400 font-medium">No marking schemes uploaded yet</div>
-                                    )}
-                                </div>
-                            </div>
+                                {/* Marking Schemes Section */}
+                                <ResourceSection
+                                    title="Marking Schemes"
+                                    resources={resources.filter(r => r.type === 'marking_scheme')}
+                                    icon={<CheckCircle className="w-5 h-5 text-teal-600 dark:text-teal-400" />}
+                                    color="teal"
+                                    onDelete={handleDelete}
+                                />
 
-                            {/* Books Section */}
-                            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-                                <div className="p-4 bg-rose-50 border-b border-rose-100 flex items-center gap-3">
-                                    <div className="p-2 bg-white rounded-lg shadow-sm">
-                                        <FileText className="w-5 h-5 text-rose-600" />
+                                {/* Books Section */}
+                                <ResourceSection
+                                    title="Books & Reading"
+                                    resources={resources.filter(r => r.type === 'book')}
+                                    icon={<Book className="w-5 h-5 text-rose-600 dark:text-rose-400" />}
+                                    color="rose"
+                                    onDelete={handleDelete}
+                                />
+
+                                {resources.length === 0 && (
+                                    <div className="bg-white dark:bg-stitch-card-dark rounded-[2rem] p-12 text-center border border-slate-100 dark:border-white/5">
+                                        <p className="text-lg font-bold text-slate-900 dark:text-white mb-2">No resources found</p>
+                                        <p className="text-slate-500 dark:text-slate-400">Be the first to upload materials for this module.</p>
                                     </div>
-                                    <h3 className="font-bold text-rose-900">Books / Reading Materials</h3>
-                                    <span className="ml-auto bg-white px-3 py-1 rounded-full text-xs font-bold text-rose-600 shadow-sm border border-rose-100">
-                                        {resources.filter(r => r.type === 'book').length}
-                                    </span>
-                                </div>
-                                <div className="divide-y divide-gray-100">
-                                    {resources.filter(r => r.type === 'book').map(resource => (
-                                        <ResourceItem key={resource._id} resource={resource} onDelete={handleDelete} />
-                                    ))}
-                                    {resources.filter(r => r.type === 'book').length === 0 && (
-                                        <div className="p-8 text-center text-gray-400 font-medium">No books uploaded yet</div>
-                                    )}
-                                </div>
-                            </div>
-                        </>
+                                )}
+                            </>
+                        )
                     )}
                 </div>
             </div>
@@ -628,38 +603,67 @@ export default function ResourceManagement() {
                     />
                 )
             }
-
-            <style jsx>{`
-                @keyframes fadeIn {
-                    from { opacity: 0; transform: translateY(10px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                .animate-fadeIn {
-                    animation: fadeIn 0.5s ease-out;
-                }
-            `}</style>
         </div >
     );
 }
 
-function ResourceItem({ resource, onDelete }) {
-    return (
-        <div className="p-4 hover:bg-gray-50 transition-colors flex items-center justify-between group">
-            <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <span className="text-xs font-bold text-gray-500 uppercase">{resource.mimeType?.split('/')[1] || 'FILE'}</span>
+function ResourceSection({ title, resources, icon, color, onDelete }) {
+    // Dynamic color classes based on the 'color' prop would typically need a lookup or full classes
+    // simplifying for safety using direct mappings for the ones we generally use
+    const colors = {
+        indigo: 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-900 dark:text-indigo-100 border-indigo-100 dark:border-indigo-500/20',
+        orange: 'bg-orange-50 dark:bg-orange-900/20 text-orange-900 dark:text-orange-100 border-orange-100 dark:border-orange-500/20',
+        purple: 'bg-purple-50 dark:bg-purple-900/20 text-purple-900 dark:text-purple-100 border-purple-100 dark:border-purple-500/20',
+        teal: 'bg-teal-50 dark:bg-teal-900/20 text-teal-900 dark:text-teal-100 border-teal-100 dark:border-teal-500/20',
+        rose: 'bg-rose-50 dark:bg-rose-900/20 text-rose-900 dark:text-rose-100 border-rose-100 dark:border-rose-500/20'
+    };
 
+    const headerClass = colors[color] || colors.indigo;
+
+    if (resources.length === 0) return null;
+
+    return (
+        <div className="bg-white dark:bg-stitch-card-dark rounded-[2.5rem] shadow-xl border border-slate-100 dark:border-white/5 overflow-hidden transition-all hover:translate-y-[-4px] duration-300">
+            <div className={`p-6 border-b flex items-center gap-4 ${headerClass}`}>
+                <div className="p-3 bg-white dark:bg-white/10 rounded-xl shadow-sm backdrop-blur-sm">
+                    {icon}
+                </div>
+                <h3 className="text-lg font-black">{title}</h3>
+                <span className="ml-auto bg-white dark:bg-black/20 px-3 py-1 rounded-lg text-xs font-bold shadow-sm">
+                    {resources.length}
+                </span>
+            </div>
+            <div className="divide-y divide-slate-100 dark:divide-white/5">
+                {resources.map(resource => (
+                    <ResourceItem key={resource._id} resource={resource} onDelete={onDelete} color={color} />
+                ))}
+            </div>
+        </div>
+    )
+}
+
+function ResourceItem({ resource, onDelete, color }) {
+    return (
+        <div className="p-5 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors flex items-center justify-between group">
+            <div className="flex items-center gap-5">
+                <div className="w-12 h-12 bg-slate-100 dark:bg-white/5 rounded-xl flex items-center justify-center font-bold text-xs text-slate-500 dark:text-slate-400 uppercase border border-slate-200 dark:border-white/10">
+                    {resource.mimeType?.includes('pdf') ? 'PDF' : resource.mimeType?.split('/')[1]?.slice(0, 3) || 'FILE'}
                 </div>
                 <div>
-                    <h4 className="font-bold text-gray-800 flex items-center gap-2">
+                    <h4 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-3 text-base">
                         {resource.title}
                         {resource.type === 'marking_scheme' && resource.answerFor && (
-                            <span className="px-2 py-0.5 rounded-full bg-teal-100 text-teal-700 text-[10px] uppercase font-bold border border-teal-200">
+                            <span className="px-2 py-1 rounded-lg bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 text-[10px] uppercase font-bold tracking-wide">
                                 {resource.answerFor.replace('_', ' ')} Answer
                             </span>
                         )}
+                        {resource.academicYear && (
+                            <span className="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wide">
+                                {resource.academicYear}
+                            </span>
+                        )}
                     </h4>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs font-bold text-slate-400 mt-1">
                         {(resource.size / 1024 / 1024).toFixed(2)} MB • {new Date(resource.createdAt).toLocaleDateString()}
                     </p>
                 </div>
@@ -667,14 +671,16 @@ function ResourceItem({ resource, onDelete }) {
             <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <a
                     href={`${import.meta.env.VITE_API_BASE_URL}/resources/stream/${resource._id}`}
-                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 text-slate-400 hover:text-stitch-blue hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all"
                     title="Download / View"
                 >
                     <ExternalLink className="w-5 h-5" />
                 </a>
                 <button
                     onClick={() => onDelete(resource._id)}
-                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all"
                     title="Delete"
                 >
                     <Trash2 className="w-5 h-5" />
@@ -683,3 +689,5 @@ function ResourceItem({ resource, onDelete }) {
         </div>
     );
 }
+
+

@@ -145,7 +145,7 @@ export default function DashboardPage() {
                         </div>
                         <h1 className="text-white text-4xl md:text-5xl font-black leading-tight tracking-tight mb-3 drop-shadow-sm">Dashboard</h1>
                         <p className="text-white/80 text-sm md:text-base font-medium leading-relaxed max-w-xl">
-                            Welcome to your student management system. System performance is optimal and all services are running smoothly.
+                            Welcome to your student management system.
                         </p>
                     </div>
                 </div>
