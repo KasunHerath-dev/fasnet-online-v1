@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { CheckCircle, XCircle, Clock, User, Calendar, FileText, Filter, Search } from 'lucide-react'
+import { CheckCircle, XCircle, Clock, FileText, Filter, Search, User, Calendar, ArrowRight, ArrowLeft } from 'lucide-react'
 import api from '../services/api'
+import { useNavigate } from 'react-router-dom'
 
 export default function ProfileRequestsPage() {
     const [requests, setRequests] = useState([])
@@ -8,6 +9,7 @@ export default function ProfileRequestsPage() {
     const [filter, setFilter] = useState('all') // all, Pending, Approved, Rejected
     const [searchQuery, setSearchQuery] = useState('')
     const [processingId, setProcessingId] = useState(null)
+    const navigate = useNavigate()
 
     useEffect(() => {
         fetchRequests()
@@ -17,19 +19,14 @@ export default function ProfileRequestsPage() {
         try {
             setLoading(true)
             const url = filter === 'all' ? '/profile-requests' : `/profile-requests?status=${filter}`
-            console.log('Fetching requests from:', url)
             const response = await api.get(url)
-            console.log('API Response:', response)
-            console.log('API Data:', response.data)
 
             // Handle different possible response structures
             const requestData = response.data.data || response.data || []
-            console.log('Parsed Requests:', requestData)
 
             if (Array.isArray(requestData)) {
                 setRequests(requestData)
             } else {
-                console.error('Data is not an array:', requestData)
                 setRequests([])
             }
         } catch (error) {
@@ -76,11 +73,11 @@ export default function ProfileRequestsPage() {
 
     const getStatusBadge = (status) => {
         const styles = {
-            Pending: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-            Approved: 'bg-green-100 text-green-700 border-green-200',
-            Rejected: 'bg-red-100 text-red-700 border-red-200'
+            Pending: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400',
+            Approved: 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400',
+            Rejected: 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400'
         }
-        return styles[status] || 'bg-gray-100 text-gray-700 border-gray-200'
+        return styles[status] || 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300'
     }
 
     const formatDate = (date) => {
@@ -99,8 +96,6 @@ export default function ProfileRequestsPage() {
         const changedKeys = Object.entries(changes)
             .filter(([key, value]) => {
                 const currentValue = student ? student[key] : null
-                // Loose equality check to handle number/string differences, 
-                // but handle empty/null cases carefully
                 if (!currentValue && !value) return false
                 return String(currentValue).trim() !== String(value).trim()
             })
@@ -119,62 +114,65 @@ export default function ProfileRequestsPage() {
         if (!request) return null
 
         return (
-            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-                <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
+                <div className="bg-white dark:bg-stitch-card-dark rounded-[2.5rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col border border-white/10 animate-scaleIn">
                     {/* Header */}
-                    <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 flex items-start justify-between">
-                        <div className="text-white">
-                            <h2 className="text-2xl font-bold">Request Details</h2>
-                            <p className="text-indigo-100 mt-1">Review the requested profile changes</p>
+                    <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-8 flex items-start justify-between relative overflow-hidden">
+                        <div className="absolute inset-0 bg-black/10"></div>
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
+                        <div className="relative z-10 text-white">
+                            <h2 className="text-2xl font-black">Request Details</h2>
+                            <p className="text-indigo-100 font-medium opacity-80 mt-1">Review the requested profile changes</p>
                         </div>
                         <button
                             onClick={onClose}
-                            className="text-white/80 hover:text-white hover:bg-white/10 p-2 rounded-full transition-colors"
+                            className="relative z-10 text-white/60 hover:text-white hover:bg-white/10 p-2 rounded-xl transition-colors"
                         >
-                            <XCircle className="w-6 h-6" />
+                            <XCircle className="w-8 h-8" />
                         </button>
                     </div>
 
                     {/* Content */}
-                    <div className="p-6 overflow-y-auto flex-1 space-y-6">
+                    <div className="p-8 overflow-y-auto flex-1 space-y-8">
                         {/* Student Info */}
-                        <div className="flex items-center gap-4 p-4 bg-indigo-50 rounded-xl border border-indigo-100">
-                            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-indigo-600 font-bold text-lg shadow-sm">
+                        <div className="flex items-center gap-6 p-6 bg-indigo-50 dark:bg-indigo-900/10 rounded-[2rem] border border-indigo-100 dark:border-indigo-500/20">
+                            <div className="w-16 h-16 bg-white dark:bg-white/5 rounded-2xl flex items-center justify-center text-indigo-600 dark:text-indigo-300 font-black text-2xl shadow-sm">
                                 {request.student?.fullName?.charAt(0)}
                             </div>
                             <div>
-                                <h3 className="font-bold text-gray-900">{request.student?.fullName}</h3>
-                                <p className="text-indigo-600 font-medium">{request.student?.registrationNumber}</p>
+                                <h3 className="font-bold text-lg text-slate-900 dark:text-white">{request.student?.fullName}</h3>
+                                <p className="text-indigo-500 dark:text-indigo-300 font-bold font-mono">{request.student?.registrationNumber}</p>
                             </div>
                         </div>
 
                         {/* Changes List */}
                         <div>
-                            <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Requested Changes</h4>
-                            <div className="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">
+                            <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Requested Changes</h4>
+                            <div className="bg-slate-50 dark:bg-black/20 rounded-2xl border border-slate-200 dark:border-white/5 overflow-hidden">
                                 <table className="w-full">
-                                    <thead className="bg-gray-100">
+                                    <thead className="bg-slate-100 dark:bg-white/5 border-b border-slate-200 dark:border-white/5">
                                         <tr>
-                                            <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Field</th>
-                                            <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase text-red-600">Current Value</th>
-                                            <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase text-green-600">Requested Value</th>
+                                            <th className="px-6 py-4 text-left text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Field</th>
+                                            <th className="px-6 py-4 text-left text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Current</th>
+                                            <th className="px-6 py-4 text-left text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Requested</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-gray-200">
+                                    <tbody className="divide-y divide-slate-200 dark:divide-white/5">
                                         {Object.entries(request.requestedChanges || {}).map(([key, value]) => {
                                             const currentValue = request.student ? request.student[key] : 'N/A'
                                             const isDifferent = String(currentValue) !== String(value)
 
                                             return (
-                                                <tr key={key} className="hover:bg-white transition-colors">
-                                                    <td className="px-4 py-3 font-medium text-gray-700 capitalize border-r border-gray-200 w-1/4">
+                                                <tr key={key} className="hover:bg-white dark:hover:bg-white/5 transition-colors">
+                                                    <td className="px-6 py-4 font-bold text-slate-700 dark:text-slate-300 capitalize text-sm">
                                                         {key.replace(/([A-Z])/g, ' $1').trim()}
                                                     </td>
-                                                    <td className="px-4 py-3 text-gray-500 border-r border-gray-200 w-1/3 break-all">
-                                                        {currentValue || <span className="text-gray-400 italic">Empty</span>}
+                                                    <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-sm break-all">
+                                                        {currentValue || <span className="text-slate-400 italic">Empty</span>}
                                                     </td>
-                                                    <td className={`px-4 py-3 font-semibold w-1/3 break-all ${isDifferent ? 'text-green-700 bg-green-50' : 'text-gray-900'}`}>
+                                                    <td className={`px-6 py-4 font-bold text-sm w-1/3 break-all ${isDifferent ? 'text-green-600 dark:text-green-400' : 'text-slate-900 dark:text-white'}`}>
                                                         {value}
+                                                        {isDifferent && <span className="ml-2 inline-block w-2 h-2 bg-green-500 rounded-full"></span>}
                                                     </td>
                                                 </tr>
                                             )
@@ -186,31 +184,29 @@ export default function ProfileRequestsPage() {
 
                         {/* Reason */}
                         <div>
-                            <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">Reason for Request</h4>
-                            <div className="p-4 bg-yellow-50 rounded-xl border border-yellow-100 text-yellow-800 italic">
+                            <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Reason for Request</h4>
+                            <div className="p-6 bg-yellow-50 dark:bg-yellow-900/10 rounded-2xl border border-yellow-100 dark:border-yellow-500/20 text-yellow-800 dark:text-yellow-200 italic font-medium">
                                 "{request.reason}"
                             </div>
                         </div>
 
                         {/* Metadata */}
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                            <div className="flex items-center gap-2 text-gray-600">
+                        <div className="flex flex-wrap gap-4 text-sm">
+                            <div className="px-4 py-2 bg-slate-100 dark:bg-white/5 rounded-xl flex items-center gap-2 text-slate-600 dark:text-slate-400 font-bold">
                                 <Calendar className="w-4 h-4" />
-                                <span>Requested: {formatDate(request.createdAt)}</span>
+                                <span>{formatDate(request.createdAt)}</span>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusBadge(request.status)}`}>
-                                    {request.status}
-                                </span>
+                            <div className={`px-4 py-2 rounded-xl flex items-center gap-2 font-bold ${getStatusBadge(request.status)}`}>
+                                {request.status}
                             </div>
                         </div>
                     </div>
 
                     {/* Footer / Actions */}
-                    <div className="p-6 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
+                    <div className="p-6 border-t border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-white/5 flex justify-end gap-3">
                         <button
                             onClick={onClose}
-                            className="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition-colors"
+                            className="px-6 py-3 bg-white dark:bg-white/5 text-slate-700 dark:text-white border border-slate-200 dark:border-white/10 rounded-xl hover:bg-slate-50 dark:hover:bg-white/10 font-bold transition-colors shadow-sm"
                         >
                             Close
                         </button>
@@ -221,18 +217,18 @@ export default function ProfileRequestsPage() {
                                         handleReject(request._id)
                                         onClose()
                                     }}
-                                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium shadow-md transition-colors flex items-center gap-2"
+                                    className="px-6 py-3 bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 rounded-xl hover:bg-red-200 dark:hover:bg-red-500/30 font-bold transition-colors flex items-center gap-2"
                                 >
-                                    <XCircle className="w-4 h-4" /> Reject
+                                    <XCircle className="w-5 h-5" /> Reject
                                 </button>
                                 <button
                                     onClick={() => {
                                         handleApprove(request._id)
                                         onClose()
                                     }}
-                                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium shadow-md transition-colors flex items-center gap-2"
+                                    className="px-6 py-3 bg-green-500 text-white rounded-xl hover:bg-green-600 font-bold shadow-lg shadow-green-500/30 transition-colors flex items-center gap-2"
                                 >
-                                    <CheckCircle className="w-4 h-4" /> Approve
+                                    <CheckCircle className="w-5 h-5" /> Approve
                                 </button>
                             </>
                         )}
@@ -252,245 +248,190 @@ export default function ProfileRequestsPage() {
     })
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-4 md:p-8">
-            <div className="max-w-7xl mx-auto space-y-6">
-                {/* Header */}
-                <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-2xl md:rounded-3xl p-4 md:p-8 shadow-2xl">
-                    <div className="flex items-center gap-3 md:gap-4">
-                        <div className="w-10 h-10 md:w-16 md:h-16 bg-white/20 backdrop-blur-sm rounded-xl md:rounded-2xl flex items-center justify-center">
-                            <FileText className="w-5 h-5 md:w-9 md:h-9 text-white" />
-                        </div>
-                        <div>
-                            <h1 className="text-xl md:text-4xl font-black text-white mb-1">Profile Change Requests</h1>
-                            <p className="text-xs md:text-base text-indigo-100 font-medium">Review and manage student profile update requests</p>
+        <div className="min-h-screen bg-stitch-bg-light dark:bg-stitch-bg-dark font-display text-slate-900 dark:text-white pb-20 transition-colors duration-300">
+            <div className="max-w-[1600px] mx-auto space-y-8 animate-fadeIn p-4 md:p-8">
+
+                {/* Hero Header */}
+                <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-700 to-violet-800 dark:from-indigo-900 dark:via-purple-950 dark:to-violet-950 rounded-[2.5rem] p-8 md:p-12 shadow-2xl z-10">
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
+                    <div className="absolute bottom-0 left-0 w-80 h-80 bg-pink-500/20 rounded-full blur-3xl -ml-20 -mb-20"></div>
+
+                    <div className="relative z-10">
+                        <button
+                            onClick={() => navigate('/admin')}
+                            className="group flex items-center gap-2 text-indigo-100 hover:text-white transition-colors mb-6 font-medium"
+                        >
+                            <div className="p-2 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
+                                <ArrowLeft className="w-5 h-5" />
+                            </div>
+                            Back to Dashboard
+                        </button>
+
+                        <div className="flex flex-col md:flex-row md:items-center gap-6">
+                            <div className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-3xl flex items-center justify-center shadow-inner border border-white/20">
+                                <FileText className="w-10 h-10 text-white" />
+                            </div>
+                            <div>
+                                <h1 className="text-4xl md:text-5xl font-black text-white mb-2 tracking-tight">Profile Requests</h1>
+                                <p className="text-indigo-100 text-lg font-medium max-w-2xl">Review and manage student profile update requests.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Filters and Search */}
-                <div className="bg-white rounded-2xl p-4 md:p-6 shadow-lg border-2 border-gray-100">
-                    <div className="flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
-                        {/* Status Filter */}
-                        <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
-                            <Filter className="w-5 h-5 text-gray-400 flex-shrink-0" />
-                            <div className="flex gap-2">
+                {/* Main Content Card */}
+                <div className="bg-white dark:bg-stitch-card-dark rounded-[2.5rem] shadow-xl border border-slate-100 dark:border-white/5 p-6 md:p-8 space-y-8">
+
+                    {/* Controls */}
+                    <div className="flex flex-col xl:flex-row gap-6 justify-between items-start xl:items-center">
+                        {/* Stats */}
+                        <div className="flex gap-4 w-full xl:w-auto">
+                            <StatBadge
+                                icon={<Clock className="w-4 h-4" />}
+                                label="Pending"
+                                count={requests.filter(r => r.status === 'Pending').length}
+                                color="bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400"
+                            />
+                            <StatBadge
+                                icon={<CheckCircle className="w-4 h-4" />}
+                                label="Approved"
+                                count={requests.filter(r => r.status === 'Approved').length}
+                                color="bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400"
+                            />
+                            <StatBadge
+                                icon={<XCircle className="w-4 h-4" />}
+                                label="Rejected"
+                                count={requests.filter(r => r.status === 'Rejected').length}
+                                color="bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400"
+                            />
+                        </div>
+
+                        {/* Filters & Search */}
+                        <div className="flex flex-col md:flex-row gap-4 w-full xl:w-auto">
+                            <div className="bg-slate-100 dark:bg-black/20 p-1 rounded-xl flex gap-1">
                                 {['all', 'Pending', 'Approved', 'Rejected'].map((status) => (
                                     <button
                                         key={status}
                                         onClick={() => setFilter(status)}
-                                        className={`px-3 md:px-4 py-1.5 md:py-2 rounded-lg font-semibold text-xs md:text-sm transition-all whitespace-nowrap ${filter === status
-                                            ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg'
-                                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                        className={`px-4 py-2 rounded-lg font-bold text-xs md:text-sm transition-all whitespace-nowrap ${filter === status
+                                            ? 'bg-white dark:bg-white/10 text-indigo-600 dark:text-indigo-300 shadow-md transform scale-105'
+                                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/5'
                                             }`}
                                     >
                                         {status === 'all' ? 'All' : status}
                                     </button>
                                 ))}
                             </div>
-                        </div>
 
-                        {/* Search */}
-                        <div className="relative flex-1 md:max-w-xs">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
-                            <input
-                                type="text"
-                                placeholder="Search..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-9 md:pl-10 pr-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:outline-none text-xs md:text-sm"
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                {/* Stats */}
-                <div className="grid grid-cols-3 gap-2 md:gap-4">
-                    <div className="bg-white rounded-xl p-2 md:p-4 shadow-lg border-2 border-yellow-100">
-                        <div className="flex flex-col md:flex-row items-center md:gap-3 text-center md:text-left">
-                            <div className="w-8 h-8 md:w-10 md:h-10 bg-yellow-100 rounded-lg flex items-center justify-center mb-1 md:mb-0">
-                                <Clock className="w-4 h-4 md:w-5 md:h-5 text-yellow-600" />
-                            </div>
-                            <div>
-                                <p className="text-[10px] md:text-xs text-gray-500 font-medium">Pending</p>
-                                <p className="text-lg md:text-2xl font-black text-gray-900">
-                                    {requests.filter(r => r.status === 'Pending').length}
-                                </p>
+                            <div className="relative flex-1 md:w-64">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <input
+                                    type="text"
+                                    placeholder="Search student..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none text-slate-900 dark:text-white placeholder-slate-400 font-medium transition-all"
+                                />
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-xl p-2 md:p-4 shadow-lg border-2 border-green-100">
-                        <div className="flex flex-col md:flex-row items-center md:gap-3 text-center md:text-left">
-                            <div className="w-8 h-8 md:w-10 md:h-10 bg-green-100 rounded-lg flex items-center justify-center mb-1 md:mb-0">
-                                <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-green-600" />
-                            </div>
-                            <div>
-                                <p className="text-[10px] md:text-xs text-gray-500 font-medium">Approved</p>
-                                <p className="text-lg md:text-2xl font-black text-gray-900">
-                                    {requests.filter(r => r.status === 'Approved').length}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="bg-white rounded-xl p-2 md:p-4 shadow-lg border-2 border-red-100">
-                        <div className="flex flex-col md:flex-row items-center md:gap-3 text-center md:text-left">
-                            <div className="w-8 h-8 md:w-10 md:h-10 bg-red-100 rounded-lg flex items-center justify-center mb-1 md:mb-0">
-                                <XCircle className="w-4 h-4 md:w-5 md:h-5 text-red-600" />
-                            </div>
-                            <div>
-                                <p className="text-[10px] md:text-xs text-gray-500 font-medium">Rejected</p>
-                                <p className="text-lg md:text-2xl font-black text-gray-900">
-                                    {requests.filter(r => r.status === 'Rejected').length}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Requests List (Mobile Cards + Desktop Table) */}
-                <div className="space-y-4">
-                    {/* Mobile Card View */}
-                    <div className="grid grid-cols-1 md:hidden gap-4">
-                        {filteredRequests.map((request) => (
-                            <div
-                                key={request._id}
-                                onClick={() => setSelectedRequest(request)}
-                                className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 active:scale-[0.98] transition-all cursor-pointer"
-                            >
-                                <div className="flex items-start justify-between mb-3">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                                            {request.student?.fullName?.charAt(0) || '?'}
-                                        </div>
-                                        <div>
-                                            <h3 className="font-bold text-gray-900 text-sm line-clamp-1">{request.student?.fullName}</h3>
-                                            <p className="text-xs text-indigo-600 font-medium">{request.student?.registrationNumber}</p>
-                                        </div>
-                                    </div>
-                                    <span className={`px-2 py-1 rounded-lg text-xs font-bold ${getStatusBadge(request.status)}`}>
-                                        {request.status}
-                                    </span>
-                                </div>
-
-                                <div className="space-y-2 mb-4">
-                                    <div className="text-xs text-gray-500">
-                                        <span className="font-semibold text-gray-700">Changes:</span> {formatChanges(request.requestedChanges, request.student)}
-                                    </div>
-                                    <div className="text-xs text-gray-500 line-clamp-2">
-                                        <span className="font-semibold text-gray-700">Reason:</span> "{request.reason}"
-                                    </div>
-                                    <div className="flex items-center gap-1 text-xs text-gray-400">
-                                        <Clock className="w-3 h-3" />
-                                        {formatDate(request.createdAt)}
-                                    </div>
-                                </div>
-
-                                <button className="w-full py-2 bg-gray-50 text-indigo-600 font-semibold text-sm rounded-lg hover:bg-gray-100 transition-colors">
-                                    View Details
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Desktop Table View */}
-                    <div className="hidden md:block bg-white rounded-2xl shadow-xl border-2 border-gray-100 overflow-hidden">
+                    {/* Table */}
+                    <div className="bg-slate-50 dark:bg-black/20 rounded-[2rem] border border-slate-200 dark:border-white/5 overflow-hidden">
                         {loading ? (
-                            <div className="p-12 text-center">
+                            <div className="p-20 text-center">
                                 <div className="inline-block w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-                                <p className="text-gray-600 font-medium mt-4">Loading requests...</p>
+                                <p className="text-slate-500 dark:text-slate-400 font-bold mt-4">Loading requests...</p>
                             </div>
                         ) : filteredRequests.length === 0 ? (
-                            <div className="p-12 text-center">
-                                <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                                <h3 className="text-xl font-bold text-gray-900 mb-2">No Requests Found</h3>
-                                <p className="text-gray-600">
-                                    {searchQuery ? 'Try adjusting your search' : 'No profile change requests available'}
+                            <div className="p-20 text-center flex flex-col items-center">
+                                <div className="w-20 h-20 bg-slate-100 dark:bg-white/5 rounded-full flex items-center justify-center mb-6">
+                                    <FileText className="w-10 h-10 text-slate-300 dark:text-slate-600" />
+                                </div>
+                                <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2">No Requests Found</h3>
+                                <p className="text-slate-500 dark:text-slate-400 font-medium">
+                                    {searchQuery ? 'Try adjusting your search criteria.' : 'No profile change requests match the current filter.'}
                                 </p>
                             </div>
                         ) : (
                             <div className="overflow-x-auto">
                                 <table className="w-full">
-                                    <thead>
-                                        <tr className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
-                                            <th className="px-6 py-4 text-left font-bold text-sm">Student</th>
-                                            <th className="px-6 py-4 text-left font-bold text-sm">Requested Changes</th>
-                                            <th className="px-6 py-4 text-left font-bold text-sm">Reason</th>
-                                            <th className="px-6 py-4 text-left font-bold text-sm">Date</th>
-                                            <th className="px-6 py-4 text-left font-bold text-sm">Status</th>
-                                            <th className="px-6 py-4 text-left font-bold text-sm">Actions</th>
+                                    <thead className="bg-slate-100 dark:bg-white/5 border-b border-slate-200 dark:border-white/5">
+                                        <tr>
+                                            <th className="px-8 py-5 text-left font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">Student</th>
+                                            <th className="px-8 py-5 text-left font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">Changes</th>
+                                            <th className="px-8 py-5 text-left font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">Reason</th>
+                                            <th className="px-8 py-5 text-left font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">Date</th>
+                                            <th className="px-8 py-5 text-left font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
+                                            <th className="px-8 py-5 text-right font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-gray-100">
+                                    <tbody className="divide-y divide-slate-200 dark:divide-white/5">
                                         {filteredRequests.map((request) => (
                                             <tr
                                                 key={request._id}
-                                                className="hover:bg-indigo-50 transition-colors cursor-pointer"
+                                                className="group hover:bg-white dark:hover:bg-white/5 transition-colors cursor-pointer"
                                                 onClick={() => setSelectedRequest(request)}
                                             >
-                                                <td className="px-6 py-4">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                                                <td className="px-8 py-5">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-md">
                                                             {request.student?.fullName?.charAt(0) || '?'}
                                                         </div>
                                                         <div className="min-w-0">
-                                                            <p className="font-semibold text-gray-900 text-sm truncate">
+                                                            <p className="font-bold text-slate-900 dark:text-white text-sm truncate max-w-[150px]">
                                                                 {request.student?.fullName || 'Unknown'}
                                                             </p>
-                                                            <p className="text-xs text-gray-500 truncate">
+                                                            <p className="text-xs font-bold text-slate-400 font-mono">
                                                                 {request.student?.registrationNumber || 'N/A'}
                                                             </p>
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4">
-                                                    <p className="text-sm text-gray-700 line-clamp-2">
+                                                <td className="px-8 py-5">
+                                                    <p className="text-slate-600 dark:text-slate-300 text-sm font-medium line-clamp-1 max-w-xs">
                                                         {formatChanges(request.requestedChanges, request.student)}
                                                     </p>
                                                 </td>
-                                                <td className="px-6 py-4">
-                                                    <p className="text-sm text-gray-700 line-clamp-2 max-w-xs">
-                                                        {request.reason || 'No reason provided'}
+                                                <td className="px-8 py-5">
+                                                    <p className="text-slate-500 dark:text-slate-400 text-sm italic line-clamp-1 max-w-xs opacity-80">
+                                                        "{request.reason || 'No reason provided'}"
                                                     </p>
                                                 </td>
-                                                <td className="px-6 py-4">
-                                                    <div className="flex items-center gap-1 text-sm text-gray-600">
-                                                        <Calendar className="w-4 h-4 flex-shrink-0" />
-                                                        <span>{formatDate(request.createdAt)}</span>
+                                                <td className="px-8 py-5">
+                                                    <div className="flex items-center gap-2 text-sm font-bold text-slate-500 dark:text-slate-400">
+                                                        <span>{new Date(request.createdAt).toLocaleDateString()}</span>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4">
-                                                    <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-lg font-semibold text-xs border-2 ${getStatusBadge(request.status)}`}>
-                                                        {request.status === 'Pending' && <Clock className="w-3 h-3" />}
-                                                        {request.status === 'Approved' && <CheckCircle className="w-3 h-3" />}
-                                                        {request.status === 'Rejected' && <XCircle className="w-3 h-3" />}
+                                                <td className="px-8 py-5">
+                                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg font-bold text-xs uppercase tracking-wide border ${getStatusBadge(request.status)} border-current bg-opacity-10`}>
                                                         {request.status}
                                                     </span>
                                                 </td>
-                                                <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+                                                <td className="px-8 py-5 text-right" onClick={(e) => e.stopPropagation()}>
                                                     {request.status === 'Pending' ? (
-                                                        <div className="flex gap-2">
+                                                        <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                                             <button
                                                                 onClick={() => handleApprove(request._id)}
                                                                 disabled={processingId === request._id}
-                                                                className="px-3 py-1 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-sm font-medium disabled:opacity-50 flex items-center gap-1"
+                                                                className="p-2 bg-green-100 dark:bg-green-500/20 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-500/30 transition-colors"
+                                                                title="Approve"
                                                             >
-                                                                <CheckCircle className="w-4 h-4" />
-                                                                <span>Approve</span>
+                                                                <CheckCircle className="w-5 h-5" />
                                                             </button>
                                                             <button
                                                                 onClick={() => handleReject(request._id)}
                                                                 disabled={processingId === request._id}
-                                                                className="px-3 py-1 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm font-medium disabled:opacity-50 flex items-center gap-1"
+                                                                className="p-2 bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-500/30 transition-colors"
+                                                                title="Reject"
                                                             >
-                                                                <XCircle className="w-4 h-4" />
-                                                                <span>Reject</span>
+                                                                <XCircle className="w-5 h-5" />
                                                             </button>
                                                         </div>
                                                     ) : (
-                                                        <div className="text-xs text-gray-500">
-                                                            {request.reviewedBy?.username && `By ${request.reviewedBy.username}`}
-                                                        </div>
+                                                        <button className="text-slate-400 hover:text-indigo-500 transition-colors">
+                                                            <ArrowRight className="w-5 h-5" />
+                                                        </button>
                                                     )}
                                                 </td>
                                             </tr>
@@ -509,6 +450,34 @@ export default function ProfileRequestsPage() {
                         onClose={() => setSelectedRequest(null)}
                     />
                 )}
+            </div>
+            <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-scaleIn {
+            animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.4s ease-out;
+        }
+      `}</style>
+        </div>
+    )
+}
+
+function StatBadge({ icon, label, count, color }) {
+    return (
+        <div className={`px-4 py-2 rounded-2xl flex items-center gap-3 border border-transparent ${color} bg-opacity-20`}>
+            {icon}
+            <div className="flex flex-col">
+                <span className="text-[10px] font-black uppercase tracking-widest opacity-70">{label}</span>
+                <span className="text-xl font-black leading-none">{count}</span>
             </div>
         </div>
     )

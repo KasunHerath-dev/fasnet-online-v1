@@ -11,7 +11,9 @@ import {
   Sparkles,
   ChevronRight,
   ChevronDown,
-  Check
+  Check,
+  Search,
+  Arrowleft
 } from 'lucide-react'
 import Dropdown from '../components/Dropdown'
 
@@ -20,7 +22,7 @@ export default function BirthdaysPage() {
   const [selectedStudent, setSelectedStudent] = useState(null)
   const [loading, setLoading] = useState(false)
   const [days, setDays] = useState(30)
-  const [viewMode, setViewMode] = useState('timeline') // timeline or list
+  const [viewMode, setViewMode] = useState('list') // Default to list for better density
 
   useEffect(() => {
     fetchBirthdays()
@@ -82,195 +84,176 @@ export default function BirthdaysPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 p-4 md:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto space-y-4 md:space-y-6 lg:space-y-8 animate-fadeIn">
-        {/* Enhanced Header */}
-        {/* Enhanced Header */}
-        <div className="relative shadow-2xl rounded-2xl md:rounded-3xl">
-          {/* Background Layer with Clipping */}
-          <div className="absolute inset-0 bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 rounded-2xl md:rounded-3xl overflow-hidden z-0">
-            <div className="hidden md:block absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
-            <div className="hidden md:block absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
-          </div>
+    <div className="min-h-screen bg-stitch-bg-light dark:bg-stitch-bg-dark font-display text-slate-900 dark:text-white pb-20 transition-colors duration-300">
+      <div className="max-w-[1600px] mx-auto space-y-8 animate-fadeIn p-4 md:p-8">
 
-          <div className="relative z-10 p-4 md:p-8">
-            <div className="flex flex-col gap-4">
-              {/* Title Section */}
-              <div className="flex items-center gap-2 md:gap-3">
-                <div className="w-10 h-10 md:w-16 md:h-16 bg-white/20 backdrop-blur-sm rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0">
-                  <Cake className="w-5 h-5 md:w-9 md:h-9 text-white" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h1 className="text-xl md:text-4xl font-black text-white mb-0.5 md:mb-1 truncate">Upcoming Birthdays</h1>
-                  <p className="text-xs md:text-base text-pink-100 font-medium">Celebrate your students' special days</p>
-                </div>
+        {/* Hero Header */}
+        <div className="relative overflow-hidden bg-gradient-to-br from-pink-500 via-rose-500 to-purple-600 dark:from-pink-900 dark:via-rose-950 dark:to-purple-950 rounded-[2.5rem] p-8 md:p-12 shadow-2xl z-10">
+          {/* Background Visuals */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 animate-pulse"></div>
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl -ml-20 -mb-20"></div>
+
+          <div className="relative z-10 flex flex-col gap-6">
+            <div className="flex items-center gap-6">
+              <div className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-3xl flex items-center justify-center shadow-inner border border-white/20">
+                <Cake className="w-10 h-10 text-white" />
+              </div>
+              <div>
+                <h1 className="text-4xl md:text-5xl font-black text-white mb-2 tracking-tight">Birthdays</h1>
+                <p className="text-pink-100 text-lg font-medium max-w-2xl">Celebrate upcoming special days with your students.</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
+              {/* View Mode Toggle */}
+              <div className="bg-white/10 backdrop-blur-md rounded-xl p-1 flex border border-white/10">
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${viewMode === 'list'
+                    ? 'bg-white text-rose-600 shadow-lg'
+                    : 'text-white hover:bg-white/10'
+                    }`}
+                >
+                  List View
+                </button>
+                <button
+                  onClick={() => setViewMode('timeline')}
+                  className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${viewMode === 'timeline'
+                    ? 'bg-white text-rose-600 shadow-lg'
+                    : 'text-white hover:bg-white/10'
+                    }`}
+                >
+                  Timeline
+                </button>
               </div>
 
-              {/* Filter Controls - Stacked on Mobile */}
-              <div className="flex flex-col gap-2">
-                {/* View Mode Toggle */}
-                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-1 flex gap-1">
-                  <button
-                    onClick={() => setViewMode('timeline')}
-                    className={`flex-1 px-3 md:px-4 py-2 rounded-lg font-semibold text-xs md:text-sm transition-all ${viewMode === 'timeline'
-                      ? 'bg-white text-purple-600 shadow-lg'
-                      : 'text-white hover:bg-white/10'
-                      }`}
-                  >
-                    Timeline
-                  </button>
-                  <button
-                    onClick={() => setViewMode('list')}
-                    className={`flex-1 px-3 md:px-4 py-2 rounded-lg font-semibold text-xs md:text-sm transition-all ${viewMode === 'list'
-                      ? 'bg-white text-purple-600 shadow-lg'
-                      : 'text-white hover:bg-white/10'
-                      }`}
-                  >
-                    List
-                  </button>
-                </div>
-
-                {/* Custom Dropdown */}
-                <Dropdown
-                  value={days}
-                  onChange={(e) => setDays(e.target.value)}
-                  options={[
-                    { value: 7, label: 'Next 7 days' },
-                    { value: 30, label: 'Next 30 days' },
-                    { value: 60, label: 'Next 60 days' },
-                    { value: 90, label: 'Next 90 days' }
-                  ]}
-                  variant="glass"
-                  className="w-48"
-                />
-              </div>
+              {/* Range Dropdown */}
+              <Dropdown
+                value={days}
+                onChange={(e) => setDays(e.target.value)}
+                options={[
+                  { value: 7, label: 'Next 7 days' },
+                  { value: 14, label: 'Next 14 days' },
+                  { value: 30, label: 'Next 30 days' },
+                  { value: 60, label: 'Next 60 days' },
+                  { value: 90, label: 'Next 90 days' }
+                ]}
+                className="w-48"
+              />
             </div>
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-6">
-          <div className="bg-white rounded-xl md:rounded-2xl p-3 md:p-6 shadow-lg border-2 border-pink-100">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
-                <PartyPopper className="w-5 h-5 md:w-7 md:h-7 text-white" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-gray-500 text-xs md:text-sm font-medium">Total Birthdays</p>
-                <p className="text-xl md:text-3xl font-black text-gray-900">{students.length}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl md:rounded-2xl p-3 md:p-6 shadow-lg border-2 border-purple-100">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
-                <Calendar className="w-5 h-5 md:w-7 md:h-7 text-white" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-gray-500 text-xs md:text-sm font-medium">Time Range</p>
-                <p className="text-xl md:text-3xl font-black text-gray-900">{days} Days</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl md:rounded-2xl p-3 md:p-6 shadow-lg border-2 border-indigo-100">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
-                <Sparkles className="w-5 h-5 md:w-7 md:h-7 text-white" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-gray-500 text-xs md:text-sm font-medium">This Week</p>
-                <p className="text-xl md:text-3xl font-black text-gray-900">
-                  {students.filter(s => getDaysUntil(s.nextBirthday) <= 7).length}
-                </p>
-              </div>
-            </div>
-          </div>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <StatCard
+            icon={<PartyPopper className="w-6 h-6 text-white" />}
+            color="bg-gradient-to-br from-pink-500 to-rose-600"
+            label="Total Birthdays"
+            value={students.length}
+            subtext={`In the next ${days} days`}
+          />
+          <StatCard
+            icon={<Sparkles className="w-6 h-6 text-white" />}
+            color="bg-gradient-to-br from-purple-500 to-indigo-600"
+            label="This Week"
+            value={students.filter(s => getDaysUntil(s.nextBirthday) <= 7).length}
+            subtext="Upcoming celebrations"
+          />
+          <StatCard
+            icon={<Calendar className="w-6 h-6 text-white" />}
+            color="bg-gradient-to-br from-indigo-500 to-blue-600"
+            label="Today"
+            value={students.filter(s => getDaysUntil(s.nextBirthday) === 0).length}
+            subtext="Birthdays today"
+          />
         </div>
 
-        {/* Content */}
+        {/* Content Area */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20 bg-white rounded-2xl shadow-lg">
-            <div className="relative w-20 h-20 mb-4">
-              <div className="absolute inset-0 border-4 border-pink-200 rounded-full"></div>
-              <div className="absolute inset-0 border-4 border-pink-600 rounded-full border-t-transparent animate-spin"></div>
-            </div>
-            <p className="text-gray-600 font-medium">Loading birthdays...</p>
+          <div className="h-96 flex flex-col items-center justify-center">
+            <div className="w-16 h-16 border-4 border-rose-500/30 border-t-rose-500 rounded-full animate-spin mb-4"></div>
+            <p className="font-bold text-slate-500 dark:text-slate-400 text-lg">Finding celebrations...</p>
           </div>
         ) : students.length === 0 ? (
-          <div className="bg-white rounded-2xl p-12 text-center shadow-lg border-2 border-gray-100">
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Cake className="w-12 h-12 text-gray-400" />
+          <div className="bg-white dark:bg-stitch-card-dark rounded-[2.5rem] p-16 text-center shadow-xl border border-slate-100 dark:border-white/5">
+            <div className="w-24 h-24 bg-slate-50 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Cake className="w-12 h-12 text-slate-300 dark:text-slate-600" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">No Upcoming Birthdays</h3>
-            <p className="text-gray-600">No birthdays found in the next {days} days</p>
+            <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2">No Upcoming Birthdays</h3>
+            <p className="text-slate-500 dark:text-slate-400 font-medium text-lg">There are no birthdays in the next {days} days.</p>
           </div>
         ) : viewMode === 'timeline' ? (
           /* Timeline View */
-          <div className="space-y-6">
+          <div className="space-y-8">
             {sortedDates.map((date, index) => {
               const daysUntil = getDaysUntil(date)
               const studentsOnDate = groupedByDate[date]
 
               return (
-                <div key={date} className="relative" style={{ animation: `fadeInUp 0.3s ease-out ${index * 0.1}s both` }}>
+                <div key={date} className="relative animate-fadeIn" style={{ animationDelay: `${index * 0.1}s` }}>
                   {/* Date Header */}
-                  <div className="flex items-center gap-4 mb-4">
+                  <div className="flex items-center gap-6 mb-6">
                     <div className="relative">
-                      <div className={`w-20 h-20 rounded-2xl flex flex-col items-center justify-center shadow-lg ${isToday(date)
-                        ? 'bg-gradient-to-br from-pink-500 to-rose-600 text-white'
-                        : 'bg-white border-2 border-gray-200 text-gray-900'
+                      <div className={`w-20 h-20 rounded-2xl flex flex-col items-center justify-center shadow-lg border-2 ${isToday(date)
+                        ? 'bg-rose-500 border-rose-400 text-white'
+                        : 'bg-white dark:bg-stitch-card-dark border-slate-100 dark:border-white/10 text-slate-900 dark:text-white'
                         }`}>
-                        <span className="text-xs font-bold uppercase">
+                        <span className="text-xs font-bold uppercase opacity-80">
                           {getMonthName(date).substring(0, 3)}
                         </span>
-                        <span className="text-2xl font-black">{getDateDay(date)}</span>
+                        <span className="text-3xl font-black">{getDateDay(date)}</span>
                       </div>
                       {isToday(date) && (
-                        <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
-                          <Sparkles className="w-4 h-4 text-yellow-900" />
+                        <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center shadow-md animate-bounce">
+                          <Sparkles className="w-5 h-5 text-yellow-900" />
                         </div>
                       )}
                     </div>
 
-                    <div className="flex-1">
-                      <h2 className="text-2xl font-black text-gray-900">{getDateLabel(date)}</h2>
-                      <p className="text-gray-600 font-medium">
-                        {daysUntil === 0 ? 'Today!' : daysUntil === 1 ? 'Tomorrow' : `In ${daysUntil} days`} • {studentsOnDate.length} {studentsOnDate.length === 1 ? 'birthday' : 'birthdays'}
-                      </p>
+                    <div>
+                      <h2 className="text-2xl font-black text-slate-900 dark:text-white">{getDateLabel(date)}</h2>
+                      <div className="flex items-center gap-2">
+                        <span className={`px-2 py-0.5 rounded-md text-xs font-bold uppercase ${daysUntil === 0
+                          ? 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400'
+                          : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                          }`}>
+                          {daysUntil === 0 ? 'Happening Now' : `${daysUntil} Days Away`}
+                        </span>
+                        <span className="text-slate-400 dark:text-slate-500 font-bold">•</span>
+                        <span className="text-slate-500 dark:text-slate-400 font-bold">
+                          {studentsOnDate.length} {studentsOnDate.length === 1 ? 'Birthday' : 'Birthdays'}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
                   {/* Students Cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:ml-24">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pl-0 md:pl-28">
                     {studentsOnDate.map((student) => (
                       <div
                         key={student._id}
-                        className="group relative bg-white rounded-2xl p-5 shadow-lg border-2 border-gray-100 hover:border-pink-300 transition-all hover:shadow-xl hover:-translate-y-1 cursor-pointer"
+                        className="group relative bg-white dark:bg-stitch-card-dark rounded-[2rem] p-6 shadow-lg border border-slate-100 dark:border-white/5 hover:border-rose-200 dark:hover:border-rose-500/30 transition-all hover:translate-y-[-4px] cursor-pointer"
                         onClick={() => setSelectedStudent(student)}
                       >
-                        <div className="absolute top-3 right-3">
-                          <Gift className="w-5 h-5 text-pink-400 group-hover:scale-110 transition-transform" />
+                        <div className="absolute top-4 right-4 bg-rose-50 dark:bg-rose-900/20 p-2 rounded-xl">
+                          <Gift className="w-5 h-5 text-rose-500 group-hover:scale-110 transition-transform" />
                         </div>
 
-                        <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 bg-gradient-to-br from-pink-400 to-purple-500 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md">
+                        <div className="flex items-center gap-4 mb-4">
+                          <div className="w-14 h-14 bg-gradient-to-br from-rose-400 to-pink-500 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-rose-500/20">
                             {student.fullName.charAt(0)}
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-bold text-gray-900 mb-1 truncate group-hover:text-pink-600 transition-colors">
+                          <div className="min-w-0 flex-1">
+                            <p className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-0.5">Reg: {student.registrationNumber}</p>
+                            <h3 className="font-bold text-slate-900 dark:text-white truncate group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
                               {student.fullName}
                             </h3>
-                            <p className="text-xs text-gray-500 mb-2">
-                              Reg: {student.registrationNumber}
-                            </p>
-                            <div className="flex items-center gap-2 text-xs">
-                              <span className="px-2 py-1 bg-pink-100 text-pink-700 rounded-full font-semibold">
-                                🎂 {new Date(student.birthday).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                              </span>
-                            </div>
                           </div>
+                        </div>
+
+                        <div className="w-full h-1 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+                          <div className="h-full bg-gradient-to-r from-rose-400 to-pink-500 w-full transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
                         </div>
                       </div>
                     ))}
@@ -281,55 +264,52 @@ export default function BirthdaysPage() {
           </div>
         ) : (
           /* List View */
-          <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-100 overflow-hidden">
+          <div className="bg-white dark:bg-stitch-card-dark rounded-[2.5rem] shadow-xl border border-slate-100 dark:border-white/5 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead>
-                  <tr className="bg-gradient-to-r from-pink-600 to-purple-600 text-white">
-                    <th className="px-2 md:px-6 py-2 md:py-4 text-left font-bold text-xs md:text-sm">Student</th>
-                    <th className="hidden md:table-cell px-2 md:px-6 py-2 md:py-4 text-left font-bold text-xs md:text-sm">Registration #</th>
-                    <th className="px-2 md:px-6 py-2 md:py-4 text-left font-bold text-xs md:text-sm">Birthday</th>
-                    <th className="px-2 md:px-6 py-2 md:py-4 text-left font-bold text-xs md:text-sm">Days</th>
+                <thead className="bg-slate-50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
+                  <tr>
+                    <th className="px-8 py-5 text-left font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">Student</th>
+                    <th className="hidden md:table-cell px-8 py-5 text-left font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">Registration</th>
+                    <th className="px-8 py-5 text-left font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">Birthday</th>
+                    <th className="px-8 py-5 text-left font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">Count Down</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                   {students.map((student, index) => {
                     const daysUntil = getDaysUntil(student.nextBirthday)
                     return (
                       <tr
                         key={student._id}
-                        className="hover:bg-pink-50 transition-colors cursor-pointer"
+                        className="group hover:bg-slate-50 dark:hover:bg-white/5 transition-colors cursor-pointer"
                         onClick={() => setSelectedStudent(student)}
-                        style={{ animation: `fadeIn 0.3s ease-out ${index * 0.05}s both` }}
                       >
-                        <td className="px-2 md:px-6 py-2 md:py-4">
-                          <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-pink-400 to-purple-500 rounded-lg md:rounded-xl flex items-center justify-center text-white font-bold text-xs md:text-base shadow-md flex-shrink-0">
+                        <td className="px-8 py-4">
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold shadow-sm">
                               {student.fullName.charAt(0)}
                             </div>
-                            <span className="font-semibold text-gray-900 text-xs md:text-base truncate max-w-[120px] md:max-w-none">{student.fullName}</span>
+                            <span className="font-bold text-slate-900 dark:text-white">{student.fullName}</span>
                           </div>
                         </td>
-                        <td className="hidden md:table-cell px-2 md:px-6 py-2 md:py-4">
-                          <span className="text-gray-700 text-xs md:text-base">{student.registrationNumber}</span>
+                        <td className="hidden md:table-cell px-8 py-4">
+                          <span className="font-medium text-slate-500 dark:text-slate-400 font-mono text-sm">{student.registrationNumber}</span>
                         </td>
-                        <td className="px-2 md:px-6 py-2 md:py-4">
-                          <span className="inline-flex items-center gap-1 px-1.5 md:px-3 py-0.5 md:py-1 bg-pink-100 text-pink-700 rounded-lg font-semibold text-xs whitespace-nowrap">
-                            <Cake className="w-3 h-3 md:w-4 md:h-4 flex-shrink-0" />
-                            <span className="hidden md:inline">{new Date(student.birthday).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>
-                            <span className="md:hidden">{new Date(student.birthday).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-                          </span>
+                        <td className="px-8 py-4">
+                          <div className="flex items-center gap-2">
+                            <Cake className="w-4 h-4 text-rose-400" />
+                            <span className="font-bold text-slate-700 dark:text-slate-200">{new Date(student.birthday).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>
+                          </div>
                         </td>
-                        <td className="px-2 md:px-6 py-2 md:py-4">
-                          <span className={`inline-flex items-center gap-1 px-1.5 md:px-3 py-0.5 md:py-1 rounded-lg font-bold text-xs whitespace-nowrap ${daysUntil === 0
-                            ? 'bg-yellow-100 text-yellow-700'
+                        <td className="px-8 py-4">
+                          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg font-bold text-xs uppercase tracking-wide ${daysUntil === 0
+                            ? 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400'
                             : daysUntil <= 7
-                              ? 'bg-green-100 text-green-700'
-                              : 'bg-blue-100 text-blue-700'
+                              ? 'bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400'
+                              : 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400'
                             }`}>
-                            <Clock className="w-3 h-3 md:w-4 md:h-4 flex-shrink-0" />
-                            <span className="hidden md:inline">{daysUntil === 0 ? 'Today!' : daysUntil === 1 ? 'Tomorrow' : `${daysUntil} days`}</span>
-                            <span className="md:hidden">{daysUntil === 0 ? 'Today' : daysUntil === 1 ? '1d' : `${daysUntil}d`}</span>
+                            <Clock className="w-3 h-3" />
+                            {daysUntil === 0 ? 'Today' : daysUntil === 1 ? 'Tomorrow' : `${daysUntil} Days`}
                           </span>
                         </td>
                       </tr>
@@ -344,86 +324,68 @@ export default function BirthdaysPage() {
 
       {/* Birthday Details Modal */}
       {selectedStudent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn" onClick={() => setSelectedStudent(null)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn" onClick={() => setSelectedStudent(null)}>
           <div
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-scaleIn"
+            className="bg-white dark:bg-stitch-card-dark rounded-[2.5rem] shadow-2xl w-full max-w-sm overflow-hidden animate-scaleIn border border-white/10"
             onClick={e => e.stopPropagation()}
           >
             {/* Header with Avatar */}
-            <div className="bg-gradient-to-r from-pink-500 to-purple-600 p-6 flex flex-col items-center">
-              <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-purple-600 font-bold text-3xl shadow-lg mb-3 border-4 border-white/30">
+            <div className="bg-gradient-to-br from-rose-500 to-pink-600 p-8 flex flex-col items-center relative overflow-hidden">
+              <div className="absolute inset-0 bg-black/10"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl -mr-10 -mt-10"></div>
+
+              <div className="relative z-10 w-24 h-24 bg-white dark:bg-slate-900 rounded-full flex items-center justify-center text-rose-600 text-4xl font-black shadow-xl mb-4 border-4 border-white/30">
                 {selectedStudent.fullName.charAt(0)}
               </div>
-              <h3 className="text-white font-bold text-lg text-center leading-tight">
+              <h3 className="relative z-10 text-white font-black text-xl text-center leading-tight mb-1">
                 {selectedStudent.fullName}
               </h3>
-              <p className="text-pink-100 text-sm font-medium mt-1">
-                Reg: {selectedStudent.registrationNumber}
+              <p className="relative z-10 text-pink-100 font-bold opacity-80">
+                {selectedStudent.registrationNumber}
               </p>
             </div>
 
             {/* Content */}
-            <div className="p-6 space-y-4">
+            <div className="p-8 space-y-6">
 
               {/* Birthday */}
-              <div className="flex items-center gap-3 p-3 bg-pink-50 rounded-xl border border-pink-100">
-                <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Cake className="w-5 h-5 text-pink-600" />
+              <div className="flex items-center gap-4 p-4 bg-rose-50 dark:bg-rose-900/10 rounded-2xl border border-rose-100 dark:border-rose-500/20">
+                <div className="w-12 h-12 bg-white dark:bg-white/5 rounded-xl flex items-center justify-center shadow-sm">
+                  <Cake className="w-6 h-6 text-rose-500" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 font-bold uppercase tracking-wide">Birthday</p>
-                  <p className="font-bold text-gray-900">
+                  <p className="text-xs text-rose-400 dark:text-rose-300 font-bold uppercase tracking-wide">Birthday Date</p>
+                  <p className="font-black text-rose-900 dark:text-rose-100 text-lg">
                     {new Date(selectedStudent.birthday).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                   </p>
                 </div>
               </div>
 
-              {/* Whatsapp */}
-              <div className="flex items-center gap-3 p-3 bg-green-50 rounded-xl border border-green-100">
-                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="w-5 h-5 text-green-600"
-                  >
-                    <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" />
-                    <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0 .5-.5l.14-.3A7.7 7.7 0 0 0 6.6 7H7a.5.5 0 0 0 .5-.5V6a.5.5 0 0 0-.5-.5H6a.5.5 0 0 0-.5.5v.5e.5a.5.5 0 0 0 .5.5H7z" opacity="0" />
-                    {/* Using simple phone icon fallback if needed, but lets try to mimic whatsapp icon visually or just use phone */}
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                  </svg>
+              {/* Contact Info */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-bold text-slate-400 uppercase">Contact Info</span>
+                  <span className="text-xs font-bold text-slate-300 bg-slate-100 dark:bg-white/5 px-2 py-1 rounded">Primary</span>
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500 font-bold uppercase tracking-wide">WhatsApp / Phone</p>
-                  <p className="font-bold text-gray-900 font-mono">
-                    {selectedStudent.whatsapp || selectedStudent.contactNumber || 'Not provided'}
-                  </p>
+                <div className="p-4 bg-slate-50 dark:bg-black/20 rounded-2xl border-2 border-slate-100 dark:border-white/5 flex items-center gap-4">
+                  <div className="w-10 h-10 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center">
+                    <svg className="w-5 h-5 text-green-600 dark:text-green-400" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" /></svg>
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-900 dark:text-white font-mono text-lg tracking-tight">
+                      {selectedStudent.whatsapp || selectedStudent.contactNumber || 'Not provided'}
+                    </p>
+                    <p className="text-[10px] text-slate-400 uppercase font-bold">WhatsApp / Mobile</p>
+                  </div>
+
                 </div>
               </div>
-
-              {/* Index Number (Registration) */}
-              <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-xl border border-purple-100">
-                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Users className="w-5 h-5 text-purple-600" />
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 font-bold uppercase tracking-wide">Index Number</p>
-                  <p className="font-bold text-gray-900">
-                    {selectedStudent.registrationNumber}
-                  </p>
-                </div>
-              </div>
-
             </div>
 
-            <div className="p-4 bg-gray-50 border-t border-gray-100">
+            <div className="p-6 bg-slate-50 dark:bg-black/20 border-t border-slate-100 dark:border-white/5">
               <button
                 onClick={() => setSelectedStudent(null)}
-                className="min-h-[44px] w-full py-2.5 bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-colors active:scale-95"
+                className="w-full py-4 bg-white dark:bg-white/10 text-slate-900 dark:text-white font-black rounded-xl hover:bg-slate-100 dark:hover:bg-white/20 transition-colors shadow-lg shadow-slate-200/50 dark:shadow-none"
               >
                 Close
               </button>
@@ -431,31 +393,38 @@ export default function BirthdaysPage() {
           </div>
         </div>
       )}
+
       <style jsx>{`
         @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
-
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
-
+        .animate-scaleIn {
+            animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
         .animate-fadeIn {
-          animation: fadeIn 0.5s ease-out;
+          animation: fadeIn 0.4s ease-out;
         }
       `}</style>
+    </div>
+  )
+}
+
+function StatCard({ icon, color, label, value, subtext }) {
+  return (
+    <div className="bg-white dark:bg-stitch-card-dark p-6 rounded-[2rem] shadow-xl border border-slate-100 dark:border-white/5 flex items-center gap-6 hover:translate-y-[-4px] transition-transform duration-300">
+      <div className={`w-16 h-16 ${color} rounded-2xl flex items-center justify-center shadow-lg`}>
+        {icon}
+      </div>
+      <div>
+        <p className="text-sm font-bold text-slate-400 uppercase tracking-wide">{label}</p>
+        <p className="text-3xl font-black text-slate-900 dark:text-white my-0.5">{value}</p>
+        <p className="text-xs font-bold text-slate-400 opacity-60">{subtext}</p>
+      </div>
     </div>
   )
 }
