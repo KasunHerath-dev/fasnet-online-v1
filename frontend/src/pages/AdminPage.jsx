@@ -96,18 +96,18 @@ export default function AdminPage() {
       <div className="relative flex flex-col w-full min-h-screen">
 
         {/* Hero Section - Dashboard Style */}
-        <div className="relative w-full h-[280px] bg-gradient-to-br from-stitch-blue via-[#6b13ec] to-stitch-pink overflow-hidden rounded-b-[2.5rem] shadow-2xl z-10">
+        <div className="relative w-full h-[240px] md:h-[280px] bg-gradient-to-br from-stitch-blue via-[#6b13ec] to-stitch-pink overflow-hidden rounded-b-[2rem] md:rounded-b-[2.5rem] shadow-2xl z-10">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl"></div>
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-stitch-blue opacity-20 rounded-full translate-y-1/4 -translate-x-1/4 blur-2xl"></div>
 
-          <div className="relative flex flex-col justify-end h-full px-6 pb-12 pt-12 z-10 max-w-7xl mx-auto w-full">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-lg">
-                <Settings className="w-7 h-7 text-white" />
+          <div className="relative flex flex-col justify-end h-full px-4 md:px-6 pb-10 md:pb-12 pt-12 z-10 max-w-7xl mx-auto w-full">
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-lg shrink-0">
+                <Settings className="w-6 h-6 md:w-7 md:h-7 text-white" />
               </div>
-              <div>
-                <h1 className="text-white text-4xl md:text-5xl font-black leading-tight tracking-tight drop-shadow-sm">Admin Settings</h1>
-                <p className="text-white/80 text-sm md:text-base font-medium mt-1">System configuration and management</p>
+              <div className="min-w-0">
+                <h1 className="text-white text-2xl md:text-4xl lg:text-5xl font-black leading-tight tracking-tight drop-shadow-sm truncate">Admin Settings</h1>
+                <p className="text-white/80 text-xs md:text-sm lg:text-base font-medium mt-0.5 md:mt-1 truncate">System configuration and management</p>
               </div>
             </div>
           </div>
@@ -116,7 +116,7 @@ export default function AdminPage() {
         <div className="max-w-7xl mx-auto w-full px-4 md:px-6 z-20 -mt-8 space-y-8">
 
           {/* Tab Navigation */}
-          <div className="bg-white dark:bg-stitch-card-dark rounded-2xl p-2 shadow-lg border border-slate-100 dark:border-stitch-card-border overflow-x-auto scrollbar-hide">
+          <div className="bg-white dark:bg-stitch-card-dark rounded-xl md:rounded-2xl p-1.5 md:p-2 shadow-lg border border-slate-100 dark:border-stitch-card-border overflow-x-auto scrollbar-hide">
             <div className="flex gap-1 min-w-max">
               {tabs.map((tab) => {
                 const Icon = tab.icon
@@ -125,13 +125,14 @@ export default function AdminPage() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold transition-all ${isActive
+                    className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-5 py-2.5 md:py-3 rounded-lg md:rounded-xl text-xs md:text-sm font-bold transition-all whitespace-nowrap ${isActive
                       ? 'bg-stitch-blue text-white shadow-md shadow-stitch-blue/20'
                       : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
                       }`}
                   >
-                    <Icon className="w-4 h-4" />
-                    {tab.label}
+                    <Icon className="w-3.5 h-3.5 md:w-4 md:h-4 shrink-0" />
+                    <span className="hidden sm:inline">{tab.label}</span>
+                    <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
                   </button>
                 )
               })}
@@ -145,9 +146,9 @@ export default function AdminPage() {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Quick Actions */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 ml-1">
-                      <Activity className="w-5 h-5 text-stitch-blue" />
+                  <div className="space-y-3 md:space-y-4">
+                    <h3 className="text-base md:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 ml-1">
+                      <Activity className="w-4 h-4 md:w-5 md:h-5 text-stitch-blue" />
                       Quick Actions
                     </h3>
 
@@ -209,9 +210,9 @@ export default function AdminPage() {
                   </div>
 
                   {/* System Info */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 ml-1">
-                      <Activity className="w-5 h-5 text-stitch-success" />
+                  <div className="space-y-3 md:space-y-4">
+                    <h3 className="text-base md:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 ml-1">
+                      <Activity className="w-4 h-4 md:w-5 md:h-5 text-stitch-success" />
                       System Information
                     </h3>
 
