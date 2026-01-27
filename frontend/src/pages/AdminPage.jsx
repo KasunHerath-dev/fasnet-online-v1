@@ -99,11 +99,11 @@ export default function AdminPage() {
   }
 
   const tabs = [
-    { id: 'general', label: 'Overview', icon: BarChart3, color: 'from-blue-500 to-cyan-500' },
-    { id: 'academic', label: 'Academic', icon: GraduationCap, color: 'from-purple-500 to-pink-500' },
-    { id: 'resources', label: 'Resources', icon: Database, color: 'from-emerald-500 to-teal-500' },
-    { id: 'users', label: 'Users', icon: Users, color: 'from-orange-500 to-red-500' },
-    { id: 'system', label: 'System', icon: Settings, color: 'from-slate-500 to-zinc-500' }
+    { id: 'general', label: 'Overview', icon: BarChart3 },
+    { id: 'academic', label: 'Academic', icon: GraduationCap },
+    { id: 'resources', label: 'Resources', icon: Database },
+    { id: 'users', label: 'Users', icon: Users },
+    { id: 'system', label: 'System', icon: Settings }
   ]
 
   const currentTab = tabs.find(t => t.id === activeTab)
@@ -718,171 +718,166 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* Users Tab */}
+          {/* Users Tab - Monochrome */}
           {activeTab === 'users' && (
             <div className="space-y-6 sm:space-y-8">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                {/* Manage Users Card */}
+                {/* Manage Users Card - Monochrome */}
                 <button
                   onClick={() => navigate('/admin/users')}
-                  className="group relative overflow-hidden bg-gradient-to-br from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-pink-500/30 hover:shadow-pink-500/50 transition-all duration-300 hover:-translate-y-1"
+                  className="group relative overflow-hidden bg-gray-50 border border-gray-300 hover:border-black rounded-2xl sm:rounded-3xl p-6 sm:p-8 transition-all duration-200 hover:shadow-lg"
                 >
-                  <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
                   <div className="relative">
                     <div className="flex items-start justify-between mb-6">
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <Shield className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gray-200 flex items-center justify-center">
+                        <Shield className="w-7 h-7 sm:w-8 sm:h-8 text-black" />
                       </div>
-                      <ChevronRight className="w-6 h-6 text-white group-hover:translate-x-2 transition-transform" />
+                      <ChevronRight className="w-6 h-6 text-black" />
                     </div>
-                    <h3 className="text-2xl sm:text-3xl font-black text-white mb-3">Manage Users</h3>
-                    <p className="text-white/90 text-sm sm:text-base mb-6">Control access levels and user roles</p>
-                    <div className="flex items-center justify-between p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                      <span className="text-white/90 text-sm font-medium">Total Users</span>
-                      <span className="text-2xl font-black text-white">{stats.usersCount}</span>
+                    <h3 className="text-2xl sm:text-3xl font-black text-black mb-3">Manage Users</h3>
+                    <p className="text-gray-600 text-sm sm:text-base mb-6">Control access levels and user roles</p>
+                    <div className="flex items-center justify-between p-4 bg-gray-100 rounded-xl border border-gray-300">
+                      <span className="text-gray-700 text-sm font-medium">Total Users</span>
+                      <span className="text-2xl font-black text-black">{stats.usersCount}</span>
                     </div>
                   </div>
                 </button>
 
-                {/* Sync Accounts Card */}
+                {/* Sync Accounts Card - Monochrome */}
                 <button
                   onClick={handleSyncUsers}
-                  className="group relative overflow-hidden bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-300 hover:-translate-y-1"
+                  className="group relative overflow-hidden bg-gray-50 border border-gray-300 hover:border-black rounded-2xl sm:rounded-3xl p-6 sm:p-8 transition-all duration-200 hover:shadow-lg"
                 >
-                  <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
                   <div className="relative">
                     <div className="flex items-start justify-between mb-6">
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 group-hover:rotate-180 transition-all duration-500">
-                        <RefreshCw className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gray-200 flex items-center justify-center">
+                        <RefreshCw className="w-7 h-7 sm:w-8 sm:h-8 text-black" />
                       </div>
-                      <ChevronRight className="w-6 h-6 text-white group-hover:translate-x-2 transition-transform" />
+                      <ChevronRight className="w-6 h-6 text-black" />
                     </div>
-                    <h3 className="text-2xl sm:text-3xl font-black text-white mb-3">Sync Accounts</h3>
-                    <p className="text-white/90 text-sm sm:text-base mb-6">Auto-create user accounts for students</p>
-                    <div className="p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                      <p className="text-xs text-white/80 italic">Automatically generates login credentials for students without accounts</p>
+                    <h3 className="text-2xl sm:text-3xl font-black text-black mb-3">Sync Accounts</h3>
+                    <p className="text-gray-600 text-sm sm:text-base mb-6">Auto-create user accounts for students</p>
+                    <div className="p-4 bg-gray-100 rounded-xl border border-gray-300">
+                      <p className="text-xs text-gray-700 italic">Automatically generates login credentials for students without accounts</p>
                     </div>
                   </div>
                 </button>
               </div>
 
-              {/* Missing Students */}
+              {/* Missing Students - Monochrome */}
               <button
                 onClick={() => navigate('/missing-students')}
-                className="group w-full bg-gradient-to-br from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-orange-500/30 hover:shadow-orange-500/50 transition-all duration-300 hover:-translate-y-1"
+                className="group w-full bg-gray-50 border border-gray-300 hover:border-black rounded-2xl sm:rounded-3xl p-6 sm:p-8 transition-all duration-200 hover:shadow-lg"
               >
                 <div className="flex items-center gap-4 sm:gap-6">
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <AlertTriangle className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gray-200 flex items-center justify-center">
+                    <AlertTriangle className="w-7 h-7 sm:w-8 sm:h-8 text-black" />
                   </div>
                   <div className="flex-1 text-left">
-                    <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Missing Students Report</h3>
-                    <p className="text-white/90 text-sm sm:text-base">Identify and resolve data inconsistencies</p>
+                    <h3 className="text-xl sm:text-2xl font-bold text-black mb-2">Missing Students Report</h3>
+                    <p className="text-gray-600 text-sm sm:text-base">Identify and resolve data inconsistencies</p>
                   </div>
-                  <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8 text-white group-hover:translate-x-2 transition-transform" />
+                  <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8 text-black" />
                 </div>
               </button>
 
-              {/* Permission Levels */}
-              <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
+              {/* Permission Levels - Monochrome */}
+              <div className="bg-white border border-gray-300 rounded-2xl sm:rounded-3xl p-6 sm:p-8">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-slate-500 to-zinc-500 flex items-center justify-center shadow-lg">
-                    <Lock className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gray-200 flex items-center justify-center">
+                    <Lock className="w-6 h-6 sm:w-7 sm:h-7 text-black" />
                   </div>
                   <div>
-                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Permission Levels</h3>
-                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">System access hierarchy</p>
+                    <h3 className="text-xl sm:text-2xl font-bold text-black">Permission Levels</h3>
+                    <p className="text-xs sm:text-sm text-gray-600">System access hierarchy</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-                  <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 p-5 sm:p-6 rounded-2xl border-2 border-blue-200 dark:border-blue-800">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-500 to-cyan-500 text-white rounded-2xl flex items-center justify-center mb-4 font-black text-xl sm:text-2xl shadow-lg">
+                  <div className="bg-gray-50 p-5 sm:p-6 rounded-2xl border-2 border-gray-300">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gray-200 text-black rounded-2xl flex items-center justify-center mb-4 font-black text-xl sm:text-2xl">
                       S
                     </div>
-                    <h4 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2">Superadmin</h4>
-                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Complete system control and configuration access</p>
+                    <h4 className="text-lg sm:text-xl font-bold text-black mb-2">Superadmin</h4>
+                    <p className="text-xs sm:text-sm text-gray-700">Complete system control and configuration access</p>
                   </div>
 
-                  <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-5 sm:p-6 rounded-2xl border-2 border-purple-200 dark:border-purple-800">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-2xl flex items-center justify-center mb-4 font-black text-xl sm:text-2xl shadow-lg">
+                  <div className="bg-gray-50 p-5 sm:p-6 rounded-2xl border-2 border-gray-300">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gray-200 text-black rounded-2xl flex items-center justify-center mb-4 font-black text-xl sm:text-2xl">
                       A
                     </div>
-                    <h4 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2">Admin</h4>
-                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Manage students, data, and daily operations</p>
+                    <h4 className="text-lg sm:text-xl font-bold text-black mb-2">Admin</h4>
+                    <p className="text-xs sm:text-sm text-gray-700">Manage students, data, and daily operations</p>
                   </div>
 
-                  <div className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 p-5 sm:p-6 rounded-2xl border-2 border-emerald-200 dark:border-emerald-800">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-emerald-500 to-teal-500 text-white rounded-2xl flex items-center justify-center mb-4 font-black text-xl sm:text-2xl shadow-lg">
+                  <div className="bg-gray-50 p-5 sm:p-6 rounded-2xl border-2 border-gray-300">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gray-200 text-black rounded-2xl flex items-center justify-center mb-4 font-black text-xl sm:text-2xl">
                       U
                     </div>
-                    <h4 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2">User</h4>
-                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">View and manage personal data only</p>
+                    <h4 className="text-lg sm:text-xl font-bold text-black mb-2">User</h4>
+                    <p className="text-xs sm:text-sm text-gray-700">View and manage personal data only</p>
                   </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* System Tab */}
+          {/* System Tab - Monochrome */}
           {activeTab === 'system' && (
             <div className="space-y-6 sm:space-y-8">
-              {/* Danger Zone */}
-              <div className="relative overflow-hidden bg-gradient-to-br from-red-500 to-rose-600 rounded-2xl sm:rounded-3xl p-6 sm:p-10 shadow-2xl shadow-red-500/40">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
-                <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full -ml-24 -mb-24"></div>
-
+              {/* Danger Zone - Monochrome */}
+              <div className="relative overflow-hidden bg-gray-50 border-2 border-gray-400 rounded-2xl sm:rounded-3xl p-6 sm:p-10">
                 <div className="relative">
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                      <AlertTriangle className="w-7 h-7 sm:w-8 sm:h-8 text-white animate-pulse" />
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gray-200 rounded-2xl flex items-center justify-center">
+                      <AlertTriangle className="w-7 h-7 sm:w-8 sm:h-8 text-black" />
                     </div>
                     <div>
-                      <h3 className="text-2xl sm:text-3xl font-black text-white">Danger Zone</h3>
-                      <p className="text-white/90 text-sm sm:text-base font-medium">Irreversible destructive actions</p>
+                      <h3 className="text-2xl sm:text-3xl font-black text-black">Danger Zone</h3>
+                      <p className="text-gray-700 text-sm sm:text-base font-medium">Irreversible destructive actions</p>
                     </div>
                   </div>
 
-                  <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 sm:p-8 border border-white/20">
-                    <h4 className="text-xl font-bold text-white mb-3">Reset All Student Data</h4>
-                    <p className="text-white/90 text-sm sm:text-base mb-6">
+                  <div className="bg-white border border-gray-300 rounded-2xl p-6 sm:p-8">
+                    <h4 className="text-xl font-bold text-black mb-3">Reset All Student Data</h4>
+                    <p className="text-gray-700 text-sm sm:text-base mb-6">
                       ⚠️ This will <span className="font-bold">permanently delete</span> all student records from the database. This action <span className="font-bold">cannot be undone</span>.
                     </p>
                     <button
                       onClick={handleResetData}
-                      className="w-full py-4 bg-white hover:bg-red-50 text-red-600 font-black rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3 text-base sm:text-lg group"
+                      className="w-full py-4 bg-gray-900 hover:bg-black text-white font-black rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3 text-base sm:text-lg group"
                     >
-                      <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 group-hover:animate-bounce" />
+                      <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6" />
                       Delete All Student Data
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* System Maintenance */}
+              {/* System Maintenance - Monochrome */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
+                <div className="bg-white border border-gray-300 rounded-2xl sm:rounded-3xl p-6 sm:p-8">
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
-                      <Database className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gray-200 flex items-center justify-center">
+                      <Database className="w-6 h-6 sm:w-7 sm:h-7 text-black" />
                     </div>
                     <div>
-                      <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Database Tools</h3>
-                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Maintenance and optimization</p>
+                      <h3 className="text-lg sm:text-xl font-bold text-black">Database Tools</h3>
+                      <p className="text-xs sm:text-sm text-gray-600">Maintenance and optimization</p>
                     </div>
                   </div>
 
                   <div className="space-y-3 sm:space-y-4">
                     <button
                       onClick={() => alert('Database backup feature coming soon! This will create a complete backup of your database.')}
-                      className="w-full py-3 sm:py-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                      className="w-full py-3 sm:py-4 bg-black hover:bg-gray-800 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                     >
                       <Download className="w-5 h-5" />
                       Backup Database
                     </button>
                     <button
                       onClick={() => alert('Table optimization feature coming soon! This will optimize database performance.')}
-                      className="w-full py-3 sm:py-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl border-2 border-slate-200 dark:border-slate-700 transition-all flex items-center justify-center gap-2"
+                      className="w-full py-3 sm:py-4 bg-gray-100 hover:bg-gray-200 text-black font-bold rounded-xl border-2 border-gray-300 transition-all flex items-center justify-center gap-2"
                     >
                       <Zap className="w-5 h-5" />
                       Optimize Tables
@@ -890,28 +885,28 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
+                <div className="bg-white border border-gray-300 rounded-2xl sm:rounded-3xl p-6 sm:p-8">
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
-                      <Activity className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gray-200 flex items-center justify-center">
+                      <Activity className="w-6 h-6 sm:w-7 sm:h-7 text-black" />
                     </div>
                     <div>
-                      <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">System Logs</h3>
-                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Activity monitoring</p>
+                      <h3 className="text-lg sm:text-xl font-bold text-black">System Logs</h3>
+                      <p className="text-xs sm:text-sm text-gray-600">Activity monitoring</p>
                     </div>
                   </div>
 
                   <div className="space-y-3 sm:space-y-4">
                     <button
                       onClick={() => alert('Activity logs viewer coming soon! Monitor all system activities.')}
-                      className="w-full py-3 sm:py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                      className="w-full py-3 sm:py-4 bg-black hover:bg-gray-800 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                     >
                       <Eye className="w-5 h-5" />
                       View Activity Logs
                     </button>
                     <button
                       onClick={() => alert('Log export feature coming soon! Download system logs for analysis.')}
-                      className="w-full py-3 sm:py-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl border-2 border-slate-200 dark:border-slate-700 transition-all flex items-center justify-center gap-2"
+                      className="w-full py-3 sm:py-4 bg-gray-100 hover:bg-gray-200 text-black font-bold rounded-xl border-2 border-gray-300 transition-all flex items-center justify-center gap-2"
                     >
                       <Download className="w-5 h-5" />
                       Export Logs
