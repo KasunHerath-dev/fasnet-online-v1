@@ -377,33 +377,6 @@ export default function StudentTable({ query, district, batch, selectedIds = [],
 
   return (
     <div className="space-y-8">
-      {/* Stats Bar (Ash Theme) */}
-      <div className="bg-slate-900 dark:bg-black rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden border border-slate-800">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-slate-800 opacity-20 rounded-full blur-3xl translate-y-1/4 -translate-x-1/4"></div>
-
-        <div className="flex items-center justify-between relative z-10">
-          <div>
-            <p className="text-slate-400 text-sm font-black uppercase tracking-widest mb-2">Total Students</p>
-            <p className="text-5xl sm:text-6xl font-black tracking-tight text-white mb-2">{total.toLocaleString()}</p>
-            <p className="text-slate-500 text-sm font-medium">registered in the system</p>
-          </div>
-          <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white/10 rounded-3xl flex items-center justify-center backdrop-blur-md border border-white/10 shadow-2xl">
-            <Users className="w-8 h-8 sm:w-10 sm:h-10 text-white opacity-80" />
-          </div>
-        </div>
-        {selectedIds.length > 0 && (
-          <div className="mt-8 pt-6 border-t border-white/10 flex items-center gap-4 animate-fadeIn">
-            <div className="w-10 h-10 rounded-xl bg-white text-slate-900 flex items-center justify-center font-black text-lg shadow-lg">
-              {selectedIds.length}
-            </div>
-            <p className="text-slate-300 font-medium">
-              students selected for <span className="text-white font-bold decoration-slate-500 underline underline-offset-4">batch action</span>
-            </p>
-          </div>
-        )}
-      </div>
-
       {/* Main Content Card */}
       <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
         <div className="p-6 md:p-8">

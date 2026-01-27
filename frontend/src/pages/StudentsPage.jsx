@@ -204,190 +204,144 @@ export default function StudentsPage() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 sm:-mt-8 pb-12 sm:pb-20">
 
-        {/* Enhanced Filters Section - Ash Theme */}
-        <div className="mb-6 sm:mb-8 lg:mb-12">
-          <div className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden relative">
+        {/* Enhanced Controls Toolbar */}
+        <div className="mb-6 sm:mb-8 lg:mb-10 -mt-2 relative z-10">
+          <div className="flex flex-col xl:flex-row xl:items-center gap-4 justify-between">
 
-            {/* Filter Header */}
-            <div className="relative px-6 sm:px-8 py-6 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
-              <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-slate-900 dark:bg-white rounded-2xl flex items-center justify-center shadow-lg transform rotate-3 transition-transform hover:rotate-6">
-                    <SlidersHorizontal className="w-6 h-6 text-white dark:text-slate-900" />
+            {/* Search Pill */}
+            <div className="flex-1 max-w-2xl">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-white/20 dark:bg-black/20 rounded-2xl blur-lg transition-all group-hover:bg-white/30 dark:group-hover:bg-black/30"></div>
+                <div className="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl flex items-center p-2 transition-all focus-within:ring-2 focus-within:ring-slate-900 dark:focus-within:ring-white">
+                  <div className="pl-4 pr-3 text-slate-400">
+                    <Search className="w-5 h-5" />
                   </div>
-                  <div>
-                    <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">Search & Filter</h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 font-bold">Refine student list</p>
+                  <input
+                    type="text"
+                    className="flex-1 bg-transparent border-none focus:ring-0 text-slate-900 dark:text-white font-bold placeholder-slate-400 text-sm sm:text-base h-10"
+                    placeholder="Search students by name, reg number..."
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                  />
+                  <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800 ml-2">
+                    <button
+                      onClick={() => setShowFilters(!showFilters)}
+                      className={`px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${showFilters
+                        ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white'
+                        : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800'
+                        }`}
+                    >
+                      <SlidersHorizontal className="w-4 h-4" />
+                      Filters
+                    </button>
+                    {hasActiveFilters && (
+                      <button
+                        onClick={clearFilters}
+                        className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all"
+                        title="Clear Filters"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                 </div>
-
-                <button
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="self-start sm:self-auto inline-flex items-center gap-2 px-6 py-3 bg-slate-900 dark:bg-white hover:bg-black dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg"
-                >
-                  <SlidersHorizontal className="w-4 h-4" />
-                  {showFilters ? 'Hide' : 'Show'} Filters
-                </button>
               </div>
             </div>
 
-            {/* Filter Content */}
-            {showFilters && (
-              <div className="p-6 sm:p-8 animate-fadeIn bg-white dark:bg-slate-900">
+            {/* View Mode Toggle Pill */}
+            <div className="flex items-center gap-4 self-end xl:self-auto">
+              {/* Mobile Filter Toggle (Visible only on small screens) */}
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="sm:hidden p-4 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white"
+              >
+                <SlidersHorizontal className="w-5 h-5" />
+              </button>
 
-                {/* Filter Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
-                  {/* Search Input */}
-                  <div className="sm:col-span-2">
-                    <label className="flex items-center gap-2 text-sm font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">
-                      <Search className="w-4 h-4" />
-                      Search Students
-                    </label>
-                    <div className="relative group">
-                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-slate-900 dark:group-focus-within:text-white transition-colors z-10 pointer-events-none" />
-                      <input
-                        type="text"
-                        className="w-full pl-12 pr-4 py-4 text-base bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-slate-900 dark:focus:border-white focus:ring-0 transition-all font-bold text-slate-900 dark:text-white placeholder-slate-400 outline-none"
-                        placeholder="Search by key details..."
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                      />
-                    </div>
-                  </div>
-
-                  {/* District Filter */}
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">
-                      <MapPin className="w-4 h-4" />
-                      District
-                    </label>
-                    <div className="relative">
-                      <Dropdown
-                        value={district}
-                        onChange={(e) => setDistrict(e.target.value)}
-                        options={[
-                          { value: '', label: 'All Districts' },
-                          ...SRI_LANKAN_DISTRICTS
-                        ]}
-                        icon={<MapPin className="w-5 h-5" />}
-                        placeholder="All Districts"
-                        variant="default"
-                        className="w-full bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-slate-900 dark:focus:border-white px-4 py-4 text-base font-bold shadow-none hover:border-slate-300 dark:hover:border-slate-600 transition-colors"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Batch Year */}
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">
-                      <GraduationCap className="w-4 h-4" />
-                      Batch Year
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full px-4 py-4 text-base bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-slate-900 dark:focus:border-white focus:ring-0 transition-all font-bold text-slate-900 dark:text-white placeholder-slate-400 outline-none"
-                      placeholder="e.g. 2024"
-                      value={batch}
-                      onChange={(e) => setBatch(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                {/* Active Filters Display */}
-                {hasActiveFilters && (
-                  <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-sm font-black text-slate-400 uppercase tracking-wider mr-2">
-                          Active Filters:
-                        </span>
-
-                        {query && (
-                          <span className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm font-bold border border-slate-200 dark:border-slate-700">
-                            <Search className="w-3.5 h-3.5" />
-                            "{query.length > 20 ? query.substring(0, 20) + '...' : query}"
-                            <button
-                              onClick={() => setQuery('')}
-                              className="ml-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md p-0.5 transition-colors"
-                            >
-                              <X className="w-3.5 h-3.5" />
-                            </button>
-                          </span>
-                        )}
-
-                        {district && (
-                          <span className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm font-bold border border-slate-200 dark:border-slate-700">
-                            <MapPin className="w-3.5 h-3.5" />
-                            {district}
-                            <button
-                              onClick={() => setDistrict('')}
-                              className="ml-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md p-0.5 transition-colors"
-                            >
-                              <X className="w-3.5 h-3.5" />
-                            </button>
-                          </span>
-                        )}
-
-                        {batch && (
-                          <span className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm font-bold border border-slate-200 dark:border-slate-700">
-                            <GraduationCap className="w-3.5 h-3.5" />
-                            Batch {batch}
-                            <button
-                              onClick={() => setBatch('')}
-                              className="ml-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md p-0.5 transition-colors"
-                            >
-                              <X className="w-3.5 h-3.5" />
-                            </button>
-                          </span>
-                        )}
-                      </div>
-
-                      <button
-                        onClick={clearFilters}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 text-sm bg-red-50 dark:bg-red-900/10 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-xl font-bold transition-all active:scale-95"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                        Clear All
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* View Mode Toggle - Ash Theme */}
-                <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <label className="text-sm font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                      <Activity className="w-4 h-4" />
-                      View Layout
-                    </label>
-
-                    <div className="inline-flex gap-2 p-1.5 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-                      {VIEW_MODES.map((mode) => {
-                        const Icon = mode.icon
-                        const isActive = viewMode === mode.id
-                        return (
-                          <button
-                            key={mode.id}
-                            onClick={() => setViewMode(mode.id)}
-                            className={`flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${isActive
-                              ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-slate-700'
-                              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                              }`}
-                          >
-                            <Icon className="w-4 h-4" />
-                            <span className="hidden sm:inline">{mode.label}</span>
-                            <span className="sm:hidden">{mode.label}</span>
-                          </button>
-                        )
-                      })}
-                    </div>
-                  </div>
-                </div>
+              <div className="bg-white dark:bg-slate-900 rounded-2xl p-1.5 shadow-xl border border-slate-200 dark:border-slate-800 flex items-center">
+                {VIEW_MODES.map((mode) => {
+                  const Icon = mode.icon
+                  const isActive = viewMode === mode.id
+                  return (
+                    <button
+                      key={mode.id}
+                      onClick={() => setViewMode(mode.id)}
+                      className={`px-4 sm:px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 ${isActive
+                        ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
+                        : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
+                        }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span className="hidden sm:inline">{mode.label}</span>
+                    </button>
+                  )
+                })}
               </div>
-            )}
+            </div>
           </div>
         </div>
+
+        {/* Collapsible Filters Panel */}
+        {showFilters && (
+          <div className="mb-8 animate-fadeIn">
+            <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-6 sm:p-8 shadow-xl border border-slate-200 dark:border-slate-800 relative overflow-hidden">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* District Filter */}
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">
+                    <MapPin className="w-4 h-4" />
+                    District
+                  </label>
+                  <Dropdown
+                    value={district}
+                    onChange={(e) => setDistrict(e.target.value)}
+                    options={[
+                      { value: '', label: 'All Districts' },
+                      ...SRI_LANKAN_DISTRICTS
+                    ]}
+                    icon={<MapPin className="w-5 h-5" />}
+                    placeholder="Select District"
+                    className="w-full bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-bold"
+                  />
+                </div>
+
+                {/* Batch Year */}
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">
+                    <GraduationCap className="w-4 h-4" />
+                    Batch Year
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-3 text-base bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-slate-900 dark:focus:border-white focus:ring-0 transition-all font-bold text-slate-900 dark:text-white placeholder-slate-400 outline-none"
+                    placeholder="e.g. 2024"
+                    value={batch}
+                    onChange={(e) => setBatch(e.target.value)}
+                  />
+                </div>
+
+                {/* Active Filters Summary */}
+                <div className="flex flex-col justify-end">
+                  {hasActiveFilters ? (
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800">
+                      <p className="text-xs font-bold text-slate-400 uppercase mb-2">Active Filters</p>
+                      <div className="flex flex-wrap gap-2">
+                        {district && <span className="px-2 py-1 bg-white dark:bg-slate-700 rounded-md text-xs font-bold shadow-sm">{district}</span>}
+                        {batch && <span className="px-2 py-1 bg-white dark:bg-slate-700 rounded-md text-xs font-bold shadow-sm">Batch {batch}</span>}
+                        {query && <span className="px-2 py-1 bg-white dark:bg-slate-700 rounded-md text-xs font-bold shadow-sm">Search: {query}</span>}
+                      </div>
+                      <button onClick={clearFilters} className="mt-2 text-xs font-bold text-red-500 hover:underline">Clear All</button>
+                    </div>
+                  ) : (
+                    <div className="h-full flex items-center justify-center text-slate-400 text-sm font-bold italic opacity-50 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl">
+                      No active filters
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Students Display */}
         <div className="animate-fadeIn">

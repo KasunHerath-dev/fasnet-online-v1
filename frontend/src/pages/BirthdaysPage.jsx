@@ -143,35 +143,29 @@ export default function BirthdaysPage() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-4 sm:-mt-6 lg:-mt-8 pb-12 sm:pb-16 lg:pb-20">
 
-        {/* Filters & Controls Card */}
-        <div className="mb-6 sm:mb-8">
-          <div className="bg-white dark:bg-slate-900 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl border border-slate-200 dark:border-slate-800">
-            <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-
-              {/* View Mode Toggle */}
-              <div className="bg-slate-100 dark:bg-black/40 rounded-xl p-1 flex">
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2 ${viewMode === 'list'
-                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                    }`}
-                >
-                  <Filter className="w-4 h-4" />
-                  List View
-                </button>
-                <button
-                  onClick={() => setViewMode('timeline')}
-                  className={`px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2 ${viewMode === 'timeline'
-                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                    }`}
-                >
-                  <Clock className="w-4 h-4" />
-                  Timeline
-                </button>
-              </div>
-            </div>
+        {/* View Mode Toggle - Compact Pill */}
+        <div className="mb-8">
+          <div className="inline-flex bg-white dark:bg-slate-900 rounded-2xl p-1.5 shadow-xl border border-slate-200 dark:border-slate-800">
+            <button
+              onClick={() => setViewMode('list')}
+              className={`px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 ${viewMode === 'list'
+                ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
+                : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
+                }`}
+            >
+              <Filter className="w-4 h-4" />
+              List View
+            </button>
+            <button
+              onClick={() => setViewMode('timeline')}
+              className={`px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 ${viewMode === 'timeline'
+                ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
+                : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
+                }`}
+            >
+              <Clock className="w-4 h-4" />
+              Timeline
+            </button>
           </div>
         </div>
 
