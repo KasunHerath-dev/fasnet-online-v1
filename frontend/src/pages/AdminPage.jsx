@@ -251,101 +251,93 @@ export default function AdminPage() {
           {activeTab === 'general' && (
             <div className="space-y-6 sm:space-y-8">
 
-              {/* Quick Actions Grid */}
+              {/* Quick Actions Grid - Monochrome */}
               <div>
                 <div className="flex items-center gap-3 mb-4 sm:mb-6">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
-                    <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gray-200 flex items-center justify-center">
+                    <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-black" />
                   </div>
                   <div>
-                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white">Quick Actions</h2>
-                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Frequently used operations</p>
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-black">Quick Actions</h2>
+                    <p className="text-xs sm:text-sm text-gray-600">Frequently used operations</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-                  {/* Change Password */}
+                  {/* Change Password - Monochrome */}
                   <button
                     onClick={handleChangePassword}
-                    className="group relative overflow-hidden bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 hover:border-blue-500 dark:hover:border-blue-500 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20 hover:-translate-y-1"
+                    className="group relative overflow-hidden bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-gray-300 hover:border-black transition-all duration-200 hover:shadow-lg"
                   >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
-
                     <div className="relative">
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
-                        <Key className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gray-200 flex items-center justify-center mb-4">
+                        <Key className="w-6 h-6 sm:w-7 sm:h-7 text-black" />
                       </div>
 
-                      <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-2">Change Password</h3>
-                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-4">Update your security credentials</p>
+                      <h3 className="font-bold text-base sm:text-lg text-black mb-2">Change Password</h3>
+                      <p className="text-xs sm:text-sm text-gray-600 mb-4">Update your security credentials</p>
 
-                      <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
+                      <div className="flex items-center gap-2 text-black font-bold text-xs sm:text-sm">
                         <span>Update now</span>
                         <ChevronRight className="w-4 h-4" />
                       </div>
                     </div>
                   </button>
 
-                  {/* Add Student */}
+                  {/* Add Student - Monochrome */}
                   <button
                     onClick={() => navigate('/students/new')}
-                    className="group relative overflow-hidden bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 hover:border-purple-500 dark:hover:border-purple-500 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20 hover:-translate-y-1"
+                    className="group relative overflow-hidden bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-gray-300 hover:border-black transition-all duration-200 hover:shadow-lg"
                   >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
-
                     <div className="relative">
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
-                        <Plus className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gray-200 flex items-center justify-center mb-4">
+                        <Plus className="w-6 h-6 sm:w-7 sm:h-7 text-black" />
                       </div>
 
-                      <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-2">Add Student</h3>
-                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-4">Register new student manually</p>
+                      <h3 className="font-bold text-base sm:text-lg text-black mb-2">Add Student</h3>
+                      <p className="text-xs sm:text-sm text-gray-600 mb-4">Register new student manually</p>
 
-                      <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
+                      <div className="flex items-center gap-2 text-black font-bold text-xs sm:text-sm">
                         <span>Create profile</span>
                         <ChevronRight className="w-4 h-4" />
                       </div>
                     </div>
                   </button>
 
-                  {/* Profile Requests */}
+                  {/* Profile Requests - Monochrome */}
                   <button
                     onClick={() => navigate('/profile-requests')}
-                    className="group relative overflow-hidden bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/20 hover:-translate-y-1"
+                    className="group relative overflow-hidden bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-gray-300 hover:border-black transition-all duration-200 hover:shadow-lg"
                   >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
-
                     <div className="relative">
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
-                        <FileText className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gray-200 flex items-center justify-center mb-4">
+                        <FileText className="w-6 h-6 sm:w-7 sm:h-7 text-black" />
                       </div>
 
-                      <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-2">Profile Requests</h3>
-                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-4">Review pending changes</p>
+                      <h3 className="font-bold text-base sm:text-lg text-black mb-2">Profile Requests</h3>
+                      <p className="text-xs sm:text-sm text-gray-600 mb-4">Review pending changes</p>
 
-                      <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
+                      <div className="flex items-center gap-2 text-black font-bold text-xs sm:text-sm">
                         <span>View requests</span>
                         <ChevronRight className="w-4 h-4" />
                       </div>
                     </div>
                   </button>
 
-                  {/* Bulk Import */}
+                  {/* Bulk Import - Monochrome */}
                   <button
-                    onClick={() => navigate('/register-students')}
-                    className="group relative overflow-hidden bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 hover:border-orange-500 dark:hover:border-orange-500 transition-all duration-300 hover:shadow-2xl hover:shadow-orange-500/20 hover:-translate-y-1"
+                    onClick={() => navigate('/students/upload')}
+                    className="group relative overflow-hidden bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-gray-300 hover:border-black transition-all duration-200 hover:shadow-lg"
                   >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
-
                     <div className="relative">
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
-                        <Upload className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gray-200 flex items-center justify-center mb-4">
+                        <Upload className="w-6 h-6 sm:w-7 sm:h-7 text-black" />
                       </div>
 
-                      <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-2">Bulk Import</h3>
-                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-4">Upload CSV/Excel files</p>
+                      <h3 className="font-bold text-base sm:text-lg text-black mb-2">Bulk Import</h3>
+                      <p className="text-xs sm:text-sm text-gray-600 mb-4">Upload CSV/Excel files</p>
 
-                      <div className="flex items-center gap-2 text-orange-600 dark:text-orange-400 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
+                      <div className="flex items-center gap-2 text-black font-bold text-xs sm:text-sm">
                         <span>Import data</span>
                         <ChevronRight className="w-4 h-4" />
                       </div>
@@ -354,55 +346,54 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* System Analytics */}
+              {/* System Analytics - Monochrome */}
               <div>
                 <div className="flex items-center gap-3 mb-4 sm:mb-6">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
-                    <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gray-200 flex items-center justify-center">
+                    <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-black" />
                   </div>
                   <div>
-                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white">System Analytics</h2>
-                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Real-time system metrics</p>
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-black">System Analytics</h2>
+                    <p className="text-xs sm:text-sm text-gray-600">Real-time system metrics</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                  {/* Database Status Card */}
-                  <div className="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white shadow-2xl shadow-blue-500/30 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
+                  {/* Database Status Card - Monochrome */}
+                  <div className="bg-gray-50 border border-gray-300 rounded-2xl sm:rounded-3xl p-6 sm:p-8 relative">
                     <div className="relative">
                       <div className="flex items-center justify-between mb-4">
-                        <Database className="w-8 h-8 sm:w-10 sm:h-10" />
-                        <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
+                        <Database className="w-8 h-8 sm:w-10 sm:h-10 text-black" />
+                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                       </div>
-                      <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-2">Online</h3>
-                      <p className="text-white/90 text-xs sm:text-sm font-medium">Database Status</p>
+
+                      <div>
+                        <p className="text-black text-4xl sm:text-5xl font-black mb-2">Online</p>
+                        <p className="text-gray-600 text-sm font-medium">Database</p>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Users Count Card - Monochrome */}
+                  <div className="bg-gray-50 border border-gray-300 rounded-2xl sm:rounded-3xl p-6 sm:p-8 relative">
+                    <div className="relative">
+                      <div className="flex items-center justify-between mb-4">
+                        <Users className="w-8 h-8 sm:w-10 sm:h-10 text-black" />
+                        <TrendingUp className="w-6 h-6 text-gray-600" />
+                      </div>
+                      <p className="text-black text-4xl sm:text-5xl font-black mb-2">{stats.usersCount}</p>
+                      <p className="text-gray-600 text-sm font-medium">Total Users</p>
                     </div>
                   </div>
 
-                  {/* Users Count Card */}
-                  <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white shadow-2xl shadow-purple-500/30 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
+                  {/* API Response Card - Monochrome */}
+                  <div className="bg-gray-50 border border-gray-300 rounded-2xl sm:rounded-3xl p-6 sm:p-8 relative">
                     <div className="relative">
                       <div className="flex items-center justify-between mb-4">
-                        <Users className="w-8 h-8 sm:w-10 sm:h-10" />
-                        <TrendingUp className="w-6 h-6 text-white/80" />
+                        <Activity className="w-8 h-8 sm:w-10 sm:h-10 text-black" />
+                        <CheckCircle className="w-6 h-6 text-gray-600" />
                       </div>
-                      <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-2">{stats.usersCount}</h3>
-                      <p className="text-white/90 text-xs sm:text-sm font-medium">Total Users</p>
-                    </div>
-                  </div>
-
-                  {/* API Response Card */}
-                  <div className="bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white shadow-2xl shadow-emerald-500/30 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
-                    <div className="relative">
-                      <div className="flex items-center justify-between mb-4">
-                        <Activity className="w-8 h-8 sm:w-10 sm:h-10" />
-                        <CheckCircle className="w-6 h-6 text-white/80" />
-                      </div>
-                      <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-2">45ms</h3>
-                      <p className="text-white/90 text-xs sm:text-sm font-medium">API Response</p>
+                      <p className="text-black text-4xl sm:text-5xl font-black mb-2">45ms</p>
+                      <p className="text-gray-600 text-sm font-medium">API Response</p>
                     </div>
                   </div>
                 </div>
