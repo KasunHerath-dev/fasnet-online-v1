@@ -85,51 +85,67 @@ export default function UpdateStudentsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-stitch-bg-light dark:bg-stitch-bg-dark font-display text-slate-900 dark:text-white pb-20 transition-colors duration-300">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 font-display text-slate-900 dark:text-white pb-20 transition-colors duration-300">
             <div className="max-w-6xl mx-auto space-y-8 animate-fadeIn p-4 md:p-6 lg:p-8">
 
-                {/* Hero Header */}
-                <div className="relative overflow-hidden bg-gradient-to-br from-stitch-blue via-[#6b13ec] to-stitch-pink rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative z-10">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
-                    <div className="absolute bottom-0 left-0 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl -ml-20 -mb-20"></div>
-                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+                {/* Enhanced Hero Header - Command Center Style */}
+                <div className="relative overflow-hidden bg-gradient-to-br from-cyan-600 via-blue-700 to-indigo-800 dark:from-cyan-800 dark:via-blue-900 dark:to-indigo-950 rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-12 shadow-2xl shadow-blue-900/30 z-10">
+                    {/* Grid Pattern Overlay */}
+                    <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] pointer-events-none"></div>
+
+                    {/* Floating Orbs for Depth */}
+                    <div className="absolute top-10 right-10 w-48 h-48 bg-indigo-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }}></div>
+                    <div className="absolute bottom-0 left-10 w-64 h-64 bg-cyan-400/25 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '5s', animationDelay: '1s' }}></div>
+                    <div className="absolute top-1/3 left-1/3 w-32 h-32 bg-blue-300/20 rounded-full blur-2xl animate-pulse" style={{ animationDuration: '3s', animationDelay: '0.5s' }}></div>
 
                     <div className="relative z-10 flex flex-col md:flex-row items-center gap-6 md:gap-8">
-                        <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center shadow-inner border border-white/20">
-                            <RefreshCw className="w-10 h-10 text-white" />
+                        {/* Enhanced Logo with Glassmorphism */}
+                        <div className="relative group">
+                            <div className="absolute inset-0 bg-gradient-to-br from-white to-cyan-300 opacity-30 rounded-2xl md:rounded-3xl blur-lg group-hover:blur-xl transition-all"></div>
+                            <div className="relative w-20 h-20 bg-gradient-to-br from-white/20 to-white/10 backdrop-blur-xl rounded-2xl md:rounded-3xl flex items-center justify-center shadow-2xl shadow-indigo-900/30 border-2 border-white/30 group-hover:scale-105 group-hover:rotate-6 transition-all">
+                                <RefreshCw className="w-10 h-10 text-white group-hover:rotate-180 transition-transform duration-500" />
+                            </div>
+                            {/* Sparkle Indicator */}
+                            <div className="absolute -top-1 -right-1">
+                                <span className="relative flex h-5 w-5">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-5 w-5 bg-yellow-500 items-center justify-center text-xs">✨</span>
+                                </span>
+                            </div>
                         </div>
                         <div className="text-center md:text-left">
-                            <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-2">Update Student Data</h1>
-                            <p className="text-blue-100 font-medium text-lg max-w-2xl">
+                            <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-2 drop-shadow-2xl">Update Student Data</h1>
+                            <p className="text-cyan-100 dark:text-cyan-200 font-semibold text-base md:text-lg max-w-2xl drop-shadow-lg">
                                 Bulk update existing student information using Excel or CSV templates.
                             </p>
                         </div>
                     </div>
                 </div>
 
-                {/* Info Banner */}
-                <div className="bg-blue-50/50 dark:bg-blue-900/10 rounded-2xl p-6 border border-blue-100 dark:border-blue-800 backdrop-blur-sm">
-                    <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center flex-shrink-0 text-blue-600 dark:text-blue-400">
-                            <Info className="w-6 h-6" />
+                {/* Enhanced Info Banner with Gradient */}
+                <div className="relative bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-2xl md:rounded-3xl p-6 md:p-8 border-2 border-blue-200 dark:border-blue-800 backdrop-blur-sm shadow-xl shadow-blue-500/10">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-cyan-500/5 rounded-2xl md:rounded-3xl"></div>
+                    <div className="relative flex items-start gap-4 md:gap-6">
+                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0 text-white shadow-lg shadow-blue-500/30">
+                            <Info className="w-6 h-6 md:w-7 md:h-7" />
                         </div>
-                        <div>
-                            <h3 className="text-lg font-bold text-blue-900 dark:text-blue-200 mb-2">How Updates Work</h3>
-                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm text-blue-800 dark:text-blue-300/80 font-medium">
-                                <li className="flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+                        <div className="flex-1">
+                            <h3 className="text-lg md:text-xl font-black text-blue-900 dark:text-blue-100 mb-3">How Updates Work</h3>
+                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-sm md:text-base text-blue-800 dark:text-blue-200/90 font-semibold">
+                                <li className="flex items-center gap-3">
+                                    <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 shadow-lg shadow-blue-500/50"></div>
                                     Students are matched by Registration Number
                                 </li>
-                                <li className="flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+                                <li className="flex items-center gap-3">
+                                    <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 shadow-lg shadow-blue-500/50"></div>
                                     Only existing students will be updated
                                 </li>
-                                <li className="flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+                                <li className="flex items-center gap-3">
+                                    <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 shadow-lg shadow-blue-500/50"></div>
                                     New students in the file will be skipped
                                 </li>
-                                <li className="flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+                                <li className="flex items-center gap-3">
+                                    <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 shadow-lg shadow-blue-500/50"></div>
                                     Empty cells will not overwrite existing data
                                 </li>
                             </ul>
@@ -201,8 +217,8 @@ export default function UpdateStudentsPage() {
 
                             <div
                                 className={`relative border-2 border-dashed rounded-3xl p-12 text-center transition-all duration-300 group ${dragActive
-                                        ? 'border-stitch-blue bg-stitch-blue/5 scale-[1.02]'
-                                        : 'border-slate-200 dark:border-slate-700 hover:border-stitch-blue/50 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                                    ? 'border-stitch-blue bg-stitch-blue/5 scale-[1.02]'
+                                    : 'border-slate-200 dark:border-slate-700 hover:border-stitch-blue/50 hover:bg-slate-50 dark:hover:bg-slate-800/50'
                                     }`}
                                 onDragEnter={handleDrag}
                                 onDragLeave={handleDrag}
