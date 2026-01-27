@@ -167,7 +167,7 @@ export default function SideNav({ isOpen, onClose }) {
                 {effectiveOpen && (
                   <div className="animate-fadeIn">
                     <h1 className="text-white font-black text-xl tracking-tight drop-shadow-lg">fasnet.online</h1>
-                    <p className="text-indigo-300 text-xs font-medium flex items-center gap-1">
+                    <p className="text-slate-400 text-xs font-medium flex items-center gap-1">
                       <Zap className="w-3 h-3" />
                       Student Management
                     </p>
@@ -229,7 +229,7 @@ export default function SideNav({ isOpen, onClose }) {
           </nav>
 
           {/* Footer - Monochrome */}
-          <div className="p-4 border-t border-gray-800">
+          <div className="p-4 border-t border-slate-800 dark:border-white/5">
             {effectiveOpen && (
               <div className="bg-gray-900 rounded-xl p-4 mb-3 border border-gray-800 animate-fadeIn">
                 <div className="flex items-center gap-3 mb-2">
@@ -295,11 +295,11 @@ export default function SideNav({ isOpen, onClose }) {
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: linear-gradient(to bottom, #6366f1, #a855f7, #ec4899);
+          background: #475569; /* Slate-600 */
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(to bottom, #4f46e5, #9333ea, #db2777);
+          background: #334155; /* Slate-700 */
         }
       `}</style>
     </>

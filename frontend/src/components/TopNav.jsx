@@ -63,7 +63,7 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
         <div className="flex justify-between items-center">
           {/* Mobile Menu Button */}
           <button
-            className="group md:hidden p-2.5 -ml-2 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 hover:from-indigo-500 hover:to-purple-600 dark:hover:from-indigo-600 dark:hover:to-purple-600 text-slate-700 dark:text-slate-200 hover:text-white transition-all shadow-lg hover:shadow-xl hover:scale-105"
+            className="group md:hidden p-2.5 -ml-2 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all"
             onClick={onToggleSidebar}
             aria-label="Toggle menu"
           >
@@ -72,14 +72,14 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
             </svg>
           </button>
 
-          {/* Welcome Message with Gradient (Desktop only) */}
+          {/* Welcome Message (Desktop only) */}
           <div className="hidden md:flex items-center gap-3">
             <div className="relative">
-              <Sparkles className="w-5 h-5 text-yellow-500 animate-pulse" />
+              <Sparkles className="w-5 h-5 text-slate-400 animate-pulse" />
             </div>
             <div>
               <span className="text-slate-500 dark:text-slate-400 text-sm font-medium">Welcome back,</span>
-              <span className="ml-2 font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 text-lg">
+              <span className="ml-2 font-black text-slate-900 dark:text-white text-lg">
                 {currentUser?.username || 'User'}
               </span>
             </div>
@@ -87,37 +87,35 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
 
           {/* Right Side */}
           <div className="flex items-center gap-2 sm:gap-4">
-            {/* Role Badges with Gradients */}
+            {/* Role Badges */}
             <div className="hidden sm:flex items-center gap-2">
               {currentUser?.roles?.map((role) => (
                 <span
                   key={role}
-                  className="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide shadow-lg
-                    bg-gradient-to-r from-indigo-500 to-purple-600 text-white
-                    hover:from-indigo-600 hover:to-purple-700 transition-all hover:scale-105 hover:shadow-xl"
+                  className="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide shadow-sm
+                    bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
                 >
                   {role}
                 </span>
               ))}
             </div>
 
-            <div className="hidden sm:block h-8 w-px bg-gradient-to-b from-transparent via-slate-300 dark:via-slate-700 to-transparent"></div>
+            <div className="hidden sm:block h-8 w-px bg-slate-200 dark:bg-slate-800"></div>
 
             {/* Notification Bell (Admin only) */}
             {isAdmin && (
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setShowNotifications(!showNotifications)}
-                  className="group relative p-2.5 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 hover:from-indigo-500 hover:to-purple-600 dark:hover:from-indigo-600 dark:hover:to-purple-600 text-slate-700 dark:text-slate-300 hover:text-white transition-all shadow-lg hover:shadow-xl hover:scale-105"
+                  className="group relative p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all"
                   aria-label="Notifications"
                 >
                   <Bell className="w-5 h-5" />
                   {pendingRequests.length > 0 && (
                     <>
-                      <span className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-br from-red-500 to-pink-600 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-lg shadow-red-500/50 animate-pulse">
+                      <span className="absolute -top-1 -right-1 w-6 h-6 bg-slate-900 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">
                         {pendingRequests.length > 9 ? '9+' : pendingRequests.length}
                       </span>
-                      <span className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full animate-ping opacity-75"></span>
                     </>
                   )}
                 </button>
@@ -125,14 +123,13 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
                 {/* Enhanced Notification Dropdown - Fixed positioning and z-index */}
                 {showNotifications && (
                   <div className="fixed md:absolute right-2 md:right-0 top-16 md:top-auto md:mt-3 w-[calc(100vw-1rem)] max-w-sm md:w-96 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 z-[999] max-h-[calc(100vh-5rem)] md:max-h-[500px] overflow-hidden flex flex-col">
-                    {/* Gradient Header */}
-                    <div className="relative overflow-hidden px-5 py-4 border-b border-slate-200 dark:border-slate-800 bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-800">
-                      <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 via-purple-500/5 to-pink-500/5"></div>
+                    {/* Header */}
+                    <div className="relative overflow-hidden px-5 py-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
                       <div className="relative">
                         <div className="flex items-center justify-between mb-1">
                           <h3 className="font-black text-slate-900 dark:text-white text-base flex items-center gap-2">
-                            <div className="p-1.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg">
-                              <Bell className="w-4 h-4 text-white" />
+                            <div className="p-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                              <Bell className="w-4 h-4 text-slate-900 dark:text-white" />
                             </div>
                             Profile Change Requests
                           </h3>
@@ -158,11 +155,11 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
                         </div>
                       ) : pendingRequests.length === 0 ? (
                         <div className="p-12 text-center">
-                          <div className="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/10">
-                            <Bell className="w-10 h-10 text-indigo-500 dark:text-indigo-400" />
+                          <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                            <Bell className="w-10 h-10 text-slate-400" />
                           </div>
                           <p className="text-base text-slate-900 dark:text-white font-bold mb-1">No pending requests</p>
-                          <p className="text-sm text-slate-500 dark:text-slate-400">All caught up! 🎉</p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400">All caught up!</p>
                         </div>
                       ) : (
                         <div className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -175,11 +172,11 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
                             >
                               <div className="flex items-start gap-3">
                                 <div className="relative flex-shrink-0">
-                                  <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-black text-lg shadow-lg shadow-indigo-500/30 group-hover:scale-110 transition-transform">
+                                  <div className="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center text-white font-black text-lg group-hover:scale-105 transition-transform">
                                     {request.student?.fullName?.charAt(0) || '?'}
                                   </div>
-                                  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center">
-                                    <Sparkles className="w-3 h-3 text-white" />
+                                  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-white border-2 border-white dark:border-slate-900 rounded-full flex items-center justify-center">
+                                    <Sparkles className="w-3 h-3 text-slate-900" />
                                   </div>
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -211,7 +208,7 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
                         <Link
                           to="/profile-requests"
                           onClick={() => setShowNotifications(false)}
-                          className="group flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-500/30 hover:shadow-xl transition-all hover:scale-105"
+                          className="group flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-sm transition-all"
                         >
                           View All Requests ({pendingRequests.length})
                           <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -228,7 +225,7 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
             {/* Enhanced Logout Button */}
             <button
               onClick={onLogout}
-              className="group flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 hover:from-red-500 hover:to-pink-600 dark:hover:from-red-600 dark:hover:to-pink-600 text-slate-700 dark:text-slate-300 hover:text-white transition-all font-bold shadow-lg hover:shadow-xl hover:scale-105"
+              className="group flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900/10 text-slate-700 dark:text-slate-300 hover:text-red-600 transition-all font-bold"
             >
               <LogOut className="w-5 h-5 group-hover:rotate-12 transition-transform" />
               <span className="hidden sm:inline text-sm">Logout</span>

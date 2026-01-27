@@ -347,7 +347,7 @@ export default function ResourceManagement() {
                 <div className="xl:col-span-1">
                     <div className="bg-white dark:bg-stitch-card-dark rounded-[2rem] shadow-xl border border-slate-100 dark:border-white/5 p-6 md:p-8 sticky top-6">
                         <div className="flex items-center gap-4 mb-8">
-                            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30">
+                            <div className="w-14 h-14 bg-slate-900 dark:bg-black rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10">
                                 <Upload className="w-7 h-7 text-white" />
                             </div>
                             <div>
@@ -501,7 +501,7 @@ export default function ResourceManagement() {
                                 className={`w-full py-4 rounded-xl font-black text-white shadow-lg shadow-stitch-blue/20 flex items-center justify-center gap-3 transition-all transform hover:translate-y-[-2px]
                                     ${uploading || !formData.file
                                         ? 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed shadow-none'
-                                        : 'bg-gradient-to-r from-stitch-blue to-blue-600 hover:shadow-xl active:scale-95'}`}
+                                        : 'bg-slate-900 hover:bg-black dark:bg-white dark:hover:bg-slate-200 dark:text-black hover:shadow-xl active:scale-95'}`}
                             >
                                 {uploading ? (
                                     <>
