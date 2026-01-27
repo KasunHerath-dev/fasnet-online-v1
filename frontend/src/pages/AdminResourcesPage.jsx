@@ -10,15 +10,15 @@ export default function AdminResourcesPage() {
         <div className="min-h-screen bg-stitch-bg-light dark:bg-stitch-bg-dark font-display text-slate-900 dark:text-white pb-20 transition-colors duration-300">
             <div className="max-w-[1600px] mx-auto space-y-8 animate-fadeIn p-4 md:p-8">
                 {/* Hero Header */}
-                <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 dark:from-indigo-900 dark:via-indigo-950 dark:to-violet-950 rounded-[2.5rem] p-8 md:p-12 shadow-2xl z-10">
+                <div className="relative overflow-hidden bg-black dark:bg-black rounded-[2.5rem] p-8 md:p-12 shadow-2xl z-10">
                     {/* Background Visuals */}
                     <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
-                    <div className="absolute bottom-0 left-0 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl -ml-20 -mb-20"></div>
+                    <div className="absolute bottom-0 left-0 w-80 h-80 bg-white/5 rounded-full blur-3xl -ml-20 -mb-20"></div>
 
                     <div className="relative z-10">
                         <button
                             onClick={() => navigate('/admin')}
-                            className="group flex items-center gap-2 text-indigo-100 hover:text-white transition-colors mb-6 font-medium"
+                            className="group flex items-center gap-2 text-slate-300 hover:text-white transition-colors mb-6 font-medium"
                         >
                             <div className="p-2 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
                                 <ArrowLeft className="w-5 h-5" />
@@ -32,7 +32,7 @@ export default function AdminResourcesPage() {
                             </div>
                             <div>
                                 <h1 className="text-3xl md:text-5xl font-black text-white mb-2 tracking-tight">Resource Manager</h1>
-                                <p className="text-indigo-100 text-lg font-medium max-w-2xl">Upload, organize, and manage academic materials for all batches and semesters.</p>
+                                <p className="text-slate-300 text-lg font-medium max-w-2xl">Upload, organize, and manage academic materials for all batches and semesters.</p>
                             </div>
                         </div>
                     </div>

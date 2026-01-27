@@ -117,12 +117,12 @@ export default function ProfileRequestsPage() {
             <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
                 <div className="bg-white dark:bg-stitch-card-dark rounded-[2.5rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col border border-white/10 animate-scaleIn">
                     {/* Header */}
-                    <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-8 flex items-start justify-between relative overflow-hidden">
-                        <div className="absolute inset-0 bg-black/10"></div>
+                    <div className="bg-black p-8 flex items-start justify-between relative overflow-hidden">
+                        <div className="absolute inset-0 bg-white/5"></div>
                         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
                         <div className="relative z-10 text-white">
                             <h2 className="text-2xl font-black">Request Details</h2>
-                            <p className="text-indigo-100 font-medium opacity-80 mt-1">Review the requested profile changes</p>
+                            <p className="text-slate-300 font-medium opacity-80 mt-1">Review the requested profile changes</p>
                         </div>
                         <button
                             onClick={onClose}
@@ -135,13 +135,13 @@ export default function ProfileRequestsPage() {
                     {/* Content */}
                     <div className="p-8 overflow-y-auto flex-1 space-y-8">
                         {/* Student Info */}
-                        <div className="flex items-center gap-6 p-6 bg-indigo-50 dark:bg-indigo-900/10 rounded-[2rem] border border-indigo-100 dark:border-indigo-500/20">
-                            <div className="w-16 h-16 bg-white dark:bg-white/5 rounded-2xl flex items-center justify-center text-indigo-600 dark:text-indigo-300 font-black text-2xl shadow-sm">
+                        <div className="flex items-center gap-6 p-6 bg-slate-50 dark:bg-slate-900/10 rounded-[2rem] border border-slate-200 dark:border-slate-500/20">
+                            <div className="w-16 h-16 bg-white dark:bg-white/5 rounded-2xl flex items-center justify-center text-slate-900 dark:text-slate-300 font-black text-2xl shadow-sm">
                                 {request.student?.fullName?.charAt(0)}
                             </div>
                             <div>
                                 <h3 className="font-bold text-lg text-slate-900 dark:text-white">{request.student?.fullName}</h3>
-                                <p className="text-indigo-500 dark:text-indigo-300 font-bold font-mono">{request.student?.registrationNumber}</p>
+                                <p className="text-slate-500 dark:text-slate-400 font-bold font-mono">{request.student?.registrationNumber}</p>
                             </div>
                         </div>
 
@@ -252,14 +252,14 @@ export default function ProfileRequestsPage() {
             <div className="max-w-[1600px] mx-auto space-y-8 animate-fadeIn p-4 md:p-8">
 
                 {/* Hero Header */}
-                <div className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-700 to-violet-800 dark:from-indigo-900 dark:via-purple-950 dark:to-violet-950 rounded-[2.5rem] p-8 md:p-12 shadow-2xl z-10">
+                <div className="relative overflow-hidden bg-black dark:bg-black rounded-[2.5rem] p-8 md:p-12 shadow-2xl z-10">
                     <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
-                    <div className="absolute bottom-0 left-0 w-80 h-80 bg-pink-500/20 rounded-full blur-3xl -ml-20 -mb-20"></div>
+                    <div className="absolute bottom-0 left-0 w-80 h-80 bg-white/5 rounded-full blur-3xl -ml-20 -mb-20"></div>
 
                     <div className="relative z-10">
                         <button
                             onClick={() => navigate('/admin')}
-                            className="group flex items-center gap-2 text-indigo-100 hover:text-white transition-colors mb-6 font-medium"
+                            className="group flex items-center gap-2 text-slate-300 hover:text-white transition-colors mb-6 font-medium"
                         >
                             <div className="p-2 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
                                 <ArrowLeft className="w-5 h-5" />
@@ -273,7 +273,7 @@ export default function ProfileRequestsPage() {
                             </div>
                             <div>
                                 <h1 className="text-4xl md:text-5xl font-black text-white mb-2 tracking-tight">Profile Requests</h1>
-                                <p className="text-indigo-100 text-lg font-medium max-w-2xl">Review and manage student profile update requests.</p>
+                                <p className="text-slate-300 text-lg font-medium max-w-2xl">Review and manage student profile update requests.</p>
                             </div>
                         </div>
                     </div>
@@ -375,7 +375,7 @@ export default function ProfileRequestsPage() {
                                             >
                                                 <td className="px-8 py-5">
                                                     <div className="flex items-center gap-4">
-                                                        <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-md">
+                                                        <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-md">
                                                             {request.student?.fullName?.charAt(0) || '?'}
                                                         </div>
                                                         <div className="min-w-0">

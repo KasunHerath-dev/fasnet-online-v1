@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { authService } from '../services/authService'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   LayoutDashboard,
   Users,
@@ -24,6 +24,19 @@ import { hasPermission, isRegularUser, isSuperAdmin, PERMISSIONS } from '../util
 export default function SideNav({ isOpen, onClose }) {
   const location = useLocation()
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
+
+  // Determine if the sidebar is effectively open (visually expanded)
+  // Expanded if: Not collapsed (Pinned Open) OR Hovered (Temporarily Open)
+  const effectiveOpen = !isCollapsed || isHovered
+
+  // Default to collapsed on desktop on initial load
+  useEffect(() => {
+    if (window.innerWidth >= 768) {
+      setIsCollapsed(true)
+    }
+  }, [])
+
   const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/')
 
   const user = authService.getUser()
@@ -124,9 +137,12 @@ export default function SideNav({ isOpen, onClose }) {
         />
       )}
 
-      <aside className={`
+      <aside
+        onMouseEnter={() => window.innerWidth >= 768 && setIsHovered(true)}
+        onMouseLeave={() => window.innerWidth >= 768 && setIsHovered(false)}
+        className={`
         fixed md:static inset-y-0 left-0 z-[100]
-        ${isCollapsed ? 'w-20' : 'w-64 lg:w-72'}
+        ${effectiveOpen ? 'w-64 lg:w-72' : 'w-20'}
         bg-black
         shadow-2xl
         transform transition-all duration-300 ease-in-out
@@ -141,14 +157,14 @@ export default function SideNav({ isOpen, onClose }) {
           {/* Header - Monochrome */}
           <div className="p-6 border-b border-gray-800">
             <div className="flex items-center justify-between">
-              <div className={`flex items-center gap-3 transition-all duration-300 ${isCollapsed ? 'justify-center w-full' : ''}`}>
+              <div className={`flex items-center gap-3 transition-all duration-300 ${!effectiveOpen ? 'justify-center w-full' : ''}`}>
                 <div className="relative group">
                   <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-black font-black text-lg transition-all duration-300">
                     F
                   </div>
                 </div>
 
-                {!isCollapsed && (
+                {effectiveOpen && (
                   <div className="animate-fadeIn">
                     <h1 className="text-white font-black text-xl tracking-tight drop-shadow-lg">fasnet.online</h1>
                     <p className="text-indigo-300 text-xs font-medium flex items-center gap-1">
@@ -187,23 +203,23 @@ export default function SideNav({ isOpen, onClose }) {
                       ? 'bg-mono-hover text-white'
                       : 'text-gray-400 hover:bg-gray-900 hover:text-white'
                     }
-                    ${isCollapsed ? 'justify-center' : ''}
+                    ${!effectiveOpen ? 'justify-center' : ''}
                   `}
                 >
                   <Icon className={`w-5 h-5 flex-shrink-0 transition-all duration-200 ${active ? 'text-white' : 'text-gray-400 group-hover:text-white'}`} />
 
-                  {!isCollapsed && (
+                  {effectiveOpen && (
                     <>
-                      <span className="font-semibold text-sm truncate">{link.label}</span>
+                      <span className="font-semibold text-sm truncate animate-fadeIn">{link.label}</span>
                       {active && (
                         <div className="absolute right-3 w-1.5 h-1.5 bg-white rounded-full"></div>
                       )}
                     </>
                   )}
 
-                  {/* Tooltip for collapsed state */}
-                  {isCollapsed && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity border border-gray-700">
+                  {/* Tooltip for collapsed state - Only show if effectively closed (not hovered) */}
+                  {!effectiveOpen && (
+                    <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity border border-gray-700 z-50">
                       {link.label}
                     </div>
                   )}
@@ -214,8 +230,8 @@ export default function SideNav({ isOpen, onClose }) {
 
           {/* Footer - Monochrome */}
           <div className="p-4 border-t border-gray-800">
-            {!isCollapsed && (
-              <div className="bg-gray-900 rounded-xl p-4 mb-3 border border-gray-800">
+            {effectiveOpen && (
+              <div className="bg-gray-900 rounded-xl p-4 mb-3 border border-gray-800 animate-fadeIn">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-10 h-10 rounded-xl bg-gray-800 flex items-center justify-center">
                     <User className="w-5 h-5 text-white" />
@@ -238,21 +254,23 @@ export default function SideNav({ isOpen, onClose }) {
             <button
               onClick={toggleCollapse}
               className="hidden md:flex w-full items-center justify-center gap-2 px-4 py-3 bg-gray-800 hover:bg-mono-hover text-white rounded-xl font-semibold text-sm transition-all"
-              title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+              title={isCollapsed ? 'Pin Sidebar Open' : 'Unpin Sidebar'}
             >
               {isCollapsed ? (
+                /* Collapsed (Pinned Closed) -> Show Expand Icon */
                 <ChevronRight className="w-5 h-5" />
               ) : (
+                /* Expanded (Pinned Open) -> Show Collapse Icon */
                 <>
                   <ChevronLeft className="w-5 h-5" />
-                  <span>Collapse</span>
+                  {effectiveOpen && <span>Collapse</span>}
                 </>
               )}
             </button>
 
             {/* Copyright */}
-            {!isCollapsed && (
-              <p className="text-gray-500 text-xs text-center mt-3">
+            {effectiveOpen && (
+              <p className="text-gray-500 text-xs text-center mt-3 animate-fadeIn">
                 Developed by <span className="text-gray-300 font-bold">Kasun Herath</span>
               </p>
             )}
@@ -266,7 +284,7 @@ export default function SideNav({ isOpen, onClose }) {
           to { opacity: 1; }
         }
         .animate-fadeIn {
-          animation: fadeIn 0.3s ease-out;
+          animation: fadeIn 0.2s ease-out;
         }
         
         .custom-scrollbar::-webkit-scrollbar {

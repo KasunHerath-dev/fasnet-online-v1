@@ -233,25 +233,25 @@ export default function AssessmentManagement() {
 
     return (
         <div className="space-y-6">
-            {/* Instructions Card */}
-            <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-2 border-amber-200 dark:border-amber-800">
+            {/* Instructions Card - Ash */}
+            <div className="bg-slate-50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-slate-300">
                 <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center flex-shrink-0">
                         <AlertCircle className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-slate-900 dark:text-white mb-2">Upload Instructions</h3>
-                        <ul className="text-sm text-slate-700 dark:text-slate-300 space-y-1.5">
+                        <h3 className="font-bold text-slate-900 mb-2">Upload Instructions</h3>
+                        <ul className="text-sm text-slate-700 space-y-1.5">
                             <li className="flex items-start gap-2">
-                                <span className="text-amber-600 dark:text-amber-400 mt-0.5">•</span>
+                                <span className="text-slate-900 mt-0.5">•</span>
                                 <span>Upload an Excel/CSV file with student results</span>
                             </li>
                             <li className="flex items-start gap-2">
-                                <span className="text-amber-600 dark:text-amber-400 mt-0.5">•</span>
+                                <span className="text-slate-900 mt-0.5">•</span>
                                 <span><strong className="font-bold">Column 1:</strong> Registration Number (must match module)</span>
                             </li>
                             <li className="flex items-start gap-2">
-                                <span className="text-amber-600 dark:text-amber-400 mt-0.5">•</span>
+                                <span className="text-slate-900 mt-0.5">•</span>
                                 <span><strong className="font-bold">Column 2:</strong> Marks (numerical value)</span>
                             </li>
                         </ul>
@@ -264,10 +264,10 @@ export default function AssessmentManagement() {
                 {/* Selection Grid - Stats Style */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     {/* Batch Year Card */}
-                    <div className="relative bg-white dark:bg-slate-900 rounded-xl sm:rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-lg">
+                    <div className="relative bg-white rounded-xl sm:rounded-2xl p-5 border border-slate-300 shadow-lg">
                         <div className="flex items-center gap-2 mb-3">
-                            <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Batch Year</span>
+                            <Calendar className="w-5 h-5 text-slate-900" />
+                            <span className="text-xs font-bold text-slate-500 uppercase tracking-wide">Batch Year</span>
                         </div>
                         <Dropdown
                             value={formData.batchYear}
@@ -285,10 +285,10 @@ export default function AssessmentManagement() {
                     </div>
 
                     {/* Level Card */}
-                    <div className="bg-white dark:bg-slate-900 rounded-xl sm:rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-lg">
+                    <div className="bg-white rounded-xl sm:rounded-2xl p-5 border border-slate-300 shadow-lg">
                         <div className="flex items-center gap-2 mb-3">
-                            <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Level</span>
+                            <TrendingUp className="w-5 h-5 text-slate-900" />
+                            <span className="text-xs font-bold text-slate-500 uppercase tracking-wide">Level</span>
                         </div>
                         <Dropdown
                             value={formData.level}
@@ -300,10 +300,10 @@ export default function AssessmentManagement() {
                     </div>
 
                     {/* Module Card */}
-                    <div className="sm:col-span-2 bg-white dark:bg-slate-900 rounded-xl sm:rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-lg">
+                    <div className="sm:col-span-2 bg-white rounded-xl sm:rounded-2xl p-5 border border-slate-300 shadow-lg">
                         <div className="flex items-center gap-2 mb-3">
-                            <BookOpen className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Module</span>
+                            <BookOpen className="w-5 h-5 text-slate-900" />
+                            <span className="text-xs font-bold text-slate-500 uppercase tracking-wide">Module</span>
                         </div>
                         <Dropdown
                             value={formData.moduleId}
@@ -326,10 +326,10 @@ export default function AssessmentManagement() {
                 {/* Exam Type & File Upload Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Exam Type Card */}
-                    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl sm:rounded-2xl p-5 border-2 border-blue-200 dark:border-blue-800">
+                    <div className="bg-slate-50 rounded-xl sm:rounded-2xl p-5 border border-slate-300">
                         <div className="flex items-center gap-2 mb-3">
-                            <CheckCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                            <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Exam Type</span>
+                            <CheckCircle className="w-5 h-5 text-slate-900" />
+                            <span className="text-xs font-bold text-slate-900 uppercase tracking-wide">Exam Type</span>
                         </div>
                         <Dropdown
                             value={formData.type}
@@ -344,22 +344,22 @@ export default function AssessmentManagement() {
                     </div>
 
                     {/* File Upload Card */}
-                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl sm:rounded-2xl p-5 border-2 border-purple-200 dark:border-purple-800">
+                    <div className="bg-slate-50 rounded-xl sm:rounded-2xl p-5 border border-slate-300">
                         <div className="flex items-center gap-2 mb-3">
-                            <Upload className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                            <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Results File</span>
+                            <Upload className="w-5 h-5 text-slate-900" />
+                            <span className="text-xs font-bold text-slate-900 uppercase tracking-wide">Results File</span>
                         </div>
                         <div className="relative">
                             <input
                                 type="file"
                                 accept=".csv, .xlsx, .xls"
-                                className="w-full px-4 py-3 rounded-lg border-2 border-purple-200 dark:border-purple-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-sm transition-colors hover:border-purple-400 dark:hover:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                className="w-full px-4 py-3 rounded-lg border border-slate-300 bg-white text-slate-900 text-sm transition-colors hover:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
                                 onChange={handleFileChange}
                                 required
                             />
-                            <FileText className="w-5 h-5 text-purple-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            <FileText className="w-5 h-5 text-slate-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                         </div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">Excel or CSV format</p>
+                        <p className="text-xs text-slate-500 mt-2">Excel or CSV format</p>
                     </div>
                 </div>
 
@@ -368,9 +368,8 @@ export default function AssessmentManagement() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="group relative overflow-hidden bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3.5 rounded-xl font-bold shadow-xl shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-300 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                        className="group relative overflow-hidden bg-slate-900 hover:bg-slate-800 text-white px-8 py-3.5 rounded-xl font-bold shadow-lg transition-all duration-300 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                     >
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                         <div className="relative flex items-center gap-2.5">
                             {loading ? (
                                 <>
