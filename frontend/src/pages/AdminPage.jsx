@@ -113,19 +113,19 @@ export default function AdminPage() {
             </div>
 
             {/* Bottom Section - Title & Icon */}
-            <div className="flex items-center gap-2.5 md:gap-4">
+            <div className="flex items-end gap-3 md:gap-4">
               <div className="relative group">
-                <div className="absolute inset-0 bg-white opacity-20 rounded-lg md:rounded-2xl blur-md group-hover:blur-lg transition-all"></div>
-                <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-lg md:rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-lg group-hover:scale-105 transition-transform">
-                  <Settings className="w-6 h-6 md:w-7 md:h-7 text-white" />
+                <div className="absolute inset-0 bg-white opacity-20 rounded-xl md:rounded-2xl blur-md group-hover:blur-lg transition-all"></div>
+                <div className="relative w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-lg group-hover:scale-105 transition-transform">
+                  <Settings className="w-7 h-7 md:w-9 md:h-9 text-white" />
                 </div>
               </div>
-              <div className="min-w-0 flex-1">
-                <h1 className="text-white text-xl md:text-4xl lg:text-5xl font-black leading-tight tracking-tight drop-shadow-lg truncate">
+              <div className="min-w-0 flex-1 pb-1">
+                <h1 className="text-white text-2xl md:text-5xl lg:text-6xl font-black leading-none tracking-tight drop-shadow-lg mb-1">
                   Admin Settings
                 </h1>
-                <p className="text-white/90 text-xs md:text-sm lg:text-base font-semibold mt-0.5 truncate hidden sm:block drop-shadow-md">
-                  System configuration and management
+                <p className="text-white/95 text-xs md:text-base lg:text-lg font-semibold leading-tight drop-shadow-md hidden sm:block">
+                  Complete system control
                 </p>
               </div>
             </div>
