@@ -75,56 +75,54 @@ export default function StudentsPage() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-black font-display text-slate-900 dark:text-white transition-colors duration-500">
 
-      {/* Enhanced Hero Section with Glassmorphism */}
-      <div className="relative w-full overflow-hidden">
-        {/* Animated gradient background */}
-        <div className="absolute inset-0 bg-black dark:bg-black">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
-        </div>
+      {/* Enhanced Hero Section - Command Center Style (Ash Theme) */}
+      <div className="relative w-full bg-black overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem] shadow-2xl shadow-slate-900/50 border-b border-slate-800 pb-12 sm:pb-24">
+        {/* Abstract Background */}
+        <div className="absolute inset-0 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/50 via-black to-slate-950"></div>
 
-        {/* Floating orbs */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-slate-700 opacity-10 rounded-full blur-3xl translate-y-1/4 -translate-x-1/4 animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-slate-600 opacity-5 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        {/* Minimalist Glows */}
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white opacity-[0.03] rounded-full blur-[120px] animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-slate-500 opacity-[0.05] rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2s' }}></div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-14">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 lg:gap-10">
 
             {/* Left side - Title & Description */}
-            <div className="flex-1 space-y-3 sm:space-y-5">
-              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 shadow-lg">
-                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-300" />
-                <span className="text-white text-[10px] sm:text-xs font-bold tracking-wide">STUDENT DIRECTORY</span>
+            <div className="flex-1 space-y-4 sm:space-y-6">
+              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10 shadow-sm transition-all hover:bg-white/10">
+                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400" />
+                <span className="text-slate-300 text-[10px] sm:text-xs font-bold tracking-widest uppercase">Command Center &bull; Directory</span>
               </div>
 
               <div className="space-y-2">
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-none tracking-tight">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-white leading-none tracking-tight">
                   Student
                   <span className="block mt-1 text-slate-500">
                     Directory
                   </span>
                 </h1>
-                <p className="text-sm sm:text-base lg:text-lg text-white/85 font-medium max-w-xl leading-relaxed">
-                  Complete student management and analytics
+                <p className="text-sm sm:text-base lg:text-lg text-slate-400 font-medium max-w-xl leading-relaxed">
+                  Comprehensive student database management and real-time analytics
                 </p>
               </div>
 
               {/* Quick stats badges */}
               <div className="flex flex-wrap gap-2 sm:gap-3">
-                <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
-                  <Users className="w-4 h-4 text-white" />
-                  <span className="text-white text-xs sm:text-sm font-bold">All Students</span>
+                <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors">
+                  <Users className="w-4 h-4 text-slate-300" />
+                  <span className="text-slate-200 text-xs sm:text-sm font-bold">All Students</span>
                 </div>
                 {selectedIds.length > 0 && (
-                  <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white text-black backdrop-blur-md border border-white/20 shadow-lg shadow-white/10">
-                    <div className="w-2 h-2 bg-black rounded-full animate-pulse"></div>
+                  <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white text-black backdrop-blur-md border border-white/20 shadow-lg shadow-white/5 animate-scaleIn">
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
                     <span className="text-black text-xs sm:text-sm font-black">{selectedIds.length} Selected</span>
                   </div>
                 )}
                 {hasActiveFilters && (
-                  <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
-                    <Filter className="w-4 h-4 text-white" />
-                    <span className="text-white text-xs sm:text-sm font-bold">Filtered</span>
+                  <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-indigo-500/20 backdrop-blur-md border border-indigo-500/30 text-indigo-200">
+                    <Filter className="w-4 h-4" />
+                    <span className="text-xs sm:text-sm font-bold">Filtered View</span>
                   </div>
                 )}
               </div>
@@ -132,28 +130,28 @@ export default function StudentsPage() {
 
             {/* Right side - Quick actions card */}
             <div className="lg:w-80 xl:w-96">
-              <div className="bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-5 sm:p-6 lg:p-8 border border-white/10 shadow-2xl">
-                <div className="flex items-center gap-3 mb-4 sm:mb-6">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-md flex items-center justify-center border border-white/20">
-                    <Zap className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+              <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-5 sm:p-6 lg:p-8 border border-white/10 shadow-2xl hover:border-white/20 transition-all duration-300 group">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 shadow-inner group-hover:scale-110 transition-transform duration-300">
+                    <Zap className="w-6 h-6 sm:w-7 sm:h-7 text-yellow-400" />
                   </div>
                   <div>
-                    <h3 className="text-white font-bold text-base sm:text-lg">Quick Actions</h3>
-                    <p className="text-white/70 text-xs sm:text-sm">Manage students</p>
+                    <h3 className="text-white font-bold text-lg">Quick Actions</h3>
+                    <p className="text-slate-400 text-xs sm:text-sm font-medium">Manage records securely</p>
                   </div>
                 </div>
 
                 <div className="space-y-3">
                   <a
                     href="/students/new"
-                    className="group flex items-center gap-3 p-3 sm:p-4 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl sm:rounded-2xl border border-white/20 hover:border-white/30 transition-all hover:scale-105"
+                    className="flex items-center gap-4 p-4 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-2xl border border-white/5 hover:border-white/20 transition-all hover:translate-x-1 group/item"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <UserPlus className="w-5 h-5 text-white" />
+                    <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center group-hover/item:bg-emerald-500/30 transition-colors">
+                      <UserPlus className="w-5 h-5 text-emerald-400" />
                     </div>
                     <div className="flex-1">
                       <p className="text-white font-bold text-sm">Add Student</p>
-                      <p className="text-white/70 text-xs">Create new record</p>
+                      <p className="text-slate-400 text-xs">Create new record</p>
                     </div>
                   </a>
 
@@ -161,27 +159,27 @@ export default function StudentsPage() {
                     <>
                       <button
                         onClick={handleExport}
-                        className="group flex items-center gap-3 p-3 sm:p-4 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl sm:rounded-2xl border border-white/20 hover:border-white/30 transition-all hover:scale-105 w-full"
+                        className="flex items-center gap-4 p-4 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-2xl border border-white/5 hover:border-white/20 transition-all hover:translate-x-1 group/item w-full"
                       >
-                        <div className="w-10 h-10 rounded-xl bg-slate-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                          <Download className="w-5 h-5 text-slate-300" />
+                        <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center group-hover/item:bg-blue-500/30 transition-colors">
+                          <Download className="w-5 h-5 text-blue-400" />
                         </div>
                         <div className="flex-1 text-left">
-                          <p className="text-white font-bold text-sm">Export</p>
-                          <p className="text-white/70 text-xs">{selectedIds.length} records</p>
+                          <p className="text-white font-bold text-sm">Export Data</p>
+                          <p className="text-slate-400 text-xs">CSV / Excel format</p>
                         </div>
                       </button>
 
                       <button
                         onClick={() => setShowDeleteModal(true)}
-                        className="group flex items-center gap-3 p-3 sm:p-4 bg-red-600 hover:bg-red-700 backdrop-blur-md rounded-xl sm:rounded-2xl border border-red-500/50 hover:border-red-500 transition-all hover:scale-105 w-full shadow-lg shadow-red-900/20"
+                        className="flex items-center gap-4 p-4 bg-red-500/10 hover:bg-red-500/20 backdrop-blur-md rounded-2xl border border-red-500/20 hover:border-red-500/40 transition-all hover:translate-x-1 group/item w-full"
                       >
-                        <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                          <Trash2 className="w-5 h-5 text-white" />
+                        <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center group-hover/item:bg-red-500/30 transition-colors">
+                          <Trash2 className="w-5 h-5 text-red-400" />
                         </div>
                         <div className="flex-1 text-left">
-                          <p className="text-white font-bold text-sm">Delete</p>
-                          <p className="text-white/70 text-xs">{selectedIds.length} selected</p>
+                          <p className="text-red-400 font-bold text-sm">Delete Records</p>
+                          <p className="text-red-400/60 text-xs">Permanent action</p>
                         </div>
                       </button>
                     </>
@@ -196,31 +194,28 @@ export default function StudentsPage() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 sm:-mt-8 pb-12 sm:pb-20">
 
-        {/* Enhanced Filters Section */}
+        {/* Enhanced Filters Section - Ash Theme */}
         <div className="mb-6 sm:mb-8 lg:mb-12">
-          <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden relative">
 
             {/* Filter Header */}
-            <div className="relative bg-white dark:bg-slate-900 px-5 sm:px-6 lg:px-8 py-4 sm:py-5 lg:py-6 border-b border-slate-200 dark:border-slate-800">
-              <div className="absolute inset-0 bg-slate-50/50 dark:bg-slate-800/20"></div>
-
+            <div className="relative px-6 sm:px-8 py-6 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
               <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div className="flex items-center gap-3 sm:gap-4">
-                  <div className="relative w-12 h-12 sm:w-14 sm:h-14 bg-slate-900 dark:bg-black rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10">
-                    <SlidersHorizontal className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-                    <div className="absolute inset-0 bg-slate-900 rounded-xl sm:rounded-2xl blur-md opacity-20"></div>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-slate-900 dark:bg-white rounded-2xl flex items-center justify-center shadow-lg transform rotate-3 transition-transform hover:rotate-6">
+                    <SlidersHorizontal className="w-6 h-6 text-white dark:text-slate-900" />
                   </div>
                   <div>
                     <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">Search & Filter</h3>
-                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium hidden sm:block">Find students quickly</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 font-bold">Refine student list</p>
                   </div>
                 </div>
 
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className="self-start sm:self-auto inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border-2 border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl transition-all font-bold text-slate-700 dark:text-slate-300 hover:scale-105 active:scale-95 shadow-lg text-sm sm:text-base"
+                  className="self-start sm:self-auto inline-flex items-center gap-2 px-6 py-3 bg-slate-900 dark:bg-white hover:bg-black dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg"
                 >
-                  <SlidersHorizontal className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <SlidersHorizontal className="w-4 h-4" />
                   {showFilters ? 'Hide' : 'Show'} Filters
                 </button>
               </div>
@@ -228,23 +223,23 @@ export default function StudentsPage() {
 
             {/* Filter Content */}
             {showFilters && (
-              <div className="p-5 sm:p-6 lg:p-8 animate-fadeIn">
+              <div className="p-6 sm:p-8 animate-fadeIn bg-white dark:bg-slate-900">
 
                 {/* Filter Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
                   {/* Search Input */}
                   <div className="sm:col-span-2">
-                    <label className="flex items-center gap-2 text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300 mb-3">
-                      <Search className="w-4 h-4 sm:w-5 sm:h-5 text-slate-900 dark:text-white" />
+                    <label className="flex items-center gap-2 text-sm font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">
+                      <Search className="w-4 h-4" />
                       Search Students
                     </label>
                     <div className="relative group">
                       <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-slate-900 dark:group-focus-within:text-white transition-colors z-10 pointer-events-none" />
                       <input
                         type="text"
-                        className="w-full pl-12 pr-4 py-3.5 sm:py-4 text-sm sm:text-base bg-white dark:bg-slate-900/50 border-2 border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl focus:border-slate-900 dark:focus:border-white focus:ring-4 focus:ring-slate-500/10 transition-all font-medium text-slate-900 dark:text-white placeholder-slate-400 shadow-sm hover:shadow-md outline-none"
-                        placeholder="Name, registration number..."
+                        className="w-full pl-12 pr-4 py-4 text-base bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-slate-900 dark:focus:border-white focus:ring-0 transition-all font-bold text-slate-900 dark:text-white placeholder-slate-400 outline-none"
+                        placeholder="Search by key details..."
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                       />
@@ -253,8 +248,8 @@ export default function StudentsPage() {
 
                   {/* District Filter */}
                   <div>
-                    <label className="flex items-center gap-2 text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300 mb-3">
-                      <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 dark:text-slate-400" />
+                    <label className="flex items-center gap-2 text-sm font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">
+                      <MapPin className="w-4 h-4" />
                       District
                     </label>
                     <div className="relative">
@@ -268,20 +263,20 @@ export default function StudentsPage() {
                         icon={<MapPin className="w-5 h-5" />}
                         placeholder="All Districts"
                         variant="default"
-                        className="w-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl focus:border-blue-500 px-4 py-3.5 sm:py-4 text-sm sm:text-base shadow-sm hover:shadow-md transition-shadow"
+                        className="w-full bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-slate-900 dark:focus:border-white px-4 py-4 text-base font-bold shadow-none hover:border-slate-300 dark:hover:border-slate-600 transition-colors"
                       />
                     </div>
                   </div>
 
                   {/* Batch Year */}
                   <div>
-                    <label className="flex items-center gap-2 text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300 mb-3">
-                      <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 dark:text-slate-400" />
+                    <label className="flex items-center gap-2 text-sm font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">
+                      <GraduationCap className="w-4 h-4" />
                       Batch Year
                     </label>
                     <input
                       type="text"
-                      className="w-full px-4 py-3.5 sm:py-4 text-sm sm:text-base bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl focus:border-slate-900 dark:focus:border-white focus:ring-4 focus:ring-slate-500/20 transition-all font-medium text-slate-900 dark:text-white placeholder-slate-400 shadow-sm hover:shadow-md outline-none"
+                      className="w-full px-4 py-4 text-base bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-slate-900 dark:focus:border-white focus:ring-0 transition-all font-bold text-slate-900 dark:text-white placeholder-slate-400 outline-none"
                       placeholder="e.g. 2024"
                       value={batch}
                       onChange={(e) => setBatch(e.target.value)}
@@ -291,22 +286,20 @@ export default function StudentsPage() {
 
                 {/* Active Filters Display */}
                 {hasActiveFilters && (
-                  <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t-2 border-slate-100 dark:border-slate-800">
+                  <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                        <span className="text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                          <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-slate-900 dark:text-white" />
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-sm font-black text-slate-400 uppercase tracking-wider mr-2">
                           Active Filters:
                         </span>
 
                         {query && (
-                          <span className="group inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold border-2 border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
-                            <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                          <span className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm font-bold border border-slate-200 dark:border-slate-700">
+                            <Search className="w-3.5 h-3.5" />
                             "{query.length > 20 ? query.substring(0, 20) + '...' : query}"
                             <button
                               onClick={() => setQuery('')}
-                              className="hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg p-1 transition-colors"
-                              aria-label="Remove search filter"
+                              className="ml-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md p-0.5 transition-colors"
                             >
                               <X className="w-3.5 h-3.5" />
                             </button>
@@ -314,13 +307,12 @@ export default function StudentsPage() {
                         )}
 
                         {district && (
-                          <span className="group inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold border-2 border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
-                            <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                          <span className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm font-bold border border-slate-200 dark:border-slate-700">
+                            <MapPin className="w-3.5 h-3.5" />
                             {district}
                             <button
                               onClick={() => setDistrict('')}
-                              className="hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg p-1 transition-colors"
-                              aria-label="Remove district filter"
+                              className="ml-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md p-0.5 transition-colors"
                             >
                               <X className="w-3.5 h-3.5" />
                             </button>
@@ -328,13 +320,12 @@ export default function StudentsPage() {
                         )}
 
                         {batch && (
-                          <span className="group inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold border-2 border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
-                            <GraduationCap className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                          <span className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg text-sm font-bold border border-slate-200 dark:border-slate-700">
+                            <GraduationCap className="w-3.5 h-3.5" />
                             Batch {batch}
                             <button
                               onClick={() => setBatch('')}
-                              className="hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg p-1 transition-colors"
-                              aria-label="Remove batch filter"
+                              className="ml-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md p-0.5 transition-colors"
                             >
                               <X className="w-3.5 h-3.5" />
                             </button>
@@ -344,24 +335,24 @@ export default function StudentsPage() {
 
                       <button
                         onClick={clearFilters}
-                        className="inline-flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base bg-slate-900 text-white hover:bg-black dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200 rounded-xl sm:rounded-2xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg border-2 border-transparent"
+                        className="inline-flex items-center gap-2 px-5 py-2.5 text-sm bg-red-50 dark:bg-red-900/10 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-xl font-bold transition-all active:scale-95"
                       >
-                        <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                        <Trash2 className="w-4 h-4" />
                         Clear All
                       </button>
                     </div>
                   </div>
                 )}
 
-                {/* View Mode Toggle */}
-                <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t-2 border-slate-100 dark:border-slate-800">
+                {/* View Mode Toggle - Ash Theme */}
+                <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <label className="text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                      <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 dark:text-slate-400" />
-                      View Mode
+                    <label className="text-sm font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                      <Activity className="w-4 h-4" />
+                      View Layout
                     </label>
 
-                    <div className="inline-flex gap-2 p-2 bg-slate-100 dark:bg-slate-800 rounded-2xl shadow-inner border-2 border-slate-200 dark:border-slate-700">
+                    <div className="inline-flex gap-2 p-1.5 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
                       {VIEW_MODES.map((mode) => {
                         const Icon = mode.icon
                         const isActive = viewMode === mode.id
@@ -369,12 +360,12 @@ export default function StudentsPage() {
                           <button
                             key={mode.id}
                             onClick={() => setViewMode(mode.id)}
-                            className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold transition-all ${isActive
-                              ? 'bg-slate-900 text-white shadow-xl shadow-slate-900/10 scale-105 dark:bg-white dark:text-black'
-                              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-slate-600 hover:scale-105'
+                            className={`flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${isActive
+                              ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-slate-700'
+                              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                               }`}
                           >
-                            <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                            <Icon className="w-4 h-4" />
                             <span className="hidden sm:inline">{mode.label}</span>
                             <span className="sm:hidden">{mode.label}</span>
                           </button>
@@ -408,7 +399,7 @@ export default function StudentsPage() {
           title="Delete Students"
           message={`Are you sure you want to delete ${selectedIds.length} selected student${selectedIds.length !== 1 ? 's' : ''}? This action cannot be undone.`}
         />
-      </div>
+      </div >
 
       <style>{`
         @keyframes fadeIn {
@@ -425,6 +416,6 @@ export default function StudentsPage() {
           animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
         }
       `}</style>
-    </div>
+    </div >
   )
 }

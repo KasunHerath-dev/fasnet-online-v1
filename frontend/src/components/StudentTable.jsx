@@ -65,7 +65,7 @@ export default function StudentTable({ query, district, batch, selectedIds = [],
   const getGenderColor = (gender) => {
     const g = (gender || '').toLowerCase()
     if (g === 'male' || g === 'm') return 'bg-blue-500'
-    if (g === 'female' || g === 'f') return 'bg-stitch-pink'
+    if (g === 'female' || g === 'f') return 'bg-pink-500'
     return 'bg-slate-500'
   }
 
@@ -405,15 +405,15 @@ export default function StudentTable({ query, district, batch, selectedIds = [],
       </div>
 
       {/* Main Content Card */}
-      <div className="bg-white dark:bg-stitch-card-dark rounded-3xl shadow-xl border border-slate-100 dark:border-stitch-card-border overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
         <div className="p-6 md:p-8">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20">
               <div className="relative w-20 h-20">
-                <div className="absolute inset-0 border-4 border-slate-100 dark:border-white/5 rounded-full"></div>
-                <div className="absolute inset-0 border-4 border-stitch-blue rounded-full border-t-transparent animate-spin"></div>
+                <div className="absolute inset-0 border-4 border-slate-100 dark:border-slate-800 rounded-full"></div>
+                <div className="absolute inset-0 border-4 border-slate-900 dark:border-white rounded-full border-t-transparent animate-spin"></div>
               </div>
-              <p className="mt-6 text-slate-600 dark:text-slate-400 font-bold uppercase tracking-widest text-sm">Loading students...</p>
+              <p className="mt-6 text-slate-900 dark:text-white font-black uppercase tracking-widest text-sm">Loading students...</p>
             </div>
           ) : students.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20">
@@ -441,18 +441,18 @@ export default function StudentTable({ query, district, batch, selectedIds = [],
                     <button
                       onClick={() => setPage(Math.max(1, page - 1))}
                       disabled={page === 1}
-                      className="flex items-center gap-2 px-5 py-3 bg-white dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl hover:bg-slate-50 dark:hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-all font-bold text-slate-700 dark:text-slate-300 hover:border-stitch-blue hover:text-stitch-blue"
+                      className="flex items-center gap-2 px-5 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all font-bold text-slate-900 dark:text-white hover:border-slate-900 dark:hover:border-white"
                     >
                       <ChevronLeft className="w-4 h-4" />
                       Previous
                     </button>
-                    <div className="px-5 py-3 bg-stitch-blue text-white rounded-xl font-bold shadow-lg shadow-stitch-blue/20">
+                    <div className="px-5 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-black shadow-lg shadow-slate-900/20">
                       Page {page}
                     </div>
                     <button
                       onClick={() => setPage(page + 1)}
                       disabled={students.length < 20}
-                      className="flex items-center gap-2 px-5 py-3 bg-white dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl hover:bg-slate-50 dark:hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-all font-bold text-slate-700 dark:text-slate-300 hover:border-stitch-blue hover:text-stitch-blue"
+                      className="flex items-center gap-2 px-5 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all font-bold text-slate-900 dark:text-white hover:border-slate-900 dark:hover:border-white"
                     >
                       Next
                       <ChevronRight className="w-4 h-4" />
