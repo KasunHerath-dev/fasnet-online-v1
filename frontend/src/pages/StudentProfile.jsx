@@ -125,7 +125,7 @@ export default function StudentProfile() {
         <div className="min-h-screen bg-slate-50 dark:bg-black font-display text-slate-900 dark:text-white transition-colors duration-500">
 
             {/* Enhanced Hero Section - Command Center Style */}
-            <div className="relative w-full overflow-hidden pb-32 sm:pb-20 lg:pb-24">
+            <div className="relative w-full overflow-hidden pb-12 sm:pb-16 lg:pb-20">
                 <div className="absolute inset-0 bg-black">
                     <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
                 </div>
@@ -166,8 +166,8 @@ export default function StudentProfile() {
                                     onClick={handleEditClick}
                                     disabled={!!pendingRequest}
                                     className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${pendingRequest
-                                            ? 'bg-yellow-500/20 text-yellow-300 cursor-not-allowed border border-yellow-500/30'
-                                            : 'bg-white/10 text-white hover:bg-white/20 border border-white/20 hover:scale-105 active:scale-95'
+                                        ? 'bg-yellow-500/20 text-yellow-300 cursor-not-allowed border border-yellow-500/30'
+                                        : 'bg-white/10 text-white hover:bg-white/20 border border-white/20 hover:scale-105 active:scale-95'
                                         }`}
                                 >
                                     {pendingRequest ? (
@@ -189,7 +189,7 @@ export default function StudentProfile() {
             </div>
 
             {/* Main Content */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 sm:-mt-8 pb-12 sm:pb-20">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 lg:pt-12 pb-12 sm:pb-20">
 
                 {/* Pending Request Alert */}
                 {pendingRequest && (
