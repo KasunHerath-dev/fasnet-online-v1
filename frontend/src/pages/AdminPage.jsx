@@ -532,19 +532,19 @@ export default function AdminPage() {
                 <AssessmentManagement />
               </div>
 
-              {/* Batch Year Management Section */}
-              <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
+              {/* Batch Year Management Section - Monochrome */}
+              <div className="bg-white border border-gray-300 rounded-2xl sm:rounded-3xl p-6 sm:p-8">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                      <GraduationCap className="w-5 h-5 text-white" />
+                    <div className="w-10 h-10 rounded-xl bg-gray-200 flex items-center justify-center">
+                      <GraduationCap className="w-5 h-5 text-black" />
                     </div>
                     <div>
-                      <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Academic Batch Management</h3>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">Create and organize student batches</p>
+                      <h3 className="text-lg sm:text-xl font-bold text-black">Academic Batch Management</h3>
+                      <p className="text-xs text-gray-600">Create and organize student batches</p>
                     </div>
                   </div>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg text-xs font-bold border border-purple-200 dark:border-purple-800">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-200 text-black rounded-lg text-xs font-bold border border-gray-300">
                     <Lock className="w-3.5 h-3.5" />
                     Super Admin
                   </div>
@@ -552,120 +552,116 @@ export default function AdminPage() {
                 <BatchYearManagement />
               </div>
 
-              {/* Bulk Combination Tool */}
+              {/* Bulk Combination Tool - Monochrome */}
               <div>
                 <div className="flex items-center gap-3 mb-4 sm:mb-6">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg">
-                    <Upload className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gray-200 flex items-center justify-center">
+                    <Upload className="w-5 h-5 sm:w-6 sm:h-6 text-black" />
                   </div>
                   <div>
-                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white">Bulk Operations</h2>
-                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Batch assignment and import tools</p>
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-black">Bulk Operations</h2>
+                    <p className="text-xs sm:text-sm text-gray-600">Mass student data management</p>
                   </div>
                 </div>
 
                 <button
                   onClick={() => navigate('/admin/bulk-combination')}
-                  className="group w-full bg-gradient-to-br from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-emerald-500/30 hover:shadow-emerald-500/50 transition-all duration-300 hover:-translate-y-1"
+                  className="group w-full bg-gray-50 border border-gray-300 hover:border-black rounded-2xl sm:rounded-3xl p-6 sm:p-8 transition-all duration-200 hover:shadow-lg"
                 >
-                  <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
                   <div className="flex items-center gap-4 sm:gap-6 relative">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-                      <GraduationCap className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gray-200 flex items-center justify-center">
+                      <GraduationCap className="w-7 h-7 sm:w-8 sm:h-8 text-black" />
                     </div>
                     <div className="flex-1 text-left">
-                      <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Bulk Combination Assignment</h3>
-                      <p className="text-white/90 text-sm sm:text-base">Upload Excel files to assign subject combinations to multiple students</p>
+                      <h3 className="text-xl sm:text-2xl font-bold text-black mb-2">Bulk Combination Assignment</h3>
+                      <p className="text-gray-600 text-sm sm:text-base">Upload Excel files to assign subject combinations to multiple students</p>
                     </div>
-                    <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8 text-white group-hover:translate-x-2 transition-transform" />
+                    <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8 text-black" />
                   </div>
                 </button>
               </div>
             </div>
           )}
 
-          {/* Resources Tab */}
+          {/* Resources Tab - Monochrome */}
           {activeTab === 'resources' && (
             <div className="space-y-6 sm:space-y-8">
 
               {/* Resource Overview Header */}
               <div>
                 <div className="flex items-center gap-3 mb-4 sm:mb-6">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg">
-                    <Database className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gray-200 flex items-center justify-center">
+                    <Database className="w-5 h-5 sm:w-6 sm:h-6 text-black" />
                   </div>
                   <div>
-                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white">Resource Center</h2>
-                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Manage academic materials and system files</p>
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-black">Resource Center</h2>
+                    <p className="text-xs sm:text-sm text-gray-600">Manage academic materials and system files</p>
                   </div>
                 </div>
 
-                {/* Resource Stats Cards */}
+                {/* Resource Stats Cards - Monochrome */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
                   {/* Study Materials Card */}
-                  <div className="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl sm:rounded-3xl p-5 sm:p-6 text-white shadow-2xl shadow-blue-500/30 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                  <div className="bg-gray-50 border border-gray-300 rounded-2xl sm:rounded-3xl p-5 sm:p-6 relative">
                     <div className="relative">
                       <div className="flex items-center justify-between mb-3">
-                        <FileText className="w-8 h-8 text-white" />
-                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
+                        <FileText className="w-8 h-8 text-black" />
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                       </div>
-                      <h3 className="text-2xl sm:text-3xl font-black mb-1">Materials</h3>
-                      <p className="text-white/90 text-xs">Study resources</p>
+                      <h3 className="text-2xl sm:text-3xl font-black mb-1 text-black">Materials</h3>
+                      <p className="text-gray-600 text-xs">Study resources</p>
                     </div>
                   </div>
 
-                  {/* Documents Card */}
-                  <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl sm:rounded-3xl p-5 sm:p-6 text-white shadow-2xl shadow-purple-500/30 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                  {/* Documents Card - Monochrome */}
+                  <div className="bg-gray-50 border border-gray-300 rounded-2xl sm:rounded-3xl p-5 sm:p-6 relative">
                     <div className="relative">
                       <div className="flex items-center justify-between mb-3">
-                        <Database className="w-8 h-8 text-white" />
-                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
+                        <Database className="w-8 h-8 text-black" />
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                       </div>
-                      <h3 className="text-2xl sm:text-3xl font-black mb-1">Documents</h3>
-                      <p className="text-white/90 text-xs">System files</p>
+                      <h3 className="text-2xl sm:text-3xl font-black mb-1 text-black">Documents</h3>
+                      <p className="text-gray-600 text-xs">System files</p>
                     </div>
                   </div>
 
-                  {/* Media Card */}
-                  <div className="bg-gradient-to-br from-orange-500 to-amber-500 rounded-2xl sm:rounded-3xl p-5 sm:p-6 text-white shadow-2xl shadow-orange-500/30 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                  {/* Media Card - Monochrome */}
+                  <div className="bg-gray-50 border border-gray-300 rounded-2xl sm:rounded-3xl p-5 sm:p-6 relative">
                     <div className="relative">
                       <div className="flex items-center justify-between mb-3">
-                        <Upload className="w-8 h-8 text-white" />
-                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
+                        <Upload className="w-8 h-8 text-black" />
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                       </div>
-                      <h3 className="text-2xl sm:text-3xl font-black mb-1">Media</h3>
-                      <p className="text-white/90 text-xs">Images & videos</p>
+                      <h3 className="text-2xl sm:text-3xl font-black mb-1 text-black">Media</h3>
+                      <p className="text-gray-600 text-xs">Images & videos</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Resource Management Interface */}
-              <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
+              {/* Resource Management Interface - Monochrome */}
+              <div className="bg-white border border-gray-300 rounded-2xl sm:rounded-3xl p-6 sm:p-8">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
-                    <Database className="w-5 h-5 text-white" />
+                  <div className="w-10 h-10 rounded-xl bg-gray-200 flex items-center justify-center">
+                    <Database className="w-5 h-5 text-black" />
                   </div>
                   <div>
-                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Resource Database</h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">Upload, organize, and manage all resources</p>
+                    <h3 className="text-lg sm:text-xl font-bold text-black">Resource Database</h3>
+                    <p className="text-xs text-gray-600">Upload, organize, and manage all resources</p>
                   </div>
                 </div>
                 <ResourceManagement />
               </div>
 
-              {/* Quick Resource Actions */}
+              {/* Quick Resource Actions - Monochrome */}
               <div>
                 <div className="flex items-center gap-3 mb-4 sm:mb-6">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-slate-500 to-zinc-500 flex items-center justify-center shadow-lg">
-                    <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gray-200 flex items-center justify-center">
+                    <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-black" />
                   </div>
                   <div>
-                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white">Quick Actions</h2>
-                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Common resource operations</p>
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-black">Quick Actions</h2>
+                    <p className="text-xs sm:text-sm text-gray-600">Common resource operations</p>
                   </div>
                 </div>
 
