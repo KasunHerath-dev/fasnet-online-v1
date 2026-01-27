@@ -259,8 +259,6 @@ export default function SideNav({ isOpen, onClose }) {
           </div>
         </div>
       </aside>
-      <div className="absolute bottom-20 left-4 w-24 h-24 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none animate-pulse" style={{ animationDuration: '4s', animationDelay: '1s' }}></div>
-    </aside >
 
       <style jsx>{`
         @keyframes fadeIn {
