@@ -11,6 +11,15 @@ module.exports = {
         secondary: '#10B981',
         danger: '#EF4444',
         warning: '#F59E0B',
+        // Monochrome Design System
+        mono: {
+          bg: '#FFFFFF',
+          sidebar: '#000000',
+          primary: '#1A1A1A',
+          secondary: '#666666',
+          border: '#E0E0E0',
+          hover: '#333333',
+        },
         // Stitch Theme Colors
         'stitch-blue': '#1313ec',
         'stitch-pink': '#ec1378',
