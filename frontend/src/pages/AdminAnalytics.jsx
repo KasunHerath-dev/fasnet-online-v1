@@ -83,7 +83,7 @@ export default function AdminAnalytics() {
         }
     };
 
-    const DEMO_COLORS = ['#3B82F6', '#EC4899', '#9CA3AF']; // Blue (Male), Pink (Female), Gray (Other)
+    const DEMO_COLORS = ['#0F172A', '#64748B', '#CBD5E1']; // Slate-900, Slate-500, Slate-300
 
     // Demographics Data for Pie Chart
     const demoPieData = demographics ? [
@@ -122,27 +122,26 @@ export default function AdminAnalytics() {
     }
 
     return (
-        <div className="min-h-screen bg-stitch-bg-light dark:bg-stitch-bg-dark font-display text-slate-900 dark:text-white pb-20 transition-colors duration-300">
+        <div className="min-h-screen bg-white dark:bg-black font-display text-slate-900 dark:text-white pb-20 transition-colors duration-300">
             <div className="max-w-7xl mx-auto space-y-8 animate-fadeIn p-4 md:p-8">
 
-                {/* Hero Header */}
-                <div className="relative overflow-hidden bg-gradient-to-br from-stitch-blue via-[#6b13ec] to-stitch-pink rounded-[2.5rem] p-8 md:p-12 shadow-2xl z-10">
+                {/* Hero Header - Ash */}
+                <div className="relative overflow-hidden bg-black dark:bg-black rounded-[2.5rem] p-8 md:p-12 shadow-2xl z-10">
                     {/* Background Visuals */}
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
-                    <div className="absolute bottom-0 left-0 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl -ml-20 -mb-20"></div>
-                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -mr-20 -mt-20"></div>
+                    <div className="absolute bottom-0 left-0 w-80 h-80 bg-slate-700/20 rounded-full blur-3xl -ml-20 -mb-20"></div>
 
                     <div className="relative z-10 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-8">
                         <div>
-                            <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mb-6 shadow-inner border border-white/20">
+                            <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center mb-6 shadow-inner border border-white/10">
                                 <BarChart3 className="w-8 h-8 text-white" />
                             </div>
                             <h1 className="text-3xl md:text-5xl font-black text-white mb-2 tracking-tight">Analytics Dashboard</h1>
-                            <p className="text-blue-100 text-lg font-medium opacity-90">Overview of student demographics and academic performance</p>
+                            <p className="text-slate-400 text-lg font-medium opacity-90">Overview of student demographics and academic performance</p>
                         </div>
 
                         {/* Filters */}
-                        <div className="flex flex-wrap gap-4 bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/20 shadow-xl">
+                        <div className="flex flex-wrap gap-4 bg-white/5 backdrop-blur-md p-3 rounded-2xl border border-white/10 shadow-xl">
                             <Dropdown
                                 value={filters.batch}
                                 onChange={(e) => setFilters({ ...filters, batch: e.target.value })}
@@ -174,30 +173,30 @@ export default function AdminAnalytics() {
                 {/* Demographics Section */}
                 {demographics && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="bg-white dark:bg-stitch-card-dark rounded-[2rem] p-8 shadow-xl border border-slate-100 dark:border-white/10 hover:translate-y-[-4px] transition-transform duration-300">
+                        <div className="bg-slate-50 dark:bg-slate-900 rounded-[2rem] p-8 shadow-xl border border-slate-200 dark:border-white/10 hover:translate-y-[-4px] transition-transform duration-300">
                             <div className="flex items-center justify-between mb-4">
-                                <div className="w-14 h-14 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/30">
-                                    <Users className="w-7 h-7 text-white" />
+                                <div className="w-14 h-14 bg-slate-200 dark:bg-white/10 rounded-2xl flex items-center justify-center shadow-lg">
+                                    <Users className="w-7 h-7 text-slate-900 dark:text-white" />
                                 </div>
                             </div>
                             <p className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Total Students</p>
                             <p className="text-5xl font-black text-slate-900 dark:text-white mt-2">{demographics.total}</p>
                         </div>
 
-                        <div className="bg-white dark:bg-stitch-card-dark rounded-[2rem] p-8 shadow-xl border border-slate-100 dark:border-white/10 hover:translate-y-[-4px] transition-transform duration-300">
+                        <div className="bg-slate-50 dark:bg-slate-900 rounded-[2rem] p-8 shadow-xl border border-slate-200 dark:border-white/10 hover:translate-y-[-4px] transition-transform duration-300">
                             <div className="flex items-center justify-between mb-4">
-                                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30">
-                                    <User className="w-7 h-7 text-white" />
+                                <div className="w-14 h-14 bg-slate-200 dark:bg-white/10 rounded-2xl flex items-center justify-center shadow-lg">
+                                    <User className="w-7 h-7 text-slate-900 dark:text-white" />
                                 </div>
                             </div>
                             <p className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Boys</p>
                             <p className="text-5xl font-black text-slate-900 dark:text-white mt-2">{demographics.male}</p>
                         </div>
 
-                        <div className="bg-white dark:bg-stitch-card-dark rounded-[2rem] p-8 shadow-xl border border-slate-100 dark:border-white/10 hover:translate-y-[-4px] transition-transform duration-300">
+                        <div className="bg-slate-50 dark:bg-slate-900 rounded-[2rem] p-8 shadow-xl border border-slate-200 dark:border-white/10 hover:translate-y-[-4px] transition-transform duration-300">
                             <div className="flex items-center justify-between mb-4">
-                                <div className="w-14 h-14 bg-gradient-to-br from-pink-500 to-rose-600 rounded-2xl flex items-center justify-center shadow-lg shadow-pink-500/30">
-                                    <User className="w-7 h-7 text-white" />
+                                <div className="w-14 h-14 bg-slate-200 dark:bg-white/10 rounded-2xl flex items-center justify-center shadow-lg">
+                                    <User className="w-7 h-7 text-slate-900 dark:text-white" />
                                 </div>
                             </div>
                             <p className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Girls</p>
@@ -209,21 +208,21 @@ export default function AdminAnalytics() {
                 {analytics ? (
                     <div className="space-y-8 animate-fadeIn">
                         <div className="flex items-center gap-4 pb-2 border-b border-slate-200 dark:border-slate-800">
-                            <div className="p-3 bg-stitch-blue/10 dark:bg-stitch-blue/20 rounded-2xl">
-                                <GraduationCap className="w-8 h-8 text-stitch-blue" />
+                            <div className="p-3 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10">
+                                <GraduationCap className="w-8 h-8 text-slate-900 dark:text-white" />
                             </div>
                             <div>
                                 <h2 className="text-2xl font-black text-slate-900 dark:text-white">
                                     Academic Performance
                                 </h2>
                                 <div className="flex items-center gap-2 mt-1">
-                                    <span className="text-sm font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
+                                    <span className="text-sm font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-900 px-3 py-1 rounded-full border border-slate-200 dark:border-white/10">
                                         {filters.batch}
                                     </span>
-                                    <span className="text-sm font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
+                                    <span className="text-sm font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-900 px-3 py-1 rounded-full border border-slate-200 dark:border-white/10">
                                         Level {filters.level}
                                     </span>
-                                    <span className="text-sm font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
+                                    <span className="text-sm font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-900 px-3 py-1 rounded-full border border-slate-200 dark:border-white/10">
                                         Sem {filters.semester}
                                     </span>
                                 </div>
@@ -232,25 +231,25 @@ export default function AdminAnalytics() {
 
                         {/* Summary Cards */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                            <div className="bg-white dark:bg-stitch-card-dark rounded-3xl p-6 shadow-lg border border-slate-100 dark:border-white/5 hover:shadow-xl transition-shadow">
+                            <div className="bg-slate-50 dark:bg-slate-900 rounded-3xl p-6 shadow-lg border border-slate-200 dark:border-white/10 hover:shadow-xl transition-shadow">
                                 <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Exam Candidates</p>
                                 <p className="text-3xl font-black text-slate-900 dark:text-white mt-2">{analytics.totalStudents}</p>
                             </div>
-                            <div className="bg-white dark:bg-stitch-card-dark rounded-3xl p-6 shadow-lg border border-slate-100 dark:border-white/5 hover:shadow-xl transition-shadow relative overflow-hidden">
-                                <div className="absolute right-0 top-0 w-24 h-24 bg-emerald-500/5 rounded-full -mr-10 -mt-10"></div>
+                            <div className="bg-slate-50 dark:bg-slate-900 rounded-3xl p-6 shadow-lg border border-slate-200 dark:border-white/10 hover:shadow-xl transition-shadow relative overflow-hidden">
+                                <div className="absolute right-0 top-0 w-24 h-24 bg-slate-200/50 dark:bg-white/5 rounded-full -mr-10 -mt-10"></div>
                                 <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Passed All</p>
-                                <p className="text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-2">{analytics.passed}</p>
+                                <p className="text-3xl font-black text-slate-900 dark:text-white mt-2">{analytics.passed}</p>
                             </div>
-                            <div className="bg-white dark:bg-stitch-card-dark rounded-3xl p-6 shadow-lg border border-slate-100 dark:border-white/5 hover:shadow-xl transition-shadow relative overflow-hidden">
-                                <div className="absolute right-0 top-0 w-24 h-24 bg-red-500/5 rounded-full -mr-10 -mt-10"></div>
+                            <div className="bg-slate-50 dark:bg-slate-900 rounded-3xl p-6 shadow-lg border border-slate-200 dark:border-white/10 hover:shadow-xl transition-shadow relative overflow-hidden">
+                                <div className="absolute right-0 top-0 w-24 h-24 bg-slate-200/50 dark:bg-white/5 rounded-full -mr-10 -mt-10"></div>
                                 <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Failed / Repeat</p>
-                                <p className="text-3xl font-black text-red-600 dark:text-red-400 mt-2">{analytics.failed}</p>
+                                <p className="text-3xl font-black text-slate-900 dark:text-white mt-2">{analytics.failed}</p>
                             </div>
-                            <div className="bg-white dark:bg-stitch-card-dark rounded-3xl p-6 shadow-lg border border-slate-100 dark:border-white/5 hover:shadow-xl transition-shadow relative overflow-hidden">
-                                <div className="absolute right-0 top-0 w-24 h-24 bg-purple-500/5 rounded-full -mr-10 -mt-10"></div>
+                            <div className="bg-slate-50 dark:bg-slate-900 rounded-3xl p-6 shadow-lg border border-slate-200 dark:border-white/10 hover:shadow-xl transition-shadow relative overflow-hidden">
+                                <div className="absolute right-0 top-0 w-24 h-24 bg-slate-200/50 dark:bg-white/5 rounded-full -mr-10 -mt-10"></div>
                                 <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Semester GPA</p>
                                 <div className="flex items-end gap-2">
-                                    <p className="text-3xl font-black text-purple-600 dark:text-purple-400 mt-2">{analytics.avgGPA}</p>
+                                    <p className="text-3xl font-black text-slate-900 dark:text-white mt-2">{analytics.avgGPA}</p>
                                     <span className="text-xs font-bold text-slate-400 mb-1.5">avg</span>
                                 </div>
                             </div>
@@ -259,11 +258,11 @@ export default function AdminAnalytics() {
                         {/* Charts Area */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {/* Gender Distribution Chart */}
-                            <div className="bg-white dark:bg-stitch-card-dark rounded-[2rem] p-8 shadow-xl border border-slate-100 dark:border-white/5 flex flex-col">
+                            <div className="bg-slate-50 dark:bg-slate-900 rounded-[2rem] p-8 shadow-xl border border-slate-200 dark:border-white/10 flex flex-col">
                                 <div className="flex items-center justify-between mb-8">
                                     <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-                                        <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
-                                            <Users className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                                        <div className="p-2 bg-slate-200 dark:bg-white/10 rounded-lg">
+                                            <Users className="w-5 h-5 text-slate-900 dark:text-white" />
                                         </div>
                                         Gender Distribution
                                     </h3>
@@ -281,6 +280,7 @@ export default function AdminAnalytics() {
                                                 dataKey="value"
                                                 startAngle={90}
                                                 endAngle={-270}
+                                                stroke="none"
                                             >
                                                 {demoPieData.map((entry, index) => (
                                                     <Cell key={`cell-${index}`} fill={DEMO_COLORS[index % DEMO_COLORS.length]} strokeWidth={0} />
@@ -301,11 +301,11 @@ export default function AdminAnalytics() {
                             </div>
 
                             {/* GPA Distribution - Full Width */}
-                            <div className="bg-white dark:bg-stitch-card-dark rounded-[2rem] p-8 shadow-xl border border-slate-100 dark:border-white/5">
+                            <div className="bg-slate-50 dark:bg-slate-900 rounded-[2rem] p-8 shadow-xl border border-slate-200 dark:border-white/10">
                                 <div className="flex items-center justify-between mb-8">
                                     <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-                                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                                            <BarChart3 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                        <div className="p-2 bg-slate-200 dark:bg-white/10 rounded-lg">
+                                            <BarChart3 className="w-5 h-5 text-slate-900 dark:text-white" />
                                         </div>
                                         GPA Distribution
                                     </h3>
@@ -331,13 +331,13 @@ export default function AdminAnalytics() {
                                             />
                                             <Bar
                                                 dataKey="count"
-                                                fill="#3B82F6"
+                                                fill="#64748B"
                                                 name="Students"
                                                 radius={[8, 8, 8, 8]}
                                                 barSize={40}
                                             >
                                                 {barData.map((entry, index) => (
-                                                    <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#4F46E5' : '#7C3AED'} />
+                                                    <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#1E293B' : '#475569'} />
                                                 ))}
                                             </Bar>
                                         </BarChart>
@@ -366,13 +366,13 @@ export default function AdminAnalytics() {
                         )}
                     </div>
                 ) : (
-                    <div className="bg-white dark:bg-stitch-card-dark rounded-[2.5rem] p-12 text-center border border-slate-100 dark:border-white/5 shadow-xl animate-fadeIn">
-                        <div className="w-24 h-24 bg-slate-50 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <BarChart3 className="w-12 h-12 text-slate-300 dark:text-slate-600" />
+                    <div className="bg-slate-50 dark:bg-slate-900 rounded-[2.5rem] p-12 text-center border border-slate-200 dark:border-white/10 shadow-xl animate-fadeIn">
+                        <div className="w-24 h-24 bg-slate-200 dark:bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <BarChart3 className="w-12 h-12 text-slate-500 dark:text-white/50" />
                         </div>
                         <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2">No Data Available</h3>
                         <p className="text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-8 font-medium">
-                            There are no semester results found for <span className="font-mono bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-700 dark:text-slate-300">{filters.batch}</span> (Level {filters.level}, Semester {filters.semester}).
+                            There are no semester results found for <span className="font-mono bg-slate-200 dark:bg-slate-800 px-2 py-1 rounded text-slate-700 dark:text-slate-300">{filters.batch}</span> (Level {filters.level}, Semester {filters.semester}).
                         </p>
                     </div>
                 )}

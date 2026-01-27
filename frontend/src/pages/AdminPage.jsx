@@ -111,92 +111,101 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-black font-display text-slate-900 dark:text-white transition-colors duration-300">
 
-      <div className="relative w-full overflow-hidden border-b border-slate-200">
-        <div className="absolute inset-0 bg-white"></div>
+      {/* Enhanced Hero Section with Glassmorphism */}
+      <div className="relative w-full overflow-hidden">
+        {/* Animated gradient background */}
+        <div className="absolute inset-0 bg-black dark:bg-black">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
+        </div>
+
+        {/* Floating orbs */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-slate-700 opacity-10 rounded-full blur-3xl translate-y-1/4 -translate-x-1/4 animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-slate-600 opacity-5 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }}></div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-14">
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 lg:gap-10">
 
             {/* Left side - Title & Description */}
             <div className="flex-1 space-y-3 sm:space-y-5">
-              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-slate-100 border border-slate-300">
-                <Settings className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-900" />
-                <span className="text-slate-900 text-[10px] sm:text-xs font-bold tracking-wide uppercase">Admin Control Center</span>
+              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 shadow-lg">
+                <Settings className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-300" />
+                <span className="text-white text-[10px] sm:text-xs font-bold tracking-wide uppercase">Admin Control Center</span>
               </div>
 
               <div className="space-y-2">
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-slate-900 leading-none tracking-tight">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-none tracking-tight">
                   Command
-                  <span className="block mt-1 text-slate-600">
+                  <span className="block mt-1 text-slate-500">
                     Center
                   </span>
                 </h1>
-                <p className="text-sm sm:text-base lg:text-lg text-slate-600 font-medium max-w-xl leading-relaxed">
+                <p className="text-sm sm:text-base lg:text-lg text-white/85 font-medium max-w-xl leading-relaxed">
                   Complete system management and analytics
                 </p>
               </div>
 
               {/* Quick stats badges - Ash */}
               <div className="flex flex-wrap gap-2 sm:gap-3">
-                <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-slate-100 border border-slate-300">
+                <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-slate-900 text-xs sm:text-sm font-bold">System Online</span>
+                  <span className="text-white text-xs sm:text-sm font-bold">System Online</span>
                 </div>
-                <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-slate-100 border border-slate-300">
-                  <Users className="w-4 h-4 text-slate-900" />
-                  <span className="text-slate-900 text-xs sm:text-sm font-bold">{stats.usersCount} Users</span>
+                <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
+                  <Users className="w-4 h-4 text-white" />
+                  <span className="text-white text-xs sm:text-sm font-bold">{stats.usersCount} Users</span>
                 </div>
-                <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-slate-100 border border-slate-300">
-                  <Clock className="w-4 h-4 text-slate-900" />
-                  <span className="text-slate-900 text-xs sm:text-sm font-bold">Last sync: 2m ago</span>
+                <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
+                  <Clock className="w-4 h-4 text-white" />
+                  <span className="text-white text-xs sm:text-sm font-bold">Last sync: 2m ago</span>
                 </div>
               </div>
             </div>
 
             {/* Right side - System Health card - Ash */}
             <div className="w-full lg:w-80 xl:w-96">
-              <div className="bg-slate-50 border border-slate-300 rounded-xl sm:rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-6">
+              <div className="bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-white/10 rounded-xl sm:rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-6">
                 <div className="flex items-center gap-2.5 sm:gap-3 mb-4 sm:mb-5">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-200 flex items-center justify-center">
-                    <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-slate-900" />
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-200 dark:bg-white/10 flex items-center justify-center">
+                    <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-slate-900 dark:text-white" />
                   </div>
                   <div>
-                    <h3 className="text-slate-900 font-bold text-sm sm:text-base">System Health</h3>
-                    <p className="text-slate-600 text-[10px] sm:text-xs">Real-time monitoring</p>
+                    <h3 className="text-slate-900 dark:text-white font-bold text-sm sm:text-base">System Health</h3>
+                    <p className="text-slate-600 dark:text-slate-400 text-[10px] sm:text-xs">Real-time monitoring</p>
                   </div>
                 </div>
 
                 <div className="space-y-2.5 sm:space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-700 text-xs sm:text-sm font-medium">Database</span>
+                    <span className="text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-medium">Database</span>
                     <div className="flex items-center gap-1.5">
                       <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                      <span className="text-slate-900 font-bold text-xs sm:text-sm">Active</span>
+                      <span className="text-slate-900 dark:text-white font-bold text-xs sm:text-sm">Active</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-700 text-xs sm:text-sm font-medium">API</span>
+                    <span className="text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-medium">API</span>
                     <div className="flex items-center gap-1.5">
                       <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                      <span className="text-slate-900 font-bold text-xs sm:text-sm">Online</span>
+                      <span className="text-slate-900 dark:text-white font-bold text-xs sm:text-sm">Online</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-700 text-xs sm:text-sm font-medium">Storage</span>
+                    <span className="text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-medium">Storage</span>
                     <div className="flex items-center gap-1.5">
                       <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                      <span className="text-slate-900 font-bold text-xs sm:text-sm">68% Free</span>
+                      <span className="text-slate-900 dark:text-white font-bold text-xs sm:text-sm">68% Free</span>
                     </div>
                   </div>
 
                   {/* Health Score */}
-                  <div className="pt-3 sm:pt-4 mt-3 sm:mt-4 border-t border-slate-300">
+                  <div className="pt-3 sm:pt-4 mt-3 sm:mt-4 border-t border-slate-300 dark:border-white/10">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-slate-700 text-xs sm:text-sm font-medium">Overall Health</span>
-                      <span className="text-slate-900 font-black text-sm sm:text-base">Excellent</span>
+                      <span className="text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-medium">Overall Health</span>
+                      <span className="text-slate-900 dark:text-white font-black text-sm sm:text-base">Excellent</span>
                     </div>
-                    <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
-                      <div className="h-full bg-slate-900 rounded-full" style={{ width: '92%' }}></div>
+                    <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                      <div className="h-full bg-slate-900 dark:bg-white rounded-full" style={{ width: '92%' }}></div>
                     </div>
                   </div>
                 </div>
@@ -211,7 +220,7 @@ export default function AdminPage() {
 
         {/* Tab Navigation - Ash */}
         <div className="mb-4 sm:mb-6 lg:mb-8">
-          <div className="bg-slate-50 border border-slate-300 rounded-xl sm:rounded-2xl p-1.5 sm:p-2">
+          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-white/10 rounded-xl sm:rounded-2xl p-1.5 sm:p-2">
             <div className="grid grid-cols-5 gap-1 sm:gap-2">
               {tabs.map((tab) => {
                 const Icon = tab.icon
@@ -220,21 +229,21 @@ export default function AdminPage() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`relative group transition-all duration-200  ${isActive ? '' : 'hover:bg-slate-200'
+                    className={`relative group transition-all duration-200  ${isActive ? '' : 'hover:bg-slate-200 dark:hover:bg-slate-800'
                       }`}
                   >
                     <div className={`relative overflow-hidden rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-5 transition-all duration-200 ${isActive
-                      ? 'bg-slate-900'
-                      : 'bg-white border border-slate-300'
+                      ? 'bg-slate-900 dark:bg-white'
+                      : 'bg-white dark:bg-black border border-slate-300 dark:border-white/10'
                       }`}>
                       <div className="flex flex-col items-center gap-1.5 sm:gap-2 relative z-10">
                         <Icon className={`w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 transition-all duration-200 ${isActive
-                          ? 'text-white'
-                          : 'text-slate-600'
+                          ? 'text-white dark:text-black'
+                          : 'text-slate-600 dark:text-slate-400'
                           }`} />
                         <span className={`text-[10px] sm:text-xs lg:text-sm font-bold transition-all duration-200 text-center leading-tight ${isActive
-                          ? 'text-white'
-                          : 'text-slate-600'
+                          ? 'text-white dark:text-black'
+                          : 'text-slate-600 dark:text-slate-400'
                           }`}>
                           {tab.label}
                         </span>
@@ -257,12 +266,12 @@ export default function AdminPage() {
               {/* Quick Actions Grid - Monochrome */}
               <div>
                 <div className="flex items-center gap-3 mb-4 sm:mb-6">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-200 flex items-center justify-center">
-                    <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-slate-900" />
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-200 dark:bg-white/10 flex items-center justify-center">
+                    <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-slate-900 dark:text-white" />
                   </div>
                   <div>
-                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900">Quick Actions</h2>
-                    <p className="text-xs sm:text-sm text-slate-600">Frequently used operations</p>
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white">Quick Actions</h2>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Frequently used operations</p>
                   </div>
                 </div>
 
@@ -270,17 +279,17 @@ export default function AdminPage() {
                   {/* Change Password - Ash */}
                   <button
                     onClick={handleChangePassword}
-                    className="group relative overflow-hidden bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-slate-300 hover:border-slate-900 transition-all duration-200 hover:shadow-lg"
+                    className="group relative overflow-hidden bg-white dark:bg-black rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-slate-300 dark:border-white/10 hover:border-slate-900 dark:hover:border-white transition-all duration-200 hover:shadow-lg"
                   >
                     <div className="relative">
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-slate-200 flex items-center justify-center mb-4">
-                        <Key className="w-6 h-6 sm:w-7 sm:h-7 text-slate-900" />
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-slate-200 dark:bg-white/10 flex items-center justify-center mb-4">
+                        <Key className="w-6 h-6 sm:w-7 sm:h-7 text-slate-900 dark:text-white" />
                       </div>
 
-                      <h3 className="font-bold text-base sm:text-lg text-slate-900 mb-2">Change Password</h3>
-                      <p className="text-xs sm:text-sm text-slate-600 mb-4">Update your security credentials</p>
+                      <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-2">Change Password</h3>
+                      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-4">Update your security credentials</p>
 
-                      <div className="flex items-center gap-2 text-slate-900 font-bold text-xs sm:text-sm">
+                      <div className="flex items-center gap-2 text-slate-900 dark:text-white font-bold text-xs sm:text-sm">
                         <span>Update now</span>
                         <ChevronRight className="w-4 h-4" />
                       </div>
@@ -290,17 +299,17 @@ export default function AdminPage() {
                   {/* Add Student - Ash */}
                   <button
                     onClick={() => navigate('/students/new')}
-                    className="group relative overflow-hidden bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-slate-300 hover:border-slate-900 transition-all duration-200 hover:shadow-lg"
+                    className="group relative overflow-hidden bg-white dark:bg-black rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-slate-300 dark:border-white/10 hover:border-slate-900 dark:hover:border-white transition-all duration-200 hover:shadow-lg"
                   >
                     <div className="relative">
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-slate-200 flex items-center justify-center mb-4">
-                        <Plus className="w-6 h-6 sm:w-7 sm:h-7 text-slate-900" />
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-slate-200 dark:bg-white/10 flex items-center justify-center mb-4">
+                        <Plus className="w-6 h-6 sm:w-7 sm:h-7 text-slate-900 dark:text-white" />
                       </div>
 
-                      <h3 className="font-bold text-base sm:text-lg text-slate-900 mb-2">Add Student</h3>
-                      <p className="text-xs sm:text-sm text-slate-600 mb-4">Register new student manually</p>
+                      <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-2">Add Student</h3>
+                      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-4">Register new student manually</p>
 
-                      <div className="flex items-center gap-2 text-slate-900 font-bold text-xs sm:text-sm">
+                      <div className="flex items-center gap-2 text-slate-900 dark:text-white font-bold text-xs sm:text-sm">
                         <span>Create profile</span>
                         <ChevronRight className="w-4 h-4" />
                       </div>
@@ -310,17 +319,17 @@ export default function AdminPage() {
                   {/* Profile Requests - Ash */}
                   <button
                     onClick={() => navigate('/profile-requests')}
-                    className="group relative overflow-hidden bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-slate-300 hover:border-slate-900 transition-all duration-200 hover:shadow-lg"
+                    className="group relative overflow-hidden bg-white dark:bg-black rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-slate-300 dark:border-white/10 hover:border-slate-900 dark:hover:border-white transition-all duration-200 hover:shadow-lg"
                   >
                     <div className="relative">
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-slate-200 flex items-center justify-center mb-4">
-                        <FileText className="w-6 h-6 sm:w-7 sm:h-7 text-slate-900" />
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-slate-200 dark:bg-white/10 flex items-center justify-center mb-4">
+                        <FileText className="w-6 h-6 sm:w-7 sm:h-7 text-slate-900 dark:text-white" />
                       </div>
 
-                      <h3 className="font-bold text-base sm:text-lg text-slate-900 mb-2">Profile Requests</h3>
-                      <p className="text-xs sm:text-sm text-slate-600 mb-4">Review pending changes</p>
+                      <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-2">Profile Requests</h3>
+                      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-4">Review pending changes</p>
 
-                      <div className="flex items-center gap-2 text-slate-900 font-bold text-xs sm:text-sm">
+                      <div className="flex items-center gap-2 text-slate-900 dark:text-white font-bold text-xs sm:text-sm">
                         <span>View requests</span>
                         <ChevronRight className="w-4 h-4" />
                       </div>
@@ -330,17 +339,17 @@ export default function AdminPage() {
                   {/* Bulk Import - Ash */}
                   <button
                     onClick={() => navigate('/students/upload')}
-                    className="group relative overflow-hidden bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-slate-300 hover:border-slate-900 transition-all duration-200 hover:shadow-lg"
+                    className="group relative overflow-hidden bg-white dark:bg-black rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-slate-300 dark:border-white/10 hover:border-slate-900 dark:hover:border-white transition-all duration-200 hover:shadow-lg"
                   >
                     <div className="relative">
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-slate-200 flex items-center justify-center mb-4">
-                        <Upload className="w-6 h-6 sm:w-7 sm:h-7 text-slate-900" />
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-slate-200 dark:bg-white/10 flex items-center justify-center mb-4">
+                        <Upload className="w-6 h-6 sm:w-7 sm:h-7 text-slate-900 dark:text-white" />
                       </div>
 
-                      <h3 className="font-bold text-base sm:text-lg text-slate-900 mb-2">Bulk Import</h3>
-                      <p className="text-xs sm:text-sm text-slate-600 mb-4">Upload CSV/Excel files</p>
+                      <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-2">Bulk Import</h3>
+                      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-4">Upload CSV/Excel files</p>
 
-                      <div className="flex items-center gap-2 text-slate-900 font-bold text-xs sm:text-sm">
+                      <div className="flex items-center gap-2 text-slate-900 dark:text-white font-bold text-xs sm:text-sm">
                         <span>Import data</span>
                         <ChevronRight className="w-4 h-4" />
                       </div>
@@ -352,65 +361,65 @@ export default function AdminPage() {
               {/* System Analytics - Ash */}
               <div>
                 <div className="flex items-center gap-3 mb-4 sm:mb-6">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-200 flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-slate-900" />
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-200 dark:bg-white/10 flex items-center justify-center">
+                    <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-slate-900 dark:text-white" />
                   </div>
                   <div>
-                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900">System Analytics</h2>
-                    <p className="text-xs sm:text-sm text-slate-600">Real-time system metrics</p>
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white">System Analytics</h2>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Real-time system metrics</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   {/* Database Status Card - Ash */}
-                  <div className="bg-slate-50 border border-slate-300 rounded-2xl sm:rounded-3xl p-6 sm:p-8 relative">
+                  <div className="bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-white/10 rounded-2xl sm:rounded-3xl p-6 sm:p-8 relative">
                     <div className="relative">
                       <div className="flex items-center justify-between mb-4">
-                        <Database className="w-8 h-8 sm:w-10 sm:h-10 text-slate-900" />
+                        <Database className="w-8 h-8 sm:w-10 sm:h-10 text-slate-900 dark:text-white" />
                         <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                       </div>
 
                       <div>
-                        <p className="text-slate-900 text-4xl sm:text-5xl font-black mb-2">Online</p>
-                        <p className="text-slate-600 text-sm font-medium">Database</p>
+                        <p className="text-slate-900 dark:text-white text-4xl sm:text-5xl font-black mb-2">Online</p>
+                        <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">Database</p>
                       </div>
                     </div>
                   </div>
                   {/* Users Count Card - Ash */}
-                  <div className="bg-slate-50 border border-slate-300 rounded-2xl sm:rounded-3xl p-6 sm:p-8 relative">
+                  <div className="bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-white/10 rounded-2xl sm:rounded-3xl p-6 sm:p-8 relative">
                     <div className="relative">
                       <div className="flex items-center justify-between mb-4">
-                        <Users className="w-8 h-8 sm:w-10 sm:h-10 text-slate-900" />
-                        <TrendingUp className="w-6 h-6 text-slate-600" />
+                        <Users className="w-8 h-8 sm:w-10 sm:h-10 text-slate-900 dark:text-white" />
+                        <TrendingUp className="w-6 h-6 text-slate-600 dark:text-slate-400" />
                       </div>
-                      <p className="text-slate-900 text-4xl sm:text-5xl font-black mb-2">{stats.usersCount}</p>
-                      <p className="text-slate-600 text-sm font-medium">Total Users</p>
+                      <p className="text-slate-900 dark:text-white text-4xl sm:text-5xl font-black mb-2">{stats.usersCount}</p>
+                      <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">Total Users</p>
                     </div>
                   </div>
 
                   {/* API Response Card - Ash */}
-                  <div className="bg-slate-50 border border-slate-300 rounded-2xl sm:rounded-3xl p-6 sm:p-8 relative">
+                  <div className="bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-white/10 rounded-2xl sm:rounded-3xl p-6 sm:p-8 relative">
                     <div className="relative">
                       <div className="flex items-center justify-between mb-4">
-                        <Activity className="w-8 h-8 sm:w-10 sm:h-10 text-slate-900" />
-                        <CheckCircle className="w-6 h-6 text-slate-600" />
+                        <Activity className="w-8 h-8 sm:w-10 sm:h-10 text-slate-900 dark:text-white" />
+                        <CheckCircle className="w-6 h-6 text-slate-600 dark:text-slate-400" />
                       </div>
-                      <p className="text-slate-900 text-4xl sm:text-5xl font-black mb-2">45ms</p>
-                      <p className="text-slate-600 text-sm font-medium">API Response</p>
+                      <p className="text-slate-900 dark:text-white text-4xl sm:text-5xl font-black mb-2">45ms</p>
+                      <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">API Response</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                <div className="bg-white border border-slate-300 rounded-2xl sm:rounded-3xl p-6 sm:p-8">
+                <div className="bg-white dark:bg-black border border-slate-300 dark:border-white/10 rounded-2xl sm:rounded-3xl p-6 sm:p-8">
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-slate-200 flex items-center justify-center">
-                      <CheckCircle className="w-6 h-6 sm:w-7 sm:h-7 text-slate-900" />
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-slate-200 dark:bg-white/10 flex items-center justify-center">
+                      <CheckCircle className="w-6 h-6 sm:w-7 sm:h-7 text-slate-900 dark:text-white" />
                     </div>
                     <div>
-                      <h3 className="text-lg sm:text-xl font-bold text-slate-900">System Status</h3>
-                      <p className="text-xs sm:text-sm text-slate-600">All systems operational</p>
+                      <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">System Status</h3>
+                      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">All systems operational</p>
                     </div>
                   </div>
 
@@ -421,9 +430,9 @@ export default function AdminPage() {
                       { label: 'Storage', value: '45% Used', status: 'warning' },
                       { label: 'Version', value: '1.0.0', status: 'info' }
                     ].map((item, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-3 sm:p-4 bg-slate-50 rounded-xl sm:rounded-2xl border border-slate-200">
-                        <span className="text-slate-600 font-medium text-sm sm:text-base">{item.label}</span>
-                        <span className="font-bold text-sm sm:text-base text-slate-900">
+                      <div key={idx} className="flex items-center justify-between p-3 sm:p-4 bg-slate-50 dark:bg-slate-900 rounded-xl sm:rounded-2xl border border-slate-200 dark:border-white/5">
+                        <span className="text-slate-600 dark:text-slate-400 font-medium text-sm sm:text-base">{item.label}</span>
+                        <span className="font-bold text-sm sm:text-base text-slate-900 dark:text-white">
                           {item.value}
                         </span>
                       </div>
