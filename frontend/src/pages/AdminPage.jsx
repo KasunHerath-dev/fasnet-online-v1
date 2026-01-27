@@ -95,29 +95,29 @@ export default function AdminPage() {
     <div className="min-h-screen bg-stitch-bg-light dark:bg-stitch-bg-dark font-display text-slate-900 dark:text-white pb-20 transition-colors duration-300">
       <div className="relative flex flex-col w-full min-h-screen">
 
-        {/* Hero Section - Dashboard Style */}
-        <div className="relative w-full h-[240px] md:h-[280px] bg-gradient-to-br from-stitch-blue via-[#6b13ec] to-stitch-pink overflow-hidden rounded-b-[2rem] md:rounded-b-[2.5rem] shadow-2xl z-10">
+        {/* Hero Section - Mobile Optimized */}
+        <div className="relative w-full h-[180px] md:h-[240px] lg:h-[280px] bg-gradient-to-br from-stitch-blue via-[#6b13ec] to-stitch-pink overflow-hidden rounded-b-[1.5rem] md:rounded-b-[2.5rem] shadow-2xl z-10">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl"></div>
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-stitch-blue opacity-20 rounded-full translate-y-1/4 -translate-x-1/4 blur-2xl"></div>
 
-          <div className="relative flex flex-col justify-end h-full px-4 md:px-6 pb-10 md:pb-12 pt-12 z-10 max-w-7xl mx-auto w-full">
-            <div className="flex items-center gap-3 md:gap-4">
-              <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-lg shrink-0">
-                <Settings className="w-6 h-6 md:w-7 md:h-7 text-white" />
+          <div className="relative flex flex-col justify-end h-full px-4 md:px-6 pb-8 md:pb-12 pt-8 md:pt-12 z-10 max-w-7xl mx-auto w-full">
+            <div className="flex items-center gap-2.5 md:gap-4">
+              <div className="w-10 h-10 md:w-14 md:h-14 rounded-lg md:rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-lg shrink-0">
+                <Settings className="w-5 h-5 md:w-7 md:h-7 text-white" />
               </div>
               <div className="min-w-0">
-                <h1 className="text-white text-2xl md:text-4xl lg:text-5xl font-black leading-tight tracking-tight drop-shadow-sm truncate">Admin Settings</h1>
-                <p className="text-white/80 text-xs md:text-sm lg:text-base font-medium mt-0.5 md:mt-1 truncate">System configuration and management</p>
+                <h1 className="text-white text-xl md:text-4xl lg:text-5xl font-black leading-tight tracking-tight drop-shadow-sm truncate">Admin Settings</h1>
+                <p className="text-white/80 text-[10px] md:text-sm lg:text-base font-medium mt-0.5 truncate hidden sm:block">System configuration and management</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto w-full px-4 md:px-6 z-20 -mt-8 space-y-8">
+        <div className="max-w-7xl mx-auto w-full px-3 md:px-6 z-20 -mt-6 md:-mt-8 space-y-4 md:space-y-8">
 
-          {/* Tab Navigation */}
-          <div className="bg-white dark:bg-stitch-card-dark rounded-xl md:rounded-2xl p-1.5 md:p-2 shadow-lg border border-slate-100 dark:border-stitch-card-border overflow-x-auto scrollbar-hide">
-            <div className="flex gap-1 min-w-max">
+          {/* Tab Navigation - Mobile First */}
+          <div className="bg-white dark:bg-stitch-card-dark rounded-lg md:rounded-2xl p-1 md:p-2 shadow-lg border border-slate-100 dark:border-stitch-card-border overflow-x-auto scrollbar-hide">
+            <div className="flex gap-0.5 md:gap-1 min-w-max">
               {tabs.map((tab) => {
                 const Icon = tab.icon
                 const isActive = activeTab === tab.id
@@ -125,14 +125,13 @@ export default function AdminPage() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-5 py-2.5 md:py-3 rounded-lg md:rounded-xl text-xs md:text-sm font-bold transition-all whitespace-nowrap ${isActive
+                    className={`flex items-center justify-center gap-1.5 md:gap-2 px-2.5 md:px-5 py-2 md:py-3 rounded-md md:rounded-xl text-[11px] md:text-sm font-bold transition-all whitespace-nowrap min-h-[44px] ${isActive
                       ? 'bg-stitch-blue text-white shadow-md shadow-stitch-blue/20'
                       : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
                       }`}
                   >
-                    <Icon className="w-3.5 h-3.5 md:w-4 md:h-4 shrink-0" />
+                    <Icon className="w-4 h-4 md:w-4 md:h-4 shrink-0" />
                     <span className="hidden sm:inline">{tab.label}</span>
-                    <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
                   </button>
                 )
               })}
@@ -146,14 +145,14 @@ export default function AdminPage() {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Quick Actions */}
-                  <div className="space-y-3 md:space-y-4">
-                    <h3 className="text-base md:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 ml-1">
+                  <div className="space-y-2.5 md:space-y-4">
+                    <h3 className="text-sm md:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-1.5 md:gap-2 ml-0.5 md:ml-1">
                       <Activity className="w-4 h-4 md:w-5 md:h-5 text-stitch-blue" />
                       Quick Actions
                     </h3>
 
                     <div onClick={handleChangePassword}
-                      className="group p-4 md:p-5 bg-white dark:bg-stitch-card-dark rounded-2xl border border-slate-100 dark:border-stitch-card-border hover:border-stitch-blue dark:hover:border-stitch-blue transition-all cursor-pointer shadow-md hover:shadow-lg">
+                      className="group p-3 md:p-5 bg-white dark:bg-stitch-card-dark rounded-xl md:rounded-2xl border border-slate-100 dark:border-stitch-card-border hover:border-stitch-blue dark:hover:border-stitch-blue transition-all cursor-pointer shadow-md hover:shadow-lg min-h-[56px]">
                       <div className="flex items-center gap-4">
                         <div className="min-w-[3rem] w-12 h-12 rounded-xl bg-stitch-blue/10 flex items-center justify-center text-stitch-blue group-hover:bg-stitch-blue group-hover:text-white transition-colors">
                           <Key className="w-6 h-6" />
@@ -210,13 +209,13 @@ export default function AdminPage() {
                   </div>
 
                   {/* System Info */}
-                  <div className="space-y-3 md:space-y-4">
-                    <h3 className="text-base md:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 ml-1">
+                  <div className="space-y-2.5 md:space-y-4">
+                    <h3 className="text-sm md:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-1.5 md:gap-2 ml-0.5 md:ml-1">
                       <Activity className="w-4 h-4 md:w-5 md:h-5 text-stitch-success" />
                       System Information
                     </h3>
 
-                    <div className="bg-white dark:bg-stitch-card-dark rounded-2xl p-4 md:p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
+                    <div className="bg-white dark:bg-stitch-card-dark rounded-xl md:rounded-2xl p-3 md:p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
                       <div className="space-y-4">
                         <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 rounded-xl">
                           <span className="text-slate-600 dark:text-slate-300 font-medium text-xs md:text-sm">Database Status</span>
@@ -389,10 +388,10 @@ export default function AdminPage() {
             {activeTab === 'system' && (
               <div className="space-y-6">
                 {/* Danger Zone */}
-                <div className="relative overflow-hidden bg-red-50 dark:bg-red-900/10 rounded-2xl p-5 md:p-8 border border-red-200 dark:border-red-900/30">
+                <div className="relative overflow-hidden bg-red-50 dark:bg-red-900/10 rounded-xl md:rounded-2xl p-4 md:p-8 border border-red-200 dark:border-red-900/30">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-red-500 rounded-full opacity-5 -mr-16 -mt-16"></div>
                   <div className="relative z-10">
-                    <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6 mb-6">
+                    <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-6 mb-4 md:mb-6">
                       <div className="w-12 h-12 bg-red-500 rounded-2xl flex items-center justify-center shadow-lg shadow-red-500/20 shrink-0">
                         <AlertTriangle className="w-6 h-6 text-white" />
                       </div>
@@ -402,7 +401,7 @@ export default function AdminPage() {
                       </div>
                     </div>
 
-                    <div className="bg-white dark:bg-black/20 backdrop-blur-sm rounded-xl p-4 md:p-6 border border-red-100 dark:border-red-900/30">
+                    <div className="bg-white dark:bg-black/20 backdrop-blur-sm rounded-lg md:rounded-xl p-3 md:p-6 border border-red-100 dark:border-red-900/30">
                       <h4 className="font-bold text-red-900 dark:text-red-200 mb-2">Reset All Student Data</h4>
                       <p className="text-xs md:text-sm text-red-700 dark:text-red-400 mb-4">
                         This will permanently delete all student records from the database. This action cannot be undone.
@@ -420,7 +419,7 @@ export default function AdminPage() {
 
                 {/* System Maintenance */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-white dark:bg-stitch-card-dark rounded-2xl p-4 md:p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
+                  <div className="bg-white dark:bg-stitch-card-dark rounded-xl md:rounded-2xl p-3 md:p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                       <Database className="w-5 h-5 text-stitch-blue" />
                       Database Maintenance
