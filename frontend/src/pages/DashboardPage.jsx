@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { studentService, authService, systemService } from '../services/authService'
 import { socketService } from '../services/socketService'
 import OnlineUsersModal from '../components/OnlineUsersModal'
@@ -10,18 +10,19 @@ import {
     Upload,
     Cake,
     List,
-    Settings,
     Database,
     Activity,
-    CheckCircle,
     ArrowUpRight,
     HardDrive,
     GraduationCap,
-    Calendar,
     Shield,
     FileText,
-    BarChart3,
-    Globe
+    Globe,
+    Sparkles,
+    Zap,
+    TrendingUp,
+    Clock,
+    CheckCircle
 } from 'lucide-react'
 
 export default function DashboardPage() {
@@ -86,289 +87,322 @@ export default function DashboardPage() {
         }
     }
 
-    const quickActions = [
-        {
-            icon: UserPlus,
-            label: 'Add New Student',
-            desc: 'Register a single student',
-            color: 'from-blue-500 to-indigo-600',
-            path: '/students/new'
-        },
-        {
-            icon: Upload,
-            label: 'Register Bulk',
-            desc: 'Upload Excel/CSV file',
-            color: 'from-purple-500 to-pink-600',
-            path: '/register-students'
-        },
-        {
-            icon: List,
-            label: 'All Students',
-            desc: 'View & manage students',
-            color: 'from-emerald-500 to-teal-600',
-            path: '/students'
-        },
-        {
-            icon: Cake,
-            label: 'View Birthdays',
-            desc: 'Upcoming celebrations',
-            color: 'from-orange-500 to-red-600',
-            path: '/birthdays'
-        }
-    ]
-
     if (loading) {
         return <Loader />
     }
 
     return (
-        <div className="min-h-screen bg-stitch-bg-light dark:bg-stitch-bg-dark font-display text-slate-900 dark:text-white pb-20 transition-colors duration-300">
-            <div className="relative flex flex-col w-full min-h-screen">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 font-display text-slate-900 dark:text-white transition-colors duration-300">
 
-                {/* Hero Section */}
-                <div className="relative w-full h-[280px] bg-gradient-to-br from-stitch-blue via-[#6b13ec] to-stitch-pink overflow-hidden rounded-b-[2.5rem] shadow-2xl z-10">
-                    {/* Abstract shapes */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl"></div>
-                    <div className="absolute bottom-0 left-0 w-48 h-48 bg-stitch-blue opacity-20 rounded-full translate-y-1/4 -translate-x-1/4 blur-2xl"></div>
-
-                    <div className="relative flex flex-col justify-end h-full px-6 pb-12 pt-12 z-10 max-w-7xl mx-auto w-full">
-                        <div className="flex items-center justify-between mb-6">
-                            <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-white text-xs font-semibold shadow-sm ${stats.status === 'Healthy' ? 'text-white' : 'text-red-200'}`}>
-                                <span className={`w-2 h-2 rounded-full shadow-[0_0_8px_rgba(255,255,255,0.5)] ${stats.status === 'Healthy' ? 'bg-stitch-success' : 'bg-red-500'} animate-pulse`}></span>
-                                {stats.status}
-                            </span>
-                            <div className="flex gap-2">
-                                <button className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white/90 hover:text-white transition-colors backdrop-blur-sm">
-                                    <Shield className="w-5 h-5" />
-                                </button>
-                            </div>
-                        </div>
-                        <h1 className="text-white text-4xl md:text-5xl font-black leading-tight tracking-tight mb-3 drop-shadow-sm">Dashboard</h1>
-                        <p className="text-white/80 text-sm md:text-base font-medium leading-relaxed max-w-xl">
-                            Welcome to your student management system.
-                        </p>
-                    </div>
+            {/* Enhanced Hero Section - Command Center Style */}
+            <div className="relative w-full overflow-hidden">
+                {/* Gradient background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-stitch-blue via-purple-600 to-stitch-pink">
+                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMDgiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-40"></div>
                 </div>
 
-                <div className="max-w-7xl mx-auto w-full px-4 md:px-6 z-20 -mt-8 space-y-8">
+                {/* Floating orbs */}
+                <div className="absolute top-0 right-0 w-80 h-80 lg:w-96 lg:h-96 bg-white opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 animate-pulse"></div>
+                <div className="absolute bottom-0 left-0 w-64 h-64 lg:w-80 lg:h-80 bg-cyan-400 opacity-15 rounded-full blur-3xl translate-y-1/4 -translate-x-1/4 animate-pulse" style={{ animationDelay: '1s' }}></div>
 
-                    {/* Main Statistics Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        {/* Total Students */}
-                        <div onClick={() => navigate('/students')}
-                            className="bg-white dark:bg-stitch-card-dark p-5 rounded-2xl shadow-lg border border-slate-100 dark:border-stitch-card-border group hover:-translate-y-1 transition-all duration-300 cursor-pointer">
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="w-12 h-12 rounded-xl bg-stitch-blue/10 flex items-center justify-center text-stitch-blue group-hover:bg-stitch-blue group-hover:text-white transition-colors">
-                                    <Users className="w-6 h-6" />
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+
+                        {/* Left - Title & Status */}
+                        <div className="flex-1 space-y-4">
+                            <div className="flex items-center gap-3 flex-wrap">
+                                <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/25 shadow-lg">
+                                    <span className={`w-2 h-2 rounded-full ${stats.status === 'Healthy' ? 'bg-green-400' : 'bg-red-400'} animate-pulse shadow-lg ${stats.status === 'Healthy' ? 'shadow-green-400/50' : 'shadow-red-400/50'}`}></span>
+                                    <span className="text-white text-xs sm:text-sm font-bold">{stats.status}</span>
                                 </div>
-                                <span className="text-xs font-bold text-stitch-success bg-stitch-success/10 px-2 py-1 rounded-lg flex items-center gap-1">
-                                    <ArrowUpRight className="w-3 h-3" /> Live
-                                </span>
+                                <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/25 shadow-lg">
+                                    <Users className="w-3.5 h-3.5 text-white" />
+                                    <span className="text-white text-xs sm:text-sm font-bold">{stats.usersCount} Users</span>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Total Students</p>
-                                <p className="text-3xl font-black text-slate-900 dark:text-white mt-1">{stats.students.total}</p>
+
+                            <div className="space-y-2">
+                                <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-white leading-none tracking-tight">
+                                    Dashboard
+                                </h1>
+                                <p className="text-sm sm:text-base lg:text-lg text-white/85 font-medium max-w-2xl leading-relaxed">
+                                    Complete student management and system analytics
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Right - Quick Stats Cards */}
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 lg:gap-4">
+                            <div className="bg-white/10 backdrop-blur-xl rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-white/20 shadow-xl">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                                    <span className="text-white/70 text-xs font-medium">Students</span>
+                                </div>
+                                <p className="text-2xl sm:text-3xl font-black text-white">{stats.students.total}</p>
+                            </div>
+                            <div className="bg-white/10 backdrop-blur-xl rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-white/20 shadow-xl">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                                    <span className="text-white/70 text-xs font-medium">Online</span>
+                                </div>
+                                <p className="text-2xl sm:text-3xl font-black text-white">{onlineUsers.count}</p>
+                            </div>
+                            <div className="bg-white/10 backdrop-blur-xl rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-white/20 shadow-xl col-span-2 sm:col-span-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <Cake className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                                    <span className="text-white/70 text-xs font-medium">Birthdays</span>
+                                </div>
+                                <p className="text-2xl sm:text-3xl font-black text-white">{stats.students.birthdays}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+                {/* Student Statistics - Gradient Cards */}
+                <div>
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
+                            <Users className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white">Student Overview</h2>
+                            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Live student statistics</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                        {/* Total Students */}
+                        <div onClick={() => navigate('/students')} className="group cursor-pointer bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white shadow-2xl shadow-blue-500/30 relative overflow-hidden hover:shadow-blue-500/50 transition-all duration-300 hover:-translate-y-1">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                            <div className="relative">
+                                <div className="flex items-center justify-between mb-4">
+                                    <GraduationCap className="w-8 h-8 sm:w-10 sm:h-10" />
+                                    <span className="px-2.5 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-bold flex items-center gap-1">
+                                        <ArrowUpRight className="w-3 h-3" /> Live
+                                    </span>
+                                </div>
+                                <h3 className="text-4xl sm:text-5xl font-black mb-2">{stats.students.total}</h3>
+                                <p className="text-white/90 text-sm">Total Students</p>
                             </div>
                         </div>
 
                         {/* Boys */}
-                        <div className="bg-white dark:bg-stitch-card-dark p-5 rounded-2xl shadow-lg border border-slate-100 dark:border-stitch-card-border group hover:-translate-y-1 transition-all duration-300">
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors">
-                                    <Users className="w-6 h-6" />
+                        <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white shadow-2xl shadow-purple-500/30 relative overflow-hidden group hover:shadow-purple-500/50 transition-all duration-300 hover:-translate-y-1">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                            <div className="relative">
+                                <div className="flex items-center justify-between mb-4">
+                                    <Users className="w-8 h-8 sm:w-10 sm:h-10" />
                                 </div>
-                            </div>
-                            <div>
-                                <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Boys</p>
-                                <p className="text-3xl font-black text-slate-900 dark:text-white mt-1">{stats.students.male}</p>
+                                <h3 className="text-4xl sm:text-5xl font-black mb-2">{stats.students.male}</h3>
+                                <p className="text-white/90 text-sm">Boys</p>
                             </div>
                         </div>
 
                         {/* Girls */}
-                        <div className="bg-white dark:bg-stitch-card-dark p-5 rounded-2xl shadow-lg border border-slate-100 dark:border-stitch-card-border group hover:-translate-y-1 transition-all duration-300">
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="w-12 h-12 rounded-xl bg-stitch-pink/10 flex items-center justify-center text-stitch-pink group-hover:bg-stitch-pink group-hover:text-white transition-colors">
-                                    <Users className="w-6 h-6" />
+                        <div className="bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white shadow-2xl shadow-pink-500/30 relative overflow-hidden group hover:shadow-pink-500/50 transition-all duration-300 hover:-translate-y-1">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                            <div className="relative">
+                                <div className="flex items-center justify-between mb-4">
+                                    <Users className="w-8 h-8 sm:w-10 sm:h-10" />
                                 </div>
-                            </div>
-                            <div>
-                                <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Girls</p>
-                                <p className="text-3xl font-black text-slate-900 dark:text-white mt-1">{stats.students.female}</p>
+                                <h3 className="text-4xl sm:text-5xl font-black mb-2">{stats.students.female}</h3>
+                                <p className="text-white/90 text-sm">Girls</p>
                             </div>
                         </div>
 
                         {/* Birthdays */}
-                        <div onClick={() => navigate('/birthdays')}
-                            className="bg-white dark:bg-stitch-card-dark p-5 rounded-2xl shadow-lg border border-slate-100 dark:border-stitch-card-border group hover:-translate-y-1 transition-all duration-300 cursor-pointer">
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="w-12 h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center text-yellow-500 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
-                                    <Cake className="w-6 h-6" />
+                        <div onClick={() => navigate('/birthdays')} className="group cursor-pointer bg-gradient-to-br from-orange-500 to-amber-500 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white shadow-2xl shadow-orange-500/30 relative overflow-hidden hover:shadow-orange-500/50 transition-all duration-300 hover:-translate-y-1">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                            <div className="relative">
+                                <div className="flex items-center justify-between mb-4">
+                                    <Cake className="w-8 h-8 sm:w-10 sm:h-10" />
+                                    <span className="px-2.5 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-bold">30 Days</span>
                                 </div>
-                                <span className="text-xs font-bold text-yellow-600 bg-yellow-100 px-2 py-1 rounded-lg">
-                                    30 Days
+                                <h3 className="text-4xl sm:text-5xl font-black mb-2">{stats.students.birthdays}</h3>
+                                <p className="text-white/90 text-sm">Upcoming</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* System Health */}
+                <div>
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg">
+                            <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white">System Health</h2>
+                            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Real-time monitoring</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                        {/* System Status */}
+                        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-lg">
+                            <div className="flex items-center gap-2 mb-3">
+                                <CheckCircle className={`w-5 h-5 ${stats.status === 'Healthy' ? 'text-green-500' : 'text-red-500'}`} />
+                                <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Status</span>
+                            </div>
+                            <p className="text-2xl font-black text-slate-900 dark:text-white">{stats.status}</p>
+                        </div>
+
+                        {/* Online Users */}
+                        <div onClick={() => setIsOnlineModalOpen(true)} className="cursor-pointer bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-lg hover:border-blue-500 dark:hover:border-blue-500 transition-all hover:shadow-xl hover:-translate-y-1">
+                            <div className="flex items-center gap-2 mb-3">
+                                <Globe className="w-5 h-5 text-blue-500" />
+                                <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Online Now</span>
+                            </div>
+                            <div className="flex items-baseline gap-2">
+                                <p className="text-2xl font-black text-slate-900 dark:text-white">{onlineUsers.count}</p>
+                                <span className="relative flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
                                 </span>
                             </div>
-                            <div>
-                                <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Upcoming Birthdays</p>
-                                <p className="text-3xl font-black text-slate-900 dark:text-white mt-1">{stats.students.birthdays}</p>
+                        </div>
+
+                        {/* Database Size */}
+                        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-lg">
+                            <div className="flex items-center gap-2 mb-3">
+                                <Database className="w-5 h-5 text-purple-500" />
+                                <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Database</span>
                             </div>
+                            <p className="text-2xl font-black text-slate-900 dark:text-white">{stats.dbSize}</p>
+                        </div>
+
+                        {/* Uptime */}
+                        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-lg">
+                            <div className="flex items-center gap-2 mb-3">
+                                <Clock className="w-5 h-5 text-emerald-500" />
+                                <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Uptime</span>
+                            </div>
+                            <p className="text-2xl font-black text-slate-900 dark:text-white">{stats.uptime}</p>
                         </div>
                     </div>
-
-                    {/* System Health Section */}
-                    <div>
-                        <div className="flex items-center justify-between mb-4 px-1">
-                            <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                <Activity className="w-5 h-5 text-stitch-blue" />
-                                System Health
-                            </h2>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                            {/* Status Card */}
-                            <div className="bg-white dark:bg-stitch-card-dark p-5 rounded-2xl border border-slate-100 dark:border-stitch-card-border relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-opacity group-hover:opacity-10">
-                                    <Activity className="w-24 h-24" />
-                                </div>
-                                <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wide mb-2">System Status</p>
-                                <p className="text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-                                    {stats.status}
-                                    <span className={`w-3 h-3 rounded-full ${stats.status === 'Healthy' ? 'bg-stitch-success' : 'bg-red-500'}`}></span>
-                                </p>
-                            </div>
-
-                            {/* Online Users */}
-                            <div onClick={() => setIsOnlineModalOpen(true)}
-                                className="bg-white dark:bg-stitch-card-dark p-5 rounded-2xl border border-slate-100 dark:border-stitch-card-border relative overflow-hidden group cursor-pointer hover:border-stitch-blue/30 transition-colors">
-                                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-opacity group-hover:opacity-10">
-                                    <Globe className="w-24 h-24" />
-                                </div>
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wide mb-2">Online Users</p>
-                                        <p className="text-2xl font-black text-slate-900 dark:text-white">{onlineUsers.count} Active</p>
-                                    </div>
-                                    <div className="animate-pulse">
-                                        <span className="relative flex h-3 w-3">
-                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-stitch-blue opacity-75"></span>
-                                            <span className="relative inline-flex rounded-full h-3 w-3 bg-stitch-blue"></span>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full mt-4 overflow-hidden">
-                                    <div className="h-full bg-stitch-blue w-2/5 rounded-full animate-pulse"></div>
-                                </div>
-                            </div>
-
-                            {/* DB Size */}
-                            <div className="bg-white dark:bg-stitch-card-dark p-5 rounded-2xl border border-slate-100 dark:border-stitch-card-border relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-opacity group-hover:opacity-10">
-                                    <Database className="w-24 h-24" />
-                                </div>
-                                <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wide mb-2">Database Size</p>
-                                <p className="text-2xl font-black text-slate-900 dark:text-white">{stats.dbSize}</p>
-                                <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full mt-4 overflow-hidden">
-                                    <div className="h-full bg-stitch-pink w-3/4 rounded-full"></div>
-                                </div>
-                            </div>
-
-                            {/* Uptime */}
-                            <div className="bg-white dark:bg-stitch-card-dark p-5 rounded-2xl border border-slate-100 dark:border-stitch-card-border relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-opacity group-hover:opacity-10">
-                                    <HardDrive className="w-24 h-24" />
-                                </div>
-                                <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wide mb-2">System Uptime</p>
-                                <p className="text-2xl font-black text-slate-900 dark:text-white">{stats.uptime}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Quick Actions & Guide Grid */}
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-12">
-                        {/* Quick Actions */}
-                        <div className="lg:col-span-2">
-                            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                                <List className="w-5 h-5 text-stitch-blue" />
-                                Quick Actions
-                            </h2>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <button onClick={() => navigate('/students/new')}
-                                    className="flex items-center gap-4 p-4 rounded-2xl bg-stitch-blue text-white shadow-lg shadow-stitch-blue/20 hover:bg-stitch-blue/90 transition-all active:scale-95 group">
-                                    <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-                                        <UserPlus className="w-5 h-5" />
-                                    </div>
-                                    <div className="text-left">
-                                        <p className="text-sm font-bold">Add Student</p>
-                                        <p className="text-xs text-white/70">Single registration</p>
-                                    </div>
-                                    <ArrowUpRight className="w-5 h-5 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
-                                </button>
-
-                                <button onClick={() => navigate('/register-students')}
-                                    className="flex items-center gap-4 p-4 rounded-2xl bg-white dark:bg-stitch-card-dark border border-slate-200 dark:border-stitch-card-border text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-95 group">
-                                    <div className="w-10 h-10 rounded-xl bg-stitch-pink/10 text-stitch-pink flex items-center justify-center">
-                                        <Upload className="w-5 h-5" />
-                                    </div>
-                                    <div className="text-left">
-                                        <p className="text-sm font-bold">Bulk Register</p>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400">Import Excel/CSV</p>
-                                    </div>
-                                </button>
-
-                                <button onClick={() => navigate('/students')}
-                                    className="flex items-center gap-4 p-4 rounded-2xl bg-white dark:bg-stitch-card-dark border border-slate-200 dark:border-stitch-card-border text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-95 group">
-                                    <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
-                                        <GraduationCap className="w-5 h-5" />
-                                    </div>
-                                    <div className="text-left">
-                                        <p className="text-sm font-bold">All Students</p>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400">Manage records</p>
-                                    </div>
-                                </button>
-
-                                <button onClick={() => navigate('/birthdays')}
-                                    className="flex items-center gap-4 p-4 rounded-2xl bg-white dark:bg-stitch-card-dark border border-slate-200 dark:border-stitch-card-border text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-95 group">
-                                    <div className="w-10 h-10 rounded-xl bg-yellow-500/10 text-yellow-500 flex items-center justify-center">
-                                        <Cake className="w-5 h-5" />
-                                    </div>
-                                    <div className="text-left">
-                                        <p className="text-sm font-bold">Birthdays</p>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400">Upcoming events</p>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Getting Started / Info */}
-                        <div>
-                            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                                <FileText className="w-5 h-5 text-stitch-blue" />
-                                Getting Started
-                            </h2>
-                            <div className="space-y-4">
-                                <div className="flex gap-4 p-4 rounded-2xl bg-white dark:bg-stitch-card-dark border border-slate-200 dark:border-stitch-card-border items-center hover:shadow-md transition-shadow">
-                                    <div className="w-12 h-12 rounded-full bg-stitch-blue/10 flex items-center justify-center text-stitch-blue shrink-0">
-                                        <UserPlus className="w-5 h-5" />
-                                    </div>
-                                    <div className="flex-1">
-                                        <h3 className="text-sm font-bold text-slate-900 dark:text-white">Adding Students</h3>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Add single or bulk students efficiently.</p>
-                                    </div>
-                                </div>
-
-                                <div className="flex gap-4 p-4 rounded-2xl bg-white dark:bg-stitch-card-dark border border-slate-200 dark:border-stitch-card-border items-center hover:shadow-md transition-shadow">
-                                    <div className="w-12 h-12 rounded-full bg-stitch-pink/10 flex items-center justify-center text-stitch-pink shrink-0">
-                                        <Settings className="w-5 h-5" />
-                                    </div>
-                                    <div className="flex-1">
-                                        <h3 className="text-sm font-bold text-slate-900 dark:text-white">Managing Data</h3>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Keep your database clean and organized.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
+
+                {/* Quick Actions */}
+                <div>
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-slate-500 to-zinc-500 flex items-center justify-center shadow-lg">
+                            <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white">Quick Actions</h2>
+                            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Common operations</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                        {/* Add Student */}
+                        <button onClick={() => navigate('/students/new')} className="group relative overflow-hidden bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 hover:border-blue-500 dark:hover:border-blue-500 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20 hover:-translate-y-1 text-left">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
+                            <div className="relative">
+                                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
+                                    <UserPlus className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                                </div>
+                                <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-2">Add Student</h3>
+                                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-4">Register single student</p>
+                                <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
+                                    <span>Create</span>
+                                    <ArrowUpRight className="w-4 h-4" />
+                                </div>
+                            </div>
+                        </button>
+
+                        {/* Bulk Register */}
+                        <button onClick={() => navigate('/register-students')} className="group relative overflow-hidden bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 hover:border-purple-500 dark:hover:border-purple-500 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20 hover:-translate-y-1 text-left">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
+                            <div className="relative">
+                                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
+                                    <Upload className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                                </div>
+                                <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-2">Bulk Register</h3>
+                                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-4">Upload Excel/CSV file</p>
+                                <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
+                                    <span>Import</span>
+                                    <ArrowUpRight className="w-4 h-4" />
+                                </div>
+                            </div>
+                        </button>
+
+                        {/* All Students */}
+                        <button onClick={() => navigate('/students')} className="group relative overflow-hidden bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/20 hover:-translate-y-1 text-left">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
+                            <div className="relative">
+                                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
+                                    <List className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                                </div>
+                                <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-2">All Students</h3>
+                                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-4">View & manage records</p>
+                                <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
+                                    <span>Browse</span>
+                                    <ArrowUpRight className="w-4 h-4" />
+                                </div>
+                            </div>
+                        </button>
+
+                        {/* Birthdays */}
+                        <button onClick={() => navigate('/birthdays')} className="group relative overflow-hidden bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 hover:border-orange-500 dark:hover:border-orange-500 transition-all duration-300 hover:shadow-2xl hover:shadow-orange-500/20 hover:-translate-y-1 text-left">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-500/10 to-amber-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
+                            <div className="relative">
+                                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
+                                    <Cake className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                                </div>
+                                <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-2">Birthdays</h3>
+                                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-4">Upcoming celebrations</p>
+                                <div className="flex items-center gap-2 text-orange-600 dark:text-orange-400 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
+                                    <span>View</span>
+                                    <ArrowUpRight className="w-4 h-4" />
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                {/* Getting Started */}
+                <div className="pb-12">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg">
+                            <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white">Getting Started</h2>
+                            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Quick guide to common tasks</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-lg hover:shadow-xl transition-shadow">
+                            <div className="flex items-start gap-4">
+                                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center flex-shrink-0">
+                                    <UserPlus className="w-6 h-6 text-white" />
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2">Adding Students</h3>
+                                    <p className="text-sm text-slate-600 dark:text-slate-400">Register students individually or import bulk data via Excel/CSV files</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-lg hover:shadow-xl transition-shadow">
+                            <div className="flex items-start gap-4">
+                                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
+                                    <TrendingUp className="w-6 h-6 text-white" />
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2">Managing Data</h3>
+                                    <p className="text-sm text-slate-600 dark:text-slate-400">Keep your database clean, organized, and up-to-date with powerful tools</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <OnlineUsersModal
@@ -376,14 +410,6 @@ export default function DashboardPage() {
                 onClose={() => setIsOnlineModalOpen(false)}
                 users={onlineUsers.users}
             />
-
-            <style>{`
-                @keyframes fadeIn {
-                    from { opacity: 0; transform: translateY(10px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                .animate-fadeIn { animation: fadeIn 0.5s ease-out; }
-            `}</style>
         </div>
     )
 }
