@@ -84,34 +84,74 @@ export default function BirthdaysPage() {
   }
 
   return (
-    <div className="min-h-screen bg-stitch-bg-light dark:bg-stitch-bg-dark font-display text-slate-900 dark:text-white pb-20 transition-colors duration-300">
-      <div className="max-w-[1600px] mx-auto space-y-8 animate-fadeIn p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 font-display text-slate-900 dark:text-white transition-colors duration-300">
 
-        {/* Hero Header */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-pink-500 via-rose-500 to-purple-600 dark:from-pink-900 dark:via-rose-950 dark:to-purple-950 rounded-[2.5rem] p-8 md:p-12 shadow-2xl z-10">
-          {/* Background Visuals */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 animate-pulse"></div>
-          <div className="absolute bottom-0 left-0 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl -ml-20 -mb-20"></div>
+      {/* Enhanced Hero Section - AdminPage Theme */}
+      <div className="relative w-full overflow-hidden">
+        {/* Gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-pink-600 via-rose-600 to-purple-700">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMDgiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-40"></div>
+        </div>
 
-          <div className="relative z-10 flex flex-col gap-6">
-            <div className="flex items-center gap-6">
-              <div className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-3xl flex items-center justify-center shadow-inner border border-white/20">
-                <Cake className="w-10 h-10 text-white" />
+        {/* Floating orbs */}
+        <div className="absolute top-0 right-0 w-80 h-80 lg:w-96 lg:h-96 bg-white opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 lg:w-80 lg:h-80 bg-purple-400 opacity-15 rounded-full blur-3xl translate-y-1/4 -translate-x-1/4 animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/3 w-48 h-48 lg:w-64 lg:h-64 bg-rose-400 opacity-10 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-14">
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 lg:gap-10">
+
+            {/* Left side - Title & Description */}
+            <div className="flex-1 space-y-3 sm:space-y-5">
+              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/25 shadow-lg">
+                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-300" />
+                <span className="text-white text-[10px] sm:text-xs font-bold tracking-wide">BIRTHDAY TRACKER</span>
               </div>
-              <div>
-                <h1 className="text-4xl md:text-5xl font-black text-white mb-2 tracking-tight">Birthdays</h1>
-                <p className="text-pink-100 text-lg font-medium max-w-2xl">Celebrate upcoming special days with your students.</p>
+
+              <div className="space-y-2">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-none tracking-tight">
+                  Birthday
+                  <span className="block mt-1 bg-gradient-to-r from-yellow-200 via-pink-200 to-purple-200 bg-clip-text text-transparent">
+                    Celebrations
+                  </span>
+                </h1>
+                <p className="text-sm sm:text-base lg:text-lg text-white/85 font-medium max-w-xl leading-relaxed">
+                  Track and celebrate upcoming birthdays
+                </p>
+              </div>
+
+              {/* Quick stats badges */}
+              <div className="flex flex-wrap gap-2 sm:gap-3">
+                <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
+                  <Calendar className="w-4 h-4 text-white" />
+                  <span className="text-white text-xs sm:text-sm font-bold">Next {days} Days</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
+                  <Cake className="w-4 h-4 text-white" />
+                  <span className="text-white text-xs sm:text-sm font-bold">{students.length} Birthdays</span>
+                </div>
               </div>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-4 sm:-mt-6 lg:-mt-8 pb-12 sm:pb-16 lg:pb-20">
+
+        {/* Filters & Controls Card */}
+        <div className="mb-6 sm:mb-8">
+          <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl border border-slate-200/60 dark:border-slate-700/60">
+            <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+
               {/* View Mode Toggle */}
-              <div className="bg-white/10 backdrop-blur-md rounded-xl p-1 flex border border-white/10">
+              <div className="bg-slate-100 dark:bg-slate-800 rounded-xl p-1 flex">
                 <button
                   onClick={() => setViewMode('list')}
                   className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${viewMode === 'list'
-                    ? 'bg-white text-rose-600 shadow-lg'
-                    : 'text-white hover:bg-white/10'
+                    ? 'bg-gradient-to-r from-pink-600 to-rose-600 text-white shadow-lg'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
                     }`}
                 >
                   List View
@@ -119,27 +159,13 @@ export default function BirthdaysPage() {
                 <button
                   onClick={() => setViewMode('timeline')}
                   className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${viewMode === 'timeline'
-                    ? 'bg-white text-rose-600 shadow-lg'
-                    : 'text-white hover:bg-white/10'
+                    ? 'bg-gradient-to-r from-pink-600 to-rose-600 text-white shadow-lg'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
                     }`}
                 >
                   Timeline
                 </button>
               </div>
-
-              {/* Range Dropdown */}
-              <Dropdown
-                value={days}
-                onChange={(e) => setDays(e.target.value)}
-                options={[
-                  { value: 7, label: 'Next 7 days' },
-                  { value: 14, label: 'Next 14 days' },
-                  { value: 30, label: 'Next 30 days' },
-                  { value: 60, label: 'Next 60 days' },
-                  { value: 90, label: 'Next 90 days' }
-                ]}
-                className="w-48"
-              />
             </div>
           </div>
         </div>
