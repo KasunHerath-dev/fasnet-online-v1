@@ -103,57 +103,61 @@ export default function StudentDashboard() {
 
     return (
         <div className="p-4 md:p-6 lg:p-8 animate-fadeIn max-w-[1400px] mx-auto space-y-6 md:space-y-8">
-            {/* Greeting Card */}
-            <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl md:rounded-3xl shadow-xl p-6 md:p-8 text-white relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
-                <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
+            {/* Enhanced Greeting Card - Command Center Style */}
+            <div className="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-800 dark:via-purple-800 dark:to-pink-800 rounded-2xl md:rounded-3xl shadow-2xl shadow-purple-900/30 p-6 md:p-8 text-white overflow-hidden">
+                {/* Grid Pattern Overlay */}
+                <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] pointer-events-none"></div>
+
+                {/* Floating Orbs for Depth */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-pink-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }}></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '5s', animationDelay: '1s' }}></div>
 
                 <div className="relative z-10">
                     <div className="flex items-center gap-2 md:gap-3 mb-2">
-                        <span className="text-4xl md:text-5xl">{greetingEmoji}</span>
-                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">{greeting}!</h1>
+                        <span className="text-4xl md:text-5xl drop-shadow-lg">{greetingEmoji}</span>
+                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-black drop-shadow-lg">{greeting}!</h1>
                     </div>
-                    <p className="text-lg md:text-xl lg:text-2xl font-medium opacity-90 mb-3 md:mb-4">
+                    <p className="text-lg md:text-xl lg:text-2xl font-bold opacity-95 mb-3 md:mb-4 drop-shadow-md">
                         {(user?.studentRef?.firstName && user?.studentRef?.lastName) ? `${user.studentRef.firstName} ${user.studentRef.lastName}` : (user?.studentRef?.fullName || 'Student')}
                     </p>
                     <div className="flex flex-wrap gap-2 md:gap-3 text-xs md:text-sm">
-                        <span className="px-3 md:px-4 py-1.5 md:py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">
+                        <span className="px-3 md:px-4 py-1.5 md:py-2 bg-white/25 backdrop-blur-md rounded-xl font-bold border border-white/30 shadow-lg">
                             📋 {user?.studentRef?.registrationNumber}
                         </span>
-                        <span className="px-3 md:px-4 py-1.5 md:py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">
+                        <span className="px-3 md:px-4 py-1.5 md:py-2 bg-white/25 backdrop-blur-md rounded-xl font-bold border border-white/30 shadow-lg">
                             🎓 Level {user?.studentRef?.level}
                         </span>
-                        <span className="px-3 md:px-4 py-1.5 md:py-2 bg-white/20 backdrop-blur-sm rounded-full font-medium">
+                        <span className="px-3 md:px-4 py-1.5 md:py-2 bg-white/25 backdrop-blur-md rounded-xl font-bold border border-white/30 shadow-lg">
                             📅 {user?.studentRef?.batchYear}
                         </span>
                     </div>
                 </div>
             </div>
 
-            {/* QUICK STATS GRID - 4 Columns */}
+            {/* QUICK STATS GRID - 4 Columns - Enhanced */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 {/* Academic Status */}
-                <div className="bg-white dark:bg-slate-800 rounded-xl md:rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-4 md:p-6 hover:shadow-md transition-shadow">
+                <div className="bg-white dark:bg-slate-800 rounded-xl md:rounded-2xl shadow-lg shadow-green-500/10 border-2 border-gray-100 dark:border-slate-700 p-4 md:p-6 hover:shadow-xl hover:shadow-green-500/20 hover:scale-105 transition-all">
                     <div className="flex items-center justify-between mb-3">
                         <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Academic Status</p>
-                        <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg md:rounded-xl flex items-center justify-center text-lg md:text-xl">
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg md:rounded-xl flex items-center justify-center text-lg md:text-xl shadow-lg shadow-green-500/30">
                             ✅
                         </div>
                     </div>
-                    <p className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+                    <p className="text-xl md:text-2xl font-black text-gray-900 dark:text-white">
                         {user?.studentRef?.academicStatus || 'Regular'}
                     </p>
                 </div>
 
                 {/* Cumulative GPA */}
-                <div className="bg-white dark:bg-slate-800 rounded-xl md:rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-4 md:p-6 hover:shadow-md transition-shadow">
+                <div className="bg-white dark:bg-slate-800 rounded-xl md:rounded-2xl shadow-lg shadow-blue-500/10 border-2 border-gray-100 dark:border-slate-700 p-4 md:p-6 hover:shadow-xl hover:shadow-blue-500/20 hover:scale-105 transition-all">
                     <div className="flex items-center justify-between mb-3">
                         <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Cumulative GPA</p>
-                        <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-lg md:rounded-xl flex items-center justify-center text-lg md:text-xl">
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-lg md:rounded-xl flex items-center justify-center text-lg md:text-xl shadow-lg shadow-blue-500/30">
                             🎯
                         </div>
                     </div>
-                    <p className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+                    <p className="text-xl md:text-2xl font-black text-gray-900 dark:text-white">
                         {user?.studentRef?.cumulativeGPA > 0
                             ? user.studentRef.cumulativeGPA.toFixed(2)
                             : <span className="text-gray-400 dark:text-gray-500 text-base md:text-lg">Not Calculated</span>}
@@ -161,27 +165,27 @@ export default function StudentDashboard() {
                 </div>
 
                 {/* Credits Earned */}
-                <div className="bg-white dark:bg-slate-800 rounded-xl md:rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-4 md:p-6 hover:shadow-md transition-shadow">
+                <div className="bg-white dark:bg-slate-800 rounded-xl md:rounded-2xl shadow-lg shadow-orange-500/10 border-2 border-gray-100 dark:border-slate-700 p-4 md:p-6 hover:shadow-xl hover:shadow-orange-500/20 hover:scale-105 transition-all">
                     <div className="flex items-center justify-between mb-3">
                         <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Credits Earned</p>
-                        <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg md:rounded-xl flex items-center justify-center text-lg md:text-xl">
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg md:rounded-xl flex items-center justify-center text-lg md:text-xl shadow-lg shadow-orange-500/30">
                             ⭐
                         </div>
                     </div>
-                    <p className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+                    <p className="text-xl md:text-2xl font-black text-gray-900 dark:text-white">
                         {user?.studentRef?.totalCreditsEarned || 0}
                     </p>
                 </div>
 
                 {/* Current Level */}
-                <div className="bg-white dark:bg-slate-800 rounded-xl md:rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-4 md:p-6 hover:shadow-md transition-shadow">
+                <div className="bg-white dark:bg-slate-800 rounded-xl md:rounded-2xl shadow-lg shadow-pink-500/10 border-2 border-gray-100 dark:border-slate-700 p-4 md:p-6 hover:shadow-xl hover:shadow-pink-500/20 hover:scale-105 transition-all">
                     <div className="flex items-center justify-between mb-3">
                         <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Current Level</p>
-                        <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg md:rounded-xl flex items-center justify-center text-lg md:text-xl">
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg md:rounded-xl flex items-center justify-center text-lg md:text-xl shadow-lg shadow-pink-500/30">
                             📚
                         </div>
                     </div>
-                    <p className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+                    <p className="text-xl md:text-2xl font-black text-gray-900 dark:text-white">
                         Level {user?.studentRef?.level || 1}
                     </p>
                 </div>
