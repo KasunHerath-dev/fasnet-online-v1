@@ -42,19 +42,19 @@ export default function Dropdown({
             button: `bg-white/20 backdrop-blur-sm text-white border-2 border-white/30 hover:bg-white/30 focus:border-white`,
             text: `font-semibold`,
             icon: `text-white`,
-            menu: `border-purple-100`,
-            item: `hover:bg-purple-50`,
-            itemActive: `text-purple-600 bg-purple-50/50`,
-            itemInactive: `text-gray-700`
+            menu: `border-slate-200`,
+            item: `hover:bg-slate-50`,
+            itemActive: `text-slate-900 bg-slate-50/50 font-bold`,
+            itemInactive: `text-slate-700`
         },
         default: {
-            button: `bg-white text-gray-900 border border-gray-300 hover:border-indigo-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500`,
-            text: `font-normal`,
-            icon: `text-gray-500`,
-            menu: `border-gray-100`,
-            item: `hover:bg-indigo-50`,
-            itemActive: `text-indigo-600 bg-indigo-50/50`,
-            itemInactive: `text-gray-700`
+            button: `bg-white text-slate-900 border border-slate-300 hover:border-slate-900 focus:border-slate-900 focus:ring-1 focus:ring-slate-900`,
+            text: `font-medium`,
+            icon: `text-slate-500`,
+            menu: `border-slate-200`,
+            item: `hover:bg-slate-100`,
+            itemActive: `text-slate-900 bg-slate-100 font-bold`,
+            itemInactive: `text-slate-600`
         }
     }
 
@@ -104,7 +104,7 @@ export default function Dropdown({
                         >
                             <span className="truncate">{option.label}</span>
                             {String(value) === String(option.value) && (
-                                <Check className={`w-4 h-4 flex-shrink-0 ${variant === 'glass' ? 'text-purple-600' : 'text-indigo-600'}`} />
+                                <Check className={`w-4 h-4 flex-shrink-0 ${variant === 'glass' ? 'text-slate-900' : 'text-slate-900'}`} />
                             )}
                         </button>
                     ))}

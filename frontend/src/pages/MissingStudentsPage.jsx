@@ -75,29 +75,29 @@ export default function MissingStudentsPage() {
         <div className="min-h-screen bg-stitch-bg-light dark:bg-stitch-bg-dark font-display text-slate-900 dark:text-white pb-20 transition-colors duration-300">
             <div className="max-w-[1600px] mx-auto space-y-8 animate-fadeIn p-4 md:p-8">
 
-                {/* Hero Header */}
-                <div className="relative overflow-hidden bg-gradient-to-br from-orange-500 via-red-500 to-rose-600 dark:from-orange-900 dark:via-red-950 dark:to-rose-950 rounded-[2.5rem] p-8 md:p-12 shadow-2xl z-10">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 animate-pulse"></div>
-                    <div className="absolute bottom-0 left-0 w-80 h-80 bg-orange-400/20 rounded-full blur-3xl -ml-20 -mb-20"></div>
+                {/* Hero Header - Ash Theme */}
+                <div className="relative overflow-hidden bg-black rounded-[2.5rem] p-8 md:p-12 shadow-2xl z-10">
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -mr-20 -mt-20 animate-pulse"></div>
+                    <div className="absolute bottom-0 left-0 w-80 h-80 bg-slate-800/20 rounded-full blur-3xl -ml-20 -mb-20"></div>
 
                     <div className="relative z-10">
                         <button
                             onClick={() => navigate('/admin')}
-                            className="group flex items-center gap-2 text-orange-100 hover:text-white transition-colors mb-6 font-medium"
+                            className="group flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-6 font-medium"
                         >
-                            <div className="p-2 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
+                            <div className="p-2 bg-white/5 rounded-lg group-hover:bg-white/10 transition-colors">
                                 <ArrowLeft className="w-5 h-5" />
                             </div>
                             Back to Dashboard
                         </button>
 
                         <div className="flex flex-col md:flex-row md:items-center gap-6">
-                            <div className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-3xl flex items-center justify-center shadow-inner border border-white/20">
+                            <div className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-3xl flex items-center justify-center shadow-inner border border-white/10">
                                 <AlertTriangle className="w-10 h-10 text-white" />
                             </div>
                             <div>
                                 <h1 className="text-4xl md:text-5xl font-black text-white mb-2 tracking-tight">Missing Students</h1>
-                                <p className="text-orange-100 text-lg font-medium max-w-2xl">
+                                <p className="text-slate-400 text-lg font-medium max-w-2xl">
                                     Manage students found in import files but missing from the database.
                                 </p>
                             </div>
@@ -117,14 +117,14 @@ export default function MissingStudentsPage() {
                                 placeholder="Search by Registration Number..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-orange-500 focus:outline-none text-slate-900 dark:text-white placeholder-slate-400 font-medium transition-all"
+                                className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-slate-900 focus:outline-none text-slate-900 dark:text-white placeholder-slate-400 font-medium transition-all"
                             />
                         </div>
 
                         {students.length > 0 && (
                             <button
                                 onClick={handleDeleteAll}
-                                className="w-full md:w-auto px-6 py-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/30 font-bold transition-colors flex items-center justify-center gap-2 border border-red-100 dark:border-red-500/20"
+                                className="w-full md:w-auto px-6 py-3 bg-red-50 dark:bg-red-900/10 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/20 font-bold transition-colors flex items-center justify-center gap-2 border border-red-100 dark:border-red-500/10"
                             >
                                 <Trash2 className="w-5 h-5" />
                                 Delete All Records
@@ -195,7 +195,7 @@ export default function MissingStudentsPage() {
                                                     <div className="flex justify-end gap-3 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                                                         <button
                                                             onClick={() => handleMoveToMain(student.registrationNumber)}
-                                                            className="flex items-center gap-2 px-4 py-2 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-xl hover:bg-indigo-100 dark:hover:bg-indigo-500/20 font-bold transition-all"
+                                                            className="flex items-center gap-2 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl hover:bg-black dark:hover:bg-slate-200 font-bold transition-all shadow-md"
                                                             title="Move to Main Database"
                                                         >
                                                             <UserPlus className="w-4 h-4" />
@@ -203,7 +203,7 @@ export default function MissingStudentsPage() {
                                                         </button>
                                                         <button
                                                             onClick={() => handleDelete(student.registrationNumber)}
-                                                            className="flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-100 dark:hover:bg-red-500/20 font-bold transition-all"
+                                                            className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-900 rounded-xl hover:bg-slate-100 font-bold transition-all"
                                                             title="Delete Record"
                                                         >
                                                             <Trash2 className="w-4 h-4" />
