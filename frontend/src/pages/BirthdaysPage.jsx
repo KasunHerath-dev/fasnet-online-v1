@@ -120,11 +120,9 @@ export default function BirthdaysPage() {
                   Track upcoming birthdays and manage celebration events.
                 </p>
               </div>
-            </div>
 
-            {/* Right side - Quick stats badges (Desktop) */}
-            <div className="pt-2 lg:pt-0 lg:mb-1">
-              <div className="flex flex-wrap gap-2 sm:gap-3">
+              {/* Quick stats badges */}
+              <div className="flex flex-wrap gap-2 sm:gap-3 pt-2">
                 <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
                   <Calendar className="w-4 h-4 text-white" />
                   <span className="text-white text-xs sm:text-sm font-bold">Next {days} Days</span>

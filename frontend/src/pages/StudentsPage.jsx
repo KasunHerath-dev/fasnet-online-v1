@@ -48,6 +48,20 @@ export default function StudentsPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [viewMode, setViewMode] = useState('card')
   const [showFilters, setShowFilters] = useState(true)
+  const [students, setStudents] = useState([])
+
+  useEffect(() => {
+    fetchStudents()
+  }, [])
+
+  const fetchStudents = async () => {
+    try {
+      const { data } = await studentService.getAllStudents()
+      setStudents(data.students || [])
+    } catch (error) {
+      console.error('Failed to fetch students:', error)
+    }
+  }
 
   const handleBatchDelete = async () => {
     if (!selectedIds.length) return
@@ -75,7 +89,7 @@ export default function StudentsPage() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-black font-display text-slate-900 dark:text-white transition-colors duration-500">
 
-      {/*      {/* Enhanced Hero Section - Command Center Style */}
+      {/* Enhanced Hero Section - Command Center Style */}
       <div className="relative w-full overflow-hidden pb-32 sm:pb-20 lg:pb-24">
         {/* Animated gradient background */}
         <div className="absolute inset-0 bg-black">
