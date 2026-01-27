@@ -115,9 +115,9 @@ export default function AdminPage() {
 
         <div className="max-w-7xl mx-auto w-full px-3 md:px-6 z-20 -mt-6 md:-mt-8 space-y-4 md:space-y-8">
 
-          {/* Tab Navigation - Mobile First */}
-          <div className="bg-white dark:bg-stitch-card-dark rounded-lg md:rounded-2xl p-1 md:p-2 shadow-lg border border-slate-100 dark:border-stitch-card-border overflow-x-auto scrollbar-hide">
-            <div className="flex gap-0.5 md:gap-1 min-w-max">
+          {/* Tab Navigation - Professional Mobile/Desktop Design */}
+          <div className="bg-white dark:bg-stitch-card-dark rounded-xl md:rounded-2xl p-1.5 md:p-2 shadow-lg border border-slate-100 dark:border-stitch-card-border">
+            <div className="flex gap-1 md:gap-2 overflow-x-auto scrollbar-hide">
               {tabs.map((tab) => {
                 const Icon = tab.icon
                 const isActive = activeTab === tab.id
@@ -125,13 +125,17 @@ export default function AdminPage() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center justify-center gap-1.5 md:gap-2 px-2.5 md:px-5 py-2 md:py-3 rounded-md md:rounded-xl text-[11px] md:text-sm font-bold transition-all whitespace-nowrap min-h-[44px] ${isActive
-                      ? 'bg-stitch-blue text-white shadow-md shadow-stitch-blue/20'
-                      : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
+                    className={`relative flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-3 md:px-4 py-2.5 md:py-2.5 rounded-lg md:rounded-xl text-[10px] md:text-sm font-bold transition-all duration-200 whitespace-nowrap min-w-[60px] md:min-w-0 flex-1 md:flex-none ${isActive
+                      ? 'bg-gradient-to-br from-stitch-blue to-indigo-600 text-white shadow-lg shadow-stitch-blue/30'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
                       }`}
                   >
-                    <Icon className="w-4 h-4 md:w-4 md:h-4 shrink-0" />
-                    <span className="hidden sm:inline">{tab.label}</span>
+                    <Icon className={`w-5 h-5 md:w-4 md:h-4 shrink-0 transition-transform duration-200 ${isActive ? 'scale-110' : ''}`} />
+                    <span className="hidden md:inline">{tab.label}</span>
+                    <span className="md:hidden text-[9px] font-semibold leading-tight">{tab.label.split(' ')[0]}</span>
+                    {isActive && (
+                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-white rounded-full md:hidden"></div>
+                    )}
                   </button>
                 )
               })}
