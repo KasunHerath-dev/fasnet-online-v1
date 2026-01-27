@@ -154,46 +154,50 @@ export default function AdminPage() {
               </div>
             </div>
 
-            {/* Right side - System status card */}
+            {/* Right side - System Health card - Monochrome */}
             <div className="w-full lg:w-80 xl:w-96">
-              <div className="bg-white/10 backdrop-blur-xl rounded-xl sm:rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-6 border border-white/20 shadow-xl">
+              <div className="bg-gray-50 border border-gray-300 rounded-xl sm:rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-6">
                 <div className="flex items-center gap-2.5 sm:gap-3 mb-4 sm:mb-5">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-md flex items-center justify-center border border-white/20">
-                    <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gray-200 flex items-center justify-center">
+                    <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-black" />
                   </div>
                   <div>
-                    <h3 className="text-white font-bold text-sm sm:text-base">System Health</h3>
-                    <p className="text-white/70 text-[10px] sm:text-xs">Real-time monitoring</p>
+                    <h3 className="text-black font-bold text-sm sm:text-base">System Health</h3>
+                    <p className="text-gray-600 text-[10px] sm:text-xs">Real-time monitoring</p>
                   </div>
                 </div>
 
                 <div className="space-y-2.5 sm:space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-white/75 text-xs sm:text-sm font-medium">Database</span>
+                    <span className="text-gray-700 text-xs sm:text-sm font-medium">Database</span>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse shadow-sm shadow-green-400/50"></div>
-                      <span className="text-white font-bold text-xs sm:text-sm">Active</span>
+                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                      <span className="text-black font-bold text-xs sm:text-sm">Active</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-white/75 text-xs sm:text-sm font-medium">API Response</span>
+                    <span className="text-gray-700 text-xs sm:text-sm font-medium">API</span>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse shadow-sm shadow-green-400/50"></div>
-                      <span className="text-white font-bold text-xs sm:text-sm">45ms</span>
+                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                      <span className="text-black font-bold text-xs sm:text-sm">Online</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-white/75 text-xs sm:text-sm font-medium">Uptime</span>
-                    <span className="text-white font-bold text-xs sm:text-sm">99.9%</span>
+                    <span className="text-gray-700 text-xs sm:text-sm font-medium">Storage</span>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                      <span className="text-black font-bold text-xs sm:text-sm">68% Free</span>
+                    </div>
                   </div>
 
-                  <div className="pt-2.5 sm:pt-3 border-t border-white/20">
-                    <div className="flex items-center justify-between mb-1.5 sm:mb-2">
-                      <span className="text-white/75 text-xs sm:text-sm font-medium">Performance</span>
-                      <span className="text-green-400 font-bold text-xs sm:text-sm">Excellent</span>
+                  {/* Health Score */}
+                  <div className="pt-3 sm:pt-4 mt-3 sm:mt-4 border-t border-gray-300">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-gray-700 text-xs sm:text-sm font-medium">Overall Health</span>
+                      <span className="text-black font-black text-sm sm:text-base">Excellent</span>
                     </div>
-                    <div className="w-full h-1.5 sm:h-2 bg-white/10 rounded-full overflow-hidden">
-                      <div className="h-full w-[94%] bg-gradient-to-r from-green-400 to-emerald-500 rounded-full"></div>
+                    <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-full bg-black rounded-full" style={{ width: '92%' }}></div>
                     </div>
                   </div>
                 </div>
