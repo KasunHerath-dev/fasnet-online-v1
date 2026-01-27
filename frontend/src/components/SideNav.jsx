@@ -116,10 +116,10 @@ export default function SideNav({ isOpen, onClose }) {
 
   return (
     <>
-      {/* Enhanced Mobile Overlay with Glassmorphism */}
+      {/* Monochrome Mobile Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-gradient-to-br from-black/70 via-slate-900/80 to-black/70 backdrop-blur-md z-[90] md:hidden transition-all duration-300 animate-fadeIn"
+          className="fixed inset-0 bg-black/80 z-[90] md:hidden transition-all duration-300"
           onClick={onClose}
         />
       )}
@@ -127,39 +127,27 @@ export default function SideNav({ isOpen, onClose }) {
       <aside className={`
         fixed md:static inset-y-0 left-0 z-[100]
         ${isCollapsed ? 'w-20' : 'w-64 lg:w-72'}
-        bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950
-        shadow-2xl shadow-slate-950/50
+        bg-black
+        shadow-2xl
         transform transition-all duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         md:translate-x-0
         overflow-hidden
-        border-r border-slate-800/50
+        border-r border-mono-border
       `}>
-        {/* Animated gradient overlay - Command Center style */}
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/20 via-purple-600/15 to-pink-600/20 pointer-events-none animate-pulse" style={{ animationDuration: '4s' }}></div>
-
-        {/* Grid pattern overlay */}
-        <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] pointer-events-none"></div>
 
         {/* Content wrapper */}
         <div className="relative h-full flex flex-col">
-          {/* Enhanced Header */}
-          <div className="p-6 border-b border-white/10 bg-gradient-to-br from-white/5 to-transparent backdrop-blur-sm">
+          {/* Header - Monochrome */}
+          <div className="p-6 border-b border-gray-800">
             <div className="flex items-center justify-between">
               <div className={`flex items-center gap-3 transition-all duration-300 ${isCollapsed ? 'justify-center w-full' : ''}`}>
                 <div className="relative group">
-                  {/* Logo with enhanced gradient and glow */}
-                  <div className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-600 flex items-center justify-center text-white font-black text-xl shadow-2xl shadow-purple-600/50 transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-12 group-hover:shadow-purple-600/70">
-                    <span className="relative z-10">F</span>
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-500 opacity-0 group-hover:opacity-50 transition-opacity blur-sm"></div>
-                  </div>
-                  {/* Enhanced glow effect */}
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-600 blur-xl opacity-60 group-hover:opacity-90 transition-opacity animate-pulse"></div>
-                  {/* Sparkle indicator */}
-                  <div className="absolute -top-1 -right-1">
-                    <Sparkles className="w-4 h-4 text-yellow-400 animate-pulse" />
+                  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-black font-black text-lg transition-all duration-300">
+                    F
                   </div>
                 </div>
+
                 {!isCollapsed && (
                   <div className="animate-fadeIn">
                     <h1 className="text-white font-black text-xl tracking-tight drop-shadow-lg">fasnet.online</h1>
@@ -181,71 +169,56 @@ export default function SideNav({ isOpen, onClose }) {
             </div>
           </div>
 
-          {/* Navigation with enhanced styling */}
-          <nav className="flex-1 overflow-y-auto p-4 space-y-1 custom-scrollbar">
+          {/* Navigation Links - Monochrome */}
+          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
             {links.map((link) => {
-              const Icon = iconMap[link.icon]
+              const Icon = iconMap[link.icon] || LayoutDashboard
               const active = isActive(link.path)
 
               return (
                 <Link
                   key={link.path}
                   to={link.path}
+                  onClick={() => window.innerWidth < 768 && onClose()}
                   className={`
-                    group relative flex items-center gap-3 px-4 py-3.5 rounded-xl
-                    transition-all duration-300 ease-out
+                    group relative flex items-center gap-3 px-3 py-2.5 rounded-xl
+                    transition-all duration-200
                     ${active
-                      ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white shadow-2xl shadow-indigo-500/50 scale-105 border border-white/20'
-                      : 'text-gray-300 hover:bg-gradient-to-r hover:from-white/10 hover:to-white/5 hover:text-white hover:scale-105 hover:shadow-xl hover:shadow-white/10'
+                      ? 'bg-mono-hover text-white'
+                      : 'text-gray-400 hover:bg-gray-900 hover:text-white'
                     }
                     ${isCollapsed ? 'justify-center' : ''}
                   `}
-                  onClick={() => onClose && onClose()}
-                  title={isCollapsed ? link.label : ''}
                 >
-                  {/* Active indicator with gradient */}
-                  {active && (
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-10 bg-gradient-to-b from-cyan-400 via-white to-pink-400 rounded-r-full shadow-lg shadow-white/50"></div>
-                  )}
+                  <Icon className={`w-5 h-5 flex-shrink-0 transition-all duration-200 ${active ? 'text-white' : 'text-gray-400 group-hover:text-white'}`} />
 
-                  {/* Icon with enhanced animation */}
-                  <div className={`relative flex-shrink-0 ${active ? 'scale-110' : 'group-hover:scale-110'} transition-transform duration-300`}>
-                    <Icon className="w-5 h-5" />
-                    {active && (
-                      <div className="absolute inset-0 blur-lg opacity-75">
-                        <Icon className="w-5 h-5" />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Label */}
                   {!isCollapsed && (
-                    <span className="font-semibold text-sm truncate animate-fadeIn">
-                      {link.label}
-                    </span>
+                    <>
+                      <span className="font-semibold text-sm truncate">{link.label}</span>
+                      {active && (
+                        <div className="absolute right-3 w-1.5 h-1.5 bg-white rounded-full"></div>
+                      )}
+                    </>
                   )}
 
-                  {/* Enhanced hover glow effect */}
-                  <div className={`absolute inset-0 rounded-xl transition-opacity duration-300 ${active
-                      ? 'bg-gradient-to-r from-indigo-400 via-purple-500 to-pink-500 opacity-0 blur-2xl'
-                      : 'bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-30 blur-xl'
-                    }`}></div>
+                  {/* Tooltip for collapsed state */}
+                  {isCollapsed && (
+                    <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity border border-gray-700">
+                      {link.label}
+                    </div>
+                  )}
                 </Link>
               )
             })}
           </nav>
 
-          {/* Enhanced Footer */}
-          <div className="p-4 border-t border-white/10 bg-gradient-to-br from-white/5 to-transparent backdrop-blur-sm">
+          {/* Footer - Monochrome */}
+          <div className="p-4 border-t border-gray-800">
             {!isCollapsed && (
-              <div className="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md rounded-2xl p-4 mb-3 animate-fadeIn border border-white/10 shadow-xl">
-                {/* Decorative gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-2xl"></div>
-
-                <div className="relative flex items-center gap-3 mb-2">
-                  <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-600 flex items-center justify-center shadow-lg shadow-purple-500/50">
+              <div className="bg-gray-900 rounded-xl p-4 mb-3 border border-gray-800">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-xl bg-gray-800 flex items-center justify-center">
                     <User className="w-5 h-5 text-white" />
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-indigo-500 to-pink-600 blur-md opacity-50"></div>
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-white font-semibold text-sm truncate">
@@ -253,7 +226,7 @@ export default function SideNav({ isOpen, onClose }) {
                         ? `${user.studentRef.firstName} ${user.studentRef.lastName}`
                         : (user?.username || 'User')}
                     </p>
-                    <p className="text-indigo-300 text-xs truncate font-medium">
+                    <p className="text-gray-400 text-xs truncate">
                       {isStudent ? 'Student' : isSuperAdminUser ? 'Super Admin' : 'Administrator'}
                     </p>
                   </div>
@@ -261,38 +234,33 @@ export default function SideNav({ isOpen, onClose }) {
               </div>
             )}
 
-            {/* Enhanced Collapse Toggle Button */}
+            {/* Collapse Toggle Button - Monochrome */}
             <button
               onClick={toggleCollapse}
-              className="hidden md:flex w-full items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:via-purple-500 hover:to-pink-500 text-white rounded-xl font-semibold text-sm shadow-2xl shadow-purple-600/50 hover:shadow-purple-600/70 transition-all hover:scale-105 group border border-white/20"
+              className="hidden md:flex w-full items-center justify-center gap-2 px-4 py-3 bg-gray-800 hover:bg-mono-hover text-white rounded-xl font-semibold text-sm transition-all"
               title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
             >
               {isCollapsed ? (
-                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <ChevronRight className="w-5 h-5" />
               ) : (
                 <>
-                  <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                  <ChevronLeft className="w-5 h-5" />
                   <span>Collapse</span>
                 </>
               )}
             </button>
 
-            {/* Copyright with gradient accent */}
+            {/* Copyright */}
             {!isCollapsed && (
-              <p className="text-gray-500 text-xs text-center mt-3 animate-fadeIn font-medium">
-                Developed by <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 font-bold">Kasun Herath</span>
+              <p className="text-gray-500 text-xs text-center mt-3">
+                Developed by <span className="text-gray-300 font-bold">Kasun Herath</span>
               </p>
             )}
           </div>
         </div>
-
-        {/* Enhanced decorative side accent with gradient animation */}
-        <div className="absolute right-0 top-0 bottom-0 w-1 bg-gradient-to-b from-indigo-500 via-purple-600 to-pink-600 shadow-lg shadow-purple-600/50"></div>
-
-        {/* Floating orbs for depth */}
-        <div className="absolute top-20 right-4 w-32 h-32 bg-purple-600/20 rounded-full blur-3xl pointer-events-none animate-pulse" style={{ animationDuration: '3s' }}></div>
-        <div className="absolute bottom-20 left-4 w-24 h-24 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none animate-pulse" style={{ animationDuration: '4s', animationDelay: '1s' }}></div>
       </aside>
+      <div className="absolute bottom-20 left-4 w-24 h-24 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none animate-pulse" style={{ animationDuration: '4s', animationDelay: '1s' }}></div>
+    </aside >
 
       <style jsx>{`
         @keyframes fadeIn {
