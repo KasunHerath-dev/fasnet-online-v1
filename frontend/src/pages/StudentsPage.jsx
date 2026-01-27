@@ -73,34 +73,34 @@ export default function StudentsPage() {
   const hasActiveFilters = query || district || batch
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 font-display text-slate-900 dark:text-white transition-colors duration-500">
+    <div className="min-h-screen bg-slate-50 dark:bg-black font-display text-slate-900 dark:text-white transition-colors duration-500">
 
       {/* Enhanced Hero Section with Glassmorphism */}
       <div className="relative w-full overflow-hidden">
         {/* Animated gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 opacity-90 dark:opacity-80">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
+        <div className="absolute inset-0 bg-black dark:bg-black">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
         </div>
 
         {/* Floating orbs */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-cyan-400 opacity-20 rounded-full blur-3xl translate-y-1/4 -translate-x-1/4 animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-purple-400 opacity-15 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-slate-700 opacity-10 rounded-full blur-3xl translate-y-1/4 -translate-x-1/4 animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-slate-600 opacity-5 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }}></div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-14">
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 lg:gap-10">
 
             {/* Left side - Title & Description */}
             <div className="flex-1 space-y-3 sm:space-y-5">
-              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/25 shadow-lg">
-                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-300" />
+              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 shadow-lg">
+                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-300" />
                 <span className="text-white text-[10px] sm:text-xs font-bold tracking-wide">STUDENT DIRECTORY</span>
               </div>
 
               <div className="space-y-2">
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-none tracking-tight">
                   Student
-                  <span className="block mt-1 bg-gradient-to-r from-yellow-200 via-pink-200 to-purple-200 bg-clip-text text-transparent">
+                  <span className="block mt-1 text-slate-500">
                     Directory
                   </span>
                 </h1>
@@ -117,7 +117,7 @@ export default function StudentsPage() {
                 </div>
                 {selectedIds.length > 0 && (
                   <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
-                    <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse shadow-lg shadow-cyan-400/50"></div>
+                    <div className="w-2 h-2 bg-slate-400 rounded-full animate-pulse shadow-lg shadow-white/50"></div>
                     <span className="text-white text-xs sm:text-sm font-bold">{selectedIds.length} Selected</span>
                   </div>
                 )}
@@ -132,7 +132,7 @@ export default function StudentsPage() {
 
             {/* Right side - Quick actions card */}
             <div className="lg:w-80 xl:w-96">
-              <div className="bg-white/10 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-5 sm:p-6 lg:p-8 border border-white/20 shadow-2xl">
+              <div className="bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-5 sm:p-6 lg:p-8 border border-white/10 shadow-2xl">
                 <div className="flex items-center gap-3 mb-4 sm:mb-6">
                   <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-md flex items-center justify-center border border-white/20">
                     <Zap className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
@@ -163,8 +163,8 @@ export default function StudentsPage() {
                         onClick={handleExport}
                         className="group flex items-center gap-3 p-3 sm:p-4 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl sm:rounded-2xl border border-white/20 hover:border-white/30 transition-all hover:scale-105 w-full"
                       >
-                        <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                          <Download className="w-5 h-5 text-emerald-300" />
+                        <div className="w-10 h-10 rounded-xl bg-slate-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <Download className="w-5 h-5 text-slate-300" />
                         </div>
                         <div className="flex-1 text-left">
                           <p className="text-white font-bold text-sm">Export</p>
@@ -201,14 +201,14 @@ export default function StudentsPage() {
           <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden">
 
             {/* Filter Header */}
-            <div className="relative bg-gradient-to-r from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 px-5 sm:px-6 lg:px-8 py-4 sm:py-5 lg:py-6 border-b border-slate-200/50 dark:border-slate-700/50">
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 to-purple-500/5"></div>
+            <div className="relative bg-white dark:bg-slate-900 px-5 sm:px-6 lg:px-8 py-4 sm:py-5 lg:py-6 border-b border-slate-200 dark:border-slate-800">
+              <div className="absolute inset-0 bg-slate-50/50 dark:bg-slate-800/20"></div>
 
               <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex items-center gap-3 sm:gap-4">
-                  <div className="relative w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                  <div className="relative w-12 h-12 sm:w-14 sm:h-14 bg-slate-900 dark:bg-black rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10">
                     <SlidersHorizontal className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl sm:rounded-2xl blur-md opacity-50"></div>
+                    <div className="absolute inset-0 bg-slate-900 rounded-xl sm:rounded-2xl blur-md opacity-20"></div>
                   </div>
                   <div>
                     <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">Search & Filter</h3>
@@ -240,10 +240,10 @@ export default function StudentsPage() {
                       Search Students
                     </label>
                     <div className="relative group">
-                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors z-10 pointer-events-none" />
+                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-slate-900 dark:group-focus-within:text-white transition-colors z-10 pointer-events-none" />
                       <input
                         type="text"
-                        className="w-full pl-12 pr-4 py-3.5 sm:py-4 text-sm sm:text-base bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all font-medium text-slate-900 dark:text-white placeholder-slate-400 shadow-sm hover:shadow-md"
+                        className="w-full pl-12 pr-4 py-3.5 sm:py-4 text-sm sm:text-base bg-white dark:bg-slate-900/50 border-2 border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl focus:border-slate-900 dark:focus:border-white focus:ring-4 focus:ring-slate-500/10 transition-all font-medium text-slate-900 dark:text-white placeholder-slate-400 shadow-sm hover:shadow-md"
                         placeholder="Name, registration number..."
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
@@ -254,7 +254,7 @@ export default function StudentsPage() {
                   {/* District Filter */}
                   <div>
                     <label className="flex items-center gap-2 text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300 mb-3">
-                      <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400" />
+                      <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 dark:text-slate-400" />
                       District
                     </label>
                     <div className="relative">
@@ -276,7 +276,7 @@ export default function StudentsPage() {
                   {/* Batch Year */}
                   <div>
                     <label className="flex items-center gap-2 text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300 mb-3">
-                      <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 dark:text-purple-400" />
+                      <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 dark:text-slate-400" />
                       Batch Year
                     </label>
                     <input
@@ -295,17 +295,17 @@ export default function StudentsPage() {
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                       <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                         <span className="text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                          <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600 dark:text-indigo-400" />
+                          <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-slate-900 dark:text-white" />
                           Active Filters:
                         </span>
 
                         {query && (
-                          <span className="group inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/40 dark:to-indigo-800/40 text-indigo-700 dark:text-indigo-300 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold border-2 border-indigo-200 dark:border-indigo-700 shadow-lg shadow-indigo-500/10 hover:shadow-xl hover:scale-105 transition-all">
+                          <span className="group inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold border-2 border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
                             <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             "{query.length > 20 ? query.substring(0, 20) + '...' : query}"
                             <button
                               onClick={() => setQuery('')}
-                              className="hover:bg-indigo-200 dark:hover:bg-indigo-700 rounded-lg p-1 transition-colors"
+                              className="hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg p-1 transition-colors"
                               aria-label="Remove search filter"
                             >
                               <X className="w-3.5 h-3.5" />
@@ -314,12 +314,12 @@ export default function StudentsPage() {
                         )}
 
                         {district && (
-                          <span className="group inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-gradient-to-br from-blue-50 to-cyan-100 dark:from-blue-900/40 dark:to-cyan-800/40 text-blue-700 dark:text-cyan-300 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold border-2 border-blue-200 dark:border-blue-700 shadow-lg shadow-blue-500/10 hover:shadow-xl hover:scale-105 transition-all">
+                          <span className="group inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold border-2 border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
                             <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             {district}
                             <button
                               onClick={() => setDistrict('')}
-                              className="hover:bg-blue-200 dark:hover:bg-blue-700 rounded-lg p-1 transition-colors"
+                              className="hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg p-1 transition-colors"
                               aria-label="Remove district filter"
                             >
                               <X className="w-3.5 h-3.5" />
@@ -328,12 +328,12 @@ export default function StudentsPage() {
                         )}
 
                         {batch && (
-                          <span className="group inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-gradient-to-br from-purple-50 to-pink-100 dark:from-purple-900/40 dark:to-pink-800/40 text-purple-700 dark:text-purple-300 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold border-2 border-purple-200 dark:border-purple-700 shadow-lg shadow-purple-500/10 hover:shadow-xl hover:scale-105 transition-all">
+                          <span className="group inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold border-2 border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
                             <GraduationCap className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             Batch {batch}
                             <button
                               onClick={() => setBatch('')}
-                              className="hover:bg-purple-200 dark:hover:bg-purple-700 rounded-lg p-1 transition-colors"
+                              className="hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg p-1 transition-colors"
                               aria-label="Remove batch filter"
                             >
                               <X className="w-3.5 h-3.5" />
@@ -370,7 +370,7 @@ export default function StudentsPage() {
                             key={mode.id}
                             onClick={() => setViewMode(mode.id)}
                             className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold transition-all ${isActive
-                              ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-xl shadow-indigo-500/50 scale-105'
+                              ? 'bg-slate-900 text-white shadow-xl shadow-slate-900/10 scale-105 dark:bg-white dark:text-black'
                               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-slate-600 hover:scale-105'
                               }`}
                           >

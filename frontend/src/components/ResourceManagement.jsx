@@ -457,7 +457,7 @@ export default function ResourceManagement() {
                             )}
 
                             {/* File Upload */}
-                            <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-black/20 rounded-2xl p-6 text-center hover:bg-slate-100 dark:hover:bg-white/5 transition-all cursor-pointer relative group">
+                            <div className="border-2 border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 rounded-2xl p-6 text-center hover:bg-slate-100 hover:border-slate-400 dark:hover:bg-slate-800 dark:hover:border-slate-600 transition-all duration-300 cursor-pointer relative group">
                                 <input
                                     type="file"
                                     onChange={handleFileChange}
@@ -498,7 +498,7 @@ export default function ResourceManagement() {
                             <button
                                 type="submit"
                                 disabled={uploading || !formData.file || !formData.moduleId}
-                                className={`w-full py-4 rounded-xl font-black text-white shadow-lg shadow-stitch-blue/20 flex items-center justify-center gap-3 transition-all transform hover:translate-y-[-2px]
+                                className={`w-full py-4 rounded-xl font-black text-white shadow-lg shadow-slate-900/10 flex items-center justify-center gap-3 transition-all transform hover:translate-y-[-2px]
                                     ${uploading || !formData.file
                                         ? 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed shadow-none'
                                         : 'bg-slate-900 hover:bg-black dark:bg-white dark:hover:bg-slate-200 dark:text-black hover:shadow-xl active:scale-95'}`}
