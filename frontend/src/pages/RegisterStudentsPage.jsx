@@ -117,29 +117,41 @@ export default function RegisterStudentsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-stitch-bg-light dark:bg-stitch-bg-dark font-display text-slate-900 dark:text-white pb-20 transition-colors duration-300">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 font-display text-slate-900 dark:text-white pb-20 transition-colors duration-300">
             <div className="relative flex flex-col w-full min-h-screen">
 
-                {/* Hero Header - Professional */}
-                <div className="relative w-full h-[180px] md:h-[240px] lg:h-[280px] bg-gradient-to-br from-stitch-blue via-[#6b13ec] to-stitch-pink overflow-hidden rounded-b-[1.5rem] md:rounded-b-[2.5rem] shadow-2xl z-10">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl animate-pulse"></div>
-                    <div className="absolute bottom-0 left-0 w-48 h-48 bg-stitch-blue opacity-20 rounded-full translate-y-1/4 -translate-x-1/4 blur-2xl"></div>
-                    <div className="absolute top-1/2 right-1/4 w-32 h-32 bg-white opacity-5 rounded-full blur-2xl"></div>
+                {/* Enhanced Hero Header - Command Center Style */}
+                <div className="relative w-full h-[200px] md:h-[260px] lg:h-[300px] bg-gradient-to-br from-emerald-600 via-green-600 to-teal-700 dark:from-emerald-800 dark:via-green-800 dark:to-teal-900 overflow-hidden rounded-b-[2rem] md:rounded-b-[3rem] shadow-2xl shadow-green-900/30 z-10">
+                    {/* Grid Pattern Overlay */}
+                    <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] pointer-events-none"></div>
 
-                    <div className="relative flex flex-col justify-end h-full px-4 md:px-6 pb-8 md:pb-12 pt-6 md:pt-8 z-10 max-w-7xl mx-auto w-full">
-                        <div className="flex items-end gap-3 md:gap-4">
+                    {/* Floating Orbs for Depth */}
+                    <div className="absolute top-10 right-10 w-48 h-48 bg-teal-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }}></div>
+                    <div className="absolute bottom-0 left-10 w-64 h-64 bg-emerald-400/25 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '5s', animationDelay: '1s' }}></div>
+                    <div className="absolute top-1/3 left-1/3 w-32 h-32 bg-green-300/20 rounded-full blur-2xl animate-pulse" style={{ animationDuration: '3s', animationDelay: '0.5s' }}></div>
+
+                    <div className="relative flex flex-col justify-end h-full px-4 md:px-8 pb-8 md:pb-12 pt-6 md:pt-8 z-10 max-w-7xl mx-auto w-full">
+                        <div className="flex items-end gap-3 md:gap-5">
+                            {/* Enhanced Logo with Glassmorphism */}
                             <div className="relative group">
-                                <div className="absolute inset-0 bg-white opacity-20 rounded-xl md:rounded-2xl blur-md group-hover:blur-lg transition-all"></div>
-                                <div className="relative w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-lg group-hover:scale-105 transition-transform">
-                                    <Users className="w-7 h-7 md:w-9 md:h-9 text-white" />
+                                <div className="absolute inset-0 bg-gradient-to-br from-white to-teal-300 opacity-30 rounded-xl md:rounded-2xl blur-lg group-hover:blur-xl transition-all"></div>
+                                <div className="relative w-14 h-14 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-gradient-to-br from-white/20 to-white/10 backdrop-blur-xl flex items-center justify-center border-2 border-white/30 shadow-2xl shadow-green-900/30 group-hover:scale-105 group-hover:-rotate-6 transition-all">
+                                    <Users className="w-7 h-7 md:w-9 md:h-9 text-white group-hover:scale-110 transition-transform" />
+                                </div>
+                                {/* Sparkle Indicator */}
+                                <div className="absolute -top-1 -right-1">
+                                    <span className="relative flex h-5 w-5">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-5 w-5 bg-yellow-500 items-center justify-center text-xs">✨</span>
+                                    </span>
                                 </div>
                             </div>
                             <div className="min-w-0 flex-1 pb-1">
-                                <h1 className="text-white text-2xl md:text-5xl lg:text-6xl font-black leading-none tracking-tight drop-shadow-lg mb-1">
+                                <h1 className="text-white text-2xl md:text-5xl lg:text-6xl font-black leading-none tracking-tight drop-shadow-2xl mb-1">
                                     Register Students
                                 </h1>
-                                <p className="text-white/95 text-xs md:text-base lg:text-lg font-semibold leading-tight drop-shadow-md hidden sm:block">
-                                    Bulk import new students
+                                <p className="text-emerald-100 dark:text-emerald-200 text-xs md:text-base lg:text-lg font-semibold leading-tight drop-shadow-lg hidden sm:block">
+                                    Bulk import new students into the system
                                 </p>
                             </div>
                         </div>
