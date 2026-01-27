@@ -13,7 +13,8 @@ import {
   ChevronDown,
   Check,
   Search,
-  Arrowleft
+  Arrowleft,
+  Trash2
 } from 'lucide-react'
 import Dropdown from '../components/Dropdown'
 
@@ -23,6 +24,8 @@ export default function BirthdaysPage() {
   const [loading, setLoading] = useState(false)
   const [days, setDays] = useState(30)
   const [viewMode, setViewMode] = useState('list') // Default to list for better density
+  const [query, setQuery] = useState('')
+  const [showFilters, setShowFilters] = useState(false)
 
   useEffect(() => {
     fetchBirthdays()
@@ -40,8 +43,18 @@ export default function BirthdaysPage() {
     }
   }
 
+  // Client-side filtering
+  const filteredStudents = students.filter(student => {
+    if (!query) return true
+    const searchLower = query.toLowerCase()
+    return (
+      student.fullName.toLowerCase().includes(searchLower) ||
+      student.registrationNumber.toLowerCase().includes(searchLower)
+    )
+  })
+
   // Group students by date
-  const groupedByDate = students.reduce((groups, student) => {
+  const groupedByDate = filteredStudents.reduce((groups, student) => {
     const date = new Date(student.nextBirthday).toDateString()
     if (!groups[date]) {
       groups[date] = []
@@ -87,7 +100,6 @@ export default function BirthdaysPage() {
     <div className="min-h-screen bg-slate-50 dark:bg-black font-display text-slate-900 dark:text-white transition-colors duration-300">
 
       {/* Enhanced Hero Section - Command Center Style */}
-      {/* Enhanced Hero Section - Command Center Style */}
       <div className="relative w-full overflow-hidden pb-32 sm:pb-20 lg:pb-24">
         {/* Animated gradient background */}
         <div className="absolute inset-0 bg-black">
@@ -132,7 +144,7 @@ export default function BirthdaysPage() {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-pink-500"></span>
                   </span>
-                  <span className="text-white text-xs sm:text-sm font-bold">{students.length} Upcoming</span>
+                  <span className="text-white text-xs sm:text-sm font-bold">{filteredStudents.length} Upcoming</span>
                 </div>
               </div>
             </div>
@@ -143,31 +155,135 @@ export default function BirthdaysPage() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-4 sm:-mt-6 lg:-mt-8 pb-12 sm:pb-16 lg:pb-20">
 
-        {/* View Mode Toggle - Compact Pill */}
-        <div className="mb-8">
-          <div className="inline-flex bg-white dark:bg-slate-900 rounded-2xl p-1.5 shadow-xl border border-slate-200 dark:border-slate-800">
-            <button
-              onClick={() => setViewMode('list')}
-              className={`px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 ${viewMode === 'list'
-                ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
-                : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
-                }`}
-            >
-              <Filter className="w-4 h-4" />
-              List View
-            </button>
-            <button
-              onClick={() => setViewMode('timeline')}
-              className={`px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 ${viewMode === 'timeline'
-                ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
-                : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
-                }`}
-            >
-              <Clock className="w-4 h-4" />
-              Timeline
-            </button>
+        {/* Enhanced Controls Toolbar */}
+        <div className="mb-6 sm:mb-8 lg:mb-10 -mt-2 relative z-10">
+          <div className="flex flex-col xl:flex-row xl:items-center gap-4 justify-between">
+
+            {/* Search Pill */}
+            <div className="flex-1 max-w-2xl">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-white/20 dark:bg-black/20 rounded-2xl blur-lg transition-all group-hover:bg-white/30 dark:group-hover:bg-black/30"></div>
+                <div className="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl flex items-center p-2 transition-all focus-within:ring-2 focus-within:ring-slate-900 dark:focus-within:ring-white">
+                  <div className="pl-4 pr-3 text-slate-400">
+                    <Search className="w-5 h-5" />
+                  </div>
+                  <input
+                    type="text"
+                    className="flex-1 bg-transparent border-none focus:ring-0 text-slate-900 dark:text-white font-bold placeholder-slate-400 text-sm sm:text-base h-10"
+                    placeholder="Search birthdays by name..."
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                  />
+                  <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800 ml-2">
+                    <button
+                      onClick={() => setShowFilters(!showFilters)}
+                      className={`px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${showFilters
+                        ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white'
+                        : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800'
+                        }`}
+                    >
+                      <Filter className="w-4 h-4" />
+                      Filters
+                    </button>
+                    {(query || days !== 30) && (
+                      <button
+                        onClick={() => {
+                          setQuery('');
+                          setDays(30);
+                        }}
+                        className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all"
+                        title="Clear Filters"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* View Mode Toggle Pill */}
+            <div className="flex items-center gap-4 self-end xl:self-auto">
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="sm:hidden p-4 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white"
+              >
+                <Filter className="w-5 h-5" />
+              </button>
+
+              <div className="bg-white dark:bg-slate-900 rounded-2xl p-1.5 shadow-xl border border-slate-200 dark:border-slate-800 flex items-center">
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`px-4 sm:px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 ${viewMode === 'list'
+                    ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
+                    : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
+                    }`}
+                >
+                  <Users className="w-4 h-4" />
+                  <span className="hidden sm:inline">List View</span>
+                </button>
+                <button
+                  onClick={() => setViewMode('timeline')}
+                  className={`px-4 sm:px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 ${viewMode === 'timeline'
+                    ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
+                    : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
+                    }`}
+                >
+                  <Clock className="w-4 h-4" />
+                  <span className="hidden sm:inline">Timeline</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
+
+        {/* Collapsible Filters Panel */}
+        {showFilters && (
+          <div className="mb-8 animate-fadeIn">
+            <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-6 sm:p-8 shadow-xl border border-slate-200 dark:border-slate-800 relative overflow-hidden">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Time Range Filter */}
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">
+                    <Calendar className="w-4 h-4" />
+                    Time Range
+                  </label>
+                  <div className="flex items-center gap-2">
+                    {[30, 60, 90, 365].map((d) => (
+                      <button
+                        key={d}
+                        onClick={() => setDays(d)}
+                        className={`px-4 py-2 rounded-xl font-bold text-sm transition-all ${days === d
+                          ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-md'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'}`}
+                      >
+                        {d === 365 ? 'Year' : `${d} Days`}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Active Filters Summary */}
+                <div className="col-span-1 sm:col-span-2 lg:col-span-2 flex flex-col justify-end">
+                  {(query || days !== 30) ? (
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                      <div className="flex flex-wrap gap-2 items-center">
+                        <span className="text-xs font-bold text-slate-400 uppercase mr-2">Active:</span>
+                        {days !== 30 && <span className="px-2 py-1 bg-white dark:bg-slate-700 rounded-md text-xs font-bold shadow-sm">Next {days} Days</span>}
+                        {query && <span className="px-2 py-1 bg-white dark:bg-slate-700 rounded-md text-xs font-bold shadow-sm">Search: {query}</span>}
+                      </div>
+                      <button onClick={() => { setQuery(''); setDays(30); }} className="text-xs font-bold text-red-500 hover:underline">Clear All</button>
+                    </div>
+                  ) : (
+                    <div className="h-full flex items-center justify-center text-slate-400 text-sm font-bold italic opacity-50 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl p-4">
+                      No custom filters active (Showing next 30 days)
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Stats Grid - Mobile Scroll / Desktop Grid */}
         <div className="flex overflow-x-auto pb-6 sm:pb-0 sm:grid sm:grid-cols-3 gap-4 sm:gap-6 snap-x snap-mandatory px-4 sm:px-0 -mx-4 sm:mx-0 scrollbar-hide">
@@ -175,7 +291,7 @@ export default function BirthdaysPage() {
             <StatCard
               icon={<PartyPopper className="w-5 h-5 sm:w-6 sm:h-6 text-slate-900 dark:text-white" />}
               label="Total Birthdays"
-              value={students.length}
+              value={filteredStudents.length}
               subtext={`In the next ${days} days`}
             />
           </div>
@@ -183,7 +299,7 @@ export default function BirthdaysPage() {
             <StatCard
               icon={<Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-slate-900 dark:text-white" />}
               label="This Week"
-              value={students.filter(s => getDaysUntil(s.nextBirthday) <= 7).length}
+              value={filteredStudents.filter(s => getDaysUntil(s.nextBirthday) <= 7).length}
               subtext="Upcoming celebrations"
             />
           </div>
@@ -191,7 +307,7 @@ export default function BirthdaysPage() {
             <StatCard
               icon={<Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-slate-900 dark:text-white" />}
               label="Today"
-              value={students.filter(s => getDaysUntil(s.nextBirthday) === 0).length}
+              value={filteredStudents.filter(s => getDaysUntil(s.nextBirthday) === 0).length}
               subtext="Birthdays today"
             />
           </div>
@@ -210,6 +326,20 @@ export default function BirthdaysPage() {
             </div>
             <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2">No Upcoming Birthdays</h3>
             <p className="text-slate-500 dark:text-slate-400 font-medium text-lg">There are no birthdays in the next {days} days.</p>
+          </div>
+        ) : filteredStudents.length === 0 ? (
+          <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-16 text-center shadow-xl border border-slate-200 dark:border-slate-800 animate-fadeIn">
+            <div className="w-24 h-24 bg-slate-100 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Search className="w-12 h-12 text-slate-300 dark:text-slate-600" />
+            </div>
+            <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2">No Matches Found</h3>
+            <p className="text-slate-500 dark:text-slate-400 font-medium text-lg">Your search filters returned no results.</p>
+            <button
+              onClick={() => { setQuery(''); setDays(30); }}
+              className="mt-8 px-8 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black rounded-xl hover:scale-105 transition-transform shadow-lg"
+            >
+              Clear Filters
+            </button>
           </div>
         ) : viewMode === 'timeline' ? (
           /* Timeline View - Redesigned */
@@ -317,7 +447,7 @@ export default function BirthdaysPage() {
             </div >
 
             {
-              students.map((student, index) => {
+              filteredStudents.map((student, index) => {
                 const daysUntil = getDaysUntil(student.nextBirthday)
                 const ageTurning = new Date().getFullYear() - new Date(student.birthday).getFullYear()
                 return (

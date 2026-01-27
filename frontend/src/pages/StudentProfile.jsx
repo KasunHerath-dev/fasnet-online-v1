@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { authService, studentService } from '../services/authService'
+import { User, Mail, Phone, MapPin, GraduationCap, Award, Target, Edit, Clock, X, Info, AlertCircle, TrendingUp, BookOpen } from 'lucide-react'
 
 export default function StudentProfile() {
     const [student, setStudent] = useState(null)
@@ -51,7 +52,6 @@ export default function StudentProfile() {
     const handleSubmitRequest = async (e) => {
         e.preventDefault()
         try {
-            // 1. Handle Direct Name Update
             const nameUpdates = {}
             if (formData.firstName !== student.firstName) nameUpdates.firstName = formData.firstName
             if (formData.lastName !== student.lastName) nameUpdates.lastName = formData.lastName
@@ -61,7 +61,6 @@ export default function StudentProfile() {
                 await studentService.updateMyProfile(nameUpdates)
                 nameUpdated = true
 
-                // Update local user storage
                 const user = authService.getUser()
                 if (user.studentRef) {
                     user.studentRef.firstName = formData.firstName
@@ -70,13 +69,10 @@ export default function StudentProfile() {
                 }
             }
 
-            // 2. Handle Profile Request (Other Fields)
             const otherUpdates = { ...formData }
             delete otherUpdates.firstName
             delete otherUpdates.lastName
 
-            // Check if any other fields changed
-            // Helper to check equality loosely
             const hasOtherChanges = Object.keys(otherUpdates).some(key => {
                 const original = student[key] || ''
                 const current = otherUpdates[key] || ''
@@ -117,164 +113,217 @@ export default function StudentProfile() {
 
     const InfoField = ({ label, value, isMissing }) => (
         <div className="group">
-            <dt className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">{label}</dt>
-            <dd className={`text-base ${isMissing ? 'text-red-500 italic' : 'text-gray-900'}`}>
+            <dt className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">{label}</dt>
+            <dd className={`text-sm font-medium ${isMissing ? 'text-red-500 dark:text-red-400 italic' : 'text-slate-900 dark:text-white'}`}>
                 {value || 'Not Provided'}
-                {isMissing && <span className="ml-2 text-xs bg-red-100 text-red-700 px-2 py-1 rounded">Missing</span>}
+                {isMissing && <span className="ml-2 text-xs bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 px-2 py-0.5 rounded-lg">Missing</span>}
             </dd>
         </div>
     )
 
     return (
-        <div className="p-4 md:p-6 lg:p-8 animate-fadeIn max-w-[1400px] mx-auto space-y-4 md:space-y-6">
-            {/* Header */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 p-4 md:p-6">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div>
-                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">My Profile</h1>
-                        <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 mt-1">View and manage your personal information</p>
+        <div className="min-h-screen bg-slate-50 dark:bg-black font-display text-slate-900 dark:text-white transition-colors duration-500">
+
+            {/* Enhanced Hero Section - Command Center Style */}
+            <div className="relative w-full overflow-hidden pb-32 sm:pb-20 lg:pb-24">
+                <div className="absolute inset-0 bg-black">
+                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
+                </div>
+
+                <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 animate-pulse"></div>
+                <div className="absolute bottom-0 left-0 w-80 h-80 bg-slate-700 opacity-10 rounded-full blur-3xl translate-y-1/4 -translate-x-1/4 animate-pulse" style={{ animationDelay: '1s' }}></div>
+                <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-slate-600 opacity-5 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+                    <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 lg:gap-10">
+                        <div className="flex-1 space-y-4">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full border border-white/10 shadow-lg w-fit">
+                                <User className="w-4 h-4 text-blue-300" />
+                                <span className="text-white text-xs font-bold tracking-wide uppercase">Profile</span>
+                            </div>
+
+                            <div className="space-y-2">
+                                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-none tracking-tight">
+                                    My
+                                    <span className="block mt-1 text-slate-500">
+                                        Profile
+                                    </span>
+                                </h1>
+                                <p className="text-sm sm:text-base lg:text-lg text-white/85 font-medium max-w-xl leading-relaxed">
+                                    View and manage your personal information
+                                </p>
+                            </div>
+
+                            <div className="flex flex-wrap gap-2 sm:gap-3 pt-2">
+                                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
+                                    <span className="relative flex h-2 w-2">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                    </span>
+                                    <span className="text-white text-xs sm:text-sm font-bold">Live System</span>
+                                </div>
+                                <button
+                                    onClick={handleEditClick}
+                                    disabled={!!pendingRequest}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${pendingRequest
+                                            ? 'bg-yellow-500/20 text-yellow-300 cursor-not-allowed border border-yellow-500/30'
+                                            : 'bg-white/10 text-white hover:bg-white/20 border border-white/20 hover:scale-105 active:scale-95'
+                                        }`}
+                                >
+                                    {pendingRequest ? (
+                                        <>
+                                            <Clock className="w-4 h-4" />
+                                            Update Pending
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Edit className="w-4 h-4" />
+                                            Request Edit
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <button
-                        onClick={handleEditClick}
-                        disabled={!!pendingRequest}
-                        className={`min-h-[44px] px-4 md:px-6 py-2.5 md:py-3 rounded-xl text-sm md:text-base font-medium transition-all ${pendingRequest
-                            ? 'bg-yellow-100 text-yellow-700 cursor-not-allowed dark:bg-yellow-900/50 dark:text-yellow-400'
-                            : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg hover:shadow-xl active:scale-95'
-                            }`}
-                    >
-                        {pendingRequest ? '⏳ Update Pending' : '✏️ Request Edit'}
-                    </button>
                 </div>
             </div>
 
-            {/* Pending Request Alert */}
-            {pendingRequest && (
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-200 p-4 md:p-5 rounded-xl md:rounded-2xl flex items-start gap-3 md:gap-4 animate-fadeIn">
-                    <span className="text-2xl md:text-3xl flex-shrink-0">⏳</span>
-                    <div className="flex-1">
-                        <p className="font-bold text-base md:text-lg">Profile Update Pending</p>
-                        <p className="text-xs md:text-sm mt-1">Your profile change request is awaiting admin approval. You'll be notified once it's reviewed.</p>
+            {/* Main Content */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 sm:-mt-8 pb-12 sm:pb-20">
+
+                {/* Pending Request Alert */}
+                {pendingRequest && (
+                    <div className="bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-200 dark:border-yellow-800 rounded-2xl p-4 md:p-5 flex items-start gap-3 md:gap-4 mb-6 sm:mb-8">
+                        <Clock className="w-6 h-6 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
+                        <div className="flex-1">
+                            <p className="font-black text-base text-yellow-800 dark:text-yellow-200">Profile Update Pending</p>
+                            <p className="text-sm text-yellow-700 dark:text-yellow-300 mt-1 font-medium">Your profile change request is awaiting admin approval. You'll be notified once it's reviewed.</p>
+                        </div>
+                    </div>
+                )}
+
+                {/* Profile Summary Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                    {/* Level Card */}
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center">
+                                <TrendingUp className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                            </div>
+                        </div>
+                        <p className="text-3xl font-black text-slate-900 dark:text-white mb-1">
+                            Level {student?.level || '-'}
+                        </p>
+                        <p className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                            Current Level
+                        </p>
+                    </div>
+
+                    {/* Batch Card */}
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+                                <BookOpen className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                            </div>
+                        </div>
+                        <p className="text-3xl font-black text-slate-900 dark:text-white mb-1">
+                            {student?.batchYear}
+                        </p>
+                        <p className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                            Batch Year
+                        </p>
+                    </div>
+
+                    {/* GPA Card */}
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center">
+                                <Award className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+                            </div>
+                        </div>
+                        <p className="text-3xl font-black text-slate-900 dark:text-white mb-1">
+                            {student?.cumulativeGPA?.toFixed(2) || '0.00'}
+                        </p>
+                        <p className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                            Cumulative GPA
+                        </p>
+                    </div>
+
+                    {/* Credits Card */}
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
+                                <Target className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                            </div>
+                        </div>
+                        <p className="text-3xl font-black text-slate-900 dark:text-white mb-1">
+                            {student?.totalCreditsEarned || 0}
+                        </p>
+                        <p className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                            Credits Earned
+                        </p>
                     </div>
                 </div>
-            )}
 
-            {/* Profile Card */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden">
-                <div className="md:flex">
-                    {/* Sidebar - Full Area Design */}
-                    <div className="md:w-1/3 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 p-6 md:p-8 text-white flex flex-col justify-between relative overflow-hidden min-h-[500px] md:min-h-[600px]">
-                        {/* Decorative Elements */}
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
-                        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
-                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-white/5 rounded-full"></div>
+                {/* Information Sections */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
 
-                        {/* Top Section - Initial */}
-                        <div className="relative z-10">
-                            <div className="w-20 h-20 md:w-24 md:h-24 bg-white/20 backdrop-blur-md rounded-xl md:rounded-2xl flex items-center justify-center text-4xl md:text-5xl font-bold border-2 border-white/30 shadow-xl mb-4">
-                                {student?.fullName?.charAt(0) || 'S'}
+                    {/* Personal Information */}
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 md:p-8">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+                                <User className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                             </div>
+                            <h3 className="text-xl font-black text-slate-900 dark:text-white">Personal Information</h3>
                         </div>
-
-                        {/* Middle Section - Student Info */}
-                        <div className="relative z-10 flex-1 flex flex-col justify-center space-y-3 md:space-y-4">
-                            <div>
-                                <h2 className="text-2xl md:text-3xl font-bold mb-2 leading-tight">
-                                    {(student.firstName && student.lastName)
-                                        ? `${student.firstName} ${student.lastName}`
-                                        : student.fullName}
-                                </h2>
-                                <p className="text-white/90 text-base md:text-lg font-medium">{student?.registrationNumber}</p>
-                            </div>
-
-                            <div className="h-px bg-white/20 my-2"></div>
-
-                            <div className="space-y-2 md:space-y-3">
-                                <div className="flex items-center gap-2 md:gap-3">
-                                    <span className="text-xl md:text-2xl">🎓</span>
-                                    <div className="text-left">
-                                        <p className="text-xs text-white/70 uppercase tracking-wide">Batch Year</p>
-                                        <p className="text-sm md:text-base font-semibold">{student?.batchYear}</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-2 md:gap-3">
-                                    <span className="text-xl md:text-2xl">📚</span>
-                                    <div className="text-left">
-                                        <p className="text-xs text-white/70 uppercase tracking-wide">Current Level</p>
-                                        <p className="text-sm md:text-base font-semibold">Level {student?.level}</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-2 md:gap-3">
-                                    <span className="text-xl md:text-2xl">🎯</span>
-                                    <div className="text-left">
-                                        <p className="text-xs text-white/70 uppercase tracking-wide">Programme</p>
-                                        <p className="text-xs md:text-sm font-semibold">{student?.course || 'B.Sc. Applied Sciences'}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Bottom Section - Stats */}
-                        <div className="relative z-10 grid grid-cols-2 gap-2 md:gap-3">
-                            <div className="bg-white/10 backdrop-blur-sm rounded-lg md:rounded-xl p-2.5 md:p-3 border border-white/20">
-                                <p className="text-xs text-white/70 uppercase tracking-wide mb-1">GPA</p>
-                                <p className="text-xl md:text-2xl font-bold">{student?.cumulativeGPA?.toFixed(2) || '0.00'}</p>
-                            </div>
-                            <div className="bg-white/10 backdrop-blur-sm rounded-lg md:rounded-xl p-2.5 md:p-3 border border-white/20">
-                                <p className="text-xs text-white/70 uppercase tracking-wide mb-1">Credits</p>
-                                <p className="text-xl md:text-2xl font-bold">{student?.totalCreditsEarned || 0}</p>
-                            </div>
+                        <div className="grid grid-cols-1 gap-6">
+                            <InfoField label="Full Name (Official)" value={student.fullName} />
+                            <InfoField label="First Name" value={student.firstName} isMissing={!student.firstName} />
+                            <InfoField label="Last Name" value={student.lastName} isMissing={!student.lastName} />
+                            <InfoField label="Registration Number" value={student.registrationNumber} />
+                            <InfoField label="NIC Number" value={student.nicNumber} isMissing={!student.nicNumber} />
+                            <InfoField label="Gender" value={student.gender} isMissing={!student.gender} />
+                            <InfoField
+                                label="Birthday"
+                                value={student.birthday ? new Date(student.birthday).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : null}
+                                isMissing={!student.birthday}
+                            />
                         </div>
                     </div>
 
-                    {/* Details Area */}
-                    <div className="md:w-2/3 p-6 md:p-8">
-                        {/* Personal Details */}
-                        <div className="mb-6 md:mb-8">
-                            <h3 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6 pb-3 border-b-2 border-gray-100 dark:border-slate-700 flex items-center gap-2">
-                                <span>👤</span> Personal Information
-                            </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                                <InfoField label="First Name" value={student.firstName} isMissing={!student.firstName} />
-                                <InfoField label="Last Name" value={student.lastName} isMissing={!student.lastName} />
-                                <InfoField label="Full Name (Official)" value={student.fullName} />
-                                <InfoField label="NIC Number" value={student.nicNumber} isMissing={!student.nicNumber} />
-                                <InfoField label="Gender" value={student.gender} isMissing={!student.gender} />
-                                <InfoField
-                                    label="Birthday"
-                                    value={student.birthday ? new Date(student.birthday).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : null}
-                                    isMissing={!student.birthday}
-                                />
+                    {/* Contact Information */}
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 md:p-8">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="w-10 h-10 rounded-xl bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
+                                <Mail className="w-6 h-6 text-green-600 dark:text-green-400" />
                             </div>
+                            <h3 className="text-xl font-black text-slate-900 dark:text-white">Contact Details</h3>
                         </div>
-
-                        {/* Contact Information */}
-                        <div className="mb-8">
-                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 pb-3 border-b-2 border-gray-100 dark:border-slate-700 flex items-center gap-2">
-                                <span>📞</span> Contact Details
-                            </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <InfoField label="Email" value={student.email} isMissing={!student.email} />
-                                <InfoField label="Phone Number" value={student.contactNumber} isMissing={!student.contactNumber} />
-                                <InfoField label="WhatsApp" value={student.whatsapp} isMissing={!student.whatsapp} />
-                                <InfoField label="Address" value={student.address} isMissing={!student.address} />
-                                <InfoField label="Nearest City" value={student.nearestCity} isMissing={!student.nearestCity} />
-                                <InfoField label="District" value={student.district} isMissing={!student.district} />
-                            </div>
+                        <div className="grid grid-cols-1 gap-6">
+                            <InfoField label="Email" value={student.email} isMissing={!student.email} />
+                            <InfoField label="Phone Number" value={student.contactNumber} isMissing={!student.contactNumber} />
+                            <InfoField label="WhatsApp" value={student.whatsapp} isMissing={!student.whatsapp} />
+                            <InfoField label="Address" value={student.address} isMissing={!student.address} />
+                            <InfoField label="Nearest City" value={student.nearestCity} isMissing={!student.nearestCity} />
+                            <InfoField label="District" value={student.district} isMissing={!student.district} />
                         </div>
+                    </div>
 
-                        {/* Academic Information */}
-                        <div>
-                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 pb-3 border-b-2 border-gray-100 dark:border-slate-700 flex items-center gap-2">
-                                <span>🎓</span> Academic Information
-                            </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <InfoField label="Degree Programme" value={student.degreeProgramme} isMissing={!student.degreeProgramme} />
-                                <InfoField label="Combination" value={student.combination} isMissing={!student.combination} />
-                                <InfoField label="Academic Status" value={student.academicStatus || 'Regular'} />
-                                <InfoField label="Cumulative GPA" value={student.cumulativeGPA?.toFixed(2)} />
-                                <InfoField label="Credits Earned" value={student.totalCreditsEarned?.toString()} />
-                                <InfoField label="AL Z-Score" value={student.alZScore?.toString()} isMissing={!student.alZScore} />
+                    {/* Academic Information */}
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 md:p-8 lg:col-span-2">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center">
+                                <GraduationCap className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                             </div>
+                            <h3 className="text-xl font-black text-slate-900 dark:text-white">Academic Information</h3>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <InfoField label="Degree Programme" value={student.degreeProgramme} isMissing={!student.degreeProgramme} />
+                            <InfoField label="Combination" value={student.combination} isMissing={!student.combination} />
+                            <InfoField label="Academic Status" value={student.academicStatus || 'Regular'} />
+                            <InfoField label="Cumulative GPA" value={student.cumulativeGPA?.toFixed(2)} />
+                            <InfoField label="Credits Earned" value={student.totalCreditsEarned?.toString()} />
+                            <InfoField label="AL Z-Score" value={student.alZScore?.toString()} isMissing={!student.alZScore} />
                         </div>
                     </div>
                 </div>
@@ -282,118 +331,126 @@ export default function StudentProfile() {
 
             {/* Edit Modal */}
             {showEditModal && (
-                <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fadeIn">
-                    <div className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-2xl shadow-2xl animate-scaleIn overflow-hidden max-h-[90vh] flex flex-col">
-                        <div className="p-6 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-slate-700 dark:to-slate-700 flex justify-between items-center">
-                            <div>
-                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Request Profile Update</h3>
-                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Submit changes for admin approval</p>
+                <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+                    <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+                        <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+                                    <Edit className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                </div>
+                                <div>
+                                    <h3 className="text-2xl font-black text-slate-900 dark:text-white">Request Profile Update</h3>
+                                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Submit changes for admin approval</p>
+                                </div>
                             </div>
                             <button
                                 onClick={() => setShowEditModal(false)}
-                                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/50 dark:hover:bg-black/20 transition-colors"
+                                className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                             >
-                                ✕
+                                <X className="w-5 h-5 text-slate-500 dark:text-slate-400" />
                             </button>
                         </div>
 
                         <form onSubmit={handleSubmitRequest} className="p-6 space-y-6 overflow-y-auto flex-1">
                             <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-4 rounded-xl flex items-start gap-3">
-                                <span className="text-2xl">ℹ️</span>
+                                <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
                                 <p className="text-sm text-blue-800 dark:text-blue-200">
                                     <strong>Note:</strong> All changes require administrator approval before they appear on your profile.
                                 </p>
                             </div>
 
-                            <h4 className="font-bold text-gray-900 dark:text-white mb-4 text-lg">Personal Details</h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">First Name</label>
-                                    <input
-                                        type="text"
-                                        className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                        value={formData.firstName}
-                                        onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                                        placeholder="Enter your first name"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Last Name</label>
-                                    <input
-                                        type="text"
-                                        className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                        value={formData.lastName}
-                                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                                        placeholder="Enter your last name"
-                                    />
-                                </div>
-                            </div>
-
-                            <h4 className="font-bold text-gray-900 dark:text-white mb-4 text-lg">Contact Information</h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
-                                    <input
-                                        type="email"
-                                        className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                        value={formData.email}
-                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone Number</label>
-                                    <input
-                                        type="text"
-                                        className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                        value={formData.contactNumber}
-                                        onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">WhatsApp</label>
-                                    <input
-                                        type="text"
-                                        className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                        value={formData.whatsapp}
-                                        onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Address</label>
-                                    <input
-                                        type="text"
-                                        className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                        value={formData.address}
-                                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nearest City</label>
-                                    <input
-                                        type="text"
-                                        className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                        value={formData.nearestCity}
-                                        onChange={(e) => setFormData({ ...formData, nearestCity: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">District</label>
-                                    <input
-                                        type="text"
-                                        className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                        value={formData.district}
-                                        onChange={(e) => setFormData({ ...formData, district: e.target.value })}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Reason */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <h4 className="font-bold text-slate-900 dark:text-white mb-4 text-lg">Personal Details</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">First Name</label>
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-slate-900 dark:focus:ring-white focus:border-transparent transition-all"
+                                            value={formData.firstName}
+                                            onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                                            placeholder="Enter your first name"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Last Name</label>
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-slate-900 dark:focus:ring-white focus:border-transparent transition-all"
+                                            value={formData.lastName}
+                                            onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                                            placeholder="Enter your last name"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 className="font-bold text-slate-900 dark:text-white mb-4 text-lg">Contact Information</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Email</label>
+                                        <input
+                                            type="email"
+                                            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-slate-900 dark:focus:ring-white focus:border-transparent transition-all"
+                                            value={formData.email}
+                                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Phone Number</label>
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-slate-900 dark:focus:ring-white focus:border-transparent transition-all"
+                                            value={formData.contactNumber}
+                                            onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">WhatsApp</label>
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-slate-900 dark:focus:ring-white focus:border-transparent transition-all"
+                                            value={formData.whatsapp}
+                                            onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Address</label>
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-slate-900 dark:focus:ring-white focus:border-transparent transition-all"
+                                            value={formData.address}
+                                            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Nearest City</label>
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-slate-900 dark:focus:ring-white focus:border-transparent transition-all"
+                                            value={formData.nearestCity}
+                                            onChange={(e) => setFormData({ ...formData, nearestCity: e.target.value })}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">District</label>
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-slate-900 dark:focus:ring-white focus:border-transparent transition-all"
+                                            value={formData.district}
+                                            onChange={(e) => setFormData({ ...formData, district: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
                                     Reason for Change <span className="text-red-500">*</span>
                                 </label>
                                 <textarea
-                                    className="w-full px-4 py-3 border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                                    className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-slate-900 dark:focus:ring-white focus:border-transparent transition-all"
                                     rows="3"
                                     placeholder="e.g., Updated contact information, moved to new address, etc."
                                     value={requestReason}
@@ -402,17 +459,17 @@ export default function StudentProfile() {
                                 ></textarea>
                             </div>
 
-                            <div className="pt-4 flex justify-end gap-3 border-t border-gray-100 dark:border-slate-700">
+                            <div className="pt-4 flex justify-end gap-3 border-t border-slate-200 dark:border-slate-800">
                                 <button
                                     type="button"
                                     onClick={() => setShowEditModal(false)}
-                                    className="px-6 py-3 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-slate-600 font-medium transition-colors"
+                                    className="px-6 py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 font-bold transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-medium shadow-lg hover:shadow-xl transition-all"
+                                    className="px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl hover:bg-black dark:hover:bg-slate-100 font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95"
                                 >
                                     Submit Request
                                 </button>
@@ -421,8 +478,6 @@ export default function StudentProfile() {
                     </div>
                 </div>
             )}
-
-
         </div>
     )
 }

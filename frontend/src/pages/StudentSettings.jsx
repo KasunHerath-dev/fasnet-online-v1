@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { authService } from '../services/authService'
+import { Settings, Lock, Zap, Shield, Bell, Moon, BarChart3, AlertTriangle, CheckCircle, XCircle } from 'lucide-react'
 
 export default function StudentSettings() {
     const [formData, setFormData] = useState({
@@ -111,178 +112,237 @@ export default function StudentSettings() {
     }
 
     return (
-        <div className="p-4 md:p-6 lg:p-8 animate-fadeIn max-w-[1400px] mx-auto space-y-4 md:space-y-6">
-            {/* Header */}
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl md:rounded-3xl shadow-xl p-6 md:p-8 text-white relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32"></div>
-                <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -ml-24 -mb-24"></div>
+        <div className="min-h-screen bg-slate-50 dark:bg-black font-display text-slate-900 dark:text-white transition-colors duration-500">
 
-                <div className="relative z-10 flex items-center gap-3 md:gap-4">
-                    <span className="text-4xl md:text-5xl">⚙️</span>
-                    <div>
-                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">Settings</h1>
-                        <p className="text-sm md:text-base text-gray-400 mt-1">Manage your account security and preferences</p>
+            {/* Enhanced Hero Section - Command Center Style */}
+            <div className="relative w-full overflow-hidden pb-32 sm:pb-20 lg:pb-24">
+                {/* Animated gradient background */}
+                <div className="absolute inset-0 bg-black">
+                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
+                </div>
+
+                {/* Floating orbs */}
+                <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 animate-pulse"></div>
+                <div className="absolute bottom-0 left-0 w-80 h-80 bg-slate-700 opacity-10 rounded-full blur-3xl translate-y-1/4 -translate-x-1/4 animate-pulse" style={{ animationDelay: '1s' }}></div>
+                <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-slate-600 opacity-5 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+                    <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 lg:gap-10">
+
+                        {/* Left side - Title & Description */}
+                        <div className="flex-1 space-y-4">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full border border-white/10 shadow-lg w-fit">
+                                <Settings className="w-4 h-4 text-blue-300" />
+                                <span className="text-white text-xs font-bold tracking-wide uppercase">Settings</span>
+                            </div>
+
+                            <div className="space-y-2">
+                                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-none tracking-tight">
+                                    Account
+                                    <span className="block mt-1 text-slate-500">
+                                        Settings
+                                    </span>
+                                </h1>
+                                <p className="text-sm sm:text-base lg:text-lg text-white/85 font-medium max-w-xl leading-relaxed">
+                                    Manage your account security and preferences
+                                </p>
+                            </div>
+
+                            {/* Quick stats badges */}
+                            <div className="flex flex-wrap gap-2 sm:gap-3 pt-2">
+                                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
+                                    <span className="relative flex h-2 w-2">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                    </span>
+                                    <span className="text-white text-xs sm:text-sm font-bold">Live System</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
-                {/* Password Change Card */}
-                <div className="lg:col-span-2 bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-                    <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
-                        <span className="text-xl md:text-2xl">🔐</span>
-                        <h2 className="text-lg md:text-xl font-bold text-gray-900">Change Password</h2>
-                    </div>
+            {/* Main Content */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 sm:-mt-8 pb-12 sm:pb-20">
 
-                    {alert.message && (
-                        <div className={`p-4 rounded-xl mb-6 ${alert.type === 'success'
-                            ? 'bg-green-50 text-green-700 border border-green-200'
-                            : 'bg-red-50 text-red-700 border border-red-200'
-                            }`}>
-                            <div className="flex items-center gap-2">
-                                <span>{alert.type === 'success' ? '✅' : '⚠️'}</span>
-                                <p className="font-medium">{alert.message}</p>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+                    {/* Password Change Card */}
+                    <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 md:p-8">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="w-10 h-10 rounded-xl bg-red-50 dark:bg-red-900/20 flex items-center justify-center">
+                                <Lock className="w-6 h-6 text-red-600 dark:text-red-400" />
                             </div>
-                        </div>
-                    )}
-
-                    <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6 max-w-xl">
-                        <div>
-                            <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">Current Password</label>
-                            <input
-                                type="password"
-                                name="currentPassword"
-                                value={formData.currentPassword}
-                                onChange={handleChange}
-                                required
-                                className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none"
-                                placeholder="Enter current password"
-                            />
+                            <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white">Change Password</h2>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                            <div>
-                                <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">New Password</label>
-                                <input
-                                    type="password"
-                                    name="newPassword"
-                                    value={formData.newPassword}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none"
-                                    placeholder="Enter new password"
-                                />
-                                <p className="text-xs text-gray-500 mt-2">
-                                    Min 6 chars, 1 uppercase, 1 number
-                                </p>
-                            </div>
-
-                            <div>
-                                <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">Confirm New Password</label>
-                                <input
-                                    type="password"
-                                    name="confirmPassword"
-                                    value={formData.confirmPassword}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none"
-                                    placeholder="Confirm new password"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="pt-4">
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className={`min-h-[44px] px-6 md:px-8 py-2.5 md:py-3 text-sm md:text-base rounded-xl bg-gray-900 text-white font-bold hover:bg-black transition-colors shadow-lg shadow-gray-200 flex items-center gap-2 active:scale-95 ${loading ? 'opacity-70 cursor-not-allowed' : ''
-                                    }`}
-                            >
-                                {loading ? (
-                                    <>
-                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                        Updating...
-                                    </>
+                        {alert.message && (
+                            <div className={`p-4 rounded-xl mb-6 flex items-center gap-3 ${alert.type === 'success'
+                                ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
+                                : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800'
+                                }`}>
+                                {alert.type === 'success' ? (
+                                    <CheckCircle className="w-5 h-5 flex-shrink-0" />
                                 ) : (
-                                    <>
-                                        Update Password
-                                    </>
+                                    <XCircle className="w-5 h-5 flex-shrink-0" />
                                 )}
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                                <p className="font-bold text-sm">{alert.message}</p>
+                            </div>
+                        )}
 
-                {/* Preferences Sidebar */}
-                <div className="space-y-4 md:space-y-6">
-                    {/* General Preferences */}
-                    <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-100 p-4 md:p-6">
-                        <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
-                            <span className="text-xl md:text-2xl">⚡</span>
-                            <h2 className="text-lg md:text-xl font-bold text-gray-900">Preferences</h2>
-                        </div>
+                        <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Current Password</label>
+                                <input
+                                    type="password"
+                                    name="currentPassword"
+                                    value={formData.currentPassword}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full px-4 py-3 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:border-slate-900 dark:focus:border-white focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/10 transition-all outline-none"
+                                    placeholder="Enter current password"
+                                />
+                            </div>
 
-                        <div className="space-y-4">
-                            <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer" onClick={() => handlePrefChange('emailNotifications')}>
-                                <div className="flex items-center gap-3">
-                                    <span className="text-xl">🔔</span>
-                                    <div>
-                                        <p className="font-semibold text-gray-900">Email Notifications</p>
-                                        <p className="text-xs text-gray-500">Receive academic updates</p>
-                                    </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">New Password</label>
+                                    <input
+                                        type="password"
+                                        name="newPassword"
+                                        value={formData.newPassword}
+                                        onChange={handleChange}
+                                        required
+                                        className="w-full px-4 py-3 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:border-slate-900 dark:focus:border-white focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/10 transition-all outline-none"
+                                        placeholder="Enter new password"
+                                    />
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 font-medium">
+                                        Min 6 chars, 1 uppercase, 1 number
+                                    </p>
                                 </div>
-                                <div className={`w-12 h-6 rounded-full p-1 transition-colors ${preferences.emailNotifications ? 'bg-green-500' : 'bg-gray-300'}`}>
-                                    <div className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform ${preferences.emailNotifications ? 'translate-x-6' : 'translate-x-0'}`}></div>
+
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Confirm New Password</label>
+                                    <input
+                                        type="password"
+                                        name="confirmPassword"
+                                        value={formData.confirmPassword}
+                                        onChange={handleChange}
+                                        required
+                                        className="w-full px-4 py-3 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:border-slate-900 dark:focus:border-white focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/10 transition-all outline-none"
+                                        placeholder="Confirm new password"
+                                    />
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer" onClick={() => handlePrefChange('darkMode')}>
-                                <div className="flex items-center gap-3">
-                                    <span className="text-xl">🌙</span>
-                                    <div>
-                                        <p className="font-semibold text-gray-900">Dark Mode</p>
-                                        <p className="text-xs text-gray-500">Easier on the eyes</p>
-                                    </div>
-                                </div>
-                                <div className={`w-12 h-6 rounded-full p-1 transition-colors ${preferences.darkMode ? 'bg-indigo-500' : 'bg-gray-300'}`}>
-                                    <div className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform ${preferences.darkMode ? 'translate-x-6' : 'translate-x-0'}`}></div>
-                                </div>
+                            <div className="pt-4">
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className={`px-8 py-3 text-sm rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold hover:bg-black dark:hover:bg-slate-100 transition-all shadow-lg flex items-center gap-2 ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105 active:scale-95'
+                                        }`}
+                                >
+                                    {loading ? (
+                                        <>
+                                            <div className="w-5 h-5 border-2 border-white/30 dark:border-slate-900/30 border-t-white dark:border-t-slate-900 rounded-full animate-spin"></div>
+                                            Updating...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Lock className="w-4 h-4" />
+                                            Update Password
+                                        </>
+                                    )}
+                                </button>
                             </div>
-                        </div>
+                        </form>
                     </div>
 
-                    {/* Privacy Settings */}
-                    <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-100 p-4 md:p-6">
-                        <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
-                            <span className="text-xl md:text-2xl">🛡️</span>
-                            <h2 className="text-lg md:text-xl font-bold text-gray-900">Privacy & Data</h2>
-                        </div>
-
-                        <div className="space-y-4">
-                            <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer" onClick={() => handlePrefChange('showGPA')}>
-                                <div className="flex items-center gap-3">
-                                    <span className="text-xl">📊</span>
-                                    <div>
-                                        <p className="font-semibold text-gray-900">Show GPA on Leaderboard</p>
-                                        <p className="text-xs text-gray-500">Visible to other students</p>
-                                    </div>
+                    {/* Preferences Sidebar */}
+                    <div className="space-y-6 sm:space-y-8">
+                        {/* General Preferences */}
+                        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
+                                    <Zap className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                                 </div>
-                                <div className={`w-12 h-6 rounded-full p-1 transition-colors ${preferences.showGPA ? 'bg-blue-500' : 'bg-gray-300'}`}>
-                                    <div className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform ${preferences.showGPA ? 'translate-x-6' : 'translate-x-0'}`}></div>
-                                </div>
+                                <h2 className="text-xl font-black text-slate-900 dark:text-white">Preferences</h2>
                             </div>
 
-                            <div className="p-4 rounded-xl bg-red-50 border border-red-100 mt-4 md:mt-6">
-                                <p className="text-xs md:text-sm font-bold text-red-800 mb-2">Request Data Deletion</p>
-                                <p className="text-xs text-red-600 mb-3">
-                                    Permanently delete your account and all associated data. This action cannot be undone.
-                                </p>
-                                <button
-                                    onClick={handleRequestDeletion}
-                                    className="min-h-[44px] text-xs md:text-sm bg-red-100 hover:bg-red-200 text-red-700 px-3 py-2 rounded-lg font-bold transition-colors w-full active:scale-95"
-                                >
-                                    Request Deletion
-                                </button>
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer border border-slate-200 dark:border-slate-700" onClick={() => handlePrefChange('emailNotifications')}>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-lg bg-white dark:bg-slate-900 flex items-center justify-center">
+                                            <Bell className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-slate-900 dark:text-white text-sm">Email Notifications</p>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400">Receive academic updates</p>
+                                        </div>
+                                    </div>
+                                    <div className={`w-12 h-6 rounded-full p-1 transition-colors ${preferences.emailNotifications ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
+                                        <div className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform ${preferences.emailNotifications ? 'translate-x-6' : 'translate-x-0'}`}></div>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer border border-slate-200 dark:border-slate-700" onClick={() => handlePrefChange('darkMode')}>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-lg bg-white dark:bg-slate-900 flex items-center justify-center">
+                                            <Moon className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-slate-900 dark:text-white text-sm">Dark Mode</p>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400">Easier on the eyes</p>
+                                        </div>
+                                    </div>
+                                    <div className={`w-12 h-6 rounded-full p-1 transition-colors ${preferences.darkMode ? 'bg-indigo-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
+                                        <div className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform ${preferences.darkMode ? 'translate-x-6' : 'translate-x-0'}`}></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Privacy Settings */}
+                        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+                                    <Shield className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                                </div>
+                                <h2 className="text-xl font-black text-slate-900 dark:text-white">Privacy & Data</h2>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer border border-slate-200 dark:border-slate-700" onClick={() => handlePrefChange('showGPA')}>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-lg bg-white dark:bg-slate-900 flex items-center justify-center">
+                                            <BarChart3 className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-slate-900 dark:text-white text-sm">Show GPA on Leaderboard</p>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400">Visible to other students</p>
+                                        </div>
+                                    </div>
+                                    <div className={`w-12 h-6 rounded-full p-1 transition-colors ${preferences.showGPA ? 'bg-blue-500' : 'bg-slate-300 dark:bg-slate-600'}`}>
+                                        <div className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform ${preferences.showGPA ? 'translate-x-6' : 'translate-x-0'}`}></div>
+                                    </div>
+                                </div>
+
+                                <div className="p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 mt-6">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400" />
+                                        <p className="text-sm font-black text-red-800 dark:text-red-300">Danger Zone</p>
+                                    </div>
+                                    <p className="text-xs text-red-600 dark:text-red-400 mb-3 font-medium">
+                                        Permanently delete your account and all associated data. This action cannot be undone.
+                                    </p>
+                                    <button
+                                        onClick={handleRequestDeletion}
+                                        className="text-sm bg-red-600 dark:bg-red-700 hover:bg-red-700 dark:hover:bg-red-800 text-white px-4 py-2.5 rounded-xl font-bold transition-all w-full flex items-center justify-center gap-2 hover:scale-105 active:scale-95"
+                                    >
+                                        <AlertTriangle className="w-4 h-4" />
+                                        Request Account Deletion
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
