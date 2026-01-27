@@ -93,26 +93,27 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-stitch-bg-light dark:bg-stitch-bg-dark font-display text-slate-900 dark:text-white pb-20 transition-colors duration-300">
-      <div className="max-w-[1600px] mx-auto space-y-8 animate-fadeIn p-4 md:p-8">
+      <div className="relative flex flex-col w-full min-h-screen">
 
-        {/* Floating Hero Section */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-stitch-blue via-[#6b13ec] to-stitch-pink rounded-[2.5rem] p-8 md:p-12 shadow-2xl z-10">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-80 h-80 bg-stitch-blue opacity-20 rounded-full translate-y-1/4 -translate-x-1/4 blur-2xl"></div>
+        {/* Hero Section - Dashboard Style */}
+        <div className="relative w-full h-[280px] bg-gradient-to-br from-stitch-blue via-[#6b13ec] to-stitch-pink overflow-hidden rounded-b-[2.5rem] shadow-2xl z-10">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-stitch-blue opacity-20 rounded-full translate-y-1/4 -translate-x-1/4 blur-2xl"></div>
 
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-6">
-            <div className="w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-lg">
-              <Settings className="w-10 h-10 text-white" />
-            </div>
-            <div>
-              <h1 className="text-white text-4xl md:text-5xl font-black leading-tight tracking-tight drop-shadow-sm">Admin Settings</h1>
-              <p className="text-white/80 text-lg font-medium mt-1">System configuration and management</p>
+          <div className="relative flex flex-col justify-end h-full px-6 pb-12 pt-12 z-10 max-w-7xl mx-auto w-full">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-lg">
+                <Settings className="w-7 h-7 text-white" />
+              </div>
+              <div>
+                <h1 className="text-white text-4xl md:text-5xl font-black leading-tight tracking-tight drop-shadow-sm">Admin Settings</h1>
+                <p className="text-white/80 text-sm md:text-base font-medium mt-1">System configuration and management</p>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="space-y-8">
-
+        <div className="max-w-7xl mx-auto w-full px-4 md:px-6 z-20 -mt-8 space-y-8">
 
           {/* Tab Navigation */}
           <div className="bg-white dark:bg-stitch-card-dark rounded-2xl p-2 shadow-lg border border-slate-100 dark:border-stitch-card-border overflow-x-auto scrollbar-hide">
