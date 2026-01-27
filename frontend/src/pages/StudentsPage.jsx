@@ -75,122 +75,105 @@ export default function StudentsPage() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-black font-display text-slate-900 dark:text-white transition-colors duration-500">
 
-      {/* Enhanced Hero Section - Command Center Style (Ash Theme) */}
-      <div className="relative w-full bg-black overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem] shadow-2xl shadow-slate-900/50 border-b border-slate-800 pb-12 sm:pb-24">
-        {/* Abstract Background */}
-        <div className="absolute inset-0 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/50 via-black to-slate-950"></div>
+      {/*      {/* Enhanced Hero Section - Command Center Style */}
+      <div className="relative w-full overflow-hidden pb-12 sm:pb-16 lg:pb-20">
+        {/* Animated gradient background */}
+        <div className="absolute inset-0 bg-black">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
+        </div>
 
-        {/* Minimalist Glows */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white opacity-[0.03] rounded-full blur-[120px] animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-slate-500 opacity-[0.05] rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2s' }}></div>
+        {/* Floating orbs */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-slate-700 opacity-10 rounded-full blur-3xl translate-y-1/4 -translate-x-1/4 animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-slate-600 opacity-5 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }}></div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 lg:gap-10">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 lg:gap-10">
 
             {/* Left side - Title & Description */}
-            <div className="flex-1 space-y-4 sm:space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10 shadow-sm transition-all hover:bg-white/10">
-                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400" />
-                <span className="text-slate-300 text-[10px] sm:text-xs font-bold tracking-widest uppercase">Command Center &bull; Directory</span>
+            <div className="flex-1 space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full border border-white/10 shadow-lg w-fit">
+                <Users className="w-4 h-4 text-slate-300" />
+                <span className="text-white text-xs font-bold tracking-wide uppercase">Directory</span>
               </div>
 
               <div className="space-y-2">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-white leading-none tracking-tight">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-none tracking-tight">
                   Student
                   <span className="block mt-1 text-slate-500">
-                    Directory
+                    Database
                   </span>
                 </h1>
-                <p className="text-sm sm:text-base lg:text-lg text-slate-400 font-medium max-w-xl leading-relaxed">
-                  Comprehensive student database management and real-time analytics
+                <p className="text-sm sm:text-base lg:text-lg text-white/85 font-medium max-w-xl leading-relaxed">
+                  Manage profiles, academic records, and enrollment data.
                 </p>
               </div>
 
               {/* Quick stats badges */}
-              <div className="flex flex-wrap gap-2 sm:gap-3">
-                <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors">
-                  <Users className="w-4 h-4 text-slate-300" />
-                  <span className="text-slate-200 text-xs sm:text-sm font-bold">All Students</span>
-                </div>
-                {selectedIds.length > 0 && (
-                  <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white text-black backdrop-blur-md border border-white/20 shadow-lg shadow-white/5 animate-scaleIn">
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                    <span className="text-black text-xs sm:text-sm font-black">{selectedIds.length} Selected</span>
-                  </div>
-                )}
-                {hasActiveFilters && (
-                  <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-indigo-500/20 backdrop-blur-md border border-indigo-500/30 text-indigo-200">
-                    <Filter className="w-4 h-4" />
-                    <span className="text-xs sm:text-sm font-bold">Filtered View</span>
-                  </div>
-                )}
-              </div>
             </div>
+          </div>
 
-            {/* Right side - Quick actions card */}
-            <div className="lg:w-80 xl:w-96">
-              <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-5 sm:p-6 lg:p-8 border border-white/10 shadow-2xl hover:border-white/20 transition-all duration-300 group">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 shadow-inner group-hover:scale-110 transition-transform duration-300">
-                    <Zap className="w-6 h-6 sm:w-7 sm:h-7 text-yellow-400" />
-                  </div>
-                  <div>
-                    <h3 className="text-white font-bold text-lg">Quick Actions</h3>
-                    <p className="text-slate-400 text-xs sm:text-sm font-medium">Manage records securely</p>
-                  </div>
+          {/* Right side - Quick actions card */}
+          <div className="lg:w-80 xl:w-96">
+            <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-5 sm:p-6 lg:p-8 border border-white/10 shadow-2xl hover:border-white/20 transition-all duration-300 group">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 shadow-inner group-hover:scale-110 transition-transform duration-300">
+                  <Zap className="w-6 h-6 sm:w-7 sm:h-7 text-yellow-400" />
                 </div>
-
-                <div className="space-y-3">
-                  <a
-                    href="/students/new"
-                    className="flex items-center gap-4 p-4 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-2xl border border-white/5 hover:border-white/20 transition-all hover:translate-x-1 group/item"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center group-hover/item:bg-emerald-500/30 transition-colors">
-                      <UserPlus className="w-5 h-5 text-emerald-400" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-white font-bold text-sm">Add Student</p>
-                      <p className="text-slate-400 text-xs">Create new record</p>
-                    </div>
-                  </a>
-
-                  {selectedIds.length > 0 && (
-                    <>
-                      <button
-                        onClick={handleExport}
-                        className="flex items-center gap-4 p-4 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-2xl border border-white/5 hover:border-white/20 transition-all hover:translate-x-1 group/item w-full"
-                      >
-                        <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center group-hover/item:bg-blue-500/30 transition-colors">
-                          <Download className="w-5 h-5 text-blue-400" />
-                        </div>
-                        <div className="flex-1 text-left">
-                          <p className="text-white font-bold text-sm">Export Data</p>
-                          <p className="text-slate-400 text-xs">CSV / Excel format</p>
-                        </div>
-                      </button>
-
-                      <button
-                        onClick={() => setShowDeleteModal(true)}
-                        className="flex items-center gap-4 p-4 bg-red-500/10 hover:bg-red-500/20 backdrop-blur-md rounded-2xl border border-red-500/20 hover:border-red-500/40 transition-all hover:translate-x-1 group/item w-full"
-                      >
-                        <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center group-hover/item:bg-red-500/30 transition-colors">
-                          <Trash2 className="w-5 h-5 text-red-400" />
-                        </div>
-                        <div className="flex-1 text-left">
-                          <p className="text-red-400 font-bold text-sm">Delete Records</p>
-                          <p className="text-red-400/60 text-xs">Permanent action</p>
-                        </div>
-                      </button>
-                    </>
-                  )}
+                <div>
+                  <h3 className="text-white font-bold text-lg">Quick Actions</h3>
+                  <p className="text-slate-400 text-xs sm:text-sm font-medium">Manage records securely</p>
                 </div>
+              </div>
+
+              <div className="space-y-3">
+                <a
+                  href="/students/new"
+                  className="flex items-center gap-4 p-4 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-2xl border border-white/5 hover:border-white/20 transition-all hover:translate-x-1 group/item"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center group-hover/item:bg-emerald-500/30 transition-colors">
+                    <UserPlus className="w-5 h-5 text-emerald-400" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-white font-bold text-sm">Add Student</p>
+                    <p className="text-slate-400 text-xs">Create new record</p>
+                  </div>
+                </a>
+
+                {selectedIds.length > 0 && (
+                  <>
+                    <button
+                      onClick={handleExport}
+                      className="flex items-center gap-4 p-4 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-2xl border border-white/5 hover:border-white/20 transition-all hover:translate-x-1 group/item w-full"
+                    >
+                      <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center group-hover/item:bg-blue-500/30 transition-colors">
+                        <Download className="w-5 h-5 text-blue-400" />
+                      </div>
+                      <div className="flex-1 text-left">
+                        <p className="text-white font-bold text-sm">Export Data</p>
+                        <p className="text-slate-400 text-xs">CSV / Excel format</p>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => setShowDeleteModal(true)}
+                      className="flex items-center gap-4 p-4 bg-red-500/10 hover:bg-red-500/20 backdrop-blur-md rounded-2xl border border-red-500/20 hover:border-red-500/40 transition-all hover:translate-x-1 group/item w-full"
+                    >
+                      <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center group-hover/item:bg-red-500/30 transition-colors">
+                        <Trash2 className="w-5 h-5 text-red-400" />
+                      </div>
+                      <div className="flex-1 text-left">
+                        <p className="text-red-400 font-bold text-sm">Delete Records</p>
+                        <p className="text-red-400/60 text-xs">Permanent action</p>
+                      </div>
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
-
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 sm:-mt-8 pb-12 sm:pb-20">
 
