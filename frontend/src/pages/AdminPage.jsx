@@ -95,19 +95,38 @@ export default function AdminPage() {
     <div className="min-h-screen bg-stitch-bg-light dark:bg-stitch-bg-dark font-display text-slate-900 dark:text-white pb-20 transition-colors duration-300">
       <div className="relative flex flex-col w-full min-h-screen">
 
-        {/* Hero Section - Mobile Optimized */}
+        {/* Hero Section - Professional Enhancement */}
         <div className="relative w-full h-[180px] md:h-[240px] lg:h-[280px] bg-gradient-to-br from-stitch-blue via-[#6b13ec] to-stitch-pink overflow-hidden rounded-b-[1.5rem] md:rounded-b-[2.5rem] shadow-2xl z-10">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl"></div>
+          {/* Animated Background Elements */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl animate-pulse"></div>
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-stitch-blue opacity-20 rounded-full translate-y-1/4 -translate-x-1/4 blur-2xl"></div>
+          <div className="absolute top-1/2 right-1/4 w-32 h-32 bg-white opacity-5 rounded-full blur-2xl"></div>
 
-          <div className="relative flex flex-col justify-end h-full px-4 md:px-6 pb-8 md:pb-12 pt-8 md:pt-12 z-10 max-w-7xl mx-auto w-full">
+          <div className="relative flex flex-col justify-between h-full px-4 md:px-6 py-4 md:py-6 z-10 max-w-7xl mx-auto w-full">
+            {/* Top Section - Status Badge */}
+            <div className="flex justify-end">
+              <span className="inline-flex items-center gap-1.5 px-2.5 md:px-3 py-1 md:py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] md:text-xs font-bold shadow-lg">
+                <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></span>
+                <span className="hidden sm:inline">System Active</span>
+                <span className="sm:hidden">Active</span>
+              </span>
+            </div>
+
+            {/* Bottom Section - Title & Icon */}
             <div className="flex items-center gap-2.5 md:gap-4">
-              <div className="w-10 h-10 md:w-14 md:h-14 rounded-lg md:rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-lg shrink-0">
-                <Settings className="w-5 h-5 md:w-7 md:h-7 text-white" />
+              <div className="relative group">
+                <div className="absolute inset-0 bg-white opacity-20 rounded-lg md:rounded-2xl blur-md group-hover:blur-lg transition-all"></div>
+                <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-lg md:rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-lg group-hover:scale-105 transition-transform">
+                  <Settings className="w-6 h-6 md:w-7 md:h-7 text-white" />
+                </div>
               </div>
-              <div className="min-w-0">
-                <h1 className="text-white text-xl md:text-4xl lg:text-5xl font-black leading-tight tracking-tight drop-shadow-sm truncate">Admin Settings</h1>
-                <p className="text-white/80 text-[10px] md:text-sm lg:text-base font-medium mt-0.5 truncate hidden sm:block">System configuration and management</p>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-white text-xl md:text-4xl lg:text-5xl font-black leading-tight tracking-tight drop-shadow-lg truncate">
+                  Admin Settings
+                </h1>
+                <p className="text-white/90 text-xs md:text-sm lg:text-base font-semibold mt-0.5 truncate hidden sm:block drop-shadow-md">
+                  System configuration and management
+                </p>
               </div>
             </div>
           </div>
