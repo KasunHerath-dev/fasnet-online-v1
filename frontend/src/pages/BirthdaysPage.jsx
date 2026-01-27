@@ -86,58 +86,47 @@ export default function BirthdaysPage() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-black font-display text-slate-900 dark:text-white transition-colors duration-300">
 
-      {/* Enhanced Hero Section - Ash Theme */}
-      <div className="relative w-full overflow-hidden bg-black">
-        {/* Animated Background */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/50 via-black to-black"></div>
+      {/* Enhanced Hero Section - Command Center Style */}
+      <div className="relative w-full bg-black overflow-hidden rounded-b-[2.5rem] md:rounded-b-[3.5rem] shadow-2xl shadow-slate-900/50 border-b border-slate-800 pb-12 sm:pb-24">
+        {/* Abstract Background */}
+        <div className="absolute inset-0 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/50 via-black to-slate-950"></div>
 
-          {/* Animated Orbs - Monochrome */}
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white opacity-[0.03] rounded-full blur-[100px] animate-pulse"></div>
-          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-slate-500 opacity-[0.05] rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2s' }}></div>
-        </div>
+        {/* Minimalist Glows */}
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white opacity-[0.03] rounded-full blur-[120px] animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-slate-500 opacity-[0.05] rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2s' }}></div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 lg:py-24">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 lg:gap-10">
 
             {/* Left side - Title & Description */}
-            <div className="flex-1 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full backdrop-blur-md">
-                <span className="flex h-2 w-2 rounded-full bg-white animate-pulse"></span>
-                <span className="text-white/60 text-xs font-medium tracking-wide">BIRTHDAY TRACKER</span>
+            <div className="flex-1 space-y-4 sm:space-y-6">
+              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10 shadow-sm transition-all hover:bg-white/10">
+                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-pink-400" />
+                <span className="text-slate-300 text-[10px] sm:text-xs font-bold tracking-widest uppercase">Command Center &bull; Birthdays</span>
               </div>
 
-              <div className="space-y-4">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight">
+              <div className="space-y-2">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-white leading-none tracking-tight">
                   Student
-                  <span className="block text-slate-500">Celebrations</span>
+                  <span className="block mt-1 text-slate-500">
+                    Celebrations
+                  </span>
                 </h1>
-                <p className="text-lg text-slate-400 max-w-xl font-medium leading-relaxed">
-                  Track upcoming student birthdays and manage celebration events.
+                <p className="text-sm sm:text-base lg:text-lg text-slate-400 font-medium max-w-xl leading-relaxed">
+                  Track upcoming birthdays and manage celebration events
                 </p>
               </div>
 
               {/* Quick stats badges */}
-              <div className="flex flex-wrap gap-3 pt-2">
-                <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
-                  <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
-                    <Calendar className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-white/40 text-[10px] uppercase font-bold tracking-wider">Time Range</p>
-                    <p className="text-white font-bold text-sm">Next {days} Days</p>
-                  </div>
+              <div className="flex flex-wrap gap-2 sm:gap-3">
+                <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors">
+                  <Calendar className="w-4 h-4 text-slate-300" />
+                  <span className="text-slate-200 text-xs sm:text-sm font-bold">Next {days} Days</span>
                 </div>
-
-                <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
-                  <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
-                    <Cake className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-white/40 text-[10px] uppercase font-bold tracking-wider">Upcoming</p>
-                    <p className="text-white font-bold text-sm">{students.length} Birthdays</p>
-                  </div>
+                <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white text-black backdrop-blur-md border border-white/20 shadow-lg shadow-white/5 animate-scaleIn">
+                  <div className="w-2 h-2 bg-pink-500 rounded-full animate-pulse"></div>
+                  <span className="text-black text-xs sm:text-sm font-black">{students.length} Upcoming</span>
                 </div>
               </div>
             </div>
@@ -182,26 +171,26 @@ export default function BirthdaysPage() {
         </div>
 
         {/* Stats Grid - Mobile Scroll / Desktop Grid */}
-        <div className="flex overflow-x-auto pb-4 sm:pb-0 sm:grid sm:grid-cols-3 gap-4 sm:gap-6 snap-x snap-mandatory hide-scrollbar">
-          <div className="min-w-[85vw] sm:min-w-0 snap-center">
+        <div className="flex overflow-x-auto pb-6 sm:pb-0 sm:grid sm:grid-cols-3 gap-4 sm:gap-6 snap-x snap-mandatory px-4 sm:px-0 -mx-4 sm:mx-0 scrollbar-hide">
+          <div className="min-w-[85%] sm:min-w-0 snap-center pl-4 sm:pl-0 first:pl-4 last:pr-4 sm:first:pl-0 sm:last:pr-0">
             <StatCard
-              icon={<PartyPopper className="w-6 h-6 text-slate-900 dark:text-white" />}
+              icon={<PartyPopper className="w-5 h-5 sm:w-6 sm:h-6 text-slate-900 dark:text-white" />}
               label="Total Birthdays"
               value={students.length}
               subtext={`In the next ${days} days`}
             />
           </div>
-          <div className="min-w-[85vw] sm:min-w-0 snap-center">
+          <div className="min-w-[85%] sm:min-w-0 snap-center">
             <StatCard
-              icon={<Sparkles className="w-6 h-6 text-slate-900 dark:text-white" />}
+              icon={<Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-slate-900 dark:text-white" />}
               label="This Week"
               value={students.filter(s => getDaysUntil(s.nextBirthday) <= 7).length}
               subtext="Upcoming celebrations"
             />
           </div>
-          <div className="min-w-[85vw] sm:min-w-0 snap-center">
+          <div className="min-w-[85%] sm:min-w-0 snap-center pr-4 sm:pr-0">
             <StatCard
-              icon={<Calendar className="w-6 h-6 text-slate-900 dark:text-white" />}
+              icon={<Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-slate-900 dark:text-white" />}
               label="Today"
               value={students.filter(s => getDaysUntil(s.nextBirthday) === 0).length}
               subtext="Birthdays today"

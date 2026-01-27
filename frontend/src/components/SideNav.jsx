@@ -129,10 +129,10 @@ export default function SideNav({ isOpen, onClose }) {
 
   return (
     <>
-      {/* Monochrome Mobile Overlay */}
+      {/* Monochrome Mobile Overlay - Glassmorphism */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/80 z-[90] md:hidden transition-all duration-300"
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[90] md:hidden transition-all duration-300 animate-fadeIn"
           onClick={onClose}
         />
       )}
@@ -142,14 +142,14 @@ export default function SideNav({ isOpen, onClose }) {
         onMouseLeave={() => window.innerWidth >= 768 && setIsHovered(false)}
         className={`
         fixed md:static inset-y-0 left-0 z-[100]
-        ${effectiveOpen ? 'w-64 lg:w-72' : 'w-20'}
-        bg-black
-        shadow-2xl
-        transform transition-all duration-300 ease-in-out
+        ${effectiveOpen ? 'w-72' : 'w-20'}
+        bg-black md:bg-black
+        shadow-2xl shadow-black/50
+        transform transition-all duration-300 cubic-bezier(0.4, 0, 0.2, 1)
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         md:translate-x-0
         overflow-hidden
-        border-r border-mono-border
+        border-r border-slate-800
       `}>
 
         {/* Content wrapper */}
