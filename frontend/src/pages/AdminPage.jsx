@@ -152,58 +152,58 @@ export default function AdminPage() {
                     </h3>
 
                     <div onClick={handleChangePassword}
-                      className="group p-5 bg-white dark:bg-stitch-card-dark rounded-2xl border border-slate-100 dark:border-stitch-card-border hover:border-stitch-blue dark:hover:border-stitch-blue transition-all cursor-pointer shadow-md hover:shadow-lg">
+                      className="group p-4 md:p-5 bg-white dark:bg-stitch-card-dark rounded-2xl border border-slate-100 dark:border-stitch-card-border hover:border-stitch-blue dark:hover:border-stitch-blue transition-all cursor-pointer shadow-md hover:shadow-lg">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-stitch-blue/10 flex items-center justify-center text-stitch-blue group-hover:bg-stitch-blue group-hover:text-white transition-colors">
+                        <div className="min-w-[3rem] w-12 h-12 rounded-xl bg-stitch-blue/10 flex items-center justify-center text-stitch-blue group-hover:bg-stitch-blue group-hover:text-white transition-colors">
                           <Key className="w-6 h-6" />
                         </div>
-                        <div className="flex-1">
-                          <h4 className="font-bold text-slate-900 dark:text-white text-lg">Change My Password</h4>
-                          <p className="text-sm text-slate-500 dark:text-slate-400">Update account security</p>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-bold text-slate-900 dark:text-white text-base md:text-lg truncate">Change Password</h4>
+                          <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 truncate">Update account security</p>
                         </div>
-                        <ArrowRight className="w-5 h-5 text-slate-300 dark:text-slate-600 group-hover:text-stitch-blue group-hover:translate-x-1 transition-all" />
+                        <ArrowRight className="w-5 h-5 text-slate-300 dark:text-slate-600 group-hover:text-stitch-blue group-hover:translate-x-1 transition-all shrink-0" />
                       </div>
                     </div>
 
                     <div onClick={() => navigate('/students/new')}
-                      className="group p-5 bg-white dark:bg-stitch-card-dark rounded-2xl border border-slate-100 dark:border-stitch-card-border hover:border-stitch-blue dark:hover:border-stitch-blue transition-all cursor-pointer shadow-md hover:shadow-lg">
+                      className="group p-4 md:p-5 bg-white dark:bg-stitch-card-dark rounded-2xl border border-slate-100 dark:border-stitch-card-border hover:border-stitch-blue dark:hover:border-stitch-blue transition-all cursor-pointer shadow-md hover:shadow-lg">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                        <div className="min-w-[3rem] w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors">
                           <Plus className="w-6 h-6" />
                         </div>
-                        <div className="flex-1">
-                          <h4 className="font-bold text-slate-900 dark:text-white text-lg">Add New Student</h4>
-                          <p className="text-sm text-slate-500 dark:text-slate-400">Manual registration</p>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-bold text-slate-900 dark:text-white text-base md:text-lg truncate">Add New Student</h4>
+                          <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 truncate">Manual registration</p>
                         </div>
-                        <ArrowRight className="w-5 h-5 text-slate-300 dark:text-slate-600 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
+                        <ArrowRight className="w-5 h-5 text-slate-300 dark:text-slate-600 group-hover:text-blue-500 group-hover:translate-x-1 transition-all shrink-0" />
                       </div>
                     </div>
 
                     <div onClick={() => navigate('/profile-requests')}
-                      className="group p-5 bg-white dark:bg-stitch-card-dark rounded-2xl border border-slate-100 dark:border-stitch-card-border hover:border-stitch-blue dark:hover:border-stitch-blue transition-all cursor-pointer shadow-md hover:shadow-lg">
+                      className="group p-4 md:p-5 bg-white dark:bg-stitch-card-dark rounded-2xl border border-slate-100 dark:border-stitch-card-border hover:border-stitch-blue dark:hover:border-stitch-blue transition-all cursor-pointer shadow-md hover:shadow-lg">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-500 group-hover:bg-purple-500 group-hover:text-white transition-colors">
+                        <div className="min-w-[3rem] w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-500 group-hover:bg-purple-500 group-hover:text-white transition-colors">
                           <FileText className="w-6 h-6" />
                         </div>
-                        <div className="flex-1">
-                          <h4 className="font-bold text-slate-900 dark:text-white text-lg">Profile Requests</h4>
-                          <p className="text-sm text-slate-500 dark:text-slate-400">Review pending changes</p>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-bold text-slate-900 dark:text-white text-base md:text-lg truncate">Profile Requests</h4>
+                          <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 truncate">Review pending changes</p>
                         </div>
-                        <ArrowRight className="w-5 h-5 text-slate-300 dark:text-slate-600 group-hover:text-purple-500 group-hover:translate-x-1 transition-all" />
+                        <ArrowRight className="w-5 h-5 text-slate-300 dark:text-slate-600 group-hover:text-purple-500 group-hover:translate-x-1 transition-all shrink-0" />
                       </div>
                     </div>
 
                     <div onClick={() => navigate('/register-students')}
-                      className="group p-5 bg-white dark:bg-stitch-card-dark rounded-2xl border border-slate-100 dark:border-stitch-card-border hover:border-stitch-blue dark:hover:border-stitch-blue transition-all cursor-pointer shadow-md hover:shadow-lg">
+                      className="group p-4 md:p-5 bg-white dark:bg-stitch-card-dark rounded-2xl border border-slate-100 dark:border-stitch-card-border hover:border-stitch-blue dark:hover:border-stitch-blue transition-all cursor-pointer shadow-md hover:shadow-lg">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-stitch-pink/10 flex items-center justify-center text-stitch-pink group-hover:bg-stitch-pink group-hover:text-white transition-colors">
+                        <div className="min-w-[3rem] w-12 h-12 rounded-xl bg-stitch-pink/10 flex items-center justify-center text-stitch-pink group-hover:bg-stitch-pink group-hover:text-white transition-colors">
                           <Database className="w-6 h-6" />
                         </div>
-                        <div className="flex-1">
-                          <h4 className="font-bold text-slate-900 dark:text-white text-lg">Bulk Import</h4>
-                          <p className="text-sm text-slate-500 dark:text-slate-400">Upload CSV/Excel</p>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-bold text-slate-900 dark:text-white text-base md:text-lg truncate">Bulk Import</h4>
+                          <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 truncate">Upload CSV/Excel</p>
                         </div>
-                        <ArrowRight className="w-5 h-5 text-slate-300 dark:text-slate-600 group-hover:text-stitch-pink group-hover:translate-x-1 transition-all" />
+                        <ArrowRight className="w-5 h-5 text-slate-300 dark:text-slate-600 group-hover:text-stitch-pink group-hover:translate-x-1 transition-all shrink-0" />
                       </div>
                     </div>
                   </div>
@@ -215,29 +215,29 @@ export default function AdminPage() {
                       System Information
                     </h3>
 
-                    <div className="bg-white dark:bg-stitch-card-dark rounded-2xl p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
+                    <div className="bg-white dark:bg-stitch-card-dark rounded-2xl p-4 md:p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
                       <div className="space-y-4">
                         <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 rounded-xl">
-                          <span className="text-slate-600 dark:text-slate-300 font-medium text-sm">Database Status</span>
-                          <span className="flex items-center gap-2 text-stitch-success font-bold text-sm bg-stitch-success/10 px-3 py-1 rounded-full">
-                            <CheckCircle className="w-4 h-4" />
+                          <span className="text-slate-600 dark:text-slate-300 font-medium text-xs md:text-sm">Database Status</span>
+                          <span className="flex items-center gap-2 text-stitch-success font-bold text-xs md:text-sm bg-stitch-success/10 px-3 py-1 rounded-full">
+                            <CheckCircle className="w-3 h-3 md:w-4 md:h-4" />
                             Online
                           </span>
                         </div>
                         <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 rounded-xl">
-                          <span className="text-slate-600 dark:text-slate-300 font-medium text-sm">API Status</span>
-                          <span className="flex items-center gap-2 text-stitch-success font-bold text-sm bg-stitch-success/10 px-3 py-1 rounded-full">
-                            <CheckCircle className="w-4 h-4" />
+                          <span className="text-slate-600 dark:text-slate-300 font-medium text-xs md:text-sm">API Status</span>
+                          <span className="flex items-center gap-2 text-stitch-success font-bold text-xs md:text-sm bg-stitch-success/10 px-3 py-1 rounded-full">
+                            <CheckCircle className="w-3 h-3 md:w-4 md:h-4" />
                             Responsive
                           </span>
                         </div>
                         <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 rounded-xl">
-                          <span className="text-slate-600 dark:text-slate-300 font-medium text-sm">System Status</span>
-                          <span className="text-slate-900 dark:text-white font-bold text-sm">{stats.status}</span>
+                          <span className="text-slate-600 dark:text-slate-300 font-medium text-xs md:text-sm">System Status</span>
+                          <span className="text-slate-900 dark:text-white font-bold text-xs md:text-sm">{stats.status}</span>
                         </div>
                         <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 rounded-xl">
-                          <span className="text-slate-600 dark:text-slate-300 font-medium text-sm">Version</span>
-                          <span className="text-slate-900 dark:text-white font-bold text-sm">1.0.0</span>
+                          <span className="text-slate-600 dark:text-slate-300 font-medium text-xs md:text-sm">Version</span>
+                          <span className="text-slate-900 dark:text-white font-bold text-xs md:text-sm">1.0.0</span>
                         </div>
                       </div>
                     </div>
@@ -249,25 +249,25 @@ export default function AdminPage() {
             {/* Academic Tab */}
             {activeTab === 'academic' && (
               <div className="space-y-6">
-                <div className="bg-white dark:bg-stitch-card-dark rounded-2xl p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
+                <div className="bg-white dark:bg-stitch-card-dark rounded-2xl p-4 md:p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/20">
+                    <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/20 shrink-0">
                       <CheckCircle className="w-6 h-6 text-white" />
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white">Assessments</h3>
+                    <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">Assessments</h3>
                   </div>
                   <AssessmentManagement />
                 </div>
 
-                <div className="bg-white dark:bg-stitch-card-dark rounded-2xl p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
-                  <div className="flex items-center justify-between gap-4 mb-6">
+                <div className="bg-white dark:bg-stitch-card-dark rounded-2xl p-4 md:p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-purple-600 flex items-center justify-center shadow-lg shadow-purple-600/20">
+                      <div className="w-12 h-12 rounded-xl bg-purple-600 flex items-center justify-center shadow-lg shadow-purple-600/20 shrink-0">
                         <GraduationCap className="w-6 h-6 text-white" />
                       </div>
-                      <h3 className="text-xl font-bold text-slate-900 dark:text-white">Batch Years</h3>
+                      <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">Batch Years</h3>
                     </div>
-                    <span className="flex items-center gap-2 px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg text-xs font-bold border border-purple-200 dark:border-purple-800">
+                    <span className="self-start md:self-auto flex items-center gap-2 px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg text-xs font-bold border border-purple-200 dark:border-purple-800">
                       <Lock className="w-3 h-3" />
                       Super Admin Only
                     </span>
@@ -276,20 +276,21 @@ export default function AdminPage() {
                 </div>
 
                 <div onClick={() => navigate('/admin/bulk-combination')}
-                  className="group bg-white dark:bg-stitch-card-dark rounded-2xl p-6 border border-slate-100 dark:border-stitch-card-border hover:border-stitch-success cursor-pointer shadow-lg hover:shadow-xl transition-all">
+                  className="group bg-white dark:bg-stitch-card-dark rounded-2xl p-4 md:p-6 border border-slate-100 dark:border-stitch-card-border hover:border-stitch-success cursor-pointer shadow-lg hover:shadow-xl transition-all">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-stitch-success flex items-center justify-center shadow-lg shadow-stitch-success/20 group-hover:scale-110 transition-transform">
+                    <div className="w-12 h-12 rounded-xl bg-stitch-success flex items-center justify-center shadow-lg shadow-stitch-success/20 group-hover:scale-110 transition-transform shrink-0">
                       <GraduationCap className="w-6 h-6 text-white" />
                     </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-slate-900 dark:text-white">Bulk Combination Update</h3>
+                    <div className="flex-1">
+                      <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">Bulk Combination</h3>
                       <p className="text-slate-500 dark:text-slate-400 text-sm">Assign combinations via Excel upload</p>
                     </div>
-                    <div className="ml-auto">
+                    <div className="ml-auto hidden sm:block">
                       <span className="text-white font-bold bg-stitch-success px-4 py-2 rounded-lg text-sm group-hover:bg-emerald-600 transition-colors">
                         Open Tool
                       </span>
                     </div>
+                    <ArrowRight className="w-5 h-5 text-stitch-success sm:hidden" />
                   </div>
                 </div>
               </div>
@@ -305,9 +306,9 @@ export default function AdminPage() {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div onClick={() => navigate('/admin/users')}
-                    className="group p-6 bg-white dark:bg-stitch-card-dark rounded-2xl border border-slate-100 dark:border-stitch-card-border hover:border-stitch-pink dark:hover:border-stitch-pink cursor-pointer shadow-lg hover:shadow-xl transition-all">
+                    className="group p-4 md:p-6 bg-white dark:bg-stitch-card-dark rounded-2xl border border-slate-100 dark:border-stitch-card-border hover:border-stitch-pink dark:hover:border-stitch-pink cursor-pointer shadow-lg hover:shadow-xl transition-all">
                     <div className="flex items-center gap-4 mb-4">
-                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-stitch-pink to-rose-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-stitch-pink to-rose-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform shrink-0">
                         <Shield className="w-7 h-7 text-white" />
                       </div>
                       <div>
@@ -322,9 +323,9 @@ export default function AdminPage() {
                   </div>
 
                   <div onClick={handleSyncUsers}
-                    className="group p-6 bg-white dark:bg-stitch-card-dark rounded-2xl border border-slate-100 dark:border-stitch-card-border hover:border-stitch-blue dark:hover:border-stitch-blue cursor-pointer shadow-lg hover:shadow-xl transition-all">
+                    className="group p-4 md:p-6 bg-white dark:bg-stitch-card-dark rounded-2xl border border-slate-100 dark:border-stitch-card-border hover:border-stitch-blue dark:hover:border-stitch-blue cursor-pointer shadow-lg hover:shadow-xl transition-all">
                     <div className="flex items-center gap-4 mb-4">
-                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-stitch-blue to-indigo-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-stitch-blue to-indigo-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform shrink-0">
                         <RefreshCw className="w-7 h-7 text-white" />
                       </div>
                       <div>
@@ -339,24 +340,25 @@ export default function AdminPage() {
                 </div>
 
                 <div onClick={() => navigate('/missing-students')}
-                  className="group bg-white dark:bg-stitch-card-dark rounded-2xl p-6 border border-slate-100 dark:border-stitch-card-border hover:border-orange-500 cursor-pointer shadow-lg hover:shadow-xl transition-all">
+                  className="group bg-white dark:bg-stitch-card-dark rounded-2xl p-4 md:p-6 border border-slate-100 dark:border-stitch-card-border hover:border-orange-500 cursor-pointer shadow-lg hover:shadow-xl transition-all">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/20 group-hover:scale-110 transition-transform">
+                    <div className="w-12 h-12 rounded-xl bg-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/20 group-hover:scale-110 transition-transform shrink-0">
                       <AlertTriangle className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-slate-900 dark:text-white">Missing Students</h3>
+                      <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">Missing Students</h3>
                       <p className="text-sm text-slate-500 dark:text-slate-400">Identify data issues blocking access</p>
                     </div>
-                    <div className="ml-auto">
+                    <div className="ml-auto hidden sm:block">
                       <span className="text-white font-bold bg-orange-500 px-4 py-2 rounded-lg text-sm group-hover:bg-orange-600 transition-colors">
                         Check Now
                       </span>
                     </div>
+                    <ArrowRight className="w-5 h-5 text-orange-500 sm:hidden" />
                   </div>
                 </div>
 
-                <div className="bg-white dark:bg-stitch-card-dark rounded-2xl p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
+                <div className="bg-white dark:bg-stitch-card-dark rounded-2xl p-4 md:p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                     <Lock className="w-5 h-5 text-slate-400" />
                     Permission Levels
@@ -386,27 +388,27 @@ export default function AdminPage() {
             {activeTab === 'system' && (
               <div className="space-y-6">
                 {/* Danger Zone */}
-                <div className="relative overflow-hidden bg-red-50 dark:bg-red-900/10 rounded-2xl p-8 border border-red-200 dark:border-red-900/30">
+                <div className="relative overflow-hidden bg-red-50 dark:bg-red-900/10 rounded-2xl p-5 md:p-8 border border-red-200 dark:border-red-900/30">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-red-500 rounded-full opacity-5 -mr-16 -mt-16"></div>
                   <div className="relative z-10">
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className="w-12 h-12 bg-red-500 rounded-2xl flex items-center justify-center shadow-lg shadow-red-500/20">
+                    <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6 mb-6">
+                      <div className="w-12 h-12 bg-red-500 rounded-2xl flex items-center justify-center shadow-lg shadow-red-500/20 shrink-0">
                         <AlertTriangle className="w-6 h-6 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-2xl font-black text-red-900 dark:text-red-200">Danger Zone</h3>
+                        <h3 className="text-xl md:text-2xl font-black text-red-900 dark:text-red-200">Danger Zone</h3>
                         <p className="text-red-700 dark:text-red-400 font-medium text-sm">Irreversible actions - Use with extreme caution</p>
                       </div>
                     </div>
 
-                    <div className="bg-white dark:bg-black/20 backdrop-blur-sm rounded-xl p-6 border border-red-100 dark:border-red-900/30">
+                    <div className="bg-white dark:bg-black/20 backdrop-blur-sm rounded-xl p-4 md:p-6 border border-red-100 dark:border-red-900/30">
                       <h4 className="font-bold text-red-900 dark:text-red-200 mb-2">Reset All Student Data</h4>
-                      <p className="text-sm text-red-700 dark:text-red-400 mb-4">
+                      <p className="text-xs md:text-sm text-red-700 dark:text-red-400 mb-4">
                         This will permanently delete all student records from the database. This action cannot be undone.
                       </p>
                       <button
                         onClick={handleResetData}
-                        className="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                        className="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-sm md:text-base"
                       >
                         <AlertTriangle className="w-5 h-5" />
                         Reset All Data
@@ -417,7 +419,7 @@ export default function AdminPage() {
 
                 {/* System Maintenance */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-white dark:bg-stitch-card-dark rounded-2xl p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
+                  <div className="bg-white dark:bg-stitch-card-dark rounded-2xl p-4 md:p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                       <Database className="w-5 h-5 text-stitch-blue" />
                       Database Maintenance
@@ -425,20 +427,20 @@ export default function AdminPage() {
                     <div className="space-y-3">
                       <button
                         onClick={() => alert('Database backup feature coming soon! This will create a backup of your entire database.')}
-                        className="w-full py-3 bg-stitch-blue hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-md"
+                        className="w-full py-3 bg-stitch-blue hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-md text-sm md:text-base"
                       >
                         Backup Database
                       </button>
                       <button
                         onClick={() => alert('Table optimization feature coming soon! This will optimize database tables for better performance.')}
-                        className="w-full py-3 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-bold rounded-xl border border-slate-200 dark:border-white/10 transition-all"
+                        className="w-full py-3 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-bold rounded-xl border border-slate-200 dark:border-white/10 transition-all text-sm md:text-base"
                       >
                         Optimize Tables
                       </button>
                     </div>
                   </div>
 
-                  <div className="bg-white dark:bg-stitch-card-dark rounded-2xl p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
+                  <div className="bg-white dark:bg-stitch-card-dark rounded-2xl p-4 md:p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                       <Activity className="w-5 h-5 text-stitch-pink" />
                       System Logs
@@ -446,13 +448,13 @@ export default function AdminPage() {
                     <div className="space-y-3">
                       <button
                         onClick={() => alert('Activity logs viewer coming soon! This will display system activity and user actions.')}
-                        className="w-full py-3 bg-stitch-pink hover:bg-pink-700 text-white font-bold rounded-xl transition-all shadow-md"
+                        className="w-full py-3 bg-stitch-pink hover:bg-pink-700 text-white font-bold rounded-xl transition-all shadow-md text-sm md:text-base"
                       >
                         View Activity Logs
                       </button>
                       <button
                         onClick={() => alert('Log export feature coming soon! This will export system logs to a file.')}
-                        className="w-full py-3 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-bold rounded-xl border border-slate-200 dark:border-white/10 transition-all"
+                        className="w-full py-3 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-bold rounded-xl border border-slate-200 dark:border-white/10 transition-all text-sm md:text-base"
                       >
                         Export Logs
                       </button>
