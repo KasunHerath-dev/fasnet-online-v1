@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { authService } from '../services/authService'
-import { Bell, LogOut, Sparkles } from 'lucide-react'
+import { Bell, LogOut, Sparkles, X } from 'lucide-react'
 import api from '../services/api'
 
 export default function TopNav({ user, onLogout, onToggleSidebar }) {
