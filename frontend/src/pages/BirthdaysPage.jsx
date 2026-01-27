@@ -88,7 +88,7 @@ export default function BirthdaysPage() {
 
       {/* Enhanced Hero Section - Command Center Style */}
       {/* Enhanced Hero Section - Command Center Style */}
-      <div className="relative w-full overflow-hidden pb-12 sm:pb-16 lg:pb-20">
+      <div className="relative w-full overflow-hidden pb-32 sm:pb-20 lg:pb-24">
         {/* Animated gradient background */}
         <div className="absolute inset-0 bg-black">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
@@ -120,9 +120,11 @@ export default function BirthdaysPage() {
                   Track upcoming birthdays and manage celebration events.
                 </p>
               </div>
+            </div>
 
-              {/* Quick stats badges */}
-              <div className="flex flex-wrap gap-2 sm:gap-3 pt-2">
+            {/* Right side - Quick stats badges (Desktop) */}
+            <div className="pt-2 lg:pt-0 lg:mb-1">
+              <div className="flex flex-wrap gap-2 sm:gap-3">
                 <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
                   <Calendar className="w-4 h-4 text-white" />
                   <span className="text-white text-xs sm:text-sm font-bold">Next {days} Days</span>

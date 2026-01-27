@@ -76,7 +76,7 @@ export default function StudentsPage() {
     <div className="min-h-screen bg-slate-50 dark:bg-black font-display text-slate-900 dark:text-white transition-colors duration-500">
 
       {/*      {/* Enhanced Hero Section - Command Center Style */}
-      <div className="relative w-full overflow-hidden pb-12 sm:pb-16 lg:pb-20">
+      <div className="relative w-full overflow-hidden pb-32 sm:pb-20 lg:pb-24">
         {/* Animated gradient background */}
         <div className="absolute inset-0 bg-black">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
@@ -110,65 +110,78 @@ export default function StudentsPage() {
               </div>
 
               {/* Quick stats badges */}
-            </div>
-          </div>
-
-          {/* Right side - Quick actions card */}
-          <div className="lg:w-80 xl:w-96">
-            <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-5 sm:p-6 lg:p-8 border border-white/10 shadow-2xl hover:border-white/20 transition-all duration-300 group">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 shadow-inner group-hover:scale-110 transition-transform duration-300">
-                  <Zap className="w-6 h-6 sm:w-7 sm:h-7 text-yellow-400" />
+              <div className="flex flex-wrap gap-2 sm:gap-3 pt-2">
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                  </span>
+                  <span className="text-white text-xs sm:text-sm font-bold">Live System</span>
                 </div>
-                <div>
-                  <h3 className="text-white font-bold text-lg">Quick Actions</h3>
-                  <p className="text-slate-400 text-xs sm:text-sm font-medium">Manage records securely</p>
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
+                  <Users className="w-4 h-4 text-white" />
+                  <span className="text-white text-xs sm:text-sm font-bold">{students.length} Total Students</span>
                 </div>
               </div>
+            </div>
 
-              <div className="space-y-3">
-                <a
-                  href="/students/new"
-                  className="flex items-center gap-4 p-4 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-2xl border border-white/5 hover:border-white/20 transition-all hover:translate-x-1 group/item"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center group-hover/item:bg-emerald-500/30 transition-colors">
-                    <UserPlus className="w-5 h-5 text-emerald-400" />
+            {/* Right side - Quick actions card */}
+            <div className="lg:w-80 xl:w-96">
+              <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-5 sm:p-6 lg:p-8 border border-white/10 shadow-2xl hover:border-white/20 transition-all duration-300 group">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 shadow-inner group-hover:scale-110 transition-transform duration-300">
+                    <Zap className="w-6 h-6 sm:w-7 sm:h-7 text-yellow-400" />
                   </div>
-                  <div className="flex-1">
-                    <p className="text-white font-bold text-sm">Add Student</p>
-                    <p className="text-slate-400 text-xs">Create new record</p>
+                  <div>
+                    <h3 className="text-white font-bold text-lg">Quick Actions</h3>
+                    <p className="text-slate-400 text-xs sm:text-sm font-medium">Manage records securely</p>
                   </div>
-                </a>
+                </div>
 
-                {selectedIds.length > 0 && (
-                  <>
-                    <button
-                      onClick={handleExport}
-                      className="flex items-center gap-4 p-4 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-2xl border border-white/5 hover:border-white/20 transition-all hover:translate-x-1 group/item w-full"
-                    >
-                      <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center group-hover/item:bg-blue-500/30 transition-colors">
-                        <Download className="w-5 h-5 text-blue-400" />
-                      </div>
-                      <div className="flex-1 text-left">
-                        <p className="text-white font-bold text-sm">Export Data</p>
-                        <p className="text-slate-400 text-xs">CSV / Excel format</p>
-                      </div>
-                    </button>
+                <div className="space-y-3">
+                  <a
+                    href="/students/new"
+                    className="flex items-center gap-4 p-4 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-2xl border border-white/5 hover:border-white/20 transition-all hover:translate-x-1 group/item"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center group-hover/item:bg-emerald-500/30 transition-colors">
+                      <UserPlus className="w-5 h-5 text-emerald-400" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-white font-bold text-sm">Add Student</p>
+                      <p className="text-slate-400 text-xs">Create new record</p>
+                    </div>
+                  </a>
 
-                    <button
-                      onClick={() => setShowDeleteModal(true)}
-                      className="flex items-center gap-4 p-4 bg-red-500/10 hover:bg-red-500/20 backdrop-blur-md rounded-2xl border border-red-500/20 hover:border-red-500/40 transition-all hover:translate-x-1 group/item w-full"
-                    >
-                      <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center group-hover/item:bg-red-500/30 transition-colors">
-                        <Trash2 className="w-5 h-5 text-red-400" />
-                      </div>
-                      <div className="flex-1 text-left">
-                        <p className="text-red-400 font-bold text-sm">Delete Records</p>
-                        <p className="text-red-400/60 text-xs">Permanent action</p>
-                      </div>
-                    </button>
-                  </>
-                )}
+                  {selectedIds.length > 0 && (
+                    <>
+                      <button
+                        onClick={handleExport}
+                        className="flex items-center gap-4 p-4 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-2xl border border-white/5 hover:border-white/20 transition-all hover:translate-x-1 group/item w-full"
+                      >
+                        <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center group-hover/item:bg-blue-500/30 transition-colors">
+                          <Download className="w-5 h-5 text-blue-400" />
+                        </div>
+                        <div className="flex-1 text-left">
+                          <p className="text-white font-bold text-sm">Export Data</p>
+                          <p className="text-slate-400 text-xs">CSV / Excel format</p>
+                        </div>
+                      </button>
+
+                      <button
+                        onClick={() => setShowDeleteModal(true)}
+                        className="flex items-center gap-4 p-4 bg-red-500/10 hover:bg-red-500/20 backdrop-blur-md rounded-2xl border border-red-500/20 hover:border-red-500/40 transition-all hover:translate-x-1 group/item w-full"
+                      >
+                        <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center group-hover/item:bg-red-500/30 transition-colors">
+                          <Trash2 className="w-5 h-5 text-red-400" />
+                        </div>
+                        <div className="flex-1 text-left">
+                          <p className="text-red-400 font-bold text-sm">Delete Records</p>
+                          <p className="text-red-400/60 text-xs">Permanent action</p>
+                        </div>
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           </div>
