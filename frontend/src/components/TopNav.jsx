@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { authService } from '../services/authService'
-import { Bell, LogOut, Sparkles, X } from 'lucide-react'
+import { Bell, LogOut, Sparkles, X, Moon, Sun } from 'lucide-react'
 import api from '../services/api'
 
 export default function TopNav({ user, onLogout, onToggleSidebar }) {
@@ -9,7 +9,34 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
   const [showNotifications, setShowNotifications] = useState(false)
   const [pendingRequests, setPendingRequests] = useState([])
   const [loading, setLoading] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(false)
   const dropdownRef = useRef(null)
+
+  // Initialize dark mode from localStorage or system preference
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme')
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+      setIsDarkMode(true)
+      document.documentElement.classList.add('dark')
+    } else {
+      setIsDarkMode(false)
+      document.documentElement.classList.remove('dark')
+    }
+  }, [])
+
+  // Toggle dark mode
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode)
+    if (!isDarkMode) {
+      document.documentElement.classList.add('dark')
+      localStorage.setItem('theme', 'dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+      localStorage.setItem('theme', 'light')
+    }
+  }
 
   // Fetch pending profile requests
   useEffect(() => {
@@ -101,6 +128,30 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
             </div>
 
             <div className="hidden sm:block h-8 w-px bg-slate-200 dark:bg-slate-800"></div>
+
+            {/* Dark Mode Toggle */}
+            <button
+              onClick={toggleDarkMode}
+              className="group relative p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all"
+              aria-label="Toggle dark mode"
+            >
+              <div className="relative w-5 h-5">
+                {/* Sun icon - visible in dark mode */}
+                <Sun
+                  className={`absolute inset-0 w-5 h-5 transition-all duration-300 ${isDarkMode
+                      ? 'opacity-100 rotate-0 scale-100'
+                      : 'opacity-0 rotate-90 scale-0'
+                    }`}
+                />
+                {/* Moon icon - visible in light mode */}
+                <Moon
+                  className={`absolute inset-0 w-5 h-5 transition-all duration-300 ${!isDarkMode
+                      ? 'opacity-100 rotate-0 scale-100'
+                      : 'opacity-0 -rotate-90 scale-0'
+                    }`}
+                />
+              </div>
+            </button>
 
             {/* Notification Bell (Admin only) */}
             {isAdmin && (

@@ -3,42 +3,41 @@ import {
     BookOpen,
     Download,
     FileText,
-    Filter,
     Search,
     AlertCircle,
     File,
     CheckCircle,
-    Trash2,
     Calendar,
-    Users,
     Layers,
     Clock,
-    Grid3x3,
     LayoutGrid,
-    SlidersHorizontal,
     X,
     Zap,
     Activity,
     TrendingUp,
-    Package
+    Package,
+    ChevronDown,
+    ChevronUp,
+    Grid3x3,
+    Sparkles
 } from 'lucide-react';
 import { academicService } from '../services/academicService';
 import { authService } from '../services/authService';
 import { MODULE_DATA } from '../data/moduleList';
 import { resourceService } from '../services/resourceService';
 import Loader from '../components/Loader';
-import Dropdown from '../components/Dropdown';
 import { useToast } from '../context/ToastContext';
+
 const ResourceCard = ({ resource, viewMode = 'cards' }) => {
     const toast = useToast();
     const getTypeColor = (type) => {
         const colors = {
-            tutorial: 'text-blue-600 bg-blue-50 dark:bg-blue-900/20',
-            assignment: 'text-orange-600 bg-orange-50 dark:bg-orange-900/20',
-            past_paper: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20',
-            book: 'text-rose-600 bg-rose-50 dark:bg-rose-900/20',
-            marking_scheme: 'text-purple-600 bg-purple-50 dark:bg-purple-900/20',
-            other: 'text-slate-600 bg-slate-50 dark:bg-slate-700/20'
+            tutorial: 'text-blue-600 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800',
+            assignment: 'text-orange-600 bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800',
+            past_paper: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800',
+            book: 'text-rose-600 bg-rose-50 dark:bg-rose-900/20 border-rose-200 dark:border-rose-800',
+            marking_scheme: 'text-purple-600 bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800',
+            other: 'text-slate-600 bg-slate-50 dark:bg-slate-700/20 border-slate-200 dark:border-slate-700'
         };
         return colors[type] || colors.other;
     };
@@ -109,7 +108,7 @@ const ResourceCard = ({ resource, viewMode = 'cards' }) => {
             <div className="group bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 hover:shadow-lg hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 p-6">
                 <div className="flex items-center gap-6">
                     {/* Icon */}
-                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${getTypeColor(resource.type)}`}>
+                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center border ${getTypeColor(resource.type)}`}>
                         {getTypeIcon(resource.type)}
                     </div>
 
@@ -119,7 +118,7 @@ const ResourceCard = ({ resource, viewMode = 'cards' }) => {
                             {resource.title}
                         </h3>
                         <div className="flex items-center gap-3 flex-wrap">
-                            <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${getTypeColor(resource.type)}`}>
+                            <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${getTypeColor(resource.type)}`}>
                                 {resource.type.replace('_', ' ')}
                             </span>
                             {resource.academicYear && (
@@ -154,7 +153,7 @@ const ResourceCard = ({ resource, viewMode = 'cards' }) => {
             {/* Header */}
             <div className="p-5 border-b border-slate-100 dark:border-slate-800">
                 <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${getTypeColor(resource.type)}`}>
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${getTypeColor(resource.type)}`}>
                         {getTypeIcon(resource.type)}
                     </div>
                     {resource.answerFor && (
@@ -189,7 +188,7 @@ const ResourceCard = ({ resource, viewMode = 'cards' }) => {
 
                 {/* Type Badge */}
                 <div className="flex items-center gap-2">
-                    <span className={`px-3 py-1.5 rounded-xl text-xs font-bold ${getTypeColor(resource.type)}`}>
+                    <span className={`px-3 py-1.5 rounded-xl text-xs font-bold border ${getTypeColor(resource.type)}`}>
                         {resource.type.replace('_', ' ')}
                     </span>
                 </div>
@@ -200,10 +199,40 @@ const ResourceCard = ({ resource, viewMode = 'cards' }) => {
                     className="w-full min-h-[44px] flex items-center justify-center gap-2 px-4 py-3 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold rounded-xl transition-all shadow-md hover:shadow-lg active:scale-95"
                 >
                     <Download className="w-4 h-4" />
-                    <span>Download</span>
+                    Download
                 </button>
             </div>
         </div>
+    );
+};
+
+// Module Card Component
+const ModuleCard = ({ module, selected, onClick }) => {
+    return (
+        <button
+            onClick={onClick}
+            className={`w-full text-left p-5 rounded-2xl font-bold transition-all border-2 ${selected
+                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white shadow-lg scale-105'
+                    : 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-md'
+                }`}
+        >
+            <div className="flex items-start justify-between gap-3 mb-2">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${selected ? 'bg-white/20 dark:bg-slate-900/20' : 'bg-slate-100 dark:bg-slate-800'
+                    }`}>
+                    <BookOpen className="w-5 h-5" />
+                </div>
+                <span className={`px-2 py-1 rounded-lg text-xs font-black ${selected ? 'bg-white/20 dark:bg-slate-900/20' : 'bg-slate-100 dark:bg-slate-800'
+                    }`}>
+                    {module.credits} Credits
+                </span>
+            </div>
+            <div className="mb-1">
+                <span className="text-sm font-black opacity-70">{module.code}</span>
+            </div>
+            <h3 className="text-sm font-black line-clamp-2 leading-tight">
+                {module.title}
+            </h3>
+        </button>
     );
 };
 
@@ -215,12 +244,12 @@ export default function StudentResources() {
     const [fetchingResources, setFetchingResources] = useState(false);
     const [filterLevel, setFilterLevel] = useState('1');
     const [filterSemester, setFilterSemester] = useState('1');
-    const [activeTab, setActiveTab] = useState('tutorials');
+    const [activeTab, setActiveTab] = useState('all');
 
-    // New Command Center states
+    // New states
     const [query, setQuery] = useState('');
-    const [showFilters, setShowFilters] = useState(false);
-    const [viewMode, setViewMode] = useState('cards'); // cards, list, compact
+    const [viewMode, setViewMode] = useState('cards');
+    const [showModuleGrid, setShowModuleGrid] = useState(false);
 
     // Load enrolled modules from Static Data
     useEffect(() => {
@@ -323,6 +352,7 @@ export default function StudentResources() {
     // Categorize Resources
     const categorizeResources = (list) => {
         return {
+            all: list,
             tutorials: list.filter(r => r.type === 'tutorial' || (r.type === 'marking_scheme' && r.answerFor === 'tutorial')),
             assignments: list.filter(r => r.type === 'assignment' || (r.type === 'marking_scheme' && r.answerFor === 'assignment')),
             pastPapers: list.filter(r => r.type === 'past_paper' || (r.type === 'marking_scheme' && r.answerFor === 'past_paper')),
@@ -342,25 +372,20 @@ export default function StudentResources() {
         );
     });
 
-    // Clear all filters
-    const clearFilters = () => {
-        setQuery('');
-        setFilterLevel('1');
-        setFilterSemester('1');
-    };
-
-    const hasActiveFilters = query || filterLevel !== '1' || filterSemester !== '1';
-
     // Categorize filtered resources
     const categorizedFiltered = categorizeResources(filteredResources);
 
     // Tab Definitions
     const tabs = [
-        { id: 'tutorials', label: 'Tutorials', icon: FileText, count: categorizedFiltered.tutorials.length, color: 'indigo' },
-        { id: 'assignments', label: 'Assignments', icon: CheckCircle, count: categorizedFiltered.assignments.length, color: 'orange' },
-        { id: 'pastPapers', label: 'Past Papers', icon: BookOpen, count: categorizedFiltered.pastPapers.length, color: 'emerald' },
-        { id: 'books', label: 'Books', icon: Package, count: categorizedFiltered.books.length, color: 'rose' }
+        { id: 'all', label: 'All Resources', icon: Package, count: categorizedFiltered.all.length },
+        { id: 'tutorials', label: 'Tutorials', icon: FileText, count: categorizedFiltered.tutorials.length },
+        { id: 'assignments', label: 'Assignments', icon: CheckCircle, count: categorizedFiltered.assignments.length },
+        { id: 'pastPapers', label: 'Past Papers', icon: BookOpen, count: categorizedFiltered.pastPapers.length },
+        { id: 'books', label: 'Books', icon: Sparkles, count: categorizedFiltered.books.length }
     ];
+
+    // Get selected module
+    const selectedModule = modules.find(m => m.code === selectedModuleId);
 
     if (loading) {
         return (
@@ -391,8 +416,8 @@ export default function StudentResources() {
                         {/* Left side - Title & Description */}
                         <div className="flex-1 space-y-4">
                             <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full border border-white/10 shadow-lg w-fit">
-                                <BookOpen className="w-4 h-4 text-blue-300" />
-                                <span className="text-white text-xs font-bold tracking-wide uppercase">Library</span>
+                                <Package className="w-4 h-4 text-blue-300" />
+                                <span className="text-white text-xs font-bold tracking-wide uppercase">Resources</span>
                             </div>
 
                             <div className="space-y-2">
@@ -429,211 +454,154 @@ export default function StudentResources() {
             {/* Main Content */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 lg:pt-12 pb-12 sm:pb-20">
 
-                {/* Enhanced Controls Toolbar */}
-                <div className="mb-6 sm:mb-8 lg:mb-10 -mt-2 relative z-10">
-                    <div className="flex flex-col xl:flex-row xl:items-center gap-4 justify-between">
-
-                        {/* Search Pill */}
-                        <div className="flex-1 max-w-2xl">
-                            <div className="relative group">
-                                <div className="absolute inset-0 bg-white/20 dark:bg-black/20 rounded-2xl blur-lg transition-all group-hover:bg-white/30 dark:group-hover:bg-black/30"></div>
-                                <div className="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl flex items-center p-2 transition-all focus-within:ring-2 focus-within:ring-slate-900 dark:focus-within:ring-white">
-                                    <div className="pl-4 pr-3 text-slate-400">
-                                        <Search className="w-5 h-5" />
-                                    </div>
-                                    <input
-                                        type="text"
-                                        className="flex-1 bg-transparent border-none focus:ring-0 text-slate-900 dark:text-white font-bold placeholder-slate-400 text-sm sm:text-base h-10"
-                                        placeholder="Search resources by title, type..."
-                                        value={query}
-                                        onChange={(e) => setQuery(e.target.value)}
-                                    />
-                                    <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800 ml-2">
-                                        <button
-                                            onClick={() => setShowFilters(!showFilters)}
-                                            className={`px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${showFilters
-                                                ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white'
-                                                : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800'
-                                                }`}
-                                        >
-                                            <SlidersHorizontal className="w-4 h-4" />
-                                            Filters
-                                        </button>
-                                        {hasActiveFilters && (
-                                            <button
-                                                onClick={clearFilters}
-                                                className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all"
-                                                title="Clear Filters"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
+                {/* Filter Pills - Always Visible */}
+                <div className="mb-8 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Level Filter */}
+                        <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-xl border border-slate-200 dark:border-slate-800">
+                            <label className="flex items-center gap-2 text-sm font-black text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wide">
+                                <Activity className="w-4 h-4" />
+                                Academic Level
+                            </label>
+                            <div className="grid grid-cols-4 gap-3">
+                                {[1, 2, 3, 4].map(l => (
+                                    <button
+                                        key={l}
+                                        onClick={() => setFilterLevel(l.toString())}
+                                        className={`py-3 rounded-xl font-black text-sm transition-all ${filterLevel === l.toString()
+                                            ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg scale-105'
+                                            : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'}`}
+                                    >
+                                        Level {l}
+                                    </button>
+                                ))}
                             </div>
                         </div>
 
-                        {/* View Mode Toggle Pill */}
-                        <div className="flex items-center gap-4 self-end xl:self-auto">
-                            <button
-                                onClick={() => setShowFilters(!showFilters)}
-                                className="sm:hidden p-4 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white"
-                            >
-                                <SlidersHorizontal className="w-5 h-5" />
-                            </button>
-
-                            <div className="bg-white dark:bg-slate-900 rounded-2xl p-1.5 shadow-xl border border-slate-200 dark:border-slate-800 flex items-center">
-                                <button
-                                    onClick={() => setViewMode('cards')}
-                                    className={`px-4 sm:px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 ${viewMode === 'cards'
-                                        ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
-                                        : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
-                                        }`}
-                                >
-                                    <LayoutGrid className="w-4 h-4" />
-                                    <span className="hidden sm:inline">Cards</span>
-                                </button>
-                                <button
-                                    onClick={() => setViewMode('list')}
-                                    className={`px-4 sm:px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 ${viewMode === 'list'
-                                        ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
-                                        : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
-                                        }`}
-                                >
-                                    <Layers className="w-4 h-4" />
-                                    <span className="hidden sm:inline">List</span>
-                                </button>
+                        {/* Semester Filter */}
+                        <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-xl border border-slate-200 dark:border-slate-800">
+                            <label className="flex items-center gap-2 text-sm font-black text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wide">
+                                <Calendar className="w-4 h-4" />
+                                Semester
+                            </label>
+                            <div className="grid grid-cols-2 gap-3">
+                                {[1, 2].map(s => (
+                                    <button
+                                        key={s}
+                                        onClick={() => setFilterSemester(s.toString())}
+                                        className={`py-3 rounded-xl font-black text-sm transition-all ${filterSemester === s.toString()
+                                            ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg scale-105'
+                                            : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'}`}
+                                    >
+                                        Semester {s}
+                                    </button>
+                                ))}
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Collapsible Filters Panel */}
-                {showFilters && (
+                {/* Current Selection Badge + Module Grid Toggle */}
+                <div className="mb-6 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                        <div className="px-4 py-2 bg-white dark:bg-slate-900 rounded-xl shadow-md border border-slate-200 dark:border-slate-800">
+                            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Selected Module:</span>
+                            <span className="ml-2 text-sm font-black text-slate-900 dark:text-white">
+                                {selectedModule ? `${selectedModule.code} - ${selectedModule.title}` : 'None'}
+                            </span>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setShowModuleGrid(!showModuleGrid)}
+                        className="flex items-center gap-2 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold text-sm shadow-md hover:shadow-lg transition-all"
+                    >
+                        {showModuleGrid ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                        {showModuleGrid ? 'Hide' : 'Change'} Module
+                    </button>
+                </div>
+
+                {/* Module Selection Grid */}
+                {showModuleGrid && (
                     <div className="mb-8 animate-fadeIn">
-                        <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-6 sm:p-8 shadow-xl border border-slate-200 dark:border-slate-800 relative overflow-hidden">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                                {/* Level Filter */}
-                                <div>
-                                    <label className="flex items-center gap-2 text-sm font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">
-                                        <Activity className="w-4 h-4" />
-                                        Academic Level
-                                    </label>
-                                    <div className="flex gap-2">
-                                        {[1, 2, 3, 4].map(l => (
-                                            <button
-                                                key={l}
-                                                onClick={() => setFilterLevel(l.toString())}
-                                                className={`flex-1 py-2 rounded-xl font-bold text-sm transition-all ${filterLevel === l.toString()
-                                                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-md'
-                                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'}`}
-                                            >
-                                                {l}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Semester Filter */}
-                                <div>
-                                    <label className="flex items-center gap-2 text-sm font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">
-                                        <Calendar className="w-4 h-4" />
-                                        Semester
-                                    </label>
-                                    <div className="flex gap-2">
-                                        {[1, 2].map(s => (
-                                            <button
-                                                key={s}
-                                                onClick={() => setFilterSemester(s.toString())}
-                                                className={`flex-1 py-2 rounded-xl font-bold text-sm transition-all ${filterSemester === s.toString()
-                                                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-md'
-                                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'}`}
-                                            >
-                                                Sem {s}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Module Selector */}
-                                <div>
-                                    <label className="flex items-center gap-2 text-sm font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">
-                                        <BookOpen className="w-4 h-4" />
-                                        Module
-                                    </label>
-                                    <Dropdown
-                                        value={selectedModuleId}
-                                        onChange={(e) => setSelectedModuleId(e.target.value)}
-                                        options={filteredModules.map(m => ({
-                                            value: m.code,
-                                            label: `${m.code} - ${m.title}`
-                                        }))}
-                                        icon={<BookOpen className="w-4 h-4" />}
-                                        placeholder="Select module..."
-                                        className="w-full bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 font-bold text-sm"
-                                    />
-                                </div>
-
-                                {/* Active Filters Summary */}
-                                <div className="flex flex-col justify-end">
-                                    {hasActiveFilters ? (
-                                        <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                                            <div className="flex flex-wrap gap-2 items-center">
-                                                <span className="text-xs font-bold text-slate-400 uppercase mr-2">Active:</span>
-                                                {filterLevel !== '1' && <span className="px-2 py-1 bg-white dark:bg-slate-700 rounded-md text-xs font-bold shadow-sm">Level {filterLevel}</span>}
-                                                {filterSemester !== '1' && <span className="px-2 py-1 bg-white dark:bg-slate-700 rounded-md text-xs font-bold shadow-sm">Sem {filterSemester}</span>}
-                                                {query && <span className="px-2 py-1 bg-white dark:bg-slate-700 rounded-md text-xs font-bold shadow-sm">Search: {query}</span>}
-                                            </div>
-                                            <button onClick={clearFilters} className="text-xs font-bold text-red-500 hover:underline">Clear</button>
-                                        </div>
-                                    ) : (
-                                        <div className="h-full flex items-center justify-center text-slate-400 text-sm font-bold italic opacity-50 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl p-4">
-                                            No custom filters
-                                        </div>
-                                    )}
-                                </div>
+                        <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-xl border border-slate-200 dark:border-slate-800">
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="text-lg font-black text-slate-900 dark:text-white">
+                                    Select Module (Level {filterLevel}, Semester {filterSemester})
+                                </h3>
+                                <span className="text-sm font-bold text-slate-500 dark:text-slate-400">
+                                    {filteredModules.length} modules
+                                </span>
                             </div>
+                            {filteredModules.length === 0 ? (
+                                <div className="text-center py-12">
+                                    <AlertCircle className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+                                    <p className="text-slate-500 dark:text-slate-400 font-bold">
+                                        No modules found for Level {filterLevel}, Semester {filterSemester}
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                                    {filteredModules.map(module => (
+                                        <ModuleCard
+                                            key={module.code}
+                                            module={module}
+                                            selected={selectedModuleId === module.code}
+                                            onClick={() => {
+                                                setSelectedModuleId(module.code);
+                                                setShowModuleGrid(false);
+                                            }}
+                                        />
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}
 
-                {/* Stats Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8">
-                    <div className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] shadow-xl border border-slate-200 dark:border-slate-800 flex items-center gap-6 hover:translate-y-[-4px] transition-transform duration-300">
-                        <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center shadow-lg border border-slate-100 dark:border-slate-700">
-                            <Package className="w-6 h-6 text-slate-900 dark:text-white" />
+                {/* Search Bar + View Toggle */}
+                <div className="mb-6 flex flex-col sm:flex-row gap-4">
+                    {/* Search */}
+                    <div className="flex-1 relative">
+                        <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                            <Search className="w-5 h-5 text-slate-400" />
                         </div>
-                        <div>
-                            <p className="text-sm font-bold text-slate-400 uppercase tracking-wide">Total Resources</p>
-                            <p className="text-3xl font-black text-slate-900 dark:text-white my-0.5">{filteredResources.length}</p>
-                            <p className="text-xs font-bold text-slate-400 opacity-60">Available now</p>
-                        </div>
+                        <input
+                            type="text"
+                            className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl pl-12 pr-4 py-4 text-sm font-bold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-slate-900 dark:focus-ring-white shadow-md"
+                            placeholder="Search resources..."
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                        />
                     </div>
-                    <div className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] shadow-xl border border-slate-200 dark:border-slate-800 flex items-center gap-6 hover:translate-y-[-4px] transition-transform duration-300">
-                        <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center shadow-lg border border-slate-100 dark:border-slate-700">
-                            <BookOpen className="w-6 h-6 text-slate-900 dark:text-white" />
-                        </div>
-                        <div>
-                            <p className="text-sm font-bold text-slate-400 uppercase tracking-wide">Modules</p>
-                            <p className="text-3xl font-black text-slate-900 dark:text-white my-0.5">{filteredModules.length}</p>
-                            <p className="text-xs font-bold text-slate-400 opacity-60">Level {filterLevel}, Sem {filterSemester}</p>
-                        </div>
-                    </div>
-                    <div className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] shadow-xl border border-slate-200 dark:border-slate-800 flex items-center gap-6 hover:translate-y-[-4px] transition-transform duration-300">
-                        <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center shadow-lg border border-slate-100 dark:border-slate-700">
-                            <TrendingUp className="w-6 h-6 text-slate-900 dark:text-white" />
-                        </div>
-                        <div>
-                            <p className="text-sm font-bold text-slate-400 uppercase tracking-wide">This Module</p>
-                            <p className="text-3xl font-black text-slate-900 dark:text-white my-0.5">{filteredResources.length}</p>
-                            <p className="text-xs font-bold text-slate-400 opacity-60">In selected module</p>
-                        </div>
+
+                    {/* View Mode Toggle */}
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl p-1.5 shadow-md border border-slate-200 dark:border-slate-800 flex items-center self-start">
+                        <button
+                            onClick={() => setViewMode('cards')}
+                            className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 ${viewMode === 'cards'
+                                ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg'
+                                : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
+                                }`}
+                        >
+                            <LayoutGrid className="w-4 h-4" />
+                            Cards
+                        </button>
+                        <button
+                            onClick={() => setViewMode('list')}
+                            className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 ${viewMode === 'list'
+                                ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg'
+                                : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
+                                }`}
+                        >
+                            <Layers className="w-4 h-4" />
+                            List
+                        </button>
                     </div>
                 </div>
 
-                {/* Category Tabs */}
-                <div className="mb-6">
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl p-1.5 shadow-xl border border-slate-200 dark:border-slate-800 flex items-center gap-2 overflow-x-auto scrollbar-hide">
+                {/* Resource Type Tabs */}
+                <div className="mb-8">
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl p-2 shadow-xl border border-slate-200 dark:border-slate-800 flex gap-2 overflow-x-auto scrollbar-hide">
                         {tabs.map(tab => {
                             const Icon = tab.icon;
                             const isActive = activeTab === tab.id;
@@ -641,15 +609,15 @@ export default function StudentResources() {
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
-                                    className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl font-bold text-sm whitespace-nowrap transition-all ${isActive
-                                        ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
-                                        : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
+                                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm whitespace-nowrap transition-all ${isActive
+                                        ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg'
+                                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
                                         }`}
                                 >
                                     <Icon className="w-4 h-4" />
                                     <span>{tab.label}</span>
                                     {tab.count > 0 && (
-                                        <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${isActive ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}`}>
+                                        <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${isActive ? 'bg-white/20 dark:bg-slate-900/20' : 'bg-slate-100 dark:bg-slate-700'}`}>
                                             {tab.count}
                                         </span>
                                     )}
@@ -660,85 +628,32 @@ export default function StudentResources() {
                 </div>
 
                 {/* Resources Display */}
-                {filteredModules.length === 0 ? (
-                    <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-16 text-center shadow-xl border border-slate-200 dark:border-slate-800">
-                        <div className="w-24 h-24 bg-slate-100 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <AlertCircle className="w-12 h-12 text-slate-300 dark:text-slate-600" />
-                        </div>
-                        <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2">No Modules Found</h3>
-                        <p className="text-slate-500 dark:text-slate-400 font-medium text-lg">No modules available for Level {filterLevel}, Semester {filterSemester}.</p>
-                    </div>
-                ) : fetchingResources ? (
-                    <div className="text-center py-32 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-xl">
+                {fetchingResources ? (
+                    <div className="text-center py-32 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl">
                         <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-900 dark:border-white border-t-transparent mx-auto"></div>
                         <p className="mt-4 text-slate-500 dark:text-slate-400 font-bold animate-pulse">Loading resources...</p>
                     </div>
                 ) : categorizedFiltered[activeTab].length === 0 ? (
-                    <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-16 text-center shadow-xl border border-slate-200 dark:border-slate-800 animate-fadeIn">
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl p-16 text-center shadow-xl border border-slate-200 dark:border-slate-800">
                         <div className="w-24 h-24 bg-slate-100 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
                             <Search className="w-12 h-12 text-slate-300 dark:text-slate-600" />
                         </div>
-                        <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2">No {tabs.find(t => t.id === activeTab)?.label} Found</h3>
-                        <p className="text-slate-500 dark:text-slate-400 font-medium text-lg">There are no resources available in this category.</p>
+                        <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2">
+                            No {tabs.find(t => t.id === activeTab)?.label} Found
+                        </h3>
+                        <p className="text-slate-500 dark:text-slate-400 font-medium">
+                            There are no resources available in this category.
+                        </p>
                     </div>
                 ) : (
-                    <div className="animate-fadeIn">
-                        {activeTab === 'pastPapers' ? (
-                            <div className="space-y-10">
-                                {Object.entries(categorizedFiltered.pastPapers.reduce((acc, resource) => {
-                                    const year = resource.academicYear || 'Unknown Academic Year';
-                                    if (!acc[year]) acc[year] = [];
-                                    acc[year].push(resource);
-                                    return acc;
-                                }, {})).sort((a, b) => b[0].localeCompare(a[0]))
-                                    .map(([year, yearResources]) => (
-                                        <div key={year} className="animate-fadeIn">
-                                            <div className="flex items-center gap-4 mb-4">
-                                                <div className="h-px flex-1 bg-slate-200 dark:bg-slate-800"></div>
-                                                <h3 className="text-lg font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{year}</h3>
-                                                <div className="h-px flex-1 bg-slate-200 dark:bg-slate-800"></div>
-                                            </div>
-                                            <div className={`grid gap-6 ${viewMode === 'cards' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
-                                                {yearResources.map(resource => (
-                                                    <ResourceCard key={resource._id} resource={resource} viewMode={viewMode} />
-                                                ))}
-                                            </div>
-                                        </div>
-                                    ))}
-                            </div>
-                        ) : (
-                            <div className={`grid gap-6 ${viewMode === 'cards' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
-                                {categorizedFiltered[activeTab].map(resource => (
-                                    <ResourceCard key={resource._id} resource={resource} viewMode={viewMode} />
-                                ))}
-                            </div>
-                        )}
+                    <div className={`grid gap-6 ${viewMode === 'cards' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+                        {categorizedFiltered[activeTab].map(resource => (
+                            <ResourceCard key={resource._id} resource={resource} viewMode={viewMode} />
+                        ))}
                     </div>
                 )}
-            </div>
 
-            <style>{`
-                @keyframes fadeIn {
-                    from { 
-                        opacity: 0; 
-                        transform: translateY(20px); 
-                    }
-                    to { 
-                        opacity: 1; 
-                        transform: translateY(0); 
-                    }
-                }
-                .animate-fadeIn { 
-                    animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
-                }
-                .scrollbar-hide::-webkit-scrollbar {
-                    display: none;
-                }
-                .scrollbar-hide {
-                    -ms-overflow-style: none;
-                    scrollbar-width: none;
-                }
-            `}</style>
+            </div>
         </div>
     );
 }

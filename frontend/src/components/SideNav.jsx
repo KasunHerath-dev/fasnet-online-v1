@@ -27,7 +27,6 @@ export default function SideNav({ isOpen, onClose }) {
   const [isHovered, setIsHovered] = useState(false)
 
   // Determine if the sidebar is effectively open (visually expanded)
-  // Expanded if: Not collapsed (Pinned Open) OR Hovered (Temporarily Open)
   const effectiveOpen = !isCollapsed || isHovered
 
   // Default to collapsed on desktop on initial load
@@ -87,37 +86,37 @@ export default function SideNav({ isOpen, onClose }) {
       )
     }
 
-    // Analytics - requires view_analytics permission (or shown for dual-role users)
+    // Analytics
     if (isSuperAdminUser || hasPermission(user, PERMISSIONS.VIEW_ANALYTICS) || user?.studentRef) {
       links.push({ label: 'Analytics', path: '/analytics', icon: 'Analytics' })
     }
 
-    // Students - requires view_students permission
+    // Students
     if (isSuperAdminUser || hasPermission(user, PERMISSIONS.VIEW_STUDENTS)) {
       links.push({ label: 'Students', path: '/students', icon: 'Students' })
     }
 
-    // Birthdays - requires view_birthdays permission
+    // Birthdays
     if (isSuperAdminUser || hasPermission(user, PERMISSIONS.VIEW_BIRTHDAYS)) {
       links.push({ label: 'Birthdays', path: '/birthdays', icon: 'Birthdays' })
     }
 
-    // Register (Bulk Import) - requires bulk_import permission
+    // Register (Bulk Import)
     if (isSuperAdminUser || hasPermission(user, PERMISSIONS.BULK_IMPORT)) {
       links.push({ label: 'Register', path: '/register-students', icon: 'Register' })
     }
 
-    // Update Data - requires bulk_update permission
+    // Update Data
     if (isSuperAdminUser || hasPermission(user, PERMISSIONS.BULK_UPDATE)) {
       links.push({ label: 'Update Data', path: '/update-students', icon: 'Update Data' })
     }
 
-    // Resource Manager - for admins only (Hidden for Super Admin as per request)
+    // Resource Manager
     if (!isSuperAdminUser && user?.roles?.includes('admin')) {
       links.push({ label: 'Resource Manager', path: '/admin/resources', icon: 'Resources' })
     }
 
-    // Admin Settings - requires system_settings permission
+    // Admin Settings
     if (isSuperAdminUser || hasPermission(user, PERMISSIONS.SYSTEM_SETTINGS)) {
       links.push({ label: 'Admin', path: '/admin', icon: 'Admin' })
     }
@@ -129,11 +128,14 @@ export default function SideNav({ isOpen, onClose }) {
 
   return (
     <>
-      {/* Monochrome Mobile Overlay - Glassmorphism */}
+      {/* Mobile Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[90] md:hidden transition-all duration-300 animate-fadeIn"
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[90] md:hidden transition-opacity duration-300 ease-out"
           onClick={onClose}
+          style={{
+            animation: 'fadeIn 0.3s ease-out'
+          }}
         />
       )}
 
@@ -145,48 +147,56 @@ export default function SideNav({ isOpen, onClose }) {
         ${effectiveOpen ? 'w-72' : 'w-20'}
         bg-black md:bg-black
         shadow-2xl shadow-black/50
-        transform transition-all duration-300 cubic-bezier(0.4, 0, 0.2, 1)
+        transform transition-all duration-500 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         md:translate-x-0
         overflow-hidden
         border-r border-slate-800
-      `}>
+      `}
+        style={{
+          transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)', // Spring-like easing
+        }}
+      >
 
         {/* Content wrapper */}
         <div className="relative h-full flex flex-col">
-          {/* Header - Monochrome */}
+          {/* Header */}
           <div className="p-6 border-b border-gray-800">
             <div className="flex items-center justify-between">
-              <div className={`flex items-center gap-3 transition-all duration-300 ${!effectiveOpen ? 'justify-center w-full' : ''}`}>
+              <div className={`flex items-center gap-3 transition-all duration-500 ease-in-out ${!effectiveOpen ? 'justify-center w-full' : ''}`}>
                 <div className="relative group">
-                  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-black font-black text-lg transition-all duration-300">
+                  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-black font-black text-lg transition-all duration-300 group-hover:scale-110">
                     F
                   </div>
                 </div>
 
-                {effectiveOpen && (
-                  <div className="animate-fadeIn">
-                    <h1 className="text-white font-black text-xl tracking-tight drop-shadow-lg">fasnet.online</h1>
-                    <p className="text-slate-400 text-xs font-medium flex items-center gap-1">
-                      <Zap className="w-3 h-3" />
-                      Student Management
-                    </p>
-                  </div>
-                )}
+                <div
+                  className={`overflow-hidden transition-all duration-500 ease-in-out ${effectiveOpen ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0'
+                    }`}
+                  style={{
+                    transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+                  }}
+                >
+                  <h1 className="text-white font-black text-xl tracking-tight drop-shadow-lg whitespace-nowrap">fasnet.online</h1>
+                  <p className="text-slate-400 text-xs font-medium flex items-center gap-1 whitespace-nowrap">
+                    <Zap className="w-3 h-3" />
+                    Student Management
+                  </p>
+                </div>
               </div>
 
-              {/* Mobile close button with gradient */}
+              {/* Mobile close button */}
               <button
                 onClick={onClose}
-                className="md:hidden p-2 text-gray-400 hover:text-white hover:bg-gradient-to-br hover:from-red-500 hover:to-pink-600 rounded-xl transition-all shadow-lg hover:shadow-red-500/50 hover:scale-110"
+                className="md:hidden p-2 text-gray-400 hover:text-white hover:bg-red-500/20 rounded-xl transition-all duration-300 hover:scale-110"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
           </div>
 
-          {/* Navigation Links - Monochrome */}
-          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+          {/* Navigation Links */}
+          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto custom-scrollbar">
             {links.map((link) => {
               const Icon = iconMap[link.icon] || LayoutDashboard
               const active = isActive(link.path)
@@ -197,30 +207,48 @@ export default function SideNav({ isOpen, onClose }) {
                   to={link.path}
                   onClick={() => window.innerWidth < 768 && onClose()}
                   className={`
-                    group relative flex items-center gap-3 px-3 py-2.5 rounded-xl
-                    transition-all duration-200
+                    group relative flex items-center gap-3 px-3 py-3 rounded-xl
+                    transition-all duration-300 ease-in-out
                     ${active
-                      ? 'bg-mono-hover text-white'
+                      ? 'bg-white/10 text-white shadow-lg shadow-white/5'
                       : 'text-gray-400 hover:bg-gray-900 hover:text-white'
                     }
                     ${!effectiveOpen ? 'justify-center' : ''}
+                    hover:scale-105 hover:shadow-md
                   `}
+                  style={{
+                    transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+                  }}
                 >
-                  <Icon className={`w-5 h-5 flex-shrink-0 transition-all duration-200 ${active ? 'text-white' : 'text-gray-400 group-hover:text-white'}`} />
+                  <Icon className={`w-5 h-5 flex-shrink-0 transition-all duration-300 ${active ? 'text-white scale-110' : 'text-gray-400 group-hover:text-white group-hover:scale-110'
+                    }`} />
 
-                  {effectiveOpen && (
-                    <>
-                      <span className="font-semibold text-sm truncate animate-fadeIn">{link.label}</span>
-                      {active && (
-                        <div className="absolute right-3 w-1.5 h-1.5 bg-white rounded-full"></div>
-                      )}
-                    </>
+                  <span
+                    className={`font-semibold text-sm truncate whitespace-nowrap overflow-hidden transition-all duration-500 ease-in-out ${effectiveOpen ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0'
+                      }`}
+                    style={{
+                      transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+                    }}
+                  >
+                    {link.label}
+                  </span>
+
+                  {/* Active indicator dot */}
+                  {active && effectiveOpen && (
+                    <div
+                      className="absolute right-3 w-2 h-2 bg-white rounded-full transition-all duration-300"
+                      style={{
+                        animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                      }}
+                    ></div>
                   )}
 
-                  {/* Tooltip for collapsed state - Only show if effectively closed (not hovered) */}
+                  {/* Tooltip for collapsed state */}
                   {!effectiveOpen && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity border border-gray-700 z-50">
+                    <div className="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-all duration-300 border border-gray-700 shadow-xl z-50 group-hover:translate-x-1">
                       {link.label}
+                      {/* Arrow */}
+                      <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900"></div>
                     </div>
                   )}
                 </Link>
@@ -228,78 +256,129 @@ export default function SideNav({ isOpen, onClose }) {
             })}
           </nav>
 
-          {/* Footer - Monochrome */}
-          <div className="p-4 border-t border-slate-800 dark:border-white/5">
-            {effectiveOpen && (
-              <div className="bg-gray-900 rounded-xl p-4 mb-3 border border-gray-800 animate-fadeIn">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-xl bg-gray-800 flex items-center justify-center">
-                    <User className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-white font-semibold text-sm truncate">
-                      {(user?.studentRef?.firstName && user?.studentRef?.lastName)
-                        ? `${user.studentRef.firstName} ${user.studentRef.lastName}`
-                        : (user?.username || 'User')}
-                    </p>
-                    <p className="text-gray-400 text-xs truncate">
-                      {isStudent ? 'Student' : isSuperAdminUser ? 'Super Admin' : 'Administrator'}
-                    </p>
-                  </div>
+          {/* Footer */}
+          <div className="p-4 border-t border-slate-800">
+            {/* User Info Card */}
+            <div
+              className={`bg-gray-900 rounded-xl p-4 mb-3 border border-gray-800 overflow-hidden transition-all duration-500 ease-in-out ${effectiveOpen ? 'opacity-100 max-h-32' : 'opacity-0 max-h-0 p-0 mb-0'
+                }`}
+              style={{
+                transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gray-800 flex items-center justify-center flex-shrink-0">
+                  <User className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-white font-semibold text-sm truncate">
+                    {(user?.studentRef?.firstName && user?.studentRef?.lastName)
+                      ? `${user.studentRef.firstName} ${user.studentRef.lastName}`
+                      : (user?.username || 'User')}
+                  </p>
+                  <p className="text-gray-400 text-xs truncate">
+                    {isStudent ? 'Student' : isSuperAdminUser ? 'Super Admin' : 'Administrator'}
+                  </p>
                 </div>
               </div>
-            )}
+            </div>
 
-            {/* Collapse Toggle Button - Monochrome */}
+            {/* Collapse Toggle Button */}
             <button
               onClick={toggleCollapse}
-              className="hidden md:flex w-full items-center justify-center gap-2 px-4 py-3 bg-gray-800 hover:bg-mono-hover text-white rounded-xl font-semibold text-sm transition-all"
+              className={`
+                hidden md:flex w-full items-center justify-center gap-2 px-4 py-3 
+                bg-gray-800 hover:bg-gray-700 text-white rounded-xl font-semibold text-sm 
+                transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg
+                ${!effectiveOpen ? 'px-3' : ''}
+              `}
               title={isCollapsed ? 'Pin Sidebar Open' : 'Unpin Sidebar'}
+              style={{
+                transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+              }}
             >
-              {isCollapsed ? (
-                /* Collapsed (Pinned Closed) -> Show Expand Icon */
-                <ChevronRight className="w-5 h-5" />
-              ) : (
-                /* Expanded (Pinned Open) -> Show Collapse Icon */
-                <>
+              <div className={`transition-transform duration-300 ${isCollapsed && isHovered ? 'rotate-180' : ''}`}>
+                {isCollapsed ? (
+                  <ChevronRight className="w-5 h-5" />
+                ) : (
                   <ChevronLeft className="w-5 h-5" />
-                  {effectiveOpen && <span>Collapse</span>}
-                </>
-              )}
+                )}
+              </div>
+              <span
+                className={`whitespace-nowrap overflow-hidden transition-all duration-500 ease-in-out ${effectiveOpen ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0'
+                  }`}
+                style={{
+                  transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+                }}
+              >
+                Collapse
+              </span>
             </button>
 
             {/* Copyright */}
-            {effectiveOpen && (
-              <p className="text-gray-500 text-xs text-center mt-3 animate-fadeIn">
-                Developed by <span className="text-gray-300 font-bold">Kasun Herath</span>
-              </p>
-            )}
+            <p
+              className={`text-gray-500 text-xs text-center mt-3 transition-all duration-500 ease-in-out overflow-hidden ${effectiveOpen ? 'opacity-100 max-h-10' : 'opacity-0 max-h-0 mt-0'
+                }`}
+              style={{
+                transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+              }}
+            >
+              Developed by <span className="text-gray-300 font-bold">Kasun Herath</span>
+            </p>
           </div>
         </div>
       </aside>
 
       <style jsx>{`
         @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
+          from { 
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          to { 
+            opacity: 1;
+            transform: scale(1);
+          }
         }
-        .animate-fadeIn {
-          animation: fadeIn 0.2s ease-out;
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.5;
+            transform: scale(1.2);
+          }
         }
         
+        .custom-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: #475569 transparent;
+        }
+
         .custom-scrollbar::-webkit-scrollbar {
           width: 6px;
         }
+
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: 10px;
+          background: transparent;
         }
+
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #475569; /* Slate-600 */
+          background: #475569;
           border-radius: 10px;
+          transition: background 0.3s ease;
         }
+
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #334155; /* Slate-700 */
+          background: #334155;
+        }
+
+        /* Smooth transitions for all interactive elements */
+        * {
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
         }
       `}</style>
     </>
