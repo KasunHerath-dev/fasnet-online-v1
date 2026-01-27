@@ -19,7 +19,18 @@ import {
   Plus,
   ArrowRight,
   FileText,
-  Key
+  Key,
+  BarChart3,
+  Clock,
+  TrendingUp,
+  Zap,
+  Sparkles,
+  ChevronRight,
+  Download,
+  Upload,
+  Eye,
+  Bell,
+  Calendar
 } from 'lucide-react'
 
 export default function AdminPage() {
@@ -29,6 +40,7 @@ export default function AdminPage() {
     usersCount: 0,
     status: 'Unknown'
   })
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     fetchStats()
@@ -36,11 +48,14 @@ export default function AdminPage() {
 
   const fetchStats = async () => {
     try {
+      setIsLoading(true)
       const res = await systemService.getStats()
       setStats({ usersCount: res.data.usersCount, status: res.data.status })
     } catch (err) {
       console.error(err)
       setStats(prev => ({ ...prev, status: 'Error' }))
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -84,59 +99,125 @@ export default function AdminPage() {
   }
 
   const tabs = [
-    { id: 'general', label: 'General', icon: Settings },
-    { id: 'academic', label: 'Academic', icon: GraduationCap },
-    { id: 'resources', label: 'Resources', icon: Database },
-    { id: 'users', label: 'Users & Access', icon: Users },
-    { id: 'system', label: 'System', icon: Database }
+    { id: 'general', label: 'Overview', icon: BarChart3, color: 'from-blue-500 to-cyan-500' },
+    { id: 'academic', label: 'Academic', icon: GraduationCap, color: 'from-purple-500 to-pink-500' },
+    { id: 'resources', label: 'Resources', icon: Database, color: 'from-emerald-500 to-teal-500' },
+    { id: 'users', label: 'Users', icon: Users, color: 'from-orange-500 to-red-500' },
+    { id: 'system', label: 'System', icon: Settings, color: 'from-slate-500 to-zinc-500' }
   ]
 
+  const currentTab = tabs.find(t => t.id === activeTab)
+
   return (
-    <div className="min-h-screen bg-stitch-bg-light dark:bg-stitch-bg-dark font-display text-slate-900 dark:text-white pb-20 transition-colors duration-300">
-      <div className="relative flex flex-col w-full min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 font-display text-slate-900 dark:text-white transition-colors duration-300">
 
-        {/* Hero Section - Professional Enhancement */}
-        <div className="relative w-full h-[180px] md:h-[240px] lg:h-[280px] bg-gradient-to-br from-stitch-blue via-[#6b13ec] to-stitch-pink overflow-hidden rounded-b-[1.5rem] md:rounded-b-[2.5rem] shadow-2xl z-10">
-          {/* Animated Background Elements */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-stitch-blue opacity-20 rounded-full translate-y-1/4 -translate-x-1/4 blur-2xl"></div>
-          <div className="absolute top-1/2 right-1/4 w-32 h-32 bg-white opacity-5 rounded-full blur-2xl"></div>
+      {/* Enhanced Hero Section */}
+      <div className="relative w-full overflow-hidden">
+        {/* Gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-stitch-blue via-purple-600 to-stitch-pink">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLW9wYWNpdHk9IjAuMDgiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-40"></div>
+        </div>
 
-          <div className="relative flex flex-col justify-between h-full px-4 md:px-6 py-4 md:py-6 z-10 max-w-7xl mx-auto w-full">
-            {/* Top Section - Status Badge */}
-            <div className="flex justify-end">
-              <span className="inline-flex items-center gap-1.5 px-2.5 md:px-3 py-1 md:py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] md:text-xs font-bold shadow-lg">
-                <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.8)]"></span>
-                <span className="hidden sm:inline">System Active</span>
-                <span className="sm:hidden">Active</span>
-              </span>
-            </div>
+        {/* Floating orbs */}
+        <div className="absolute top-0 right-0 w-80 h-80 lg:w-96 lg:h-96 bg-white opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 lg:w-80 lg:h-80 bg-cyan-400 opacity-15 rounded-full blur-3xl translate-y-1/4 -translate-x-1/4 animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/3 w-48 h-48 lg:w-64 lg:h-64 bg-purple-400 opacity-10 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }}></div>
 
-            {/* Bottom Section - Title & Icon */}
-            <div className="flex items-end gap-3 md:gap-4">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-white opacity-20 rounded-xl md:rounded-2xl blur-md group-hover:blur-lg transition-all"></div>
-                <div className="relative w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-lg group-hover:scale-105 transition-transform">
-                  <Settings className="w-7 h-7 md:w-9 md:h-9 text-white" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-14">
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 lg:gap-10">
+
+            {/* Left side - Title & Description */}
+            <div className="flex-1 space-y-3 sm:space-y-5">
+              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/25 shadow-lg">
+                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-300" />
+                <span className="text-white text-[10px] sm:text-xs font-bold tracking-wide">ADMIN CONTROL CENTER</span>
+              </div>
+
+              <div className="space-y-2">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-none tracking-tight">
+                  Command
+                  <span className="block mt-1 bg-gradient-to-r from-yellow-200 via-pink-200 to-purple-200 bg-clip-text text-transparent">
+                    Center
+                  </span>
+                </h1>
+                <p className="text-sm sm:text-base lg:text-lg text-white/85 font-medium max-w-xl leading-relaxed">
+                  Complete system management and analytics
+                </p>
+              </div>
+
+              {/* Quick stats badges */}
+              <div className="flex flex-wrap gap-2 sm:gap-3">
+                <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
+                  <span className="text-white text-xs sm:text-sm font-bold">System Online</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
+                  <Users className="w-4 h-4 text-white" />
+                  <span className="text-white text-xs sm:text-sm font-bold">{stats.usersCount} Users</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
+                  <Clock className="w-4 h-4 text-white" />
+                  <span className="text-white text-xs sm:text-sm font-bold">Last sync: 2m ago</span>
                 </div>
               </div>
-              <div className="min-w-0 flex-1 pb-1">
-                <h1 className="text-white text-2xl md:text-5xl lg:text-6xl font-black leading-none tracking-tight drop-shadow-lg mb-1">
-                  Admin Settings
-                </h1>
-                <p className="text-white/95 text-xs md:text-base lg:text-lg font-semibold leading-tight drop-shadow-md hidden sm:block">
-                  Complete system control
-                </p>
+            </div>
+
+            {/* Right side - System status card */}
+            <div className="w-full lg:w-80 xl:w-96">
+              <div className="bg-white/10 backdrop-blur-xl rounded-xl sm:rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-6 border border-white/20 shadow-xl">
+                <div className="flex items-center gap-2.5 sm:gap-3 mb-4 sm:mb-5">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-md flex items-center justify-center border border-white/20">
+                    <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold text-sm sm:text-base">System Health</h3>
+                    <p className="text-white/70 text-[10px] sm:text-xs">Real-time monitoring</p>
+                  </div>
+                </div>
+
+                <div className="space-y-2.5 sm:space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-white/75 text-xs sm:text-sm font-medium">Database</span>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse shadow-sm shadow-green-400/50"></div>
+                      <span className="text-white font-bold text-xs sm:text-sm">Active</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-white/75 text-xs sm:text-sm font-medium">API Response</span>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse shadow-sm shadow-green-400/50"></div>
+                      <span className="text-white font-bold text-xs sm:text-sm">45ms</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-white/75 text-xs sm:text-sm font-medium">Uptime</span>
+                    <span className="text-white font-bold text-xs sm:text-sm">99.9%</span>
+                  </div>
+
+                  <div className="pt-2.5 sm:pt-3 border-t border-white/20">
+                    <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+                      <span className="text-white/75 text-xs sm:text-sm font-medium">Performance</span>
+                      <span className="text-green-400 font-bold text-xs sm:text-sm">Excellent</span>
+                    </div>
+                    <div className="w-full h-1.5 sm:h-2 bg-white/10 rounded-full overflow-hidden">
+                      <div className="h-full w-[94%] bg-gradient-to-r from-green-400 to-emerald-500 rounded-full"></div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div className="max-w-7xl mx-auto w-full px-3 md:px-6 z-20 -mt-6 md:-mt-8 space-y-4 md:space-y-8">
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-4 sm:-mt-6 lg:-mt-8 pb-12 sm:pb-16 lg:pb-20">
 
-          {/* Tab Navigation - Professional Mobile/Desktop Design */}
-          <div className="bg-white dark:bg-stitch-card-dark rounded-xl md:rounded-2xl p-1.5 md:p-2 shadow-lg border border-slate-100 dark:border-stitch-card-border">
-            <div className="flex gap-1 md:gap-2 overflow-x-auto scrollbar-hide">
+        {/* Tab Navigation */}
+        <div className="mb-4 sm:mb-6 lg:mb-8">
+          <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rounded-xl sm:rounded-2xl p-1.5 sm:p-2 shadow-xl border border-slate-200/60 dark:border-slate-700/60">
+            <div className="grid grid-cols-5 gap-1 sm:gap-2">
               {tabs.map((tab) => {
                 const Icon = tab.icon
                 const isActive = activeTab === tab.id
@@ -144,368 +225,568 @@ export default function AdminPage() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`relative flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-3 md:px-4 py-2.5 md:py-2.5 rounded-lg md:rounded-xl text-[10px] md:text-sm font-bold transition-all duration-200 whitespace-nowrap min-w-[60px] md:min-w-0 flex-1 md:flex-none ${isActive
-                      ? 'bg-gradient-to-br from-stitch-blue to-indigo-600 text-white shadow-lg shadow-stitch-blue/30'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
+                    className={`relative group transition-all duration-300 ${isActive ? 'scale-105' : 'hover:scale-102'
                       }`}
                   >
-                    <Icon className={`w-5 h-5 md:w-4 md:h-4 shrink-0 transition-transform duration-200 ${isActive ? 'scale-110' : ''}`} />
-                    <span className="hidden md:inline">{tab.label}</span>
-                    <span className="md:hidden text-[9px] font-semibold leading-tight">{tab.label.split(' ')[0]}</span>
-                    {isActive && (
-                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-white rounded-full md:hidden"></div>
-                    )}
+                    <div className={`relative overflow-hidden rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-5 transition-all duration-300 ${isActive
+                      ? `bg-gradient-to-br ${tab.color} shadow-lg`
+                      : 'bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                      }`}>
+                      <div className="flex flex-col items-center gap-1.5 sm:gap-2 relative z-10">
+                        <Icon className={`w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 transition-all duration-300 ${isActive
+                          ? 'text-white'
+                          : 'text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white'
+                          }`} />
+                        <span className={`text-[10px] sm:text-xs lg:text-sm font-bold transition-all duration-300 text-center leading-tight ${isActive
+                          ? 'text-white'
+                          : 'text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white'
+                          }`}>
+                          {tab.label}
+                        </span>
+                      </div>
+
+                      {isActive && (
+                        <div className="absolute inset-0 bg-white/20 rounded-xl sm:rounded-2xl animate-pulse"></div>
+                      )}
+                    </div>
                   </button>
                 )
               })}
             </div>
           </div>
+        </div>
 
-          {/* Tab Content */}
-          <div className="animate-fadeIn">
-            {/* General Tab */}
-            {activeTab === 'general' && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Quick Actions */}
-                  <div className="space-y-2.5 md:space-y-4">
-                    <h3 className="text-sm md:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-1.5 md:gap-2 ml-0.5 md:ml-1">
-                      <Activity className="w-4 h-4 md:w-5 md:h-5 text-stitch-blue" />
-                      Quick Actions
-                    </h3>
+        {/* Tab Content with Smooth Transitions */}
+        <div className="animate-fadeIn">
 
-                    <div onClick={handleChangePassword}
-                      className="group p-3 md:p-5 bg-white dark:bg-stitch-card-dark rounded-xl md:rounded-2xl border border-slate-100 dark:border-stitch-card-border hover:border-stitch-blue dark:hover:border-stitch-blue transition-all cursor-pointer shadow-md hover:shadow-lg min-h-[56px]">
-                      <div className="flex items-center gap-4">
-                        <div className="min-w-[3rem] w-12 h-12 rounded-xl bg-stitch-blue/10 flex items-center justify-center text-stitch-blue group-hover:bg-stitch-blue group-hover:text-white transition-colors">
-                          <Key className="w-6 h-6" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-slate-900 dark:text-white text-base md:text-lg truncate">Change Password</h4>
-                          <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 truncate">Update account security</p>
-                        </div>
-                        <ArrowRight className="w-5 h-5 text-slate-300 dark:text-slate-600 group-hover:text-stitch-blue group-hover:translate-x-1 transition-all shrink-0" />
+          {/* General/Overview Tab */}
+          {activeTab === 'general' && (
+            <div className="space-y-6 sm:space-y-8">
+
+              {/* Quick Actions Grid */}
+              <div>
+                <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
+                    <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white">Quick Actions</h2>
+                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Frequently used operations</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+                  {/* Change Password */}
+                  <button
+                    onClick={handleChangePassword}
+                    className="group relative overflow-hidden bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 hover:border-blue-500 dark:hover:border-blue-500 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20 hover:-translate-y-1"
+                  >
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
+
+                    <div className="relative">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
+                        <Key className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                      </div>
+
+                      <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-2">Change Password</h3>
+                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-4">Update your security credentials</p>
+
+                      <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
+                        <span>Update now</span>
+                        <ChevronRight className="w-4 h-4" />
                       </div>
                     </div>
+                  </button>
 
-                    <div onClick={() => navigate('/students/new')}
-                      className="group p-4 md:p-5 bg-white dark:bg-stitch-card-dark rounded-2xl border border-slate-100 dark:border-stitch-card-border hover:border-stitch-blue dark:hover:border-stitch-blue transition-all cursor-pointer shadow-md hover:shadow-lg">
-                      <div className="flex items-center gap-4">
-                        <div className="min-w-[3rem] w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors">
-                          <Plus className="w-6 h-6" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-slate-900 dark:text-white text-base md:text-lg truncate">Add New Student</h4>
-                          <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 truncate">Manual registration</p>
-                        </div>
-                        <ArrowRight className="w-5 h-5 text-slate-300 dark:text-slate-600 group-hover:text-blue-500 group-hover:translate-x-1 transition-all shrink-0" />
+                  {/* Add Student */}
+                  <button
+                    onClick={() => navigate('/students/new')}
+                    className="group relative overflow-hidden bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 hover:border-purple-500 dark:hover:border-purple-500 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20 hover:-translate-y-1"
+                  >
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
+
+                    <div className="relative">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
+                        <Plus className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                      </div>
+
+                      <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-2">Add Student</h3>
+                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-4">Register new student manually</p>
+
+                      <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
+                        <span>Create profile</span>
+                        <ChevronRight className="w-4 h-4" />
                       </div>
                     </div>
+                  </button>
 
-                    <div onClick={() => navigate('/profile-requests')}
-                      className="group p-4 md:p-5 bg-white dark:bg-stitch-card-dark rounded-2xl border border-slate-100 dark:border-stitch-card-border hover:border-stitch-blue dark:hover:border-stitch-blue transition-all cursor-pointer shadow-md hover:shadow-lg">
-                      <div className="flex items-center gap-4">
-                        <div className="min-w-[3rem] w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-500 group-hover:bg-purple-500 group-hover:text-white transition-colors">
-                          <FileText className="w-6 h-6" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-slate-900 dark:text-white text-base md:text-lg truncate">Profile Requests</h4>
-                          <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 truncate">Review pending changes</p>
-                        </div>
-                        <ArrowRight className="w-5 h-5 text-slate-300 dark:text-slate-600 group-hover:text-purple-500 group-hover:translate-x-1 transition-all shrink-0" />
+                  {/* Profile Requests */}
+                  <button
+                    onClick={() => navigate('/profile-requests')}
+                    className="group relative overflow-hidden bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/20 hover:-translate-y-1"
+                  >
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
+
+                    <div className="relative">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
+                        <FileText className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                      </div>
+
+                      <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-2">Profile Requests</h3>
+                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-4">Review pending changes</p>
+
+                      <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
+                        <span>View requests</span>
+                        <ChevronRight className="w-4 h-4" />
                       </div>
                     </div>
+                  </button>
 
-                    <div onClick={() => navigate('/register-students')}
-                      className="group p-4 md:p-5 bg-white dark:bg-stitch-card-dark rounded-2xl border border-slate-100 dark:border-stitch-card-border hover:border-stitch-blue dark:hover:border-stitch-blue transition-all cursor-pointer shadow-md hover:shadow-lg">
-                      <div className="flex items-center gap-4">
-                        <div className="min-w-[3rem] w-12 h-12 rounded-xl bg-stitch-pink/10 flex items-center justify-center text-stitch-pink group-hover:bg-stitch-pink group-hover:text-white transition-colors">
-                          <Database className="w-6 h-6" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-slate-900 dark:text-white text-base md:text-lg truncate">Bulk Import</h4>
-                          <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 truncate">Upload CSV/Excel</p>
-                        </div>
-                        <ArrowRight className="w-5 h-5 text-slate-300 dark:text-slate-600 group-hover:text-stitch-pink group-hover:translate-x-1 transition-all shrink-0" />
+                  {/* Bulk Import */}
+                  <button
+                    onClick={() => navigate('/register-students')}
+                    className="group relative overflow-hidden bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 hover:border-orange-500 dark:hover:border-orange-500 transition-all duration-300 hover:shadow-2xl hover:shadow-orange-500/20 hover:-translate-y-1"
+                  >
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
+
+                    <div className="relative">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
+                        <Upload className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                       </div>
+
+                      <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-2">Bulk Import</h3>
+                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-4">Upload CSV/Excel files</p>
+
+                      <div className="flex items-center gap-2 text-orange-600 dark:text-orange-400 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
+                        <span>Import data</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              {/* System Analytics */}
+              <div>
+                <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
+                    <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white">System Analytics</h2>
+                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Real-time system metrics</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  {/* Database Status Card */}
+                  <div className="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white shadow-2xl shadow-blue-500/30 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
+                    <div className="relative">
+                      <div className="flex items-center justify-between mb-4">
+                        <Database className="w-8 h-8 sm:w-10 sm:h-10" />
+                        <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
+                      </div>
+                      <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-2">Online</h3>
+                      <p className="text-white/90 text-xs sm:text-sm font-medium">Database Status</p>
                     </div>
                   </div>
 
-                  {/* System Info */}
-                  <div className="space-y-2.5 md:space-y-4">
-                    <h3 className="text-sm md:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-1.5 md:gap-2 ml-0.5 md:ml-1">
-                      <Activity className="w-4 h-4 md:w-5 md:h-5 text-stitch-success" />
-                      System Information
-                    </h3>
-
-                    <div className="bg-white dark:bg-stitch-card-dark rounded-xl md:rounded-2xl p-3 md:p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 rounded-xl">
-                          <span className="text-slate-600 dark:text-slate-300 font-medium text-xs md:text-sm">Database Status</span>
-                          <span className="flex items-center gap-2 text-stitch-success font-bold text-xs md:text-sm bg-stitch-success/10 px-3 py-1 rounded-full">
-                            <CheckCircle className="w-3 h-3 md:w-4 md:h-4" />
-                            Online
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 rounded-xl">
-                          <span className="text-slate-600 dark:text-slate-300 font-medium text-xs md:text-sm">API Status</span>
-                          <span className="flex items-center gap-2 text-stitch-success font-bold text-xs md:text-sm bg-stitch-success/10 px-3 py-1 rounded-full">
-                            <CheckCircle className="w-3 h-3 md:w-4 md:h-4" />
-                            Responsive
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 rounded-xl">
-                          <span className="text-slate-600 dark:text-slate-300 font-medium text-xs md:text-sm">System Status</span>
-                          <span className="text-slate-900 dark:text-white font-bold text-xs md:text-sm">{stats.status}</span>
-                        </div>
-                        <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 rounded-xl">
-                          <span className="text-slate-600 dark:text-slate-300 font-medium text-xs md:text-sm">Version</span>
-                          <span className="text-slate-900 dark:text-white font-bold text-xs md:text-sm">1.0.0</span>
-                        </div>
+                  {/* Users Count Card */}
+                  <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white shadow-2xl shadow-purple-500/30 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
+                    <div className="relative">
+                      <div className="flex items-center justify-between mb-4">
+                        <Users className="w-8 h-8 sm:w-10 sm:h-10" />
+                        <TrendingUp className="w-6 h-6 text-white/80" />
                       </div>
+                      <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-2">{stats.usersCount}</h3>
+                      <p className="text-white/90 text-xs sm:text-sm font-medium">Total Users</p>
+                    </div>
+                  </div>
+
+                  {/* API Response Card */}
+                  <div className="bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white shadow-2xl shadow-emerald-500/30 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
+                    <div className="relative">
+                      <div className="flex items-center justify-between mb-4">
+                        <Activity className="w-8 h-8 sm:w-10 sm:h-10" />
+                        <CheckCircle className="w-6 h-6 text-white/80" />
+                      </div>
+                      <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-2">45ms</h3>
+                      <p className="text-white/90 text-xs sm:text-sm font-medium">API Response</p>
                     </div>
                   </div>
                 </div>
               </div>
-            )}
 
-            {/* Academic Tab */}
-            {activeTab === 'academic' && (
-              <div className="space-y-6">
-                <div className="bg-white dark:bg-stitch-card-dark rounded-2xl p-4 md:p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
+              {/* Additional Info Cards */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/20 shrink-0">
-                      <CheckCircle className="w-6 h-6 text-white" />
-                    </div>
-                    <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">Assessments</h3>
-                  </div>
-                  <AssessmentManagement />
-                </div>
-
-                <div className="bg-white dark:bg-stitch-card-dark rounded-2xl p-4 md:p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-purple-600 flex items-center justify-center shadow-lg shadow-purple-600/20 shrink-0">
-                        <GraduationCap className="w-6 h-6 text-white" />
-                      </div>
-                      <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">Batch Years</h3>
-                    </div>
-                    <span className="self-start md:self-auto flex items-center gap-2 px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg text-xs font-bold border border-purple-200 dark:border-purple-800">
-                      <Lock className="w-3 h-3" />
-                      Super Admin Only
-                    </span>
-                  </div>
-                  <BatchYearManagement />
-                </div>
-
-                <div onClick={() => navigate('/admin/bulk-combination')}
-                  className="group bg-white dark:bg-stitch-card-dark rounded-2xl p-4 md:p-6 border border-slate-100 dark:border-stitch-card-border hover:border-stitch-success cursor-pointer shadow-lg hover:shadow-xl transition-all">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-stitch-success flex items-center justify-center shadow-lg shadow-stitch-success/20 group-hover:scale-110 transition-transform shrink-0">
-                      <GraduationCap className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">Bulk Combination</h3>
-                      <p className="text-slate-500 dark:text-slate-400 text-sm">Assign combinations via Excel upload</p>
-                    </div>
-                    <div className="ml-auto hidden sm:block">
-                      <span className="text-white font-bold bg-stitch-success px-4 py-2 rounded-lg text-sm group-hover:bg-emerald-600 transition-colors">
-                        Open Tool
-                      </span>
-                    </div>
-                    <ArrowRight className="w-5 h-5 text-stitch-success sm:hidden" />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Resources Tab */}
-            {activeTab === 'resources' && (
-              <ResourceManagement />
-            )}
-
-            {/* Users & Access Tab */}
-            {activeTab === 'users' && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div onClick={() => navigate('/admin/users')}
-                    className="group p-4 md:p-6 bg-white dark:bg-stitch-card-dark rounded-2xl border border-slate-100 dark:border-stitch-card-border hover:border-stitch-pink dark:hover:border-stitch-pink cursor-pointer shadow-lg hover:shadow-xl transition-all">
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-stitch-pink to-rose-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform shrink-0">
-                        <Shield className="w-7 h-7 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-bold text-slate-900 dark:text-white">Manage Users</h3>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">Control access and roles</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-white/5 rounded-xl">
-                      <span className="text-slate-600 dark:text-slate-300 font-medium text-sm">Total Users</span>
-                      <span className="font-bold text-slate-900 dark:text-white text-lg">{stats.usersCount}</span>
-                    </div>
-                  </div>
-
-                  <div onClick={handleSyncUsers}
-                    className="group p-4 md:p-6 bg-white dark:bg-stitch-card-dark rounded-2xl border border-slate-100 dark:border-stitch-card-border hover:border-stitch-blue dark:hover:border-stitch-blue cursor-pointer shadow-lg hover:shadow-xl transition-all">
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-stitch-blue to-indigo-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform shrink-0">
-                        <RefreshCw className="w-7 h-7 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-bold text-slate-900 dark:text-white">Sync Accounts</h3>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">Auto-create missing accounts</p>
-                      </div>
-                    </div>
-                    <p className="text-xs text-slate-400 dark:text-slate-500 italic">
-                      Creates user accounts for students who don't have one
-                    </p>
-                  </div>
-                </div>
-
-                <div onClick={() => navigate('/missing-students')}
-                  className="group bg-white dark:bg-stitch-card-dark rounded-2xl p-4 md:p-6 border border-slate-100 dark:border-stitch-card-border hover:border-orange-500 cursor-pointer shadow-lg hover:shadow-xl transition-all">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/20 group-hover:scale-110 transition-transform shrink-0">
-                      <AlertTriangle className="w-6 h-6 text-white" />
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
+                      <CheckCircle className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">Missing Students</h3>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">Identify data issues blocking access</p>
+                      <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">System Status</h3>
+                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">All systems operational</p>
                     </div>
-                    <div className="ml-auto hidden sm:block">
-                      <span className="text-white font-bold bg-orange-500 px-4 py-2 rounded-lg text-sm group-hover:bg-orange-600 transition-colors">
-                        Check Now
-                      </span>
-                    </div>
-                    <ArrowRight className="w-5 h-5 text-orange-500 sm:hidden" />
+                  </div>
+
+                  <div className="space-y-3 sm:space-y-4">
+                    {[
+                      { label: 'Database', value: 'Online', status: 'success' },
+                      { label: 'API', value: 'Responsive', status: 'success' },
+                      { label: 'Storage', value: '45% Used', status: 'warning' },
+                      { label: 'Version', value: '1.0.0', status: 'info' }
+                    ].map((item, idx) => (
+                      <div key={idx} className="flex items-center justify-between p-3 sm:p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl sm:rounded-2xl border border-slate-100 dark:border-slate-700">
+                        <span className="text-slate-600 dark:text-slate-400 font-medium text-sm sm:text-base">{item.label}</span>
+                        <span className={`font-bold text-sm sm:text-base ${item.status === 'success' ? 'text-green-600 dark:text-green-400' :
+                          item.status === 'warning' ? 'text-orange-600 dark:text-orange-400' :
+                            'text-slate-900 dark:text-white'
+                          }`}>
+                          {item.value}
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                <div className="bg-white dark:bg-stitch-card-dark rounded-2xl p-4 md:p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                    <Lock className="w-5 h-5 text-slate-400" />
-                    Permission Levels
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-slate-50 dark:bg-white/5 p-4 rounded-xl border border-slate-200 dark:border-white/10">
-                      <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mb-2 font-bold text-sm">S</div>
-                      <h4 className="font-bold text-slate-900 dark:text-white mb-1">Superadmin</h4>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">Full system access</p>
+                <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
+                      <Bell className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                     </div>
-                    <div className="bg-slate-50 dark:bg-white/5 p-4 rounded-xl border border-slate-200 dark:border-white/10">
-                      <div className="w-8 h-8 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center mb-2 font-bold text-sm">A</div>
-                      <h4 className="font-bold text-slate-900 dark:text-white mb-1">Admin</h4>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">Manage students & data</p>
+                    <div>
+                      <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Recent Activity</h3>
+                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Latest system events</p>
                     </div>
-                    <div className="bg-slate-50 dark:bg-white/5 p-4 rounded-xl border border-slate-200 dark:border-white/10">
-                      <div className="w-8 h-8 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mb-2 font-bold text-sm">U</div>
-                      <h4 className="font-bold text-slate-900 dark:text-white mb-1">User</h4>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">View own data only</p>
-                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    {[
+                      { action: 'User login', time: '2 minutes ago', icon: Users },
+                      { action: 'Data backup', time: '1 hour ago', icon: Database },
+                      { action: 'System update', time: '3 hours ago', icon: RefreshCw },
+                      { action: 'New student added', time: '5 hours ago', icon: UserPlus }
+                    ].map((activity, idx) => {
+                      const Icon = activity.icon
+                      return (
+                        <div key={idx} className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
+                          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center shrink-0">
+                            <Icon className="w-4 h-4 text-slate-700 dark:text-slate-300" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{activity.action}</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">{activity.time}</p>
+                          </div>
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* System Tab */}
-            {activeTab === 'system' && (
-              <div className="space-y-6">
-                {/* Danger Zone */}
-                <div className="relative overflow-hidden bg-red-50 dark:bg-red-900/10 rounded-xl md:rounded-2xl p-4 md:p-8 border border-red-200 dark:border-red-900/30">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-red-500 rounded-full opacity-5 -mr-16 -mt-16"></div>
-                  <div className="relative z-10">
-                    <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-6 mb-4 md:mb-6">
-                      <div className="w-12 h-12 bg-red-500 rounded-2xl flex items-center justify-center shadow-lg shadow-red-500/20 shrink-0">
-                        <AlertTriangle className="w-6 h-6 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="text-xl md:text-2xl font-black text-red-900 dark:text-red-200">Danger Zone</h3>
-                        <p className="text-red-700 dark:text-red-400 font-medium text-sm">Irreversible actions - Use with extreme caution</p>
-                      </div>
-                    </div>
+          {/* Academic Tab */}
+          {activeTab === 'academic' && (
+            <div className="space-y-6 sm:space-y-8">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
+                    <CheckCircle className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Assessment Management</h3>
+                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Configure and manage assessments</p>
+                  </div>
+                </div>
+                <AssessmentManagement />
+              </div>
 
-                    <div className="bg-white dark:bg-black/20 backdrop-blur-sm rounded-lg md:rounded-xl p-3 md:p-6 border border-red-100 dark:border-red-900/30">
-                      <h4 className="font-bold text-red-900 dark:text-red-200 mb-2">Reset All Student Data</h4>
-                      <p className="text-xs md:text-sm text-red-700 dark:text-red-400 mb-4">
-                        This will permanently delete all student records from the database. This action cannot be undone.
-                      </p>
-                      <button
-                        onClick={handleResetData}
-                        className="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-sm md:text-base"
-                      >
-                        <AlertTriangle className="w-5 h-5" />
-                        Reset All Data
-                      </button>
+              <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
+                      <GraduationCap className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                     </div>
+                    <div>
+                      <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Batch Years</h3>
+                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Manage academic batches</p>
+                    </div>
+                  </div>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-xl text-xs sm:text-sm font-bold border border-purple-200 dark:border-purple-800">
+                    <Lock className="w-4 h-4" />
+                    Super Admin Only
+                  </div>
+                </div>
+                <BatchYearManagement />
+              </div>
+
+              <button
+                onClick={() => navigate('/admin/bulk-combination')}
+                className="group w-full bg-gradient-to-br from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-emerald-500/30 hover:shadow-emerald-500/50 transition-all duration-300 hover:-translate-y-1"
+              >
+                <div className="flex items-center gap-4 sm:gap-6">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <GraduationCap className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Bulk Combination Assignment</h3>
+                    <p className="text-white/90 text-sm sm:text-base">Upload Excel file to assign subject combinations</p>
+                  </div>
+                  <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8 text-white group-hover:translate-x-2 transition-transform" />
+                </div>
+              </button>
+            </div>
+          )}
+
+          {/* Resources Tab */}
+          {activeTab === 'resources' && (
+            <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg">
+                  <Database className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Resource Management</h3>
+                  <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Manage system resources and files</p>
+                </div>
+              </div>
+              <ResourceManagement />
+            </div>
+          )}
+
+          {/* Users Tab */}
+          {activeTab === 'users' && (
+            <div className="space-y-6 sm:space-y-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                {/* Manage Users Card */}
+                <button
+                  onClick={() => navigate('/admin/users')}
+                  className="group relative overflow-hidden bg-gradient-to-br from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-pink-500/30 hover:shadow-pink-500/50 transition-all duration-300 hover:-translate-y-1"
+                >
+                  <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
+                  <div className="relative">
+                    <div className="flex items-start justify-between mb-6">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <Shield className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+                      </div>
+                      <ChevronRight className="w-6 h-6 text-white group-hover:translate-x-2 transition-transform" />
+                    </div>
+                    <h3 className="text-2xl sm:text-3xl font-black text-white mb-3">Manage Users</h3>
+                    <p className="text-white/90 text-sm sm:text-base mb-6">Control access levels and user roles</p>
+                    <div className="flex items-center justify-between p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                      <span className="text-white/90 text-sm font-medium">Total Users</span>
+                      <span className="text-2xl font-black text-white">{stats.usersCount}</span>
+                    </div>
+                  </div>
+                </button>
+
+                {/* Sync Accounts Card */}
+                <button
+                  onClick={handleSyncUsers}
+                  className="group relative overflow-hidden bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-300 hover:-translate-y-1"
+                >
+                  <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
+                  <div className="relative">
+                    <div className="flex items-start justify-between mb-6">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 group-hover:rotate-180 transition-all duration-500">
+                        <RefreshCw className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+                      </div>
+                      <ChevronRight className="w-6 h-6 text-white group-hover:translate-x-2 transition-transform" />
+                    </div>
+                    <h3 className="text-2xl sm:text-3xl font-black text-white mb-3">Sync Accounts</h3>
+                    <p className="text-white/90 text-sm sm:text-base mb-6">Auto-create user accounts for students</p>
+                    <div className="p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                      <p className="text-xs text-white/80 italic">Automatically generates login credentials for students without accounts</p>
+                    </div>
+                  </div>
+                </button>
+              </div>
+
+              {/* Missing Students */}
+              <button
+                onClick={() => navigate('/missing-students')}
+                className="group w-full bg-gradient-to-br from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-orange-500/30 hover:shadow-orange-500/50 transition-all duration-300 hover:-translate-y-1"
+              >
+                <div className="flex items-center gap-4 sm:gap-6">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <AlertTriangle className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Missing Students Report</h3>
+                    <p className="text-white/90 text-sm sm:text-base">Identify and resolve data inconsistencies</p>
+                  </div>
+                  <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8 text-white group-hover:translate-x-2 transition-transform" />
+                </div>
+              </button>
+
+              {/* Permission Levels */}
+              <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-slate-500 to-zinc-500 flex items-center justify-center shadow-lg">
+                    <Lock className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Permission Levels</h3>
+                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">System access hierarchy</p>
                   </div>
                 </div>
 
-                {/* System Maintenance */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-white dark:bg-stitch-card-dark rounded-xl md:rounded-2xl p-3 md:p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                      <Database className="w-5 h-5 text-stitch-blue" />
-                      Database Maintenance
-                    </h3>
-                    <div className="space-y-3">
-                      <button
-                        onClick={() => alert('Database backup feature coming soon! This will create a backup of your entire database.')}
-                        className="w-full py-3 bg-stitch-blue hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-md text-sm md:text-base"
-                      >
-                        Backup Database
-                      </button>
-                      <button
-                        onClick={() => alert('Table optimization feature coming soon! This will optimize database tables for better performance.')}
-                        className="w-full py-3 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-bold rounded-xl border border-slate-200 dark:border-white/10 transition-all text-sm md:text-base"
-                      >
-                        Optimize Tables
-                      </button>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+                  <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 p-5 sm:p-6 rounded-2xl border-2 border-blue-200 dark:border-blue-800">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-500 to-cyan-500 text-white rounded-2xl flex items-center justify-center mb-4 font-black text-xl sm:text-2xl shadow-lg">
+                      S
                     </div>
+                    <h4 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2">Superadmin</h4>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Complete system control and configuration access</p>
                   </div>
 
-                  <div className="bg-white dark:bg-stitch-card-dark rounded-2xl p-4 md:p-6 border border-slate-100 dark:border-stitch-card-border shadow-lg">
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                      <Activity className="w-5 h-5 text-stitch-pink" />
-                      System Logs
-                    </h3>
-                    <div className="space-y-3">
-                      <button
-                        onClick={() => alert('Activity logs viewer coming soon! This will display system activity and user actions.')}
-                        className="w-full py-3 bg-stitch-pink hover:bg-pink-700 text-white font-bold rounded-xl transition-all shadow-md text-sm md:text-base"
-                      >
-                        View Activity Logs
-                      </button>
-                      <button
-                        onClick={() => alert('Log export feature coming soon! This will export system logs to a file.')}
-                        className="w-full py-3 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-bold rounded-xl border border-slate-200 dark:border-white/10 transition-all text-sm md:text-base"
-                      >
-                        Export Logs
-                      </button>
+                  <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-5 sm:p-6 rounded-2xl border-2 border-purple-200 dark:border-purple-800">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-2xl flex items-center justify-center mb-4 font-black text-xl sm:text-2xl shadow-lg">
+                      A
                     </div>
+                    <h4 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2">Admin</h4>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Manage students, data, and daily operations</p>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 p-5 sm:p-6 rounded-2xl border-2 border-emerald-200 dark:border-emerald-800">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-emerald-500 to-teal-500 text-white rounded-2xl flex items-center justify-center mb-4 font-black text-xl sm:text-2xl shadow-lg">
+                      U
+                    </div>
+                    <h4 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2">User</h4>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">View and manage personal data only</p>
                   </div>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
+
+          {/* System Tab */}
+          {activeTab === 'system' && (
+            <div className="space-y-6 sm:space-y-8">
+              {/* Danger Zone */}
+              <div className="relative overflow-hidden bg-gradient-to-br from-red-500 to-rose-600 rounded-2xl sm:rounded-3xl p-6 sm:p-10 shadow-2xl shadow-red-500/40">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full -ml-24 -mb-24"></div>
+
+                <div className="relative">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                      <AlertTriangle className="w-7 h-7 sm:w-8 sm:h-8 text-white animate-pulse" />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl sm:text-3xl font-black text-white">Danger Zone</h3>
+                      <p className="text-white/90 text-sm sm:text-base font-medium">Irreversible destructive actions</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 sm:p-8 border border-white/20">
+                    <h4 className="text-xl font-bold text-white mb-3">Reset All Student Data</h4>
+                    <p className="text-white/90 text-sm sm:text-base mb-6">
+                      ⚠️ This will <span className="font-bold">permanently delete</span> all student records from the database. This action <span className="font-bold">cannot be undone</span>.
+                    </p>
+                    <button
+                      onClick={handleResetData}
+                      className="w-full py-4 bg-white hover:bg-red-50 text-red-600 font-black rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3 text-base sm:text-lg group"
+                    >
+                      <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 group-hover:animate-bounce" />
+                      Delete All Student Data
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* System Maintenance */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
+                      <Database className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Database Tools</h3>
+                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Maintenance and optimization</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 sm:space-y-4">
+                    <button
+                      onClick={() => alert('Database backup feature coming soon! This will create a complete backup of your database.')}
+                      className="w-full py-3 sm:py-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                    >
+                      <Download className="w-5 h-5" />
+                      Backup Database
+                    </button>
+                    <button
+                      onClick={() => alert('Table optimization feature coming soon! This will optimize database performance.')}
+                      className="w-full py-3 sm:py-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl border-2 border-slate-200 dark:border-slate-700 transition-all flex items-center justify-center gap-2"
+                    >
+                      <Zap className="w-5 h-5" />
+                      Optimize Tables
+                    </button>
+                  </div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
+                      <Activity className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">System Logs</h3>
+                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Activity monitoring</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 sm:space-y-4">
+                    <button
+                      onClick={() => alert('Activity logs viewer coming soon! Monitor all system activities.')}
+                      className="w-full py-3 sm:py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                    >
+                      <Eye className="w-5 h-5" />
+                      View Activity Logs
+                    </button>
+                    <button
+                      onClick={() => alert('Log export feature coming soon! Download system logs for analysis.')}
+                      className="w-full py-3 sm:py-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl border-2 border-slate-200 dark:border-slate-700 transition-all flex items-center justify-center gap-2"
+                    >
+                      <Download className="w-5 h-5" />
+                      Export Logs
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
       <style>{`
-                @keyframes fadeIn {
-                    from { opacity: 0; transform: translateY(10px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                .animate-fadeIn { animation: fadeIn 0.4s ease-out; }
-                /* Hide scrollbar for Chrome, Safari and Opera */
-                .scrollbar-hide::-webkit-scrollbar {
-                    display: none;
-                }
-                /* Hide scrollbar for IE, Edge and Firefox */
-                .scrollbar-hide {
-                    -ms-overflow-style: none;  /* IE and Edge */
-                    scrollbar-width: none;  /* Firefox */
-                }
-            `}</style>
+        @keyframes fadeIn {
+          from { 
+            opacity: 0; 
+            transform: translateY(20px); 
+          }
+          to { 
+            opacity: 1; 
+            transform: translateY(0); 
+          }
+        }
+        .animate-fadeIn { 
+          animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </div>
   )
 }
