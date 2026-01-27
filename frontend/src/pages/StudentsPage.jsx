@@ -116,9 +116,9 @@ export default function StudentsPage() {
                   <span className="text-white text-xs sm:text-sm font-bold">All Students</span>
                 </div>
                 {selectedIds.length > 0 && (
-                  <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
-                    <div className="w-2 h-2 bg-slate-400 rounded-full animate-pulse shadow-lg shadow-white/50"></div>
-                    <span className="text-white text-xs sm:text-sm font-bold">{selectedIds.length} Selected</span>
+                  <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white text-black backdrop-blur-md border border-white/20 shadow-lg shadow-white/10">
+                    <div className="w-2 h-2 bg-black rounded-full animate-pulse"></div>
+                    <span className="text-black text-xs sm:text-sm font-black">{selectedIds.length} Selected</span>
                   </div>
                 )}
                 {hasActiveFilters && (
@@ -174,10 +174,10 @@ export default function StudentsPage() {
 
                       <button
                         onClick={() => setShowDeleteModal(true)}
-                        className="group flex items-center gap-3 p-3 sm:p-4 bg-red-500/20 hover:bg-red-500/30 backdrop-blur-md rounded-xl sm:rounded-2xl border border-red-400/20 hover:border-red-400/30 transition-all hover:scale-105 w-full"
+                        className="group flex items-center gap-3 p-3 sm:p-4 bg-red-600 hover:bg-red-700 backdrop-blur-md rounded-xl sm:rounded-2xl border border-red-500/50 hover:border-red-500 transition-all hover:scale-105 w-full shadow-lg shadow-red-900/20"
                       >
-                        <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                          <Trash2 className="w-5 h-5 text-red-300" />
+                        <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <Trash2 className="w-5 h-5 text-white" />
                         </div>
                         <div className="flex-1 text-left">
                           <p className="text-white font-bold text-sm">Delete</p>
@@ -236,14 +236,14 @@ export default function StudentsPage() {
                   {/* Search Input */}
                   <div className="sm:col-span-2">
                     <label className="flex items-center gap-2 text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300 mb-3">
-                      <Search className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600 dark:text-indigo-400" />
+                      <Search className="w-4 h-4 sm:w-5 sm:h-5 text-slate-900 dark:text-white" />
                       Search Students
                     </label>
                     <div className="relative group">
                       <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-slate-900 dark:group-focus-within:text-white transition-colors z-10 pointer-events-none" />
                       <input
                         type="text"
-                        className="w-full pl-12 pr-4 py-3.5 sm:py-4 text-sm sm:text-base bg-white dark:bg-slate-900/50 border-2 border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl focus:border-slate-900 dark:focus:border-white focus:ring-4 focus:ring-slate-500/10 transition-all font-medium text-slate-900 dark:text-white placeholder-slate-400 shadow-sm hover:shadow-md"
+                        className="w-full pl-12 pr-4 py-3.5 sm:py-4 text-sm sm:text-base bg-white dark:bg-slate-900/50 border-2 border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl focus:border-slate-900 dark:focus:border-white focus:ring-4 focus:ring-slate-500/10 transition-all font-medium text-slate-900 dark:text-white placeholder-slate-400 shadow-sm hover:shadow-md outline-none"
                         placeholder="Name, registration number..."
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
@@ -281,7 +281,7 @@ export default function StudentsPage() {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-4 py-3.5 sm:py-4 text-sm sm:text-base bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl focus:border-purple-500 dark:focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20 transition-all font-medium text-slate-900 dark:text-white placeholder-slate-400 shadow-sm hover:shadow-md"
+                      className="w-full px-4 py-3.5 sm:py-4 text-sm sm:text-base bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl focus:border-slate-900 dark:focus:border-white focus:ring-4 focus:ring-slate-500/20 transition-all font-medium text-slate-900 dark:text-white placeholder-slate-400 shadow-sm hover:shadow-md outline-none"
                       placeholder="e.g. 2024"
                       value={batch}
                       onChange={(e) => setBatch(e.target.value)}
@@ -344,7 +344,7 @@ export default function StudentsPage() {
 
                       <button
                         onClick={clearFilters}
-                        className="inline-flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 hover:from-slate-200 hover:to-slate-300 dark:hover:from-slate-700 dark:hover:to-slate-600 text-slate-700 dark:text-slate-300 rounded-xl sm:rounded-2xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg border-2 border-slate-200 dark:border-slate-700"
+                        className="inline-flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base bg-slate-900 text-white hover:bg-black dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200 rounded-xl sm:rounded-2xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg border-2 border-transparent"
                       >
                         <X className="w-4 h-4 sm:w-5 sm:h-5" />
                         Clear All
@@ -361,7 +361,7 @@ export default function StudentsPage() {
                       View Mode
                     </label>
 
-                    <div className="inline-flex gap-2 p-2 bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 rounded-2xl shadow-inner border-2 border-slate-200 dark:border-slate-700">
+                    <div className="inline-flex gap-2 p-2 bg-slate-100 dark:bg-slate-800 rounded-2xl shadow-inner border-2 border-slate-200 dark:border-slate-700">
                       {VIEW_MODES.map((mode) => {
                         const Icon = mode.icon
                         const isActive = viewMode === mode.id

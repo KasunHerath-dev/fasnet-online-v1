@@ -181,26 +181,32 @@ export default function BirthdaysPage() {
           </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-          <StatCard
-            icon={<PartyPopper className="w-6 h-6 text-slate-900 dark:text-white" />}
-            label="Total Birthdays"
-            value={students.length}
-            subtext={`In the next ${days} days`}
-          />
-          <StatCard
-            icon={<Sparkles className="w-6 h-6 text-slate-900 dark:text-white" />}
-            label="This Week"
-            value={students.filter(s => getDaysUntil(s.nextBirthday) <= 7).length}
-            subtext="Upcoming celebrations"
-          />
-          <StatCard
-            icon={<Calendar className="w-6 h-6 text-slate-900 dark:text-white" />}
-            label="Today"
-            value={students.filter(s => getDaysUntil(s.nextBirthday) === 0).length}
-            subtext="Birthdays today"
-          />
+        {/* Stats Grid - Mobile Scroll / Desktop Grid */}
+        <div className="flex overflow-x-auto pb-4 sm:pb-0 sm:grid sm:grid-cols-3 gap-4 sm:gap-6 snap-x snap-mandatory hide-scrollbar">
+          <div className="min-w-[85vw] sm:min-w-0 snap-center">
+            <StatCard
+              icon={<PartyPopper className="w-6 h-6 text-slate-900 dark:text-white" />}
+              label="Total Birthdays"
+              value={students.length}
+              subtext={`In the next ${days} days`}
+            />
+          </div>
+          <div className="min-w-[85vw] sm:min-w-0 snap-center">
+            <StatCard
+              icon={<Sparkles className="w-6 h-6 text-slate-900 dark:text-white" />}
+              label="This Week"
+              value={students.filter(s => getDaysUntil(s.nextBirthday) <= 7).length}
+              subtext="Upcoming celebrations"
+            />
+          </div>
+          <div className="min-w-[85vw] sm:min-w-0 snap-center">
+            <StatCard
+              icon={<Calendar className="w-6 h-6 text-slate-900 dark:text-white" />}
+              label="Today"
+              value={students.filter(s => getDaysUntil(s.nextBirthday) === 0).length}
+              subtext="Birthdays today"
+            />
+          </div>
         </div>
 
         {/* Content Area */}
@@ -231,31 +237,36 @@ export default function BirthdaysPage() {
                   <div className={`absolute -left-[9px] top-8 w-5 h-5 rounded-full border-4 border-white dark:border-slate-950 shadow-sm z-10 ${isEventToday ? 'bg-slate-900 dark:bg-white scale-125' : 'bg-slate-300 dark:bg-slate-700'
                     }`}></div>
 
-                  {/* Date Header */}
-                  < div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6 mb-8" >
-                    <div className={`inline-flex items-center gap-4 p-4 rounded-2xl border-2 shadow-sm ${isEventToday
+                  {/* Date Header - Responsive */}
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mb-8">
+                    <div className={`inline-flex items-center gap-4 p-3 sm:p-4 rounded-2xl border-2 shadow-sm ${isEventToday
                       ? 'bg-slate-900 border-slate-900 text-white shadow-slate-900/20 shadow-lg'
                       : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white'
                       }`}>
-                      <div className="flex flex-col items-center justify-center px-2 border-r border-current/20">
-                        <span className="text-xs font-bold uppercase tracking-wider opacity-80">
+                      <div className="flex flex-col items-center justify-center px-2 border-r border-current/20 min-w-[3.5rem]">
+                        <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider opacity-80">
                           {getMonthName(date).substring(0, 3)}
                         </span>
-                        <span className="text-2xl font-black">{getDateDay(date)}</span>
+                        <span className="text-xl sm:text-2xl font-black">{getDateDay(date)}</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-lg">{daysUntil === 0 ? 'Today' : daysUntil === 1 ? 'Tomorrow' : getDateLabel(date).split(',')[0]}</span>
-                        {isEventToday && <Sparkles className="w-5 h-5 text-yellow-400 animate-pulse" />}
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-2">
+                        <span className="font-bold text-base sm:text-lg whitespace-nowrap">{daysUntil === 0 ? 'Today' : daysUntil === 1 ? 'Tomorrow' : getDateLabel(date).split(',')[0]}</span>
+                        {isEventToday && (
+                          <span className="flex items-center gap-1 text-xs font-bold text-yellow-500 bg-yellow-400/10 px-2 py-0.5 rounded-full">
+                            <Sparkles className="w-3 h-3 animate-pulse" />
+                            <span>Party Time!</span>
+                          </span>
+                        )}
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
-                      <div className="h-px w-8 bg-slate-300 dark:bg-slate-700 hidden md:block"></div>
-                      <span className="text-slate-500 dark:text-slate-400 font-bold text-sm uppercase tracking-wide">
-                        {studentsOnDate.length} {studentsOnDate.length === 1 ? 'Celebration' : 'Celebrations'}
+                    <div className="flex items-center gap-3 pl-2 sm:pl-0">
+                      <div className="h-px w-8 bg-slate-300 dark:bg-slate-700 hidden sm:block"></div>
+                      <span className="text-slate-500 dark:text-slate-400 font-bold text-xs sm:text-sm uppercase tracking-wide">
+                        {studentsOnDate.length} {studentsOnDate.length === 1 ? 'Celeb' : 'Celebs'}
                       </span>
                     </div>
-                  </div >
+                  </div>
 
                   {/* Students Cards Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -324,30 +335,40 @@ export default function BirthdaysPage() {
                 return (
                   <div
                     key={student._id}
-                    className="group relative bg-white dark:bg-slate-900 rounded-[2rem] p-4 pr-8 border border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer flex flex-col md:grid md:grid-cols-12 gap-4 items-center"
+                    className="group relative bg-white dark:bg-slate-900 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-5 border border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer flex flex-col sm:grid sm:grid-cols-12 gap-4 items-center"
                     onClick={() => setSelectedStudent(student)}
                   >
-                    {/* Mobile Label */}
-                    <div className="md:hidden w-full text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Student Info</div>
-
-                    <div className="col-span-4 w-full flex items-center gap-5">
-                      <div className="w-14 h-14 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-900 dark:text-white font-black text-xl shadow-inner group-hover:scale-105 transition-transform">
-                        {student.fullName.charAt(0)}
-                      </div>
-                      <div className="min-w-0">
-                        <h3 className="font-bold text-slate-900 dark:text-white text-lg truncate">{student.fullName}</h3>
-                        <p className="md:hidden text-sm text-slate-500 font-mono mt-0.5">{student.registrationNumber}</p>
-                      </div>
-                    </div>
-
-                    <div className="col-span-3 hidden md:block w-full">
-                      <span className="font-bold text-slate-500 dark:text-slate-400 font-mono text-sm bg-slate-50 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-100 dark:border-slate-700">
-                        {student.registrationNumber}
+                    {/* Mobile: Top Right Badge */}
+                    <div className="absolute top-4 right-4 sm:hidden">
+                      <span className={`inline-flex items-center justify-center w-10 h-10 rounded-full font-bold text-xs ring-4 ring-slate-50 dark:ring-black ${daysUntil === 0
+                        ? 'bg-slate-900 text-white'
+                        : daysUntil <= 7
+                          ? 'bg-slate-100 text-slate-900 border border-slate-200'
+                          : 'bg-slate-50 text-slate-400'
+                        }`}>
+                        {daysUntil === 0 ? 'Today' : `${daysUntil}d`}
                       </span>
                     </div>
 
-                    <div className="col-span-3 w-full flex items-center justify-between md:justify-start gap-3">
-                      <div className="md:hidden text-sm font-bold text-slate-500">Birthday:</div>
+                    {/* Info Section */}
+                    <div className="col-span-12 sm:col-span-5 w-full flex items-center gap-4">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-900 dark:text-white font-black text-xl sm:text-2xl shadow-inner group-hover:scale-105 transition-transform flex-shrink-0">
+                        {student.fullName.charAt(0)}
+                      </div>
+                      <div className="min-w-0 pr-12 sm:pr-0">
+                        <h3 className="font-bold text-slate-900 dark:text-white text-lg leading-tight truncate">{student.fullName}</h3>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-700">
+                            {student.registrationNumber}
+                          </span>
+                          <span className="sm:hidden text-xs font-medium text-slate-400">
+                            Turning {ageTurning}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="col-span-7 hidden sm:flex items-center justify-between w-full">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
                           <Cake className="w-5 h-5" />
@@ -359,27 +380,27 @@ export default function BirthdaysPage() {
                           <p className="text-xs font-bold text-slate-400">Turning {ageTurning}</p>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="col-span-2 w-full flex justify-end">
-                      <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm uppercase tracking-wide transition-all ${daysUntil === 0
-                        ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
-                        : daysUntil <= 7
-                          ? 'bg-white border-2 border-slate-900 text-slate-900 dark:bg-slate-800 dark:border-white dark:text-white'
-                          : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
-                        }`}>
-                        {daysUntil === 0 ? (
-                          <>
-                            <Sparkles className="w-4 h-4 animate-spin-slow" />
-                            <span>Today!</span>
-                          </>
-                        ) : (
-                          <>
-                            <Clock className="w-4 h-4" />
-                            <span>{daysUntil} Days</span>
-                          </>
-                        )}
-                      </span>
+                      <div className="flex justify-end">
+                        <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm uppercase tracking-wide transition-all ${daysUntil === 0
+                          ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
+                          : daysUntil <= 7
+                            ? 'bg-white border-2 border-slate-900 text-slate-900 dark:bg-slate-800 dark:border-white dark:text-white'
+                            : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                          }`}>
+                          {daysUntil === 0 ? (
+                            <>
+                              <Sparkles className="w-4 h-4 animate-spin-slow" />
+                              <span>Today!</span>
+                            </>
+                          ) : (
+                            <>
+                              <Clock className="w-4 h-4" />
+                              <span>{daysUntil} Days</span>
+                            </>
+                          )}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 )

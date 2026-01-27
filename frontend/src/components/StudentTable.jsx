@@ -82,87 +82,80 @@ export default function StudentTable({ query, district, batch, selectedIds = [],
     navigate(`/students/${regNum}`)
   }
 
-  // Enhanced List View
+  // Enhanced List View (Ash Theme)
   const ListView = () => (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {students.map((student, index) => (
         <div
           key={student._id}
-          className={`group relative bg-white dark:bg-stitch-card-dark rounded-2xl border transition-all duration-300 ${selectedIds.includes(student._id)
-            ? 'border-stitch-blue shadow-[0_0_15px_rgba(19,19,236,0.15)] dark:shadow-[0_0_15px_rgba(19,19,236,0.3)]'
-            : 'border-slate-100 dark:border-stitch-card-border hover:border-stitch-blue/50 dark:hover:border-stitch-blue/50'
+          className={`group relative bg-white dark:bg-slate-900 rounded-[2rem] border transition-all duration-300 ${selectedIds.includes(student._id)
+            ? 'border-slate-900 dark:border-white shadow-lg shadow-slate-900/10'
+            : 'border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 hover:shadow-lg'
             }`}
           style={{
             animation: `fadeInUp 0.3s ease-out ${index * 0.05}s both`
           }}
         >
-          <div className="flex items-center gap-4 p-5">
-            {/* Checkbox */}
-            <div className="flex-shrink-0">
-              <input
-                type="checkbox"
-                checked={selectedIds.includes(student._id)}
-                onChange={(e) => {
-                  e.stopPropagation()
-                  handleSelectOne(student._id)
-                }}
-                onClick={(e) => e.stopPropagation()}
-                className="w-5 h-5 rounded-lg border-2 border-slate-300 dark:border-slate-600 text-stitch-blue focus:ring-2 focus:ring-stitch-blue/50 focus:ring-offset-2 cursor-pointer transition-all bg-slate-50 dark:bg-black/20"
-              />
-            </div>
-
-            {/* Avatar */}
-            <div className="flex-shrink-0">
-              <div className={`relative w-14 h-14 rounded-2xl ${getGenderColor(student.gender)} flex items-center justify-center text-white text-2xl shadow-lg transform transition-transform group-hover:scale-110`}>
-                <span className="font-bold text-sm tracking-wider">{getInitials(student.fullName)}</span>
-                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-white dark:bg-stitch-card-dark rounded-full flex items-center justify-center shadow-md border-2 border-white dark:border-stitch-card-dark">
-                  <span className="text-[10px]">{getGenderIcon(student.gender)}</span>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-5">
+            {/* Checkbox & Avatar Group */}
+            <div className="flex items-center gap-4">
+              <div className="flex-shrink-0">
+                <input
+                  type="checkbox"
+                  checked={selectedIds.includes(student._id)}
+                  onChange={(e) => {
+                    e.stopPropagation()
+                    handleSelectOne(student._id)
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="w-5 h-5 rounded-lg border-2 border-slate-300 dark:border-slate-600 text-slate-900 focus:ring-2 focus:ring-slate-900/50 cursor-pointer transition-all bg-slate-50 dark:bg-black/20"
+                />
+              </div>
+              <div className="flex-shrink-0">
+                <div className="relative w-14 h-14 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-900 dark:text-white font-black text-xl shadow-inner group-hover:scale-105 transition-transform">
+                  {getInitials(student.fullName)}
                 </div>
               </div>
             </div>
 
             {/* Student Info */}
             <div className="flex-1 min-w-0 cursor-pointer" onClick={() => handleViewStudent(student.registrationNumber)}>
-              <div className="flex items-start justify-between gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-1 truncate group-hover:text-stitch-blue transition-colors">
+                  <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-1 truncate group-hover:underline decoration-2 underline-offset-4 transition-all">
                     {student.fullName}
                   </h3>
                   <div className="flex flex-wrap items-center gap-3 text-sm">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-stitch-blue/10 dark:bg-stitch-blue/20 text-stitch-blue dark:text-blue-300 rounded-full font-semibold border border-stitch-blue/10 dark:border-stitch-blue/30">
-                      <span className="w-1.5 h-1.5 bg-stitch-blue rounded-full"></span>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg font-bold text-xs border border-slate-200 dark:border-slate-700">
                       {student.registrationNumber}
                     </span>
                     {student.whatsapp && (
-                      <span className="inline-flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
-                        <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                        </svg>
+                      <span className="hidden sm:inline-flex items-center gap-1.5 text-slate-500 dark:text-slate-400 font-medium">
+                        <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
                         {student.whatsapp}
                       </span>
                     )}
                     {student.district && (
-                      <span className="inline-flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
+                      <span className="hidden sm:inline-flex items-center gap-1.5 text-slate-500 dark:text-slate-400 font-medium">
+                        <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
                         {student.district}
                       </span>
                     )}
                   </div>
                 </div>
 
-                {/* Action Button */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleViewStudent(student.registrationNumber)
-                  }}
-                  className="flex-shrink-0 p-3 bg-slate-50 dark:bg-white/5 text-slate-400 hover:bg-stitch-blue hover:text-white rounded-xl transition-all hover:shadow-md active:scale-95 border border-slate-100 dark:border-white/10"
-                >
-                  <Eye className="w-5 h-5" />
-                </button>
+                {/* Actions */}
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleViewStudent(student.registrationNumber)
+                    }}
+                    className="p-2.5 bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-all"
+                  >
+                    <Eye className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -171,23 +164,23 @@ export default function StudentTable({ query, district, batch, selectedIds = [],
     </div>
   )
 
-  // Enhanced Card View
+  // Enhanced Card View (Ash Theme)
   const CardView = () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {students.map((student, index) => (
         <div
           key={student._id}
-          className={`group relative bg-white dark:bg-stitch-card-dark rounded-[2rem] border-2 transition-all duration-300 cursor-pointer overflow-hidden ${selectedIds.includes(student._id)
-            ? 'border-stitch-blue'
-            : 'border-slate-100 dark:border-stitch-card-border hover:border-stitch-blue/50'
+          className={`group relative bg-white dark:bg-slate-900 rounded-[2.5rem] border transition-all duration-300 cursor-pointer overflow-hidden hover:-translate-y-1 ${selectedIds.includes(student._id)
+            ? 'border-slate-900 dark:border-white shadow-xl shadow-slate-900/10'
+            : 'border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 hover:shadow-lg'
             }`}
           onClick={() => handleViewStudent(student.registrationNumber)}
           style={{
             animation: `fadeInUp 0.3s ease-out ${index * 0.05}s both`
           }}
         >
-          {/* Header with gradient */}
-          <div className={`h-28 bg-gradient-to-br ${getGenderColor(student.gender).replace('bg-', 'from-')} to-purple-600 relative overflow-hidden`}>
+          {/* Minimal Header */}
+          <div className="h-24 bg-slate-50 dark:bg-slate-800/50 relative">
             <div className="absolute top-4 right-4 z-10">
               <input
                 type="checkbox"
@@ -197,19 +190,16 @@ export default function StudentTable({ query, district, batch, selectedIds = [],
                   handleSelectOne(student._id)
                 }}
                 onClick={(e) => e.stopPropagation()}
-                className="w-5 h-5 rounded-lg border-2 border-white/50 text-stitch-blue focus:ring-2 focus:ring-white cursor-pointer bg-black/20 backdrop-blur-sm"
+                className="w-5 h-5 rounded-lg border-2 border-slate-300 dark:border-slate-600 text-slate-900 focus:ring-2 focus:ring-slate-900 cursor-pointer bg-white dark:bg-black/20"
               />
             </div>
-            {/* Decorative blobs */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full -mr-16 -mt-16 blur-xl"></div>
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-black/10 rounded-full -ml-12 -mb-12 blur-lg"></div>
           </div>
 
           {/* Avatar overlapping header */}
-          <div className="relative px-6 -mt-14 mb-3">
-            <div className="w-28 h-28 bg-white dark:bg-stitch-card-dark p-1.5 rounded-[2rem] shadow-2xl mx-auto">
-              <div className={`w-full h-full rounded-[1.5rem] flex items-center justify-center ${getGenderColor(student.gender)} text-white`}>
-                <span className="text-4xl font-bold tracking-widest leading-none drop-shadow-md">
+          <div className="relative px-6 -mt-12 mb-4">
+            <div className="w-24 h-24 bg-white dark:bg-slate-900 p-2 rounded-[2rem] mx-auto">
+              <div className="w-full h-full bg-slate-100 dark:bg-slate-800 rounded-[1.5rem] flex items-center justify-center text-slate-900 dark:text-white group-hover:bg-slate-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-slate-900 transition-colors duration-300 shadow-inner">
+                <span className="text-3xl font-black">
                   {getInitials(student.fullName)}
                 </span>
               </div>
@@ -217,77 +207,58 @@ export default function StudentTable({ query, district, batch, selectedIds = [],
           </div>
 
           {/* Content */}
-          <div className="px-6 pb-6 pt-2 text-center">
-            <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-2 group-hover:text-stitch-blue transition-colors line-clamp-1">
-              {student.fullName}
-            </h3>
-            <div className="flex justify-center mb-4">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-stitch-blue/10 dark:bg-stitch-blue/20 text-stitch-blue dark:text-blue-300 rounded-full text-xs font-bold border border-stitch-blue/10 dark:border-stitch-blue/30">
-                <span className="w-1.5 h-1.5 bg-stitch-blue rounded-full animate-pulse"></span>
+          <div className="px-6 pb-8 text-center space-y-4">
+            <div>
+              <h3 className="font-bold text-slate-900 dark:text-white text-lg group-hover:underline decoration-2 underline-offset-4 line-clamp-1 mb-1">
+                {student.fullName}
+              </h3>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                 {student.registrationNumber}
+              </p>
+            </div>
+
+            <div className="flex items-center justify-center gap-2">
+              <span className="px-3 py-1 rounded-full bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-500 dark:text-slate-400">
+                {student.batch || 'Batch N/A'}
               </span>
-            </div>
-
-            {/* Info */}
-            <div className="space-y-2 mb-4">
-              {student.whatsapp && (
-                <div className="flex items-center justify-center gap-2 text-sm text-slate-600 dark:text-slate-400 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
-                  <svg className="w-4 h-4 flex-shrink-0 text-green-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                  </svg>
-                  <span className="truncate max-w-[120px]">{student.whatsapp}</span>
-                </div>
-              )}
               {student.district && (
-                <div className="flex items-center justify-center gap-2 text-sm text-slate-600 dark:text-slate-400 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
-                  <svg className="w-4 h-4 flex-shrink-0 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <span className="truncate max-w-[120px]">{student.district}</span>
-                </div>
+                <span className="px-3 py-1 rounded-full bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-500 dark:text-slate-400">
+                  {student.district}
+                </span>
               )}
             </div>
-
-            {/* View button */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                handleViewStudent(student.registrationNumber)
-              }}
-              className="w-full py-3 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white hover:bg-stitch-blue hover:text-white dark:hover:bg-stitch-blue rounded-xl font-bold transition-all flex items-center justify-center gap-2 group-hover/btn:shadow-lg border border-slate-100 dark:border-white/10"
-            >
-              <Eye className="w-4 h-4" />
-              View Profile
-            </button>
           </div>
         </div>
       ))}
     </div>
   )
 
-  // Enhanced Grid View (Compact)
+  // Enhanced Grid View (Compact Ash Theme)
   const GridView = () => (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
       {students.map((student, index) => (
         <div
           key={student._id}
           onClick={() => handleViewStudent(student.registrationNumber)}
-          className={`group relative p-5 rounded-2xl cursor-pointer transition-all text-center ${selectedIds.includes(student._id)
-            ? 'bg-stitch-blue/5 border-2 border-stitch-blue'
-            : 'bg-white dark:bg-stitch-card-dark border-2 border-slate-100 dark:border-stitch-card-border hover:border-stitch-blue'
+          className={`group relative p-4 rounded-2xl cursor-pointer transition-all text-center ${selectedIds.includes(student._id)
+            ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/10'
+            : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 hover:shadow-md'
             }`}
           style={{
             animation: `fadeInUp 0.3s ease-out ${index * 0.03}s both`
           }}
         >
-          <div className={`w-16 h-16 mx-auto mb-3 rounded-2xl ${getGenderColor(student.gender)} flex items-center justify-center text-white text-xl font-bold shadow-lg transform transition-transform group-hover:scale-110 group-hover:rotate-6`}>
-            {getInitials(student.fullName)}
+          <div className={`w-14 h-14 mx-auto mb-3 rounded-2xl ${selectedIds.includes(student._id) ? 'bg-white/20' : 'bg-slate-100 dark:bg-slate-800'} flex items-center justify-center text-xl font-black shadow-sm transform transition-transform group-hover:scale-110`}>
+            <span className={selectedIds.includes(student._id) ? 'text-white' : 'text-slate-900 dark:text-white'}>
+              {getInitials(student.fullName)}
+            </span>
           </div>
-          <p className="font-bold text-slate-900 dark:text-white text-sm mb-1 truncate group-hover:text-stitch-blue transition-colors">
+          <p className={`font-bold text-sm mb-0.5 truncate ${selectedIds.includes(student._id) ? 'text-white' : 'text-slate-900 dark:text-white'}`}>
             {student.fullName?.split(' ')[0]}
           </p>
-          <p className="text-xs font-semibold text-stitch-blue mb-2">{student.registrationNumber}</p>
+          <p className={`text-[10px] font-bold uppercase tracking-wider ${selectedIds.includes(student._id) ? 'text-slate-300' : 'text-slate-400'}`}>
+            {student.registrationNumber}
+          </p>
           <div className="absolute top-2 right-2">
             <input
               type="checkbox"
@@ -297,7 +268,10 @@ export default function StudentTable({ query, district, batch, selectedIds = [],
                 handleSelectOne(student._id)
               }}
               onClick={(e) => e.stopPropagation()}
-              className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-stitch-blue focus:ring-stitch-blue cursor-pointer bg-slate-50 dark:bg-black/20"
+              className={`w-4 h-4 rounded border-2 cursor-pointer transition-all ${selectedIds.includes(student._id)
+                ? 'border-white text-slate-900 focus:ring-slate-900'
+                : 'border-slate-300 dark:border-slate-600 text-slate-900 focus:ring-slate-900 bg-slate-50 dark:bg-black/20'
+                }`}
             />
           </div>
         </div>
@@ -305,33 +279,33 @@ export default function StudentTable({ query, district, batch, selectedIds = [],
     </div>
   )
 
-  // Enhanced Table View
+  // Enhanced Table View (Ash Theme)
   const TableView = () => (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-stitch-card-border shadow-lg bg-white dark:bg-stitch-card-dark">
+    <div className="overflow-hidden rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-xl bg-white dark:bg-slate-900">
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="bg-slate-50 dark:bg-white/5 border-b border-slate-200 dark:border-white/10">
-              <th className="px-6 py-4 text-left">
+            <tr className="bg-slate-50 dark:bg-black/20 border-b border-slate-200 dark:border-slate-800">
+              <th className="px-6 py-5 text-left w-16">
                 <input
                   type="checkbox"
                   checked={isAllSelected}
                   onChange={handleSelectAll}
-                  className="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-stitch-blue focus:ring-2 focus:ring-stitch-blue cursor-pointer bg-slate-50 dark:bg-black/20"
+                  className="w-5 h-5 rounded border-2 border-slate-300 dark:border-slate-600 text-slate-900 focus:ring-2 focus:ring-slate-900 cursor-pointer bg-slate-50 dark:bg-black/20"
                 />
               </th>
-              <th className="px-6 py-4 text-left font-bold text-slate-900 dark:text-white text-sm uppercase tracking-wider">Student</th>
-              <th className="px-6 py-4 text-left font-bold text-slate-900 dark:text-white text-sm uppercase tracking-wider">Registration #</th>
-              <th className="px-6 py-4 text-left font-bold text-slate-900 dark:text-white text-sm uppercase tracking-wider">Contact</th>
-              <th className="px-6 py-4 text-left font-bold text-slate-900 dark:text-white text-sm uppercase tracking-wider">Location</th>
-              <th className="px-6 py-4 text-center font-bold text-slate-900 dark:text-white text-sm uppercase tracking-wider">Actions</th>
+              <th className="px-6 py-5 text-left font-black text-slate-400 text-xs uppercase tracking-wider">Student</th>
+              <th className="px-6 py-5 text-left font-black text-slate-400 text-xs uppercase tracking-wider">Registration #</th>
+              <th className="px-6 py-5 text-left font-black text-slate-400 text-xs uppercase tracking-wider">Contact</th>
+              <th className="px-6 py-5 text-left font-black text-slate-400 text-xs uppercase tracking-wider">Location</th>
+              <th className="px-6 py-5 text-center font-black text-slate-400 text-xs uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-white/5">
+          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
             {students.map((student, index) => (
               <tr
                 key={student._id}
-                className={`transition-all hover:bg-slate-50 dark:hover:bg-white/5 ${selectedIds.includes(student._id) ? 'bg-stitch-blue/5 dark:bg-stitch-blue/10' : ''
+                className={`transition-all hover:bg-slate-50 dark:hover:bg-slate-800/50 ${selectedIds.includes(student._id) ? 'bg-slate-50 dark:bg-slate-800/80' : ''
                   }`}
                 style={{
                   animation: `fadeIn 0.3s ease-out ${index * 0.03}s both`
@@ -342,56 +316,51 @@ export default function StudentTable({ query, district, batch, selectedIds = [],
                     type="checkbox"
                     checked={selectedIds.includes(student._id)}
                     onChange={() => handleSelectOne(student._id)}
-                    className="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-stitch-blue focus:ring-stitch-blue cursor-pointer bg-slate-50 dark:bg-black/20"
+                    className="w-5 h-5 rounded border-2 border-slate-300 dark:border-slate-600 text-slate-900 focus:ring-slate-900 cursor-pointer bg-slate-50 dark:bg-black/20"
                   />
                 </td>
                 <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-xl ${getGenderColor(student.gender)} flex items-center justify-center text-white text-sm font-bold shadow-md`}>
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-900 dark:text-white text-sm font-black shadow-sm">
                       {getInitials(student.fullName)}
                     </div>
                     <div>
                       <p className="font-bold text-slate-900 dark:text-white">{student.fullName}</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">{getGenderIcon(student.gender)} {student.gender || 'N/A'}</p>
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wide">{student.gender || 'N/A'}</p>
                     </div>
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 rounded-lg font-bold text-sm">
-                    <span className="w-2 h-2 bg-stitch-blue rounded-full"></span>
+                  <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-lg font-bold text-sm border border-slate-200 dark:border-slate-700">
+                    <span className="w-2 h-2 bg-slate-400 rounded-full"></span>
                     {student.registrationNumber}
                   </span>
                 </td>
                 <td className="px-6 py-4">
                   {student.whatsapp ? (
-                    <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
-                      <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                      </svg>
+                    <div className="flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-400">
+                      <span className="w-1.5 h-1.5 bg-slate-300 rounded-full"></span>
                       {student.whatsapp}
                     </div>
                   ) : (
-                    <span className="text-sm text-slate-400">No contact</span>
+                    <span className="text-sm font-bold text-slate-300">No contact</span>
                   )}
                 </td>
                 <td className="px-6 py-4">
                   {student.district ? (
-                    <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
-                      <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
+                    <div className="flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-400">
+                      <span className="w-1.5 h-1.5 bg-slate-300 rounded-full"></span>
                       {student.district}
                     </div>
                   ) : (
-                    <span className="text-sm text-slate-400">N/A</span>
+                    <span className="text-sm font-bold text-slate-300">N/A</span>
                   )}
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center justify-center gap-2">
                     <button
                       onClick={() => handleViewStudent(student.registrationNumber)}
-                      className="p-2 bg-slate-50 dark:bg-white/5 text-slate-500 dark:text-slate-400 rounded-lg hover:bg-stitch-blue hover:text-white transition-all hover:shadow-md border border-slate-200 dark:border-white/10"
+                      className="p-2 bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-lg transition-all border border-transparent hover:border-slate-300 dark:hover:border-slate-600"
                       title="View Details"
                     >
                       <Eye className="w-4 h-4" />
@@ -407,28 +376,29 @@ export default function StudentTable({ query, district, batch, selectedIds = [],
   )
 
   return (
-    <div className="space-y-6">
-      {/* Stats Bar */}
-      <div className="bg-gradient-to-r from-stitch-blue via-[#6b13ec] to-stitch-pink rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full -ml-12 -mb-12 blur-2xl"></div>
+    <div className="space-y-8">
+      {/* Stats Bar (Ash Theme) */}
+      <div className="bg-slate-900 dark:bg-black rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden border border-slate-800">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-slate-800 opacity-20 rounded-full blur-3xl translate-y-1/4 -translate-x-1/4"></div>
 
         <div className="flex items-center justify-between relative z-10">
           <div>
-            <p className="text-blue-100 text-sm font-bold uppercase tracking-wider mb-2">Total Students</p>
-            <p className="text-5xl font-black tracking-tight">{total.toLocaleString()}</p>
+            <p className="text-slate-400 text-sm font-black uppercase tracking-widest mb-2">Total Students</p>
+            <p className="text-5xl sm:text-6xl font-black tracking-tight text-white mb-2">{total.toLocaleString()}</p>
+            <p className="text-slate-500 text-sm font-medium">registered in the system</p>
           </div>
-          <div className="w-20 h-20 bg-white/20 rounded-3xl flex items-center justify-center backdrop-blur-md border border-white/20 shadow-lg">
-            <Users className="w-10 h-10 text-white" />
+          <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white/10 rounded-3xl flex items-center justify-center backdrop-blur-md border border-white/10 shadow-2xl">
+            <Users className="w-8 h-8 sm:w-10 sm:h-10 text-white opacity-80" />
           </div>
         </div>
         {selectedIds.length > 0 && (
-          <div className="mt-6 pt-6 border-t border-white/20 flex items-center gap-3 animate-fadeIn">
-            <div className="w-8 h-8 rounded-full bg-white text-stitch-blue flex items-center justify-center font-bold text-sm">
+          <div className="mt-8 pt-6 border-t border-white/10 flex items-center gap-4 animate-fadeIn">
+            <div className="w-10 h-10 rounded-xl bg-white text-slate-900 flex items-center justify-center font-black text-lg shadow-lg">
               {selectedIds.length}
             </div>
-            <p className="text-white font-medium">
-              students selected for batch action
+            <p className="text-slate-300 font-medium">
+              students selected for <span className="text-white font-bold decoration-slate-500 underline underline-offset-4">batch action</span>
             </p>
           </div>
         )}
