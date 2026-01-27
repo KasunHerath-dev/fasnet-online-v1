@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { academicService, batchYearService, assessmentService, authService } from '../services/authService';
 import Dropdown from './Dropdown';
-import { Upload, FileText, CheckCircle, AlertCircle, Lock } from 'lucide-react';
+import { Upload, FileText, CheckCircle, AlertCircle, Lock, GraduationCap, Calendar, BookOpen, TrendingUp } from 'lucide-react';
 
 // Comprehensive module list from WUSL Module Tracker
 const ALL_MODULES = [
@@ -126,7 +126,6 @@ export default function AssessmentManagement() {
     const [filteredModules, setFilteredModules] = useState([]);
     const [batchYears, setBatchYears] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [activeTab, setActiveTab] = useState('results');
     const [user, setUser] = useState(null);
 
     // Form States
@@ -172,7 +171,6 @@ export default function AssessmentManagement() {
         }
 
         // 2. If no matches from API (or API empty), use local comprehensive list
-        // This handles cases where DB is empty OR DB has modules but none match the filter
         if (filtered.length === 0) {
             console.log('No matches from API, using local ALL_MODULES fallback');
             filtered = ALL_MODULES.filter(m => m.level === formData.level);
@@ -234,131 +232,161 @@ export default function AssessmentManagement() {
     const isBatchDisabled = !isSuperAdmin && hasBatchScope;
 
     return (
-        <div className="card animate-fadeIn">
-            <div className="border-b pb-4 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
-                <h2 className="text-lg md:text-xl font-bold text-gray-800">Assessment Management</h2>
-                <div className="flex gap-2 w-full sm:w-auto">
-                    <button
-                        className={`flex-1 sm:flex-none justify-center px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'results' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                        onClick={() => setActiveTab('results')}
-                    >
-                        <Upload className="w-4 h-4 inline-block mr-2" />
-                        Upload Results
-                    </button>
+        <div className="space-y-6">
+            {/* Instructions Card */}
+            <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-2 border-amber-200 dark:border-amber-800">
+                <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center flex-shrink-0">
+                        <AlertCircle className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-slate-900 dark:text-white mb-2">Upload Instructions</h3>
+                        <ul className="text-sm text-slate-700 dark:text-slate-300 space-y-1.5">
+                            <li className="flex items-start gap-2">
+                                <span className="text-amber-600 dark:text-amber-400 mt-0.5">•</span>
+                                <span>Upload an Excel/CSV file with student results</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="text-amber-600 dark:text-amber-400 mt-0.5">•</span>
+                                <span><strong className="font-bold">Column 1:</strong> Registration Number (must match module)</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="text-amber-600 dark:text-amber-400 mt-0.5">•</span>
+                                <span><strong className="font-bold">Column 2:</strong> Marks (numerical value)</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
-            {activeTab === 'results' && (
-                <form onSubmit={handleUpload} className="space-y-6 max-w-3xl mx-auto">
-                    <div className="bg-yellow-50 p-4 rounded-xl border border-yellow-200 flex flex-col sm:flex-row gap-3 items-start">
-                        <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                        <div className="text-sm text-yellow-800">
-                            <strong>Instructions:</strong>
-                            <ul className="list-disc ml-4 mt-1 space-y-1">
-                                <li>Upload an Excel/CSV file with results.</li>
-                                <li><strong>Column 1:</strong> Registration Number (same as module).</li>
-                                <li><strong>Column 2:</strong> Marks.</li>
-                            </ul>
+            {/* Main Upload Form */}
+            <form onSubmit={handleUpload} className="space-y-6">
+                {/* Selection Grid - Stats Style */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {/* Batch Year Card */}
+                    <div className="relative bg-white dark:bg-slate-900 rounded-xl sm:rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-lg">
+                        <div className="flex items-center gap-2 mb-3">
+                            <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Batch Year</span>
                         </div>
+                        <Dropdown
+                            value={formData.batchYear}
+                            onChange={e => setFormData({ ...formData, batchYear: e.target.value })}
+                            options={batchYears.map(b => ({ value: b.year, label: b.name || b.year }))}
+                            variant="default"
+                            className={`w-full ${isBatchDisabled ? 'opacity-50 pointer-events-none' : ''}`}
+                        />
+                        {isBatchDisabled && (
+                            <>
+                                <Lock className="w-4 h-4 text-slate-400 absolute right-12 top-16" />
+                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">Locked to assigned batch</p>
+                            </>
+                        )}
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label className="input-label">Batch Year</label>
-                            <div className="relative">
-                                <Dropdown
-                                    value={formData.batchYear}
-                                    onChange={e => setFormData({ ...formData, batchYear: e.target.value })}
-                                    options={batchYears.map(b => ({ value: b.year, label: b.name || b.year }))}
-                                    variant="default"
-                                    className={`w-full ${isBatchDisabled ? 'opacity-50 pointer-events-none' : ''}`}
-                                />
-                                {isBatchDisabled && (
-                                    <Lock className="w-4 h-4 text-gray-400 absolute right-8 top-1/2 -translate-y-1/2" />
-                                )}
-                            </div>
-                            {isBatchDisabled && <p className="text-xs text-gray-500 mt-1">Locked to your assigned batch</p>}
+                    {/* Level Card */}
+                    <div className="bg-white dark:bg-slate-900 rounded-xl sm:rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-lg">
+                        <div className="flex items-center gap-2 mb-3">
+                            <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Level</span>
                         </div>
-
-                        <div>
-                            <label className="input-label">Level</label>
-                            <Dropdown
-                                value={formData.level}
-                                onChange={e => setFormData({ ...formData, level: e.target.value })}
-                                options={levels.map(l => ({ value: l, label: `Level ${l}` }))}
-                                variant="default"
-                                className="w-full"
-                            />
-                        </div>
-
-                        <div className="md:col-span-2">
-                            <label className="input-label">Module</label>
-                            <Dropdown
-                                value={formData.moduleId}
-                                onChange={e => setFormData({ ...formData, moduleId: e.target.value })}
-                                options={[
-                                    { value: '', label: 'Select Module' },
-                                    ...filteredModules.map(m => ({
-                                        value: m._id,
-                                        label: `${m.code} - ${m.title}`
-                                    }))
-                                ]}
-                                placeholder="Select Module"
-                                variant="default"
-                                className="w-full"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="input-label">Exam Type</label>
-                            <Dropdown
-                                value={formData.type}
-                                onChange={e => setFormData({ ...formData, type: e.target.value })}
-                                options={[
-                                    { value: 'Mid', label: 'Mid Exam' },
-                                    { value: 'End', label: 'End Exam' }
-                                ]}
-                                variant="default"
-                                className="w-full"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="input-label">Results File (Excel/CSV)</label>
-                            <div className="relative">
-                                <input
-                                    type="file"
-                                    accept=".csv, .xlsx, .xls"
-                                    className="input py-2"
-                                    onChange={handleFileChange}
-                                    required
-                                />
-                                <FileText className="w-5 h-5 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2" />
-                            </div>
-                        </div>
+                        <Dropdown
+                            value={formData.level}
+                            onChange={e => setFormData({ ...formData, level: e.target.value })}
+                            options={levels.map(l => ({ value: l, label: `Level ${l}` }))}
+                            variant="default"
+                            className="w-full"
+                        />
                     </div>
 
-                    <div className="flex justify-end pt-4">
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="btn-primary flex items-center gap-2"
-                        >
+                    {/* Module Card */}
+                    <div className="sm:col-span-2 bg-white dark:bg-slate-900 rounded-xl sm:rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-lg">
+                        <div className="flex items-center gap-2 mb-3">
+                            <BookOpen className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Module</span>
+                        </div>
+                        <Dropdown
+                            value={formData.moduleId}
+                            onChange={e => setFormData({ ...formData, moduleId: e.target.value })}
+                            options={[
+                                { value: '', label: 'Select Module' },
+                                ...filteredModules.map(m => ({
+                                    value: m._id,
+                                    label: `${m.code} - ${m.title}`
+                                }))
+                            ]}
+                            placeholder="Select Module"
+                            variant="default"
+                            className="w-full"
+                        />
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">{filteredModules.length} modules available</p>
+                    </div>
+                </div>
+
+                {/* Exam Type & File Upload Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Exam Type Card */}
+                    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl sm:rounded-2xl p-5 border-2 border-blue-200 dark:border-blue-800">
+                        <div className="flex items-center gap-2 mb-3">
+                            <CheckCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                            <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Exam Type</span>
+                        </div>
+                        <Dropdown
+                            value={formData.type}
+                            onChange={e => setFormData({ ...formData, type: e.target.value })}
+                            options={[
+                                { value: 'Mid', label: 'Mid Semester Exam' },
+                                { value: 'End', label: 'End Semester Exam' }
+                            ]}
+                            variant="default"
+                            className="w-full"
+                        />
+                    </div>
+
+                    {/* File Upload Card */}
+                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl sm:rounded-2xl p-5 border-2 border-purple-200 dark:border-purple-800">
+                        <div className="flex items-center gap-2 mb-3">
+                            <Upload className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                            <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Results File</span>
+                        </div>
+                        <div className="relative">
+                            <input
+                                type="file"
+                                accept=".csv, .xlsx, .xls"
+                                className="w-full px-4 py-3 rounded-lg border-2 border-purple-200 dark:border-purple-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-sm transition-colors hover:border-purple-400 dark:hover:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                onChange={handleFileChange}
+                                required
+                            />
+                            <FileText className="w-5 h-5 text-purple-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        </div>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">Excel or CSV format</p>
+                    </div>
+                </div>
+
+                {/* Submit Button */}
+                <div className="flex justify-end">
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="group relative overflow-hidden bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3.5 rounded-xl font-bold shadow-xl shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-300 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                    >
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
+                        <div className="relative flex items-center gap-2.5">
                             {loading ? (
                                 <>
-                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                    Uploading...
+                                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                    <span>Uploading Results...</span>
                                 </>
                             ) : (
                                 <>
-                                    <CheckCircle className="w-4 h-4" />
-                                    Upload Results
+                                    <CheckCircle className="w-5 h-5" />
+                                    <span>Upload Results</span>
                                 </>
                             )}
-                        </button>
-                    </div>
-                </form>
-            )}
+                        </div>
+                    </button>
+                </div>
+            </form>
         </div>
     );
 }
