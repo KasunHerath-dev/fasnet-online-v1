@@ -122,18 +122,28 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
                   )}
                 </button>
 
-                {/* Enhanced Notification Dropdown */}
+                {/* Enhanced Notification Dropdown - Fixed positioning and z-index */}
                 {showNotifications && (
-                  <div className="absolute right-0 mt-3 w-80 md:w-96 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 z-50 max-h-[500px] overflow-hidden flex flex-col backdrop-blur-xl">
+                  <div className="fixed md:absolute right-2 md:right-0 top-16 md:top-auto md:mt-3 w-[calc(100vw-1rem)] max-w-sm md:w-96 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 z-[999] max-h-[calc(100vh-5rem)] md:max-h-[500px] overflow-hidden flex flex-col">
                     {/* Gradient Header */}
-                    <div className="relative overflow-hidden px-4 py-4 border-b border-slate-200 dark:border-slate-800">
-                      <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10"></div>
+                    <div className="relative overflow-hidden px-5 py-4 border-b border-slate-200 dark:border-slate-800 bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-800">
+                      <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 via-purple-500/5 to-pink-500/5"></div>
                       <div className="relative">
-                        <h3 className="font-black text-slate-900 dark:text-white text-base flex items-center gap-2">
-                          <Bell className="w-4 h-4" />
-                          Profile Change Requests
-                        </h3>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-bold">
+                        <div className="flex items-center justify-between mb-1">
+                          <h3 className="font-black text-slate-900 dark:text-white text-base flex items-center gap-2">
+                            <div className="p-1.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg">
+                              <Bell className="w-4 h-4 text-white" />
+                            </div>
+                            Profile Change Requests
+                          </h3>
+                          <button
+                            onClick={() => setShowNotifications(false)}
+                            className="md:hidden p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                          >
+                            <X className="w-4 h-4 text-slate-500" />
+                          </button>
+                        </div>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
                           {pendingRequests.length} pending approval
                         </p>
                       </div>
@@ -142,17 +152,17 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
                     {/* Notifications List */}
                     <div className="overflow-y-auto flex-1 custom-scrollbar">
                       {loading ? (
-                        <div className="p-8 text-center">
-                          <div className="inline-block w-10 h-10 border-4 border-indigo-200 dark:border-indigo-800 border-t-indigo-600 dark:border-t-indigo-400 rounded-full animate-spin"></div>
-                          <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 font-medium">Loading requests...</p>
+                        <div className="p-12 text-center">
+                          <div className="inline-block w-12 h-12 border-4 border-indigo-200 dark:border-indigo-800 border-t-indigo-600 dark:border-t-indigo-400 rounded-full animate-spin mb-4"></div>
+                          <p className="text-sm text-slate-600 dark:text-slate-400 font-semibold">Loading requests...</p>
                         </div>
                       ) : pendingRequests.length === 0 ? (
-                        <div className="p-8 text-center">
-                          <div className="w-16 h-16 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                            <Bell className="w-8 h-8 text-slate-400" />
+                        <div className="p-12 text-center">
+                          <div className="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/10">
+                            <Bell className="w-10 h-10 text-indigo-500 dark:text-indigo-400" />
                           </div>
-                          <p className="text-sm text-slate-600 dark:text-slate-400 font-bold">No pending requests</p>
-                          <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">All caught up!</p>
+                          <p className="text-base text-slate-900 dark:text-white font-bold mb-1">No pending requests</p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400">All caught up! 🎉</p>
                         </div>
                       ) : (
                         <div className="divide-y divide-slate-100 dark:divide-slate-800">
