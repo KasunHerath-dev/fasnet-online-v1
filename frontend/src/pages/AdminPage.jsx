@@ -493,69 +493,255 @@ export default function AdminPage() {
           {/* Academic Tab */}
           {activeTab === 'academic' && (
             <div className="space-y-6 sm:space-y-8">
-              <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
-                    <CheckCircle className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+
+              {/* Academic Management Header */}
+              <div>
+                <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
+                    <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Assessment Management</h3>
-                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Configure and manage assessments</p>
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white">Academic Management</h2>
+                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Configure student assessments and batches</p>
+                  </div>
+                </div>
+
+                {/* Assessment & Batch Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                  {/* Assessments Card */}
+                  <div className="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white shadow-2xl shadow-blue-500/30 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
+                    <div className="relative">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                          <CheckCircle className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+                        </div>
+                        <div className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
+                          <span className="text-xs font-bold">Active</span>
+                        </div>
+                      </div>
+                      <h3 className="text-2xl sm:text-3xl font-black mb-2">Assessments</h3>
+                      <p className="text-white/90 text-sm mb-4">Configure grading criteria and exam settings</p>
+                    </div>
+                  </div>
+
+                  {/* Batch Years Card */}
+                  <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white shadow-2xl shadow-purple-500/30 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
+                    <div className="relative">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                          <GraduationCap className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+                        </div>
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
+                          <Lock className="w-3 h-3" />
+                          <span className="text-xs font-bold">Admin</span>
+                        </div>
+                      </div>
+                      <h3 className="text-2xl sm:text-3xl font-black mb-2">Batch Years</h3>
+                      <p className="text-white/90 text-sm mb-4">Manage student cohorts and academic years</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Assessment Management Section */}
+              <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                    <CheckCircle className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Assessment Configuration</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Define grading scales and exam types</p>
                   </div>
                 </div>
                 <AssessmentManagement />
               </div>
 
+              {/* Batch Year Management Section */}
               <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
-                      <GraduationCap className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                      <GraduationCap className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Batch Years</h3>
-                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Manage academic batches</p>
+                      <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Academic Batch Management</h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Create and organize student batches</p>
                     </div>
                   </div>
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-xl text-xs sm:text-sm font-bold border border-purple-200 dark:border-purple-800">
-                    <Lock className="w-4 h-4" />
-                    Super Admin Only
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg text-xs font-bold border border-purple-200 dark:border-purple-800">
+                    <Lock className="w-3.5 h-3.5" />
+                    Super Admin
                   </div>
                 </div>
                 <BatchYearManagement />
               </div>
 
-              <button
-                onClick={() => navigate('/admin/bulk-combination')}
-                className="group w-full bg-gradient-to-br from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-emerald-500/30 hover:shadow-emerald-500/50 transition-all duration-300 hover:-translate-y-1"
-              >
-                <div className="flex items-center gap-4 sm:gap-6">
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <GraduationCap className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+              {/* Bulk Combination Tool */}
+              <div>
+                <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg">
+                    <Upload className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
-                  <div className="flex-1 text-left">
-                    <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Bulk Combination Assignment</h3>
-                    <p className="text-white/90 text-sm sm:text-base">Upload Excel file to assign subject combinations</p>
+                  <div>
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white">Bulk Operations</h2>
+                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Batch assignment and import tools</p>
                   </div>
-                  <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8 text-white group-hover:translate-x-2 transition-transform" />
                 </div>
-              </button>
+
+                <button
+                  onClick={() => navigate('/admin/bulk-combination')}
+                  className="group w-full bg-gradient-to-br from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl shadow-emerald-500/30 hover:shadow-emerald-500/50 transition-all duration-300 hover:-translate-y-1"
+                >
+                  <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
+                  <div className="flex items-center gap-4 sm:gap-6 relative">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                      <GraduationCap className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+                    </div>
+                    <div className="flex-1 text-left">
+                      <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Bulk Combination Assignment</h3>
+                      <p className="text-white/90 text-sm sm:text-base">Upload Excel files to assign subject combinations to multiple students</p>
+                    </div>
+                    <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8 text-white group-hover:translate-x-2 transition-transform" />
+                  </div>
+                </button>
+              </div>
             </div>
           )}
 
           {/* Resources Tab */}
           {activeTab === 'resources' && (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg">
-                  <Database className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+            <div className="space-y-6 sm:space-y-8">
+
+              {/* Resource Overview Header */}
+              <div>
+                <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg">
+                    <Database className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white">Resource Center</h2>
+                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Manage academic materials and system files</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Resource Management</h3>
-                  <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Manage system resources and files</p>
+
+                {/* Resource Stats Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+                  {/* Study Materials Card */}
+                  <div className="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl sm:rounded-3xl p-5 sm:p-6 text-white shadow-2xl shadow-blue-500/30 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                    <div className="relative">
+                      <div className="flex items-center justify-between mb-3">
+                        <FileText className="w-8 h-8 text-white" />
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
+                      </div>
+                      <h3 className="text-2xl sm:text-3xl font-black mb-1">Materials</h3>
+                      <p className="text-white/90 text-xs">Study resources</p>
+                    </div>
+                  </div>
+
+                  {/* Documents Card */}
+                  <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl sm:rounded-3xl p-5 sm:p-6 text-white shadow-2xl shadow-purple-500/30 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                    <div className="relative">
+                      <div className="flex items-center justify-between mb-3">
+                        <Database className="w-8 h-8 text-white" />
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
+                      </div>
+                      <h3 className="text-2xl sm:text-3xl font-black mb-1">Documents</h3>
+                      <p className="text-white/90 text-xs">System files</p>
+                    </div>
+                  </div>
+
+                  {/* Media Card */}
+                  <div className="bg-gradient-to-br from-orange-500 to-amber-500 rounded-2xl sm:rounded-3xl p-5 sm:p-6 text-white shadow-2xl shadow-orange-500/30 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                    <div className="relative">
+                      <div className="flex items-center justify-between mb-3">
+                        <Upload className="w-8 h-8 text-white" />
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
+                      </div>
+                      <h3 className="text-2xl sm:text-3xl font-black mb-1">Media</h3>
+                      <p className="text-white/90 text-xs">Images & videos</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <ResourceManagement />
+
+              {/* Resource Management Interface */}
+              <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
+                    <Database className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Resource Database</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Upload, organize, and manage all resources</p>
+                  </div>
+                </div>
+                <ResourceManagement />
+              </div>
+
+              {/* Quick Resource Actions */}
+              <div>
+                <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-slate-500 to-zinc-500 flex items-center justify-center shadow-lg">
+                    <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white">Quick Actions</h2>
+                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Common resource operations</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                  {/* Upload Resources */}
+                  <button
+                    onClick={() => navigate('/admin/resources')}
+                    className="group relative overflow-hidden bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/20 hover:-translate-y-1"
+                  >
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
+
+                    <div className="relative">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
+                        <Upload className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                      </div>
+
+                      <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-2">Upload Resource</h3>
+                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-4">Add new study materials or files</p>
+
+                      <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
+                        <span>Browse files</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </div>
+                    </div>
+                  </button>
+
+                  {/* Organize Resources */}
+                  <button
+                    onClick={() => navigate('/admin/resources')}
+                    className="group relative overflow-hidden bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 hover:border-blue-500 dark:hover:border-blue-500 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20 hover:-translate-y-1"
+                  >
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
+
+                    <div className="relative">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
+                        <Database className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                      </div>
+
+                      <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white mb-2">Organize Files</h3>
+                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-4">Categorize and structure resources</p>
+
+                      <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
+                        <span>Manage</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 
