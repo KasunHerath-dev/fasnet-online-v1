@@ -22,6 +22,9 @@ import {
 } from 'lucide-react'
 import { authService, academicService } from '../services/authService'
 import { MODULE_DATA } from '../data/moduleList'
+import { EXAM_TIMETABLE, getStudentExams } from '../data/examTimetable'
+import { ACADEMIC_CALENDAR, getKeyDates } from '../data/academicCalendar'
+import HeroSection from '../components/HeroSection'
 
 // Sub-page Imports
 import StudentProfile from './StudentProfile'
@@ -88,7 +91,7 @@ const QuickActions = () => {
     )
 }
 
-const TimelineItem = ({ time, title, subtitle, color, isLast }) => (
+const TimelineItem = ({ time, title, subtitle, color, isLast, date }) => (
     <div className="flex items-start gap-4 mb-6 last:mb-0 group">
         <div className="flex flex-col items-center">
             <div className="w-3 h-3 rounded-full bg-rose-500 shadow-lg shadow-rose-500/50 mt-1.5"></div>
@@ -97,14 +100,28 @@ const TimelineItem = ({ time, title, subtitle, color, isLast }) => (
         <div className="flex-1 bg-white/5 rounded-xl p-4 border border-white/5 group-hover:border-white/10 transition-all">
             <div className="flex justify-between items-start mb-2">
                 <h4 className="font-bold text-white text-sm group-hover:text-rose-400 transition-colors">{title}</h4>
-                <span className="text-[10px] font-bold bg-black/40 text-gray-400 px-2 py-1 rounded border border-white/5">
-                    {time}
-                </span>
+                {date && <span className="text-[10px] font-bold text-rose-400 border border-rose-500/20 px-2 py-0.5 rounded">{new Date(date).toLocaleDateString()}</span>}
             </div>
             <p className="text-xs text-gray-500 font-medium flex items-center gap-2">
                 <LayoutDashboard className="w-3 h-3" />
                 {subtitle}
             </p>
+            <span className="text-[10px] font-bold bg-black/40 text-gray-400 px-2 py-1 rounded border border-white/5 inline-block mt-2">
+                {time}
+            </span>
+        </div>
+    </div>
+)
+
+const CalendarEvent = ({ event, date, description, type }) => (
+    <div className="flex gap-4 items-center p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+        <div className={`w-12 h-12 rounded-xl flex flex-col items-center justify-center border border-white/10 ${type === 'exam' ? 'bg-rose-500/10 text-rose-500' : 'bg-blue-500/10 text-blue-500'}`}>
+            <span className="text-[10px] font-bold uppercase">{new Date(date).toLocaleString('default', { month: 'short' })}</span>
+            <span className="text-lg font-black leading-none">{new Date(date).getDate()}</span>
+        </div>
+        <div className="flex-1">
+            <h4 className="text-sm font-bold text-white">{event}</h4>
+            <p className="text-xs text-gray-500 line-clamp-1">{description}</p>
         </div>
     </div>
 )
@@ -142,11 +159,12 @@ const DashboardOverview = ({ user, student, profile, modules }) => {
     const progress = Math.min(Math.round((credits / creditTarget) * 100), 100);
     const honoursClass = getHonoursClass(gpa);
     const showDeansList = isDeansListEligible(gpa);
-    const timetable = [
-        { time: "09:00 AM", title: "Advanced Database Systems", subtitle: "Lecture Hall A", color: "blue" },
-        { time: "11:00 AM", title: "Artificial Intelligence", subtitle: "Lab 3", color: "purple" },
-        { time: "02:00 PM", title: "Software Engineering", subtitle: "Meeting Room 2", color: "emerald" },
-    ];
+
+    // Dynamic Data
+    const studentLevel = student?.level || 1;
+    const upcomingExams = getStudentExams(studentLevel).slice(0, 3);
+    const calendarEvents = getKeyDates().slice(0, 3);
+
 
     return (
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 pt-2">
@@ -154,42 +172,14 @@ const DashboardOverview = ({ user, student, profile, modules }) => {
             {/* LEFT COLUMN: Hero & Main Content */}
             <div className="xl:col-span-8 space-y-6">
 
-                {/* New Hero Section */}
-                <div className="relative rounded-[2.5rem] bg-gradient-to-r from-rose-900/20 to-black border border-white/5 overflow-hidden min-h-[250px] flex items-center p-8 lg:p-12">
-                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-rose-600/20 blur-[100px] rounded-full"></div>
-
-                    <div className="relative z-10 w-full flex flex-col md:flex-row justify-between items-center gap-8">
-                        <div>
-                            <h1 className="text-4xl lg:text-5xl font-black text-white mb-4 tracking-tight">
-                                Welcome back,<br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-orange-400">{firstName}</span>
-                            </h1>
-                            <div className="flex flex-wrap gap-2 mb-6">
-                                <Badge label={`Level ${student?.level || 1}`} color="gray" />
-                                <Badge label={`Sem ${student?.semester || 1}`} color="gray" />
-                                <Badge label={student?.combination || "COMB 01"} color="gray" />
-                            </div>
-                            {showDeansList && (
-                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm font-bold animate-pulse">
-                                    <Award className="w-4 h-4" /> Dean's List Eligible
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Quick Stats on Hero */}
-                        <div className="flex gap-4">
-                            <div className="text-center p-4 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-sm">
-                                <span className="block text-3xl font-black text-white">{gpa}</span>
-                                <span className="text-[10px] font-bold text-gray-500 uppercase">GPA</span>
-                            </div>
-                            <div className="text-center p-4 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-sm">
-                                <span className="block text-3xl font-black text-white">{credits}</span>
-                                <span className="text-[10px] font-bold text-gray-500 uppercase">Credits</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {/* Hero / Profile Card */}
+                <HeroSection
+                    firstName={firstName}
+                    student={student}
+                    gpa={gpa}
+                    credits={credits}
+                    showDeansList={showDeansList}
+                />
 
                 {/* Quick Actions Bar */}
                 <QuickActions />
@@ -198,35 +188,43 @@ const DashboardOverview = ({ user, student, profile, modules }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Card className="min-h-[300px]">
                         <SectionTitle
-                            title="Academic Time Table"
-                            action={<button className="text-xs font-bold text-rose-500 hover:text-rose-400 hover:underline">View All</button>}
+                            title="Upcoming Exams"
+                            action={<button className="text-xs font-bold text-rose-500 hover:text-rose-400 hover:underline">View Schedule</button>}
                         />
                         <div className="mt-6">
-                            {timetable.map((event, i) => (
-                                <TimelineItem key={i} {...event} isLast={i === timetable.length - 1} />
-                            ))}
+                            {upcomingExams.length > 0 ? upcomingExams.map((exam, i) => (
+                                <TimelineItem
+                                    key={i}
+                                    time={exam.time}
+                                    title={exam.title}
+                                    subtitle={`${exam.code} • ${exam.venue}`}
+                                    color="rose"
+                                    date={exam.date}
+                                    isLast={i === upcomingExams.length - 1}
+                                />
+                            )) : (
+                                <p className="text-sm text-gray-500 italic">No exams scheduled shortly.</p>
+                            )}
                         </div>
                     </Card>
 
                     <Card>
-                        <SectionTitle title="Degree Progress" />
-                        <div className="flex flex-col items-center justify-center py-6">
-                            <div className="w-full bg-white/5 rounded-full h-4 mb-4 overflow-hidden relative">
+                        <SectionTitle title="Academic Calendar" action={<button className="text-xs font-bold text-blue-500 hover:text-blue-400 hover:underline">Full Calendar</button>} />
+                        <div className="space-y-4">
+                            {calendarEvents.map((evt, i) => (
+                                <CalendarEvent key={i} {...evt} />
+                            ))}
+                            {calendarEvents.length === 0 && <p className="text-sm text-gray-500 italic">No upcoming events.</p>}
+                        </div>
+
+                        <div className="mt-6 pt-6 border-t border-white/5">
+                            <SectionTitle title="Degree Progress" className="!mb-2 !text-sm !text-gray-400" />
+                            <div className="w-full bg-white/5 rounded-full h-3 mb-2 overflow-hidden relative">
                                 <div style={{ width: `${progress}%` }} className="h-full bg-gradient-to-r from-rose-500 to-orange-500 rounded-full"></div>
                             </div>
-                            <div className="flex justify-between w-full text-sm font-bold text-gray-400 uppercase tracking-widest">
-                                <span>{credits} Credits</span>
-                                <span>{creditTarget} Goal</span>
-                            </div>
-                            <div className="mt-8 grid grid-cols-2 gap-4 w-full">
-                                <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-center">
-                                    <span className="block text-xs text-gray-500 mb-1">Honours Class</span>
-                                    <span className="block text-sm font-bold text-white">{honoursClass}</span>
-                                </div>
-                                <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-center">
-                                    <span className="block text-xs text-gray-500 mb-1">Status</span>
-                                    <span className="block text-sm font-bold text-emerald-400">Good Standing</span>
-                                </div>
+                            <div className="flex justify-between w-full text-xs font-bold text-gray-500 uppercase tracking-widest">
+                                <span>{credits} Earned</span>
+                                <span>{creditTarget} Req.</span>
                             </div>
                         </div>
                     </Card>
