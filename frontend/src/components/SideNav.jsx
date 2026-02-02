@@ -190,7 +190,7 @@ export default function SideNav({ isOpen, onClose }) {
 
             {/* Logout */}
             <button
-              className="relative w-full h-11 md:h-12 flex items-center justify-center md:justify-start gap-3 px-2 md:px-4 rounded-xl transition-all duration-200 text-gray-400 hover:bg-[#f3184c]/10 hover:text-[#f3184c]"
+              className="relative w-full h-11 md:h-12 flex items-center justify-center md:justify-start gap-3 px-2 md:px-4 rounded-xl transition-all duration-200 text-sidebar-muted hover:bg-[#f3184c]/10 hover:text-[#f3184c]"
               onClick={() => authService.logout()}
               title="Logout"
             >
