@@ -62,7 +62,7 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
 
   return (
     <header className="sticky top-0 z-50 bg-gray-50 py-4">
-      <div className="px-3 sm:px-4 md:px-6 lg:px-8">
+      <div className="px-4 w-full">
         <div className="flex items-center gap-4">
 
           {/* Mobile Menu */}
@@ -77,7 +77,7 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
 
           {/* Main Container - Page Title, Actions */}
           <div className="flex-1">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 px-6 py-3 flex items-center gap-4 max-w-7xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 px-4 py-3 flex items-center gap-4 w-full">
 
               {/* Page Title */}
               <h1 className="text-xl font-bold text-gray-900 whitespace-nowrap">

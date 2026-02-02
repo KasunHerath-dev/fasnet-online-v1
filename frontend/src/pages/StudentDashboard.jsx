@@ -230,8 +230,8 @@ export default function StudentDashboard() {
     ]
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-black p-3 sm:p-4 md:p-5 lg:p-6 font-sans">
-            <div className="max-w-7xl mx-auto space-y-3 sm:space-y-4">
+        <div className="min-h-screen bg-gray-50 dark:bg-black p-4 font-sans">
+            <div className="w-full space-y-3 sm:space-y-4">
 
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
