@@ -80,23 +80,12 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 px-6 py-3 flex items-center gap-4">
 
               {/* Page Title */}
-              <h1 className="text-xl font-bold text-gray-900 whitespace-nowrap hidden lg:block">
+              <h1 className="text-xl font-bold text-gray-900 whitespace-nowrap">
                 {getPageTitle()}
               </h1>
 
-              {/* Search Bar */}
-              <div className="flex-1">
-                <form onSubmit={handleSearch} className="relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="What assignment are you looking for?"
-                    className="w-full pl-11 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:border-[#f3184c] focus:bg-white transition-colors"
-                  />
-                </form>
-              </div>
+              {/* Spacer */}
+              <div className="flex-1"></div>
 
               {/* Notifications */}
               <div className="relative" ref={notifRef}>
