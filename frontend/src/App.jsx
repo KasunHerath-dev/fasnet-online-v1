@@ -121,18 +121,18 @@ export default function App() {
           path="/*"
           element={
             <ProtectedRoute>
-              <div className="flex h-screen">
+              <div className="flex h-screen bg-[#0F0F0F] text-white overflow-hidden">
                 <SideNav
                   isOpen={isSidebarOpen}
                   onClose={() => setIsSidebarOpen(false)}
                 />
-                <div className="flex-1 flex flex-col">
+                <div className="flex-1 flex flex-col relative w-full h-full overflow-hidden">
                   <TopNav
                     user={user}
                     onLogout={handleLogout}
                     onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
                   />
-                  <main className="flex-1 overflow-auto">
+                  <main className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide">
                     <Routes>
                       {/* Student Routes */}
                       {isStudent && (
