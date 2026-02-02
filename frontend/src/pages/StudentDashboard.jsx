@@ -55,20 +55,20 @@ const TabButton = ({ active, icon: Icon, label, onClick }) => (
 
 // Stat Card Component
 const StatCard = ({ icon: Icon, value, label, color = '#f3184c', trend, subtitle }) => (
-    <div className="bg-white dark:bg-[#303030] rounded-2xl p-4 sm:p-6 border border-gray-100 dark:border-[#303030] hover:shadow-lg transition-all">
+    <div className="bg-[#1a1a1a] rounded-2xl p-4 sm:p-6 border border-[#2a2a2a] hover:border-[#3a3a3a] hover:shadow-xl transition-all">
         <div className="flex items-start justify-between mb-3 sm:mb-4">
-            <div className="p-2 sm:p-3 rounded-xl" style={{ backgroundColor: `${color}20` }}>
+            <div className="p-2 sm:p-3 rounded-xl" style={{ backgroundColor: `${color}15` }}>
                 <Icon className="w-4 h-4 sm:w-5 sm:h-5" style={{ color }} />
             </div>
             {trend && (
-                <div className={`text-xs font-bold px-2 py-1 rounded-lg ${trend > 0 ? 'bg-green-100 text-green-600 dark:bg-green-900/20' : 'bg-red-100 text-red-600 dark:bg-red-900/20'}`}>
+                <div className={`text-xs font-bold px-2 py-1 rounded-lg ${trend > 0 ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
                     {trend > 0 ? '↑' : '↓'} {Math.abs(trend)}%
                 </div>
             )}
         </div>
-        <div className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mb-1">{value}</div>
-        <div className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{label}</div>
-        {subtitle && <div className="text-xs text-gray-400 mt-1">{subtitle}</div>}
+        <div className="text-2xl sm:text-3xl font-black text-white mb-1">{value}</div>
+        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">{label}</div>
+        {subtitle && <div className="text-xs text-gray-600 mt-1">{subtitle}</div>}
     </div>
 )
 
@@ -82,18 +82,18 @@ const EventCard = ({ title, date, time, type, icon: Icon }) => {
     }
 
     return (
-        <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-50 dark:bg-[#1e1e1e] rounded-xl hover:bg-gray-100 dark:hover:bg-[#252525] transition-colors group cursor-pointer border border-transparent hover:border-gray-200 dark:hover:border-[#303030]">
+        <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-[#1a1a1a] rounded-xl hover:bg-[#222] transition-colors group cursor-pointer border border-[#2a2a2a] hover:border-[#3a3a3a]">
             <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl ${typeColors[type] || 'bg-[#f3184c]'} flex items-center justify-center flex-shrink-0`}>
                 {Icon ? <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" /> : <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-white" />}
             </div>
             <div className="flex-1 min-w-0">
-                <h4 className="font-bold text-sm sm:text-base text-gray-900 dark:text-white truncate">{title}</h4>
+                <h4 className="font-bold text-sm sm:text-base text-white truncate">{title}</h4>
                 <div className="flex items-center gap-2 mt-1">
-                    <Clock className="w-3 h-3 text-gray-400" />
-                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400">{date} • {time}</span>
+                    <Clock className="w-3 h-3 text-gray-500" />
+                    <span className="text-xs font-medium text-gray-500">{date} • {time}</span>
                 </div>
             </div>
-            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-[#f3184c] transition-colors flex-shrink-0" />
+            <ChevronRight className="w-4 h-4 text-gray-600 group-hover:text-[#f3184c] transition-colors flex-shrink-0" />
         </div>
     )
 }
@@ -102,17 +102,17 @@ const EventCard = ({ title, date, time, type, icon: Icon }) => {
 const SubjectCard = ({ title, code, credits, instructor, onClick }) => (
     <div
         onClick={onClick}
-        className="bg-white dark:bg-[#303030] rounded-xl p-4 border border-gray-100 dark:border-[#303030] hover:border-[#f3184c] hover:shadow-md transition-all cursor-pointer group"
+        className="bg-[#1a1a1a] rounded-xl p-4 border border-[#2a2a2a] hover:border-[#f3184c] hover:shadow-md transition-all cursor-pointer group"
     >
         <div className="flex items-start justify-between mb-3">
-            <div className="p-2 bg-gray-100 dark:bg-[#1e1e1e] rounded-lg group-hover:bg-[#f3184c]/10 transition-colors">
+            <div className="p-2 bg-[#252525] rounded-lg group-hover:bg-[#f3184c]/10 transition-colors">
                 <BookOpen className="w-5 h-5 text-[#f3184c]" />
             </div>
-            <span className="text-xs font-bold text-gray-400">{credits} Credits</span>
+            <span className="text-xs font-bold text-gray-500">{credits} Credits</span>
         </div>
-        <h4 className="font-bold text-gray-900 dark:text-white text-sm mb-1 line-clamp-2">{title}</h4>
-        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-2">{code}</span>
-        {instructor && <span className="text-xs text-gray-400">👤 {instructor}</span>}
+        <h4 className="font-bold text-white text-sm mb-1 line-clamp-2">{title}</h4>
+        <span className="text-xs font-medium text-gray-500 block mb-2">{code}</span>
+        {instructor && <span className="text-xs text-gray-600">👤 {instructor}</span>}
     </div>
 )
 
@@ -138,6 +138,15 @@ export default function StudentDashboard() {
     const [modules, setModules] = useState([])
     const [academicRecords, setAcademicRecords] = useState([])
     const [loading, setLoading] = useState(true)
+
+    // Get time-based greeting
+    const getGreeting = () => {
+        const hour = new Date().getHours()
+        if (hour < 12) return 'Good Morning'
+        if (hour < 17) return 'Good Afternoon'
+        if (hour < 21) return 'Good Evening'
+        return 'Good Night'
+    }
 
     useEffect(() => {
         const currentUser = authService.getUser()
@@ -228,7 +237,7 @@ export default function StudentDashboard() {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
                     <div>
                         <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mb-1">
-                            Welcome back, {firstName}! 👋
+                            {getGreeting()}, {firstName}! 👋
                         </h1>
                         <p className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
                             Level {level} • {combination} • Here's your academic overview
