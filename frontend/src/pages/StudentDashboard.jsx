@@ -15,7 +15,10 @@ import {
     Award,
     Target,
     Layers,
-    LayoutDashboard
+    LayoutDashboard,
+    Bell,
+    MessageSquare,
+    User
 } from 'lucide-react'
 import { authService, academicService } from '../services/authService'
 import { MODULE_DATA } from '../data/moduleList'
@@ -26,30 +29,31 @@ import StudentAcademic from './StudentAcademic'
 import StudentResources from './StudentResources'
 import StudentAnalytics from './StudentAnalytics'
 
-// --- Reusable Dashboard Components ---
+// --- Reusable Dashboard Components (Pro Dark Theme) ---
 
 const Card = ({ children, className = "" }) => (
-    <div className={`bg-white dark:bg-[#1e1e1e] rounded-[2rem] shadow-sm border border-gray-100 dark:border-[#303030] p-6 transition-all ${className}`}>
+    <div className={`bg-[#0F0F0F] rounded-[2rem] shadow-2xl shadow-black/50 border border-[#1f1f1f] p-6 transition-all ${className}`}>
         {children}
     </div>
 )
 
-const SectionTitle = ({ title, action }) => (
-    <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-black text-gray-900 dark:text-white">{title}</h2>
+const SectionTitle = ({ title, action, className = "" }) => (
+    <div className={`flex items-center justify-between mb-4 ${className}`}>
+        <h2 className="text-xl font-bold text-white tracking-wide">{title}</h2>
         {action}
     </div>
 )
 
-const Tag = ({ label, color = "blue" }) => {
+const Badge = ({ label, color = "gray" }) => {
     const colors = {
-        blue: "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400",
-        purple: "bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400",
-        emerald: "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400",
-        orange: "bg-orange-50 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400",
+        blue: "bg-[#1e3a8a]/30 text-blue-400 border border-blue-500/30",
+        purple: "bg-[#581c87]/30 text-purple-400 border border-purple-500/30",
+        red: "bg-[#7f1d1d]/30 text-red-400 border border-red-500/30",
+        orange: "bg-[#7c2d12]/30 text-orange-400 border border-orange-500/30",
+        gray: "bg-[#27272a] text-gray-300 border border-gray-700",
     }
     return (
-        <span className={`px-3 py-1.5 rounded-xl text-xs font-bold ${colors[color] || colors.blue}`}>
+        <span className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider ${colors[color] || colors.gray}`}>
             {label}
         </span>
     )
@@ -64,192 +68,186 @@ const DateStrip = () => {
         d.setDate(today.getDate() + i);
         dates.push(d);
     }
+    const todayIndex = 0; // Simplified for demo, ideally match actual date
 
     return (
-        <div className="bg-[#1e1e1e] text-white rounded-[2rem] p-4 flex justify-between items-center shadow-lg shadow-gray-200 dark:shadow-none mb-6">
+        <Card className="flex justify-between items-center py-5 px-8">
             {dates.map((date, index) => {
-                const isSelected = index === 0;
+                const isSelected = index === todayIndex;
                 return (
-                    <div key={index} className={`flex flex-col items-center px-4 py-2 rounded-2xl cursor-pointer transition-all ${isSelected ? 'bg-[#f3184c] shadow-lg shadow-[#f3184c]/20' : 'hover:bg-white/5 opacity-60 hover:opacity-100'}`}>
-                        <span className="text-xs font-medium mb-1">{date.toLocaleDateString('en-US', { weekday: 'short' })}</span>
-                        <span className="text-xl font-black">{date.getDate()}</span>
+                    <div key={index} className="flex flex-col items-center gap-2 cursor-pointer group">
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-sm font-bold transition-all ${isSelected ? 'bg-[#ff0033] text-white shadow-[0_0_15px_rgba(255,0,51,0.5)]' : 'bg-[#1a1a1a] text-gray-400 group-hover:bg-[#252525]'}`}>
+                            {date.getDate()}
+                        </div>
+                        <span className={`text-xs font-bold uppercase ${isSelected ? 'text-white' : 'text-gray-500'}`}>
+                            {date.toLocaleDateString('en-US', { weekday: 'short' })}
+                        </span>
                     </div>
                 )
             })}
-        </div>
+        </Card>
     )
 }
 
 const TimelineItem = ({ time, title, subtitle, color, isLast }) => (
-    <div className="flex gap-4 relative">
-        {/* Timeline Line */}
-        {!isLast && <div className="absolute left-[19px] top-10 bottom-[-16px] w-0.5 bg-gray-100 dark:bg-[#303030]"></div>}
-
-        <div className="flex flex-col items-center gap-1">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-${color}-50 dark:bg-${color}-900/20 text-${color}-600 dark:text-${color}-400 ring-4 ring-white dark:ring-[#1e1e1e]`}>
-                <Clock className="w-4 h-4" />
-            </div>
+    <div className="flex items-start gap-4 mb-6 last:mb-0 group">
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 mt-1 bg-[#1a1a1a] text-${color}-400 border border-[#2a2a2a]`}>
+            <Clock className="w-4 h-4" />
         </div>
-        <div className="flex-1 pb-6">
-            <div className="flex justify-between items-start">
-                <div>
-                    <h4 className="font-bold text-gray-900 dark:text-white text-base">{title}</h4>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mt-0.5">{subtitle}</p>
-                </div>
-                <span className="text-xs font-bold bg-gray-100 dark:bg-[#303030] text-gray-600 dark:text-gray-300 px-2 py-1 rounded-lg">
-                    {time}
-                </span>
-            </div>
+        <div className="flex-1">
+            <h4 className="font-bold text-white text-base group-hover:text-[#ff0033] transition-colors">{title}</h4>
+            <p className="text-sm text-gray-500 font-medium mt-1">{subtitle}</p>
         </div>
+        <span className="text-xs font-bold bg-[#1a1a1a] text-gray-400 px-3 py-1.5 rounded-lg border border-[#2a2a2a]">
+            {time}
+        </span>
     </div>
 )
 
-// --- Overview Component (Original Dashboard Content) ---
+// --- Overview Component ---
 
 const DashboardOverview = ({ user, student, profile, modules }) => {
     const navigate = useNavigate();
 
-    // Mock Timetable Data
+    // Data Helpers
+    const firstName = user?.studentRef?.firstName || user?.username || 'Student';
+    // Use real enrolled modules if avail, else fallback to first few
+    const mySubjects = student?.enrolledModules && student.enrolledModules.length > 0
+        ? student.enrolledModules
+        : modules.slice(0, 4);
+
+    const gpa = profile?.gpa?.overall?.toFixed(2) || '0.00';
+    const credits = profile?.credits?.total || 0;
+    const progress = Math.min(Math.round((credits / 120) * 100), 100); // Assuming 120 total credits
+
+    // Mock Timetable (Placeholder as no API exists)
     const timetable = [
         { time: "09:00 AM", title: "Advanced Database Systems", subtitle: "Lecture Hall A • Prof. Smith", color: "blue" },
         { time: "11:00 AM", title: "Artificial Intelligence", subtitle: "Lab 3 • Dr. Johnson", color: "purple" },
         { time: "02:00 PM", title: "Software Engineering Project", subtitle: "Meeting Room 2 • Group 5", color: "emerald" },
     ];
 
-    // Mock Enrolled Subjects for Tags
-    const subjects = modules.slice(0, 4).map(m => m.code);
-
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-4">
-            {/* LEFT COLUMN (Wide) */}
-            <div className="lg:col-span-8 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-2">
 
-                {/* Profile Banner Card */}
-                <div className="bg-white dark:bg-[#1e1e1e] rounded-[2.5rem] p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6 shadow-sm border border-gray-100 dark:border-[#303030] relative overflow-hidden group">
-                    {/* Decorative Background Element */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-blue-50 to-transparent dark:from-blue-900/10 rounded-bl-[100%] transition-transform group-hover:scale-110 duration-500"></div>
+            {/* LEFT COLUMN (Main Content) */}
+            <div className="lg:col-span-8 space-y-8">
 
-                    {/* Avatar */}
-                    <div className="relative">
-                        <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-gray-200 dark:bg-[#303030] overflow-hidden shadow-xl ring-4 ring-white dark:ring-[#1e1e1e]">
-                            <img
-                                src={`https://ui-avatars.com/api/?name=${user?.username}&background=0D8ABC&color=fff&size=200`}
-                                alt="Profile"
-                                className="w-full h-full object-cover"
-                            />
+                {/* Hero / Profile Card */}
+                <Card className="!bg-[#121212] !p-0 overflow-hidden relative min-h-[220px] flex flex-col justify-between">
+                    {/* Decorative Glow */}
+                    <div className="absolute top-[-50px] right-[-50px] w-64 h-64 bg-[#ff0033] opacity-[0.08] blur-[80px] rounded-full pointing-events-none"></div>
+
+                    <div className="p-8 pb-4 flex justify-between items-start relative z-10">
+                        <div className="flex gap-6">
+                            {/* Big Date Box */}
+                            <div className="w-20 h-20 bg-[#0088ff] rounded-2xl flex flex-col items-center justify-center text-white shadow-lg shadow-blue-900/40 relative">
+                                <span className="text-3xl font-black">{new Date().getDate()}</span>
+                                <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-[#ff0033] rounded-lg flex items-center justify-center shadow-md">
+                                    <Edit className="w-3.5 h-3.5 text-white" />
+                                </div>
+                            </div>
+
+                            {/* Greeting */}
+                            <div>
+                                <h1 className="text-3xl font-black text-white mb-2">Hello, {firstName}!</h1>
+                                <p className="text-gray-400 text-sm max-w-sm leading-relaxed mb-4">
+                                    Welcome back to your portal. You have 3 classes today and 2 assignments due this week.
+                                </p>
+                                <div className="flex gap-2">
+                                    <Badge label={`Level ${student?.level || 1}`} color="blue" />
+                                    <Badge label={`Semester ${student?.semester || 1}`} color="purple" />
+                                    <Badge label="Computer Science" color="orange" />
+                                </div>
+                            </div>
                         </div>
-                        <button
-                            onClick={() => navigate('/dashboard?tab=profile')}
-                            className="absolute -bottom-2 -right-2 w-10 h-10 bg-[#f3184c] text-white rounded-xl flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
-                        >
-                            <Edit className="w-4 h-4" />
-                        </button>
-                    </div>
 
-                    {/* Info */}
-                    <div className="flex-1 text-center sm:text-left relative z-10">
-                        <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-2">
-                            Hello, {user?.studentRef?.firstName || user?.username}!
-                        </h2>
-                        <p className="text-gray-500 dark:text-gray-400 font-medium mb-4 max-w-md">
-                            Welcome back to your portal. You have 3 classes today and 2 assignments due this week.
-                        </p>
-                        <div className="flex flex-wrap justify-center sm:justify-start gap-3">
-                            <Tag label={`Level ${student?.level || 1}`} color="blue" />
-                            <Tag label="Semester 1" color="purple" />
-                            <Tag label="Computer Science" color="orange" />
-                        </div>
-                    </div>
-
-                    {/* Quick Stats on Banner */}
-                    <div className="hidden xl:flex flex-col gap-3 min-w-[140px] border-l border-gray-100 dark:border-[#303030] pl-6">
-                        <div>
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">GPA</p>
-                            <p className="text-2xl font-black text-gray-900 dark:text-white">{profile?.gpa?.overall?.toFixed(2) || '0.00'}</p>
-                        </div>
-                        <div>
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Credits</p>
-                            <p className="text-2xl font-black text-gray-900 dark:text-white">{profile?.credits?.total || 0}</p>
+                        {/* Right Stats (Desktop) */}
+                        <div className="hidden sm:flex flex-col items-end gap-4 text-right">
+                            <div>
+                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-0.5">GPA</span>
+                                <span className="text-3xl font-black text-white">{gpa}</span>
+                            </div>
+                            <div>
+                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-0.5">CREDITS</span>
+                                <span className="text-xl font-bold text-white">{credits}</span>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </Card>
 
                 {/* Date Strip */}
                 <DateStrip />
 
-                {/* Timetable Section */}
-                <Card>
+                {/* Timetable */}
+                <Card className="min-h-[280px]">
                     <SectionTitle
                         title="Today's Timetable"
-                        action={
-                            <button className="text-sm font-bold text-[#f3184c] hover:underline">View Full Schedule</button>
-                        }
+                        action={<button className="text-[11px] font-bold text-[#ff0033] hover:text-[#ff3355] uppercase tracking-wide transition-colors">View Full Schedule</button>}
                     />
-                    <div className="mt-6">
+                    <div className="mt-6 space-y-2">
                         {timetable.map((event, i) => (
-                            <TimelineItem
-                                key={i}
-                                {...event}
-                                isLast={i === timetable.length - 1}
-                            />
+                            <TimelineItem key={i} {...event} isLast={i === timetable.length - 1} />
                         ))}
                     </div>
                 </Card>
 
             </div>
 
-            {/* RIGHT COLUMN (Narrow) */}
+            {/* RIGHT COLUMN (Widgets) */}
             <div className="lg:col-span-4 space-y-6">
 
-                {/* Statistic Info Widget */}
+                {/* Stats Row */}
                 <div className="grid grid-cols-2 gap-4">
-                    <Card className="!p-5 bg-gradient-to-br from-purple-500 to-indigo-600 !border-none text-white shadow-lg shadow-purple-500/20">
-                        <TrendingUp className="w-8 h-8 text-white/80 mb-6" />
-                        <p className="text-3xl font-black mb-1">{profile?.gpa?.overall?.toFixed(2) || '3.42'}</p>
-                        <p className="text-xs font-bold text-white/80 uppercase">Current GPA</p>
+                    <Card className="!bg-gradient-to-br !from-[#6366f1] !to-[#4f46e5] border-none !px-5 !py-6">
+                        <TrendingUp className="w-6 h-6 text-white/80 mb-6" />
+                        <h3 className="text-3xl font-black text-white mb-1">{gpa}</h3>
+                        <p className="text-[10px] font-bold text-white/60 uppercase tracking-wider">Current GPA</p>
                     </Card>
-                    <Card className="!p-5 bg-[#1e1e1e] !border-none text-white shadow-lg shadow-gray-900/20">
-                        <Target className="w-8 h-8 text-emerald-400 mb-6" />
-                        <p className="text-3xl font-black mb-1">{profile?.credits?.total || 64}</p>
-                        <p className="text-xs font-bold text-gray-400 uppercase">Credits Earned</p>
+                    <Card className="bg-[#1a1a1a] border-[#2a2a2a] !px-5 !py-6">
+                        <Target className="w-6 h-6 text-[#10b981] mb-6" />
+                        <h3 className="text-3xl font-black text-white mb-1">{credits}</h3>
+                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Credits Earned</p>
                     </Card>
                 </div>
 
                 {/* Degree Progress */}
-                <Card>
+                <Card className="bg-[#1a1a1a] border-[#2a2a2a] min-h-[240px] flex flex-col">
                     <SectionTitle title="Degree Progress" />
-                    <div className="flex items-center justify-center py-6 relative">
-                        {/* Circular Progress Placeholder */}
-                        <div className="w-48 h-48 rounded-full border-[12px] border-gray-100 dark:border-[#303030] flex items-center justify-center relative">
-                            <div className="absolute inset-0 border-[12px] border-[#f3184c] rounded-full border-l-transparent border-b-transparent rotate-45"></div>
-                            <div className="text-center">
-                                <span className="text-4xl font-black text-gray-900 dark:text-white">65%</span>
-                                <span className="block text-xs font-bold text-gray-400 uppercase mt-1">Completed</span>
+                    <div className="flex-1 flex items-center justify-center py-4">
+                        {/* Simple CSS Chart */}
+                        <div className="relative w-40 h-40 rounded-full border-[10px] border-[#252525] flex items-center justify-center">
+                            {/* Active segment (approx using conic gradient for simpler css implementation vs SVG) */}
+                            <div className="absolute inset-[-10px] rounded-full border-[10px] border-[#ff0033] border-l-transparent border-b-transparent rotate-[45deg] opacity-90 shadow-[0_0_20px_rgba(255,0,51,0.3)]"></div>
+
+                            <div className="text-center z-10">
+                                <span className="text-4xl font-black text-white">{progress}%</span>
+                                <span className="block text-[10px] font-bold text-gray-500 uppercase mt-1">Completed</span>
                             </div>
                         </div>
                     </div>
                 </Card>
 
-                {/* Enrolled Subjects / Tags */}
-                <Card>
+                {/* Subjects */}
+                <Card className="bg-[#1a1a1a] border-[#2a2a2a]">
                     <SectionTitle
                         title="My Subjects"
-                        action={<button onClick={() => navigate('/dashboard?tab=academic')}><ArrowRight className="w-5 h-5 text-gray-400 hover:text-[#f3184c]" /></button>}
+                        action={<button onClick={() => navigate('/dashboard?tab=academic')}><ArrowRight className="w-4 h-4 text-gray-500 hover:text-white" /></button>}
                     />
-                    <div className="flex flex-wrap gap-2">
-                        {subjects.length > 0 ? (
-                            subjects.map(code => (
-                                <span key={code} className="px-3 py-2 bg-gray-50 hover:bg-gray-100 dark:bg-[#303030] dark:hover:bg-[#404040] rounded-xl text-sm font-bold text-gray-600 dark:text-gray-300 transition-colors cursor-default">
-                                    {code}
-                                </span>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                        {mySubjects.length > 0 ? (
+                            mySubjects.map((sub, idx) => (
+                                <div key={idx} className="bg-[#252525] hover:bg-[#2a2a2a] border border-[#303030] px-3 py-2 rounded-lg text-xs font-bold text-gray-300 transition-colors cursor-default">
+                                    {sub.code || sub}
+                                </div>
                             ))
                         ) : (
-                            <p className="text-sm text-gray-400 font-medium">No enrolled subjects.</p>
+                            <p className="text-xs text-gray-500 font-medium italic">No subjects enrolled.</p>
                         )}
-                        <button className="px-3 py-2 border-2 border-dashed border-gray-200 dark:border-[#303030] rounded-xl text-sm font-bold text-gray-400 hover:text-[#f3184c] hover:border-[#f3184c] transition-colors">
-                            + Add New
-                        </button>
                     </div>
+                    <button className="w-full mt-6 py-3 rounded-xl border border-dashed border-[#333] text-gray-500 text-xs font-bold uppercase hover:border-[#ff0033] hover:text-[#ff0033] transition-colors">
+                        + Add New
+                    </button>
                 </Card>
 
             </div>
@@ -260,6 +258,7 @@ const DashboardOverview = ({ user, student, profile, modules }) => {
 // --- Main Container Component ---
 
 export default function StudentDashboard() {
+    const navigate = useNavigate()
     const [user, setUser] = useState(null)
     const [student, setStudent] = useState(null)
     const [profile, setProfile] = useState(null)
@@ -303,50 +302,46 @@ export default function StudentDashboard() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-[#f8f9fa] dark:bg-black">
-                <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#f3184c] border-t-transparent"></div>
+            <div className="min-h-screen flex items-center justify-center bg-black">
+                <div className="animate-spin rounded-full h-10 w-10 border-4 border-[#ff0033] border-t-transparent"></div>
             </div>
         )
     }
 
+
+
     // Render Tab Content
     const renderContent = () => {
         switch (activeTab) {
-            case 'academic':
-                return <StudentAcademic />;
-            case 'resources':
-                return <StudentResources />;
-            case 'analytics':
-                return <StudentAnalytics />;
-            case 'profile':
-                return <StudentProfile />;
+            case 'academic': return <StudentAcademic />;
+            case 'resources': return <StudentResources />;
+            case 'analytics': return <StudentAnalytics />;
+            case 'profile': return <StudentProfile />;
             case 'overview':
-            default:
-                return <DashboardOverview user={user} student={student} profile={profile} modules={modules} />;
+            default: return <DashboardOverview user={user} student={student} profile={profile} modules={modules} />;
         }
     };
 
     return (
-        <div className="min-h-screen bg-[#f8f9fa] dark:bg-black p-4 sm:p-6 lg:p-8 font-sans transition-colors duration-500">
-            <div className="w-full max-w-[1600px] mx-auto space-y-6">
+        <div className="min-h-screen bg-black p-4 lg:p-6 font-sans text-gray-200">
+            {/* Top Search Header (Local Scope) - Optional if TopNav exists */}
+            <div className="w-full max-w-[1700px] mx-auto mb-6 flex items-center justify-between hidden">
+                <h1 className="text-2xl font-black text-white">Dashboard</h1>
+            </div>
 
-                {/* Tab Header - Visible on Mobile to switch views if specific mobile nav isn't enough */}
-                {/* On Desktop, SideNav handles switching. This area serves as title for sub-pages if needed */}
+            <div className="w-full max-w-[1700px] mx-auto">
+                {/* Back to Dashboard Link (Mobile/Tab View) */}
                 {activeTab !== 'overview' && (
-                    <div className="mb-4">
-                        <Link to="/dashboard?tab=overview" className="inline-flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-[#f3184c] transition-colors mb-2">
+                    <div className="mb-6">
+                        <Link to="/dashboard?tab=overview" className="inline-flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-[#ff0033] transition-colors">
                             <LayoutDashboard className="w-4 h-4" />
-                            Back to Dashboard
+                            <span>Back to Overview</span>
                         </Link>
                     </div>
                 )}
 
-                {/* Main View Area */}
                 {renderContent()}
-
-            </div >
-        </div >
+            </div>
+        </div>
     )
 }
-
-
