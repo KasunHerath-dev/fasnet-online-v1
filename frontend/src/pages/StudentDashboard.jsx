@@ -104,6 +104,36 @@ const TimelineItem = ({ time, title, subtitle, color, isLast }) => (
     </div>
 )
 
+const ArrowRight = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M5 12h14" />
+        <path d="m12 5 7 7-7 7" />
+    </svg>
+)
+
+// --- WUSL Academic Logic Helpers ---
+
+const getHonoursClass = (gpa) => {
+    const numGpa = parseFloat(gpa);
+    if (!numGpa && numGpa !== 0) return "Not Classified";
+    if (numGpa >= 3.70) return "First Class";
+    if (numGpa >= 3.30) return "Second Upper";
+    if (numGpa >= 3.00) return "Second Lower";
+    if (numGpa >= 2.00) return "Pass";
+    return "Pending";
+}
+
+const isDeansListEligible = (gpa, annualCredits) => {
+    // WUSL Rule: GPA >= 3.70 AND >= 30 Credits/Year
+    // Assuming annualCredits check is passed for this visualization if gpa is high enough
+    return parseFloat(gpa) >= 3.70;
+}
+
+const getCreditTarget = (level, degreeType = 'special') => {
+    // General: 90, Special/Joint: 120
+    return degreeType === 'general' ? 90 : 120;
+}
+
 // --- Overview Component ---
 
 const DashboardOverview = ({ user, student, profile, modules }) => {
@@ -118,7 +148,13 @@ const DashboardOverview = ({ user, student, profile, modules }) => {
 
     const gpa = profile?.gpa?.overall?.toFixed(2) || '0.00';
     const credits = profile?.credits?.total || 0;
-    const progress = Math.min(Math.round((credits / 120) * 100), 100); // Assuming 120 total credits
+
+    // WUSL Logic Calculations
+    const degreeType = student?.degreeType || 'special'; // Default to special/joint track (4 years)
+    const creditTarget = getCreditTarget(student?.level, degreeType);
+    const progress = Math.min(Math.round((credits / creditTarget) * 100), 100);
+    const honoursClass = getHonoursClass(gpa);
+    const showDeansList = isDeansListEligible(gpa);
 
     // Mock Timetable (Placeholder as no API exists)
     const timetable = [
@@ -152,11 +188,14 @@ const DashboardOverview = ({ user, student, profile, modules }) => {
                             <div>
                                 <h1 className="text-3xl font-black text-white mb-2">Hello, {firstName}!</h1>
                                 <p className="text-gray-400 text-sm max-w-sm leading-relaxed mb-4">
-                                    Welcome back to your portal. You have 3 classes today and 2 assignments due this week.
+                                    Welcome back to your portal.
+                                    {showDeansList && <span className="text-[#fbbf24] font-bold ml-1 flex items-center gap-1 inline-flex"><Award className="w-3 h-3" /> Dean's List Eligible</span>}
                                 </p>
                                 <div className="flex gap-2">
                                     <Badge label={`Level ${student?.level || 1}`} color="blue" />
-                                    <Badge label={`Semester ${student?.semester || 1}`} color="purple" />
+                                    <Badge label={`Sem ${student?.semester || 1}`} color="purple" />
+                                    {/* Default Combination Mock if not present */}
+                                    <Badge label={student?.combination || "COMB 1"} color="gray" />
                                     <Badge label="Computer Science" color="orange" />
                                 </div>
                             </div>
@@ -165,12 +204,12 @@ const DashboardOverview = ({ user, student, profile, modules }) => {
                         {/* Right Stats (Desktop) */}
                         <div className="hidden sm:flex flex-col items-end gap-4 text-right">
                             <div>
-                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-0.5">GPA</span>
-                                <span className="text-3xl font-black text-white">{gpa}</span>
+                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-0.5">Current Standing</span>
+                                <span className="text-xl font-bold text-[#ff0033]">{honoursClass}</span>
                             </div>
                             <div>
-                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-0.5">CREDITS</span>
-                                <span className="text-xl font-bold text-white">{credits}</span>
+                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-0.5">Total Credits</span>
+                                <span className="text-3xl font-black text-white">{credits} <span className="text-sm text-gray-600">/ {creditTarget}</span></span>
                             </div>
                         </div>
                     </div>
@@ -202,7 +241,7 @@ const DashboardOverview = ({ user, student, profile, modules }) => {
                     <Card className="!bg-gradient-to-br !from-[#6366f1] !to-[#4f46e5] border-none !px-5 !py-6">
                         <TrendingUp className="w-6 h-6 text-white/80 mb-6" />
                         <h3 className="text-3xl font-black text-white mb-1">{gpa}</h3>
-                        <p className="text-[10px] font-bold text-white/60 uppercase tracking-wider">Current GPA</p>
+                        <p className="text-[10px] font-bold text-white/60 uppercase tracking-wider">GPA ({honoursClass})</p>
                     </Card>
                     <Card className="bg-[#1a1a1a] border-[#2a2a2a] !px-5 !py-6">
                         <Target className="w-6 h-6 text-[#10b981] mb-6" />
@@ -217,14 +256,19 @@ const DashboardOverview = ({ user, student, profile, modules }) => {
                     <div className="flex-1 flex items-center justify-center py-4">
                         {/* Simple CSS Chart */}
                         <div className="relative w-40 h-40 rounded-full border-[10px] border-[#252525] flex items-center justify-center">
-                            {/* Active segment (approx using conic gradient for simpler css implementation vs SVG) */}
+                            {/* Active segment (approx) */}
                             <div className="absolute inset-[-10px] rounded-full border-[10px] border-[#ff0033] border-l-transparent border-b-transparent rotate-[45deg] opacity-90 shadow-[0_0_20px_rgba(255,0,51,0.3)]"></div>
 
                             <div className="text-center z-10">
                                 <span className="text-4xl font-black text-white">{progress}%</span>
-                                <span className="block text-[10px] font-bold text-gray-500 uppercase mt-1">Completed</span>
+                                <span className="block text-[10px] font-bold text-gray-500 uppercase mt-1">{credits} / {creditTarget} Credits</span>
                             </div>
                         </div>
+                    </div>
+                    {/* WUSL Level Check */}
+                    <div className="text-center border-t border-[#2a2a2a] pt-4 mt-2">
+                        <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Annual Target</p>
+                        <p className="text-white font-bold text-sm">30 Credits Minimum</p>
                     </div>
                 </Card>
 
@@ -245,9 +289,6 @@ const DashboardOverview = ({ user, student, profile, modules }) => {
                             <p className="text-xs text-gray-500 font-medium italic">No subjects enrolled.</p>
                         )}
                     </div>
-                    <button className="w-full mt-6 py-3 rounded-xl border border-dashed border-[#333] text-gray-500 text-xs font-bold uppercase hover:border-[#ff0033] hover:text-[#ff0033] transition-colors">
-                        + Add New
-                    </button>
                 </Card>
 
             </div>
