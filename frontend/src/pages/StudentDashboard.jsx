@@ -309,21 +309,40 @@ export default function StudentDashboard() {
         )
     }
 
-    {/* Tab Header - Visible on Mobile to switch views if specific mobile nav isn't enough */ }
-    {/* On Desktop, SideNav handles switching. This area serves as title for sub-pages if needed */ }
-    {
-        activeTab !== 'overview' && (
-            <div className="mb-4">
-                <Link to="/dashboard?tab=overview" className="inline-flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-[#f3184c] transition-colors mb-2">
-                    <LayoutDashboard className="w-4 h-4" />
-                    Back to Dashboard
-                </Link>
-            </div>
-        )
-    }
+    // Render Tab Content
+    const renderContent = () => {
+        switch (activeTab) {
+            case 'academic':
+                return <StudentAcademic />;
+            case 'resources':
+                return <StudentResources />;
+            case 'analytics':
+                return <StudentAnalytics />;
+            case 'profile':
+                return <StudentProfile />;
+            case 'overview':
+            default:
+                return <DashboardOverview user={user} student={student} profile={profile} modules={modules} />;
+        }
+    };
 
-    {/* Main View Area */ }
-    { renderContent() }
+    return (
+        <div className="min-h-screen bg-[#f8f9fa] dark:bg-black p-4 sm:p-6 lg:p-8 font-sans transition-colors duration-500">
+            <div className="w-full max-w-[1600px] mx-auto space-y-6">
+
+                {/* Tab Header - Visible on Mobile to switch views if specific mobile nav isn't enough */}
+                {/* On Desktop, SideNav handles switching. This area serves as title for sub-pages if needed */}
+                {activeTab !== 'overview' && (
+                    <div className="mb-4">
+                        <Link to="/dashboard?tab=overview" className="inline-flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-[#f3184c] transition-colors mb-2">
+                            <LayoutDashboard className="w-4 h-4" />
+                            Back to Dashboard
+                        </Link>
+                    </div>
+                )}
+
+                {/* Main View Area */}
+                {renderContent()}
 
             </div >
         </div >
