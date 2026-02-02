@@ -1,121 +1,127 @@
 import React from 'react'
-import { ArrowRight, Sparkles, GraduationCap, TrendingUp } from 'lucide-react'
+import { Search, Bell, MessageCircle, Sparkles } from 'lucide-react'
 
 export default function HeroSection() {
     return (
-        <section className="relative min-h-screen bg-black overflow-hidden flex items-center">
-            {/* Animated Background Elements */}
-            <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute top-20 left-10 w-72 h-72 bg-[#f3184c]/10 rounded-full blur-3xl animate-pulse"></div>
-                <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-3xl"></div>
+        <section className="relative min-h-screen bg-gradient-to-br from-[#2a1a1f] via-[#1a1520] to-black overflow-hidden">
+            {/* Top Navigation Bar */}
+            <div className="relative z-20 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pt-8">
+                <div className="flex items-center justify-between">
+                    {/* Logo */}
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-[#f3184c] to-[#d01440] rounded-xl flex items-center justify-center">
+                            <span className="text-white font-black text-lg">F</span>
+                        </div>
+                        <span className="text-white font-black text-xl hidden sm:block">fasnet</span>
+                    </div>
+
+                    {/* Right Actions */}
+                    <div className="flex items-center gap-3">
+                        <button className="w-10 h-10 bg-[#1a1a1a] hover:bg-[#252525] rounded-xl flex items-center justify-center transition-colors relative">
+                            <Bell className="w-5 h-5 text-gray-400" />
+                            <div className="absolute top-2 right-2 w-2 h-2 bg-[#f3184c] rounded-full"></div>
+                        </button>
+                        <button className="w-10 h-10 bg-[#1a1a1a] hover:bg-[#252525] rounded-xl flex items-center justify-center transition-colors">
+                            <MessageCircle className="w-5 h-5 text-gray-400" />
+                        </button>
+                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                            <span className="text-white font-bold text-sm">K</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            {/* Grid Pattern Overlay */}
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]"></div>
-
-            {/* Content */}
+            {/* Main Content */}
             <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-20">
                 <div className="grid lg:grid-cols-2 gap-12 items-center">
 
                     {/* Left Content */}
                     <div className="space-y-8">
-                        {/* Badge */}
-                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-full">
-                            <Sparkles className="w-4 h-4 text-[#f3184c]" />
-                            <span className="text-sm font-bold text-gray-400">Student Portal</span>
-                        </div>
-
                         {/* Heading */}
-                        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight">
-                            <span className="text-white">Your Academic</span>
-                            <br />
-                            <span className="bg-gradient-to-r from-[#f3184c] via-purple-500 to-blue-500 bg-clip-text text-transparent">
-                                Journey Starts Here
-                            </span>
-                        </h1>
-
-                        {/* Description */}
-                        <p className="text-lg sm:text-xl text-gray-400 max-w-xl">
-                            Track progress, access resources, and excel in your studies.
-                        </p>
-
-                        {/* CTA Buttons */}
-                        <div className="flex flex-wrap gap-4">
-                            <button className="group px-8 py-4 bg-[#f3184c] hover:bg-[#d01440] text-white rounded-xl font-bold text-lg transition-all flex items-center gap-2 shadow-lg shadow-[#f3184c]/30 hover:shadow-[#f3184c]/50">
-                                Get Started
-                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </button>
-                            <button className="px-8 py-4 bg-[#1a1a1a] hover:bg-[#252525] text-white border border-[#2a2a2a] hover:border-[#3a3a3a] rounded-xl font-bold text-lg transition-all">
-                                Learn More
-                            </button>
+                        <div className="space-y-4">
+                            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-tight">
+                                Dashboard
+                            </h1>
+                            <p className="text-lg text-gray-400 max-w-md">
+                                Track your academic progress and access everything you need in one place
+                            </p>
                         </div>
 
-                        {/* Stats */}
-                        <div className="flex flex-wrap gap-8 pt-4">
-                            <div>
-                                <div className="text-3xl font-black text-white">5K+</div>
-                                <div className="text-sm text-gray-500">Students</div>
+                        {/* Search Bar */}
+                        <div className="relative max-w-xl">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                            <input
+                                type="text"
+                                placeholder="What assignment are you looking for?"
+                                className="w-full pl-12 pr-4 py-4 bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#f3184c] transition-colors"
+                            />
+                        </div>
+
+                        {/* Quick Stats */}
+                        <div className="grid grid-cols-3 gap-4 max-w-xl">
+                            <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-4">
+                                <div className="text-2xl font-black text-white">24</div>
+                                <div className="text-xs text-gray-500 mt-1">Active Courses</div>
                             </div>
-                            <div>
-                                <div className="text-3xl font-black text-white">100+</div>
-                                <div className="text-sm text-gray-500">Courses</div>
+                            <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-4">
+                                <div className="text-2xl font-black text-white">3.8</div>
+                                <div className="text-xs text-gray-500 mt-1">Current GPA</div>
                             </div>
-                            <div>
-                                <div className="text-3xl font-black text-white">95%</div>
-                                <div className="text-sm text-gray-500">Success Rate</div>
+                            <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-4">
+                                <div className="text-2xl font-black text-white">89%</div>
+                                <div className="text-xs text-gray-500 mt-1">Completion</div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Right Content - Feature Cards */}
+                    {/* Right Content - Illustration & Card */}
                     <div className="relative">
-                        <div className="grid grid-cols-2 gap-4">
-                            {/* Card 1 */}
-                            <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-2xl p-6 hover:border-[#f3184c] transition-all group">
-                                <div className="w-12 h-12 bg-[#f3184c]/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#f3184c]/20 transition-colors">
-                                    <GraduationCap className="w-6 h-6 text-[#f3184c]" />
-                                </div>
-                                <h3 className="text-lg font-black text-white mb-2">Track Progress</h3>
-                                <p className="text-sm text-gray-500">Monitor your GPA and credits in real-time</p>
-                            </div>
+                        {/* Illustration */}
+                        <div className="relative mb-8">
+                            <div className="w-full aspect-square max-w-md mx-auto relative">
+                                {/* Running Student Illustration (simplified) */}
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <div className="relative">
+                                        {/* Cloud elements */}
+                                        <div className="absolute -top-20 -left-10 w-24 h-12 bg-white/10 rounded-full blur-sm"></div>
+                                        <div className="absolute -top-16 left-20 w-16 h-8 bg-white/10 rounded-full blur-sm"></div>
+                                        <div className="absolute top-10 -right-20 w-20 h-10 bg-white/10 rounded-full blur-sm"></div>
 
-                            {/* Card 2 */}
-                            <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-2xl p-6 hover:border-blue-500 transition-all group mt-8">
-                                <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-500/20 transition-colors">
-                                    <TrendingUp className="w-6 h-6 text-blue-500" />
-                                </div>
-                                <h3 className="text-lg font-black text-white mb-2">Analytics</h3>
-                                <p className="text-sm text-gray-500">Visualize your academic performance</p>
-                            </div>
-
-                            {/* Card 3 */}
-                            <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-2xl p-6 hover:border-purple-500 transition-all group">
-                                <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-purple-500/20 transition-colors">
-                                    <Sparkles className="w-6 h-6 text-purple-500" />
-                                </div>
-                                <h3 className="text-lg font-black text-white mb-2">Resources</h3>
-                                <p className="text-sm text-gray-500">Access study materials anytime</p>
-                            </div>
-
-                            {/* Card 4 */}
-                            <div className="bg-gradient-to-br from-[#f3184c] to-purple-600 rounded-2xl p-6 mt-8 relative overflow-hidden group">
-                                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
-                                <div className="relative">
-                                    <div className="text-4xl font-black text-white mb-2">24/7</div>
-                                    <p className="text-sm text-white/90 font-bold">Always Available</p>
+                                        {/* Student figure (abstract) */}
+                                        <div className="w-48 h-48 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center relative">
+                                            <div className="text-6xl">🎓</div>
+                                            {/* Motion lines */}
+                                            <div className="absolute -right-8 top-1/3 w-12 h-1 bg-white/20 rounded-full"></div>
+                                            <div className="absolute -right-6 top-1/2 w-8 h-1 bg-white/20 rounded-full"></div>
+                                            <div className="absolute -right-10 top-2/3 w-16 h-1 bg-white/20 rounded-full"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Floating Element */}
-                        <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-[#f3184c] to-purple-500 rounded-full blur-2xl opacity-50 animate-pulse"></div>
+                        {/* Premium Subscription Card */}
+                        <div className="bg-gradient-to-br from-[#1a1a1a] to-[#252525] border border-[#2a2a2a] rounded-2xl p-6 max-w-md mx-auto">
+                            <div className="flex items-start gap-4 mb-4">
+                                <div className="w-12 h-12 bg-gradient-to-br from-[#f3184c] to-purple-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <Sparkles className="w-6 h-6 text-white" />
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-lg font-black text-white mb-1">Premium subscription</h3>
+                                    <p className="text-sm text-gray-400">Buy Premium and get access to new courses</p>
+                                </div>
+                            </div>
+                            <button className="w-full py-3 bg-black hover:bg-[#0a0a0a] text-white rounded-xl font-bold text-sm transition-colors">
+                                More detailed
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* Bottom Gradient */}
-            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent"></div>
+            {/* Decorative Elements */}
+            <div className="absolute top-20 right-10 w-72 h-72 bg-[#f3184c]/5 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-20 left-10 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl"></div>
         </section>
     )
 }
