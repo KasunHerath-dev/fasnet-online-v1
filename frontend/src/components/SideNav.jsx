@@ -115,15 +115,15 @@ export default function SideNav({ isOpen, onClose }) {
           group
         `}
       >
-        <div className="h-full w-16 md:w-20 md:group-hover:w-60 bg-[#1e1e1e] md:rounded-[2rem] flex flex-col items-center py-6 border-r md:border border-[#303030] shadow-2xl transition-all duration-300">
+        <div className="h-full w-16 md:w-20 md:group-hover:w-60 bg-[#121212]/90 backdrop-blur-xl md:rounded-[2rem] flex flex-col items-center py-6 border-r md:border border-white/10 shadow-2xl transition-all duration-300">
 
           {/* Logo */}
           <div className="mb-8 flex items-center justify-center md:justify-start gap-3 w-full px-2 md:px-4">
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-[#f3184c] to-[#d01440] rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg shadow-[#f3184c]/30 flex-shrink-0">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-[#E11D48] to-[#9F1239] rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg shadow-rose-900/20 flex-shrink-0">
               <span className="text-white font-black text-lg md:text-xl">F</span>
             </div>
             <div className="overflow-hidden w-0 md:group-hover:w-auto transition-all duration-300 opacity-0 md:group-hover:opacity-100 whitespace-nowrap">
-              <span className="font-black text-white text-lg">fasnet</span>
+              <span className="font-black text-white text-lg tracking-tight">fasnet</span>
             </div>
           </div>
 
@@ -145,8 +145,8 @@ export default function SideNav({ isOpen, onClose }) {
                   className={`
                     relative w-full h-11 md:h-12 flex items-center justify-center md:justify-start gap-3 px-2 md:px-4 rounded-xl transition-all duration-200
                     ${active
-                      ? 'bg-[#f3184c] text-white shadow-lg shadow-[#f3184c]/30'
-                      : 'text-gray-400 hover:bg-[#303030] hover:text-white'
+                      ? 'bg-white/10 text-white shadow-inner border border-white/5'
+                      : 'text-gray-500 hover:bg-white/5 hover:text-white'
                     }
                   `}
                   title={link.label}

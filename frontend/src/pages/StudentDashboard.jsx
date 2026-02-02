@@ -29,28 +29,31 @@ import StudentAcademic from './StudentAcademic'
 import StudentResources from './StudentResources'
 import StudentAnalytics from './StudentAnalytics'
 
-// --- Reusable Dashboard Components (Pro Dark Theme) ---
+// --- Reusable Dashboard Components (Pro Dark Theme 2.0) ---
 
 const Card = ({ children, className = "" }) => (
-    <div className={`bg-[#0F0F0F] rounded-[2rem] shadow-2xl shadow-black/50 border border-[#1f1f1f] p-6 transition-all ${className}`}>
+    <div className={`bg-[#121212]/50 backdrop-blur-md rounded-[2rem] border border-white/5 p-6 transition-all duration-300 hover:border-white/10 ${className}`}>
         {children}
     </div>
 )
 
 const SectionTitle = ({ title, action, className = "" }) => (
     <div className={`flex items-center justify-between mb-4 ${className}`}>
-        <h2 className="text-xl font-bold text-white tracking-wide">{title}</h2>
+        <h2 className="text-lg font-bold text-white tracking-wide flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+            {title}
+        </h2>
         {action}
     </div>
 )
 
 const Badge = ({ label, color = "gray" }) => {
     const colors = {
-        blue: "bg-[#1e3a8a]/30 text-blue-400 border border-blue-500/30",
-        purple: "bg-[#581c87]/30 text-purple-400 border border-purple-500/30",
-        red: "bg-[#7f1d1d]/30 text-red-400 border border-red-500/30",
-        orange: "bg-[#7c2d12]/30 text-orange-400 border border-orange-500/30",
-        gray: "bg-[#27272a] text-gray-300 border border-gray-700",
+        blue: "bg-blue-500/10 text-blue-400 border border-blue-500/20",
+        purple: "bg-purple-500/10 text-purple-400 border border-purple-500/20",
+        red: "bg-rose-500/10 text-rose-400 border border-rose-500/20",
+        orange: "bg-orange-500/10 text-orange-400 border border-orange-500/20",
+        gray: "bg-white/5 text-gray-400 border border-white/10",
     }
     return (
         <span className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider ${colors[color] || colors.gray}`}>
@@ -58,7 +61,6 @@ const Badge = ({ label, color = "gray" }) => {
         </span>
     )
 }
-
 
 // --- Quick Actions Component ---
 const QuickActions = () => {
@@ -70,13 +72,16 @@ const QuickActions = () => {
     ]
 
     return (
-        <div className="grid grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             {actions.map((action, idx) => (
-                <button key={idx} className="flex flex-col items-center justify-center gap-3 p-4 bg-[#1a1a1a] hover:bg-[#252525] border border-[#2a2a2a] rounded-2xl group transition-all duration-300">
-                    <div className={`w-12 h-12 rounded-xl bg-${action.color}-500/10 flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                        <action.icon className={`w-6 h-6 text-${action.color}-400`} />
+                <button key={idx} className="group relative overflow-hidden p-4 rounded-2xl bg-[#121212] border border-white/5 hover:border-white/20 transition-all duration-300 hover:-translate-y-1">
+                    <div className={`absolute inset-0 bg-gradient-to-br from-${action.color}-500/0 to-${action.color}-500/5 group-hover:from-${action.color}-500/10 group-hover:to-${action.color}-500/20 transition-all duration-500`}></div>
+                    <div className="relative z-10 flex flex-col items-center gap-3">
+                        <div className={`p-3 rounded-xl bg-${action.color}-500/10 text-${action.color}-400 group-hover:scale-110 transition-transform duration-300`}>
+                            <action.icon className="w-6 h-6" />
+                        </div>
+                        <span className="text-xs font-bold text-gray-400 group-hover:text-white uppercase tracking-wider">{action.label}</span>
                     </div>
-                    <span className="text-xs font-bold text-gray-400 group-hover:text-white uppercase tracking-wider">{action.label}</span>
                 </button>
             ))}
         </div>
@@ -85,23 +90,27 @@ const QuickActions = () => {
 
 const TimelineItem = ({ time, title, subtitle, color, isLast }) => (
     <div className="flex items-start gap-4 mb-6 last:mb-0 group">
-        <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 mt-1 bg-[#1a1a1a] text-${color}-400 border border-[#2a2a2a]`}>
-            <Clock className="w-4 h-4" />
+        <div className="flex flex-col items-center">
+            <div className="w-3 h-3 rounded-full bg-rose-500 shadow-lg shadow-rose-500/50 mt-1.5"></div>
+            {!isLast && <div className="w-0.5 h-full bg-white/5 my-1"></div>}
         </div>
-        <div className="flex-1">
-            <h4 className="font-bold text-white text-base group-hover:text-[#ff0033] transition-colors">{title}</h4>
-            <p className="text-sm text-gray-500 font-medium mt-1">{subtitle}</p>
+        <div className="flex-1 bg-white/5 rounded-xl p-4 border border-white/5 group-hover:border-white/10 transition-all">
+            <div className="flex justify-between items-start mb-2">
+                <h4 className="font-bold text-white text-sm group-hover:text-rose-400 transition-colors">{title}</h4>
+                <span className="text-[10px] font-bold bg-black/40 text-gray-400 px-2 py-1 rounded border border-white/5">
+                    {time}
+                </span>
+            </div>
+            <p className="text-xs text-gray-500 font-medium flex items-center gap-2">
+                <LayoutDashboard className="w-3 h-3" />
+                {subtitle}
+            </p>
         </div>
-        <span className="text-xs font-bold bg-[#1a1a1a] text-gray-400 px-3 py-1.5 rounded-lg border border-[#2a2a2a]">
-            {time}
-        </span>
     </div>
 )
 
-
-
+// ... helpers remain same ...
 // --- WUSL Academic Logic Helpers ---
-
 const getHonoursClass = (gpa) => {
     const numGpa = parseFloat(gpa);
     if (!numGpa && numGpa !== 0) return "Not Classified";
@@ -111,17 +120,9 @@ const getHonoursClass = (gpa) => {
     if (numGpa >= 2.00) return "Pass";
     return "Pending";
 }
+const isDeansListEligible = (gpa) => parseFloat(gpa) >= 3.70;
+const getCreditTarget = (level, degreeType = 'special') => degreeType === 'general' ? 90 : 120;
 
-const isDeansListEligible = (gpa, annualCredits) => {
-    // WUSL Rule: GPA >= 3.70 AND >= 30 Credits/Year
-    // Assuming annualCredits check is passed for this visualization if gpa is high enough
-    return parseFloat(gpa) >= 3.70;
-}
-
-const getCreditTarget = (level, degreeType = 'special') => {
-    // General: 90, Special/Joint: 120
-    return degreeType === 'general' ? 90 : 120;
-}
 
 // --- Overview Component ---
 
@@ -130,156 +131,140 @@ const DashboardOverview = ({ user, student, profile, modules }) => {
 
     // Data Helpers
     const firstName = user?.studentRef?.firstName || user?.username || 'Student';
-    // Use real enrolled modules if avail, else fallback to first few
     const mySubjects = student?.enrolledModules && student.enrolledModules.length > 0
         ? student.enrolledModules
         : modules.slice(0, 4);
 
     const gpa = profile?.gpa?.overall?.toFixed(2) || '0.00';
     const credits = profile?.credits?.total || 0;
-
-    // WUSL Logic Calculations
-    const degreeType = student?.degreeType || 'special'; // Default to special/joint track (4 years)
+    const degreeType = student?.degreeType || 'special';
     const creditTarget = getCreditTarget(student?.level, degreeType);
     const progress = Math.min(Math.round((credits / creditTarget) * 100), 100);
     const honoursClass = getHonoursClass(gpa);
     const showDeansList = isDeansListEligible(gpa);
-
-    // Mock Timetable (Placeholder as no API exists)
     const timetable = [
-        { time: "09:00 AM", title: "Advanced Database Systems", subtitle: "Lecture Hall A • Prof. Smith", color: "blue" },
-        { time: "11:00 AM", title: "Artificial Intelligence", subtitle: "Lab 3 • Dr. Johnson", color: "purple" },
-        { time: "02:00 PM", title: "Software Engineering Project", subtitle: "Meeting Room 2 • Group 5", color: "emerald" },
+        { time: "09:00 AM", title: "Advanced Database Systems", subtitle: "Lecture Hall A", color: "blue" },
+        { time: "11:00 AM", title: "Artificial Intelligence", subtitle: "Lab 3", color: "purple" },
+        { time: "02:00 PM", title: "Software Engineering", subtitle: "Meeting Room 2", color: "emerald" },
     ];
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-2">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 pt-2">
 
-            {/* LEFT COLUMN (Main Content) */}
-            <div className="lg:col-span-8 space-y-8">
+            {/* LEFT COLUMN: Hero & Main Content */}
+            <div className="xl:col-span-8 space-y-6">
 
-                {/* Hero / Profile Card */}
-                <Card className="!bg-[#121212] !p-0 overflow-hidden relative min-h-[220px] flex flex-col justify-between border border-[#303030]">
-                    {/* Decorative Glow */}
-                    <div className="absolute top-[-50px] right-[-50px] w-64 h-64 bg-[#ff0033] opacity-[0.08] blur-[80px] rounded-full pointing-events-none"></div>
+                {/* New Hero Section */}
+                <div className="relative rounded-[2.5rem] bg-gradient-to-r from-rose-900/20 to-black border border-white/5 overflow-hidden min-h-[250px] flex items-center p-8 lg:p-12">
+                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-rose-600/20 blur-[100px] rounded-full"></div>
 
-                    <div className="p-8 pb-4 flex justify-between items-start relative z-10">
-                        <div className="flex gap-6">
-                            {/* Big Date Box */}
-                            <div className="w-20 h-20 bg-[#0088ff] rounded-2xl flex flex-col items-center justify-center text-white shadow-lg shadow-blue-900/40 relative">
-                                <span className="text-3xl font-black">{new Date().getDate()}</span>
-                                <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-[#ff0033] rounded-lg flex items-center justify-center shadow-md">
-                                    <Edit className="w-3.5 h-3.5 text-white" />
-                                </div>
+                    <div className="relative z-10 w-full flex flex-col md:flex-row justify-between items-center gap-8">
+                        <div>
+                            <h1 className="text-4xl lg:text-5xl font-black text-white mb-4 tracking-tight">
+                                Welcome back,<br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-orange-400">{firstName}</span>
+                            </h1>
+                            <div className="flex flex-wrap gap-2 mb-6">
+                                <Badge label={`Level ${student?.level || 1}`} color="gray" />
+                                <Badge label={`Sem ${student?.semester || 1}`} color="gray" />
+                                <Badge label={student?.combination || "COMB 01"} color="gray" />
                             </div>
-
-                            {/* Greeting */}
-                            <div>
-                                <h1 className="text-3xl font-black text-white mb-2">Hello, {firstName}!</h1>
-                                <p className="text-gray-400 text-sm max-w-sm leading-relaxed mb-4">
-                                    Welcome back to your portal.
-                                    {showDeansList && <span className="text-[#fbbf24] font-bold ml-1 flex items-center gap-1 inline-flex"><Award className="w-3 h-3" /> Dean's List Eligible</span>}
-                                </p>
-                                <div className="flex gap-2">
-                                    <Badge label={`Level ${student?.level || 1}`} color="blue" />
-                                    <Badge label={`Sem ${student?.semester || 1}`} color="purple" />
-                                    {/* Default Combination Mock if not present */}
-                                    <Badge label={student?.combination || "COMB 1"} color="gray" />
-                                    <Badge label="Computer Science" color="orange" />
+                            {showDeansList && (
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm font-bold animate-pulse">
+                                    <Award className="w-4 h-4" /> Dean's List Eligible
                                 </div>
-                            </div>
+                            )}
                         </div>
 
-                        {/* Right Stats (Desktop) */}
-                        <div className="hidden sm:flex flex-col items-end gap-4 text-right">
-                            <div>
-                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-0.5">Current Standing</span>
-                                <span className="text-xl font-bold text-[#ff0033]">{honoursClass}</span>
+                        {/* Quick Stats on Hero */}
+                        <div className="flex gap-4">
+                            <div className="text-center p-4 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-sm">
+                                <span className="block text-3xl font-black text-white">{gpa}</span>
+                                <span className="text-[10px] font-bold text-gray-500 uppercase">GPA</span>
                             </div>
-                            <div>
-                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-0.5">Total Credits</span>
-                                <span className="text-3xl font-black text-white">{credits} <span className="text-sm text-gray-600">/ {creditTarget}</span></span>
+                            <div className="text-center p-4 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-sm">
+                                <span className="block text-3xl font-black text-white">{credits}</span>
+                                <span className="text-[10px] font-bold text-gray-500 uppercase">Credits</span>
                             </div>
                         </div>
                     </div>
-                </Card>
-
-                {/* Quick Actions (Replaces DateStrip) */}
-                <QuickActions />
-
-                {/* Timetable */}
-                <Card className="min-h-[280px]">
-                    <SectionTitle
-                        title="Academic Time Table"
-                        action={<button className="text-[11px] font-bold text-[#ff0033] hover:text-[#ff3355] uppercase tracking-wide transition-colors">View Full Schedule</button>}
-                    />
-                    <div className="mt-6 space-y-2">
-                        {timetable.map((event, i) => (
-                            <TimelineItem key={i} {...event} isLast={i === timetable.length - 1} />
-                        ))}
-                    </div>
-                </Card>
-
-            </div>
-
-            {/* RIGHT COLUMN (Widgets) */}
-            <div className="lg:col-span-4 space-y-6">
-
-                {/* Stats Row */}
-                <div className="grid grid-cols-2 gap-4">
-                    <Card className="!bg-gradient-to-br !from-[#6366f1] !to-[#4f46e5] border-none !px-5 !py-6">
-                        <TrendingUp className="w-6 h-6 text-white/80 mb-6" />
-                        <h3 className="text-3xl font-black text-white mb-1">{gpa}</h3>
-                        <p className="text-[10px] font-bold text-white/60 uppercase tracking-wider">GPA ({honoursClass})</p>
-                    </Card>
-                    <Card className="bg-[#1a1a1a] border-[#2a2a2a] !px-5 !py-6">
-                        <Target className="w-6 h-6 text-[#10b981] mb-6" />
-                        <h3 className="text-3xl font-black text-white mb-1">{credits}</h3>
-                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Credits Earned</p>
-                    </Card>
                 </div>
 
-                {/* Degree Progress */}
-                <Card className="bg-[#1a1a1a] border-[#2a2a2a] min-h-[240px] flex flex-col">
-                    <SectionTitle title="Degree Progress" />
-                    <div className="flex-1 flex items-center justify-center py-4">
-                        {/* Simple CSS Chart */}
-                        <div className="relative w-40 h-40 rounded-full border-[10px] border-[#252525] flex items-center justify-center">
-                            {/* Active segment (approx) */}
-                            <div className="absolute inset-[-10px] rounded-full border-[10px] border-[#ff0033] border-l-transparent border-b-transparent rotate-[45deg] opacity-90 shadow-[0_0_20px_rgba(255,0,51,0.3)]"></div>
+                {/* Quick Actions Bar */}
+                <QuickActions />
 
-                            <div className="text-center z-10">
-                                <span className="text-4xl font-black text-white">{progress}%</span>
-                                <span className="block text-[10px] font-bold text-gray-500 uppercase mt-1">{credits} / {creditTarget} Credits</span>
+                {/* Academic Timeline & Subjects Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card className="min-h-[300px]">
+                        <SectionTitle
+                            title="Academic Time Table"
+                            action={<button className="text-xs font-bold text-rose-500 hover:text-rose-400 hover:underline">View All</button>}
+                        />
+                        <div className="mt-6">
+                            {timetable.map((event, i) => (
+                                <TimelineItem key={i} {...event} isLast={i === timetable.length - 1} />
+                            ))}
+                        </div>
+                    </Card>
+
+                    <Card>
+                        <SectionTitle title="Degree Progress" />
+                        <div className="flex flex-col items-center justify-center py-6">
+                            <div className="w-full bg-white/5 rounded-full h-4 mb-4 overflow-hidden relative">
+                                <div style={{ width: `${progress}%` }} className="h-full bg-gradient-to-r from-rose-500 to-orange-500 rounded-full"></div>
+                            </div>
+                            <div className="flex justify-between w-full text-sm font-bold text-gray-400 uppercase tracking-widest">
+                                <span>{credits} Credits</span>
+                                <span>{creditTarget} Goal</span>
+                            </div>
+                            <div className="mt-8 grid grid-cols-2 gap-4 w-full">
+                                <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-center">
+                                    <span className="block text-xs text-gray-500 mb-1">Honours Class</span>
+                                    <span className="block text-sm font-bold text-white">{honoursClass}</span>
+                                </div>
+                                <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-center">
+                                    <span className="block text-xs text-gray-500 mb-1">Status</span>
+                                    <span className="block text-sm font-bold text-emerald-400">Good Standing</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    {/* WUSL Level Check */}
-                    <div className="text-center border-t border-[#2a2a2a] pt-4 mt-2">
-                        <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Annual Target</p>
-                        <p className="text-white font-bold text-sm">30 Credits Minimum</p>
-                    </div>
-                </Card>
+                    </Card>
+                </div>
+            </div>
 
-                {/* Subjects */}
-                <Card className="bg-[#1a1a1a] border-[#2a2a2a]">
+            {/* RIGHT COLUMN: Secondary Info */}
+            <div className="xl:col-span-4 space-y-6">
+
+                {/* My Subjects (Vertical List) */}
+                <Card className="h-full bg-[#0F0F0F]/50">
                     <SectionTitle
-                        title="My Subjects"
-                        action={<button onClick={() => navigate('/dashboard?tab=academic')}><ArrowRight className="w-4 h-4 text-gray-500 hover:text-white" /></button>}
+                        title="Enrolled Modules"
+                        action={<button onClick={() => navigate('/dashboard?tab=academic')}><ArrowRight className="w-5 h-5 text-gray-500 hover:text-white transition-colors" /></button>}
                     />
-                    <div className="flex flex-wrap gap-2 mt-2">
+                    <div className="space-y-3 mt-4">
                         {mySubjects.length > 0 ? (
                             mySubjects.map((sub, idx) => (
-                                <div key={idx} className="bg-[#252525] hover:bg-[#2a2a2a] border border-[#303030] px-3 py-2 rounded-lg text-xs font-bold text-gray-300 transition-colors cursor-default">
-                                    {sub.code || sub}
+                                <div key={idx} className="group p-4 rounded-2xl bg-[#1a1a1a] hover:bg-[#202020] border border-[#2a2a2a] hover:border-rose-500/30 transition-all cursor-pointer">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <span className="text-[10px] font-bold text-rose-500 uppercase tracking-widest block mb-1">{sub.code || "CS101"}</span>
+                                            <h4 className="text-sm font-bold text-gray-200 group-hover:text-white">{sub.title || sub}</h4>
+                                        </div>
+                                        <div className="w-8 h-8 rounded-full bg-black/20 flex items-center justify-center text-gray-600 group-hover:text-rose-500 group-hover:bg-rose-500/10 transition-colors">
+                                            <ArrowRight className="w-4 h-4" />
+                                        </div>
+                                    </div>
                                 </div>
                             ))
                         ) : (
-                            <p className="text-xs text-gray-500 font-medium italic">No subjects enrolled.</p>
+                            <div className="text-center py-10 text-gray-500">
+                                <BookOpen className="w-8 h-8 mx-auto mb-2 opacity-20" />
+                                <p>No modules enrolled</p>
+                            </div>
                         )}
                     </div>
                 </Card>
-
             </div>
         </div>
     );
@@ -306,7 +291,6 @@ export default function StudentDashboard() {
                 setUser(currentUser)
 
                 if (currentUser && currentUser.studentRef) {
-                    // Fetch Profile
                     try {
                         const profileRes = await academicService.getStudentProfile(currentUser.studentRef._id)
                         if (profileRes.data) {
@@ -316,9 +300,6 @@ export default function StudentDashboard() {
                     } catch (e) {
                         console.warn("Could not fetch full profile", e)
                     }
-
-                    // Fetch Modules (Static + User specific if needed)
-                    // For now using static
                     setModules(MODULE_DATA)
                 }
             } catch (error) {
@@ -332,13 +313,11 @@ export default function StudentDashboard() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-black">
-                <div className="animate-spin rounded-full h-10 w-10 border-4 border-[#ff0033] border-t-transparent"></div>
+            <div className="min-h-screen flex items-center justify-center bg-[#0F0F0F]">
+                <div className="animate-spin rounded-full h-10 w-10 border-4 border-rose-500 border-t-transparent"></div>
             </div>
         )
     }
-
-
 
     // Render Tab Content
     const renderContent = () => {
@@ -353,23 +332,18 @@ export default function StudentDashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-black p-4 lg:p-6 font-sans text-gray-200">
-            {/* Top Search Header (Local Scope) - Optional if TopNav exists */}
-            <div className="w-full max-w-[1700px] mx-auto mb-6 flex items-center justify-between hidden">
-                <h1 className="text-2xl font-black text-white">Dashboard</h1>
-            </div>
-
-            <div className="w-full max-w-[1700px] mx-auto">
-                {/* Back to Dashboard Link (Mobile/Tab View) */}
+        <div className="min-h-full font-sans text-gray-200">
+            {/* Note: bg-black removed to inherit Global App bg */}
+            <div className="w-full max-w-[1920px] mx-auto p-4 lg:p-8">
+                {/* Breadcrumb / Back Link */}
                 {activeTab !== 'overview' && (
                     <div className="mb-6">
-                        <Link to="/dashboard?tab=overview" className="inline-flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-[#ff0033] transition-colors">
+                        <Link to="/dashboard?tab=overview" className="inline-flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-rose-500 transition-colors">
                             <LayoutDashboard className="w-4 h-4" />
                             <span>Back to Overview</span>
                         </Link>
                     </div>
                 )}
-
                 {renderContent()}
             </div>
         </div>
