@@ -61,30 +61,30 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-black border-b border-[#2a2a2a] py-3">
-      <div className="px-6">
-        <div className="flex items-center justify-between gap-4">
+    <header className="sticky top-0 z-50 bg-gray-50 py-4">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex items-center gap-4">
 
-          {/* Left: Logo + Mobile Menu */}
+          {/* Logo + Mobile Menu */}
           <div className="flex items-center gap-3">
             <button
               onClick={onToggleSidebar}
-              className="md:hidden p-2 hover:bg-[#1a1a1a] rounded-lg transition-colors"
+              className="md:hidden p-2 hover:bg-white rounded-lg transition-colors"
             >
-              <Menu className="w-5 h-5 text-gray-400" />
+              <Menu className="w-5 h-5 text-gray-700" />
             </button>
 
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 bg-gradient-to-br from-[#f3184c] to-[#d01440] rounded-full flex items-center justify-center">
                 <span className="text-white font-black text-sm">F</span>
               </div>
-              <span className="text-white font-bold text-lg">fasnet</span>
+              <span className="text-gray-900 font-bold text-lg">fasnet</span>
             </div>
           </div>
 
-          {/* Right: Grouped Container with Page Title, Search, Notifications, Profile */}
-          <div className="flex-1 max-w-4xl">
-            <div className="bg-white rounded-2xl px-6 py-3 flex items-center gap-4">
+          {/* Main Container - Page Title, Search, Actions */}
+          <div className="flex-1">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 px-6 py-3 flex items-center gap-4">
 
               {/* Page Title */}
               <h1 className="text-xl font-bold text-gray-900 whitespace-nowrap hidden lg:block">

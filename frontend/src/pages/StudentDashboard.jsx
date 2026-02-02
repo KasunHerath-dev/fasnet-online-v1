@@ -230,7 +230,7 @@ export default function StudentDashboard() {
     ]
 
     return (
-        <div className="min-h-screen bg-[#f6f6f6] dark:bg-black p-3 sm:p-4 md:p-6 lg:p-8 font-sans">
+        <div className="min-h-screen bg-gray-50 dark:bg-black p-3 sm:p-4 md:p-6 lg:p-8 font-sans">
             <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
 
                 {/* Header */}
