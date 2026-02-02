@@ -6,45 +6,63 @@
    DESIGN SYSTEM - Modern & Beautiful UI
    ======================================== */
 
-:root {
-  /* Monochrome Design System */
-  --mono-bg: #FFFFFF;
-  --mono-sidebar: #000000;
-  --mono-primary: #1A1A1A;
-  --mono-secondary: #666666;
-  --mono-border: #E0E0E0;
-  --mono-hover: #333333;
+@layer base {
+  :root {
+    /* LIGHT THEME (Clean & Crisp) */
+    --bg-base: #F8FAFC;
+    /* Slate-50 */
+    --bg-surface: #FFFFFF;
+    /* White */
+    --bg-surface-glass: rgba(255, 255, 255, 0.7);
+    --bg-highlight: #F1F5F9;
+    /* Slate-100 */
 
-  /* Legacy color variables (for gradual migration) */
-  --primary: #1A1A1A;
-  --primary-dark: #000000;
-  --primary-light: #666666;
-  --secondary: #666666;
-  --accent: #333333;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
+    --text-main: #0F172A;
+    /* Slate-900 */
+    --text-muted: #64748B;
+    /* Slate-500 */
+    --text-inverted: #FFFFFF;
+
+    --border-color: #E2E8F0;
+    /* Slate-200 */
+    --border-glass: rgba(15, 23, 42, 0.05);
+
+    --primary: #E11D48;
+    /* Rose-600 */
+    --primary-glow: rgba(225, 29, 72, 0.2);
+
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .dark {
+    /* DARK THEME (Pro Glass - Matches current hardcoded style) */
+    --bg-base: #0F0F0F;
+    /* Deep Black */
+    --bg-surface: #121212;
+    /* Off-Black */
+    --bg-surface-glass: rgba(18, 18, 18, 0.8);
+    --bg-highlight: #1A1A1A;
+
+    --text-main: #FFFFFF;
+    --text-muted: #94A3B8;
+    /* Slate-400 */
+    --text-inverted: #0F172A;
+
+    --border-color: #262626;
+    /* Neutral-800 */
+    --border-glass: rgba(255, 255, 255, 0.08);
+
+    --primary: #F43F5E;
+    /* Rose-500 */
+    --primary-glow: rgba(244, 63, 94, 0.5);
+
+    --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  }
 }
 
-.dark {
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --bg-card: #1e293b;
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --border-color: #334155;
-  --gradient-dark: linear-gradient(135deg, #0f172a 0%, #020617 100%);
-}
-
-/* Base Styles */
 body {
-  @apply bg-white text-gray-900 min-h-screen transition-colors duration-300;
+  @apply bg-background text-text-main min-h-screen transition-colors duration-300;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  color: #1A1A1A;
-}
-
-.dark body {
-  @apply bg-gradient-to-br from-gray-900 to-slate-900 text-slate-100;
 }
 
 /* ========================================

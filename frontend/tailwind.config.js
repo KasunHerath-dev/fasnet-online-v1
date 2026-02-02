@@ -12,14 +12,21 @@ module.exports = {
         danger: '#EF4444',
         warning: '#F59E0B',
         // Monochrome Design System
-        mono: {
-          bg: '#FFFFFF',
-          sidebar: '#000000',
-          primary: '#1A1A1A',
-          secondary: '#666666',
-          border: '#E0E0E0',
-          hover: '#333333',
-        },
+        // Semantic Theme Colors
+        background: 'var(--bg-base)',
+        surface: 'var(--bg-surface)',
+        'surface-glass': 'var(--bg-surface-glass)',
+        highlight: 'var(--bg-highlight)',
+
+        'text-main': 'var(--text-main)',
+        'text-muted': 'var(--text-muted)',
+        'text-inverted': 'var(--text-inverted)',
+
+        'border-base': 'var(--border-color)',
+        'border-glass': 'var(--border-glass)',
+
+        primary: 'var(--primary)',
+        'primary-glow': 'var(--primary-glow)',
         // Stitch Theme Colors
         'stitch-blue': '#1313ec',
         'stitch-pink': '#ec1378',

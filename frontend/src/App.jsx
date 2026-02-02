@@ -121,7 +121,7 @@ export default function App() {
           path="/*"
           element={
             <ProtectedRoute>
-              <div className="flex h-screen bg-[#0F0F0F] text-white overflow-hidden">
+              <div className="flex h-screen bg-background text-text-main overflow-hidden transition-colors duration-300">
                 <SideNav
                   isOpen={isSidebarOpen}
                   onClose={() => setIsSidebarOpen(false)}

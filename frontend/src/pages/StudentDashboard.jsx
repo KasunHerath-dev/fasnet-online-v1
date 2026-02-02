@@ -35,15 +35,15 @@ import StudentAnalytics from './StudentAnalytics'
 // --- Reusable Dashboard Components (Pro Dark Theme 2.0) ---
 
 const Card = ({ children, className = "" }) => (
-    <div className={`bg-[#121212]/50 backdrop-blur-md rounded-[2rem] border border-white/5 p-6 transition-all duration-300 hover:border-white/10 ${className}`}>
+    <div className={`bg-surface-glass backdrop-blur-md rounded-[2rem] border border-border-glass p-6 transition-all duration-300 hover:border-border-base/30 shadow-sm hover:shadow-lg ${className}`}>
         {children}
     </div>
 )
 
 const SectionTitle = ({ title, action, className = "" }) => (
     <div className={`flex items-center justify-between mb-4 ${className}`}>
-        <h2 className="text-lg font-bold text-white tracking-wide flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+        <h2 className="text-lg font-bold text-text-main tracking-wide flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
             {title}
         </h2>
         {action}
@@ -77,13 +77,13 @@ const QuickActions = () => {
     return (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             {actions.map((action, idx) => (
-                <button key={idx} className="group relative overflow-hidden p-4 rounded-2xl bg-[#121212] border border-white/5 hover:border-white/20 transition-all duration-300 hover:-translate-y-1">
+                <button key={idx} className="group relative overflow-hidden p-4 rounded-2xl bg-surface-glass border border-border-glass hover:border-border-base/30 transition-all duration-300 hover:-translate-y-1 shadow-sm">
                     <div className={`absolute inset-0 bg-gradient-to-br from-${action.color}-500/0 to-${action.color}-500/5 group-hover:from-${action.color}-500/10 group-hover:to-${action.color}-500/20 transition-all duration-500`}></div>
                     <div className="relative z-10 flex flex-col items-center gap-3">
-                        <div className={`p-3 rounded-xl bg-${action.color}-500/10 text-${action.color}-400 group-hover:scale-110 transition-transform duration-300`}>
+                        <div className={`p-3 rounded-xl bg-${action.color}-500/10 text-${action.color}-500 group-hover:scale-110 transition-transform duration-300`}>
                             <action.icon className="w-6 h-6" />
                         </div>
-                        <span className="text-xs font-bold text-gray-400 group-hover:text-white uppercase tracking-wider">{action.label}</span>
+                        <span className="text-xs font-bold text-text-muted group-hover:text-text-main uppercase tracking-wider">{action.label}</span>
                     </div>
                 </button>
             ))}
@@ -94,19 +94,19 @@ const QuickActions = () => {
 const TimelineItem = ({ time, title, subtitle, color, isLast, date }) => (
     <div className="flex items-start gap-4 mb-6 last:mb-0 group">
         <div className="flex flex-col items-center">
-            <div className="w-3 h-3 rounded-full bg-rose-500 shadow-lg shadow-rose-500/50 mt-1.5"></div>
-            {!isLast && <div className="w-0.5 h-full bg-white/5 my-1"></div>}
+            <div className="w-3 h-3 rounded-full bg-primary shadow-lg shadow-primary/50 mt-1.5"></div>
+            {!isLast && <div className="w-0.5 h-full bg-border-glass my-1"></div>}
         </div>
-        <div className="flex-1 bg-white/5 rounded-xl p-4 border border-white/5 group-hover:border-white/10 transition-all">
+        <div className="flex-1 bg-highlight/50 rounded-xl p-4 border border-border-glass group-hover:border-border-base/30 transition-all">
             <div className="flex justify-between items-start mb-2">
-                <h4 className="font-bold text-white text-sm group-hover:text-rose-400 transition-colors">{title}</h4>
-                {date && <span className="text-[10px] font-bold text-rose-400 border border-rose-500/20 px-2 py-0.5 rounded">{new Date(date).toLocaleDateString()}</span>}
+                <h4 className="font-bold text-text-main text-sm group-hover:text-primary transition-colors">{title}</h4>
+                {date && <span className="text-[10px] font-bold text-primary border border-primary/20 px-2 py-0.5 rounded">{new Date(date).toLocaleDateString()}</span>}
             </div>
-            <p className="text-xs text-gray-500 font-medium flex items-center gap-2">
+            <p className="text-xs text-text-muted font-medium flex items-center gap-2">
                 <LayoutDashboard className="w-3 h-3" />
                 {subtitle}
             </p>
-            <span className="text-[10px] font-bold bg-black/40 text-gray-400 px-2 py-1 rounded border border-white/5 inline-block mt-2">
+            <span className="text-[10px] font-bold bg-background/50 text-text-muted px-2 py-1 rounded border border-border-glass inline-block mt-2">
                 {time}
             </span>
         </div>
