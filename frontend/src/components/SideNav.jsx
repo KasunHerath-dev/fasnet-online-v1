@@ -107,7 +107,7 @@ export default function SideNav({ isOpen, onClose }) {
           group
         `}
       >
-        <div className="h-full w-16 md:w-20 md:group-hover:w-60 bg-[#1e1e1e] md:rounded-[2rem] flex flex-col items-center py-6 border-r md:border border-[#303030] shadow-2xl transition-all duration-300">
+        <div className="h-full w-16 md:w-20 md:group-hover:w-60 bg-white md:rounded-[2rem] flex flex-col items-center py-6 border-r md:border border-gray-200 shadow-lg transition-all duration-300">
 
           {/* Logo */}
           <div className="mb-8 flex items-center justify-center md:justify-start gap-3 w-full px-2 md:px-4">
@@ -115,7 +115,7 @@ export default function SideNav({ isOpen, onClose }) {
               <span className="text-white font-black text-lg md:text-xl">F</span>
             </div>
             <div className="overflow-hidden w-0 md:group-hover:w-auto transition-all duration-300 opacity-0 md:group-hover:opacity-100 whitespace-nowrap">
-              <span className="font-black text-white text-lg">fasnet</span>
+              <span className="font-black text-gray-900 text-lg">fasnet</span>
             </div>
           </div>
 
@@ -138,7 +138,7 @@ export default function SideNav({ isOpen, onClose }) {
                     relative w-full h-11 md:h-12 flex items-center justify-center md:justify-start gap-3 px-2 md:px-4 rounded-xl transition-all duration-200
                     ${active
                       ? 'bg-[#f3184c] text-white shadow-lg shadow-[#f3184c]/30'
-                      : 'text-gray-400 hover:bg-[#303030] hover:text-white'
+                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                     }
                   `}
                   title={link.label}
@@ -152,7 +152,7 @@ export default function SideNav({ isOpen, onClose }) {
 
                   {/* Active Indicator */}
                   {active && (
-                    <div className="absolute -right-1 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-l-full" />
+                    <div className="absolute -right-1 top-1/2 -translate-y-1/2 w-1 h-6 bg-[#f3184c] rounded-l-full" />
                   )}
                 </Link>
               )
@@ -160,7 +160,7 @@ export default function SideNav({ isOpen, onClose }) {
           </nav>
 
           {/* Bottom Actions */}
-          <div className="flex flex-col items-center gap-2 w-full px-2 md:px-3 pt-4 border-t border-[#303030]">
+          <div className="flex flex-col items-center gap-2 w-full px-2 md:px-3 pt-4 border-t border-gray-200">
 
             {/* Settings */}
             <Link
@@ -170,7 +170,7 @@ export default function SideNav({ isOpen, onClose }) {
               }}
               className={`
                 relative w-full h-11 md:h-12 flex items-center justify-center md:justify-start gap-3 px-2 md:px-4 rounded-xl transition-all duration-200
-                ${isActive('/settings') ? 'bg-[#303030] text-white' : 'text-gray-400 hover:bg-[#303030] hover:text-white'}
+                ${isActive('/settings') ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}
               `}
               title="Settings"
             >
@@ -182,7 +182,7 @@ export default function SideNav({ isOpen, onClose }) {
 
             {/* Logout */}
             <button
-              className="relative w-full h-11 md:h-12 flex items-center justify-center md:justify-start gap-3 px-2 md:px-4 rounded-xl transition-all duration-200 text-gray-400 hover:bg-[#f3184c]/10 hover:text-[#f3184c]"
+              className="relative w-full h-11 md:h-12 flex items-center justify-center md:justify-start gap-3 px-2 md:px-4 rounded-xl transition-all duration-200 text-gray-600 hover:bg-[#f3184c]/10 hover:text-[#f3184c]"
               onClick={() => authService.logout()}
               title="Logout"
             >
