@@ -23,7 +23,15 @@ export default function SideNav({ isOpen, onClose }) {
   const location = useLocation()
   const [hoveredItem, setHoveredItem] = useState(null)
 
-  const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/')
+
+  const isActive = (path) => {
+    if (path.includes('?tab=')) {
+      const tab = path.split('?tab=')[1];
+      const currentTab = new URLSearchParams(location.search).get('tab') || 'overview';
+      return location.pathname === '/dashboard' && currentTab === tab;
+    }
+    return location.pathname === path || location.pathname.startsWith(path + '/')
+  }
 
   const user = authService.getUser()
   const isStudent = isRegularUser(user)
@@ -47,21 +55,21 @@ export default function SideNav({ isOpen, onClose }) {
   }
 
   const links = []
-  links.push({ label: 'Dashboard', path: '/dashboard', icon: 'Dashboard' })
+  links.push({ label: 'Dashboard', path: '/dashboard?tab=overview', icon: 'Dashboard' })
 
   if (isStudent) {
     links.push(
-      { label: 'My Profile', path: '/profile', icon: 'My Profile' },
-      { label: 'Academic', path: '/academic', icon: 'Academic' },
-      { label: 'Resources', path: '/resources', icon: 'Resources' },
-      { label: 'Analytics', path: '/analytics', icon: 'Analytics' }
+      { label: 'My Profile', path: '/dashboard?tab=profile', icon: 'My Profile' },
+      { label: 'Academic', path: '/dashboard?tab=academic', icon: 'Academic' },
+      { label: 'Resources', path: '/dashboard?tab=resources', icon: 'Resources' },
+      { label: 'Analytics', path: '/dashboard?tab=analytics', icon: 'Analytics' }
     )
   } else {
     if (!isSuperAdminUser && user?.studentRef) {
       links.push(
-        { label: 'My Profile', path: '/profile', icon: 'My Profile' },
-        { label: 'Academic', path: '/academic', icon: 'Academic' },
-        { label: 'Resources', path: '/resources', icon: 'Resources' }
+        { label: 'My Profile', path: '/dashboard?tab=profile', icon: 'My Profile' },
+        { label: 'Academic', path: '/dashboard?tab=academic', icon: 'Academic' },
+        { label: 'Resources', path: '/dashboard?tab=resources', icon: 'Resources' }
       )
     }
     if (isSuperAdminUser || hasPermission(user, PERMISSIONS.VIEW_ANALYTICS) || user?.studentRef) {

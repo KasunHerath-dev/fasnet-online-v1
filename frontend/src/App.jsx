@@ -138,10 +138,10 @@ export default function App() {
                       {isStudent && (
                         <>
                           <Route path="/dashboard" element={<StudentDashboard />} />
-                          <Route path="/profile" element={<StudentProfile />} />
-                          <Route path="/academic" element={<StudentAcademic />} />
-                          <Route path="/resources" element={<StudentResources />} />
-                          <Route path="/analytics" element={<StudentAnalytics />} />
+                          <Route path="/profile" element={<Navigate to="/dashboard?tab=profile" replace />} />
+                          <Route path="/academic" element={<Navigate to="/dashboard?tab=academic" replace />} />
+                          <Route path="/resources" element={<Navigate to="/dashboard?tab=resources" replace />} />
+                          <Route path="/analytics" element={<Navigate to="/dashboard?tab=analytics" replace />} />
                           <Route path="/settings" element={<StudentSettings />} />
                           <Route path="/exams" element={<ExamTimeTablePage />} />
                           <Route path="/" element={<Navigate to="/dashboard" replace />} />
@@ -163,10 +163,10 @@ export default function App() {
                           {/* Student pages - only if user has studentRef */}
                           {user?.studentRef && (
                             <>
-                              <Route path="/profile" element={<StudentProfile />} />
-                              <Route path="/academic" element={<StudentAcademic />} />
-                              <Route path="/resources" element={<StudentResources />} />
-                              <Route path="/analytics" element={<StudentAnalytics />} />
+                              <Route path="/profile" element={<Navigate to="/dashboard?tab=profile" replace />} />
+                              <Route path="/academic" element={<Navigate to="/dashboard?tab=academic" replace />} />
+                              <Route path="/resources" element={<Navigate to="/dashboard?tab=resources" replace />} />
+                              <Route path="/analytics" element={<Navigate to="/dashboard?tab=analytics" replace />} />
                               <Route path="/settings" element={<StudentSettings />} />
                               <Route path="/exams" element={<ExamTimeTablePage />} />
                             </>

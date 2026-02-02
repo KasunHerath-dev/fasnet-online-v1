@@ -1,317 +1,336 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { authService, academicService } from '../services/authService'
-import { MODULE_DATA } from '../data/moduleList'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import {
-    BookOpen,
+    Calendar as CalendarIcon,
     Clock,
-    ChevronRight,
+    BookOpen,
+    GraduationCap,
     TrendingUp,
-    Calendar,
+    ArrowRight,
+    Search,
     Edit,
     FileText,
     Users,
     CheckCircle,
-    Search,
     Award,
     Target,
     Layers,
-    X,
-    Filter
+    LayoutDashboard
 } from 'lucide-react'
-import {
-    AreaChart,
-    Area,
-    XAxis,
-    YAxis,
-    Tooltip,
-    ResponsiveContainer
-} from 'recharts'
+import { authService, academicService } from '../services/authService'
+import { MODULE_DATA } from '../data/moduleList'
 
-// --- Styled Components ---
+// Sub-page Imports
+import StudentProfile from './StudentProfile'
+import StudentAcademic from './StudentAcademic'
+import StudentResources from './StudentResources'
+import StudentAnalytics from './StudentAnalytics'
 
-const Card = ({ children, className = '' }) => (
-    <div className={`bg-white dark:bg-[#1e1e1e] rounded-[2rem] p-6 shadow-sm border border-gray-100 dark:border-[#303030] ${className}`}>
+// --- Reusable Dashboard Components ---
+
+const Card = ({ children, className = "" }) => (
+    <div className={`bg-white dark:bg-[#1e1e1e] rounded-[2rem] shadow-sm border border-gray-100 dark:border-[#303030] p-6 transition-all ${className}`}>
         {children}
     </div>
 )
 
-const SectionTitle = ({ children, action }) => (
-    <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-black text-gray-900 dark:text-white">{children}</h2>
-        {action && (
-            <button className="text-sm font-bold text-gray-400 hover:text-[#f3184c] transition-colors">
-                {action}
-            </button>
-        )}
+const SectionTitle = ({ title, action }) => (
+    <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-black text-gray-900 dark:text-white">{title}</h2>
+        {action}
     </div>
 )
 
-const Tag = ({ label, onRemove }) => (
-    <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-[#2a2a2a] rounded-2xl text-xs font-bold text-gray-600 dark:text-gray-300">
-        {label}
-        {onRemove && <button className="hover:text-red-500"><X className="w-3 h-3" /></button>}
-    </div>
-)
+const Tag = ({ label, color = "blue" }) => {
+    const colors = {
+        blue: "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400",
+        purple: "bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400",
+        emerald: "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400",
+        orange: "bg-orange-50 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400",
+    }
+    return (
+        <span className={`px-3 py-1.5 rounded-xl text-xs font-bold ${colors[color] || colors.blue}`}>
+            {label}
+        </span>
+    )
+}
 
 const DateStrip = () => {
-    const days = ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri']
-    // Mock dates for visual match
-    const dates = [5, 5, 6, 7, 8, 9, 9]
-    const activeIndex = 3 // Tuesday
+    // Generate dates for current week
+    const today = new Date();
+    const dates = [];
+    for (let i = 0; i < 5; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() + i);
+        dates.push(d);
+    }
 
     return (
-        <div className="bg-[#1a1a1a] rounded-[2rem] p-6 text-white flex items-center justify-between">
-            <button className="p-2 hover:bg-white/10 rounded-xl transition-colors"><ChevronRight className="w-5 h-5 rotate-180" /></button>
-            <div className="flex-1 flex justify-between px-4 sm:px-8 overflow-x-auto scrollbar-hide gap-2">
-                {days.map((day, i) => (
-                    <div key={i} className="flex flex-col items-center gap-3 min-w-[3rem]">
-                        <div className={`w-10 h-10 flex items-center justify-center rounded-full text-sm font-bold ${i === activeIndex ? 'bg-[#f3184c] shadow-lg shadow-[#f3184c]/40' : 'bg-[#2a2a2a] text-gray-400'
-                            }`}>
-                            {dates[i]}
-                        </div>
-                        <span className={`text-xs font-medium ${i === activeIndex ? 'text-white' : 'text-gray-500'}`}>
-                            {day}
-                        </span>
+        <div className="bg-[#1e1e1e] text-white rounded-[2rem] p-4 flex justify-between items-center shadow-lg shadow-gray-200 dark:shadow-none mb-6">
+            {dates.map((date, index) => {
+                const isSelected = index === 0;
+                return (
+                    <div key={index} className={`flex flex-col items-center px-4 py-2 rounded-2xl cursor-pointer transition-all ${isSelected ? 'bg-[#f3184c] shadow-lg shadow-[#f3184c]/20' : 'hover:bg-white/5 opacity-60 hover:opacity-100'}`}>
+                        <span className="text-xs font-medium mb-1">{date.toLocaleDateString('en-US', { weekday: 'short' })}</span>
+                        <span className="text-xl font-black">{date.getDate()}</span>
                     </div>
-                ))}
-            </div>
-            <button className="p-2 hover:bg-white/10 rounded-xl transition-colors"><ChevronRight className="w-5 h-5" /></button>
+                )
+            })}
         </div>
     )
 }
 
-const TimelineItem = ({ time, title, type, active, icon: Icon, users }) => (
-    <div className="relative pl-8 pb-8 last:pb-0">
+const TimelineItem = ({ time, title, subtitle, color, isLast }) => (
+    <div className="flex gap-4 relative">
         {/* Timeline Line */}
-        <div className="absolute left-[11px] top-8 bottom-0 w-[2px] bg-gray-100 dark:bg-[#303030]" />
+        {!isLast && <div className="absolute left-[19px] top-10 bottom-[-16px] w-0.5 bg-gray-100 dark:bg-[#303030]"></div>}
 
-        {/* Status Dot/Time */}
-        <div className={`absolute left-0 top-0 px-3 py-1 rounded-full text-[10px] font-bold ${active ? 'bg-[#f3184c] text-white shadow-md shadow-[#f3184c]/30' : 'text-gray-400 bg-gray-100 dark:bg-[#2a2a2a]'
-            }`}>
-            {time}
+        <div className="flex flex-col items-center gap-1">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-${color}-50 dark:bg-${color}-900/20 text-${color}-600 dark:text-${color}-400 ring-4 ring-white dark:ring-[#1e1e1e]`}>
+                <Clock className="w-4 h-4" />
+            </div>
         </div>
-
-        {/* Content Card */}
-        <div className={`ml-8 p-5 rounded-3xl transition-all ${active
-            ? 'bg-[#1a1a1a] text-white shadow-xl'
-            : 'hover:bg-gray-50 dark:hover:bg-[#2a2a2a] group'
-            }`}>
-            <div className="flex items-start gap-4">
-                {active && users && (
-                    <div className="flex -space-x-2">
-                        {[1, 2].map(i => (
-                            <div key={i} className="w-8 h-8 rounded-full bg-gray-500 border-2 border-[#1a1a1a]" />
-                        ))}
-                    </div>
-                )}
+        <div className="flex-1 pb-6">
+            <div className="flex justify-between items-start">
                 <div>
-                    <h4 className={`font-bold mb-1 ${active ? 'text-white' : 'text-gray-900 dark:text-white'}`}>{title}</h4>
-                    <span className={`text-xs ${active ? 'text-gray-400' : 'text-gray-500'}`}>{type}</span>
+                    <h4 className="font-bold text-gray-900 dark:text-white text-base">{title}</h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mt-0.5">{subtitle}</p>
                 </div>
+                <span className="text-xs font-bold bg-gray-100 dark:bg-[#303030] text-gray-600 dark:text-gray-300 px-2 py-1 rounded-lg">
+                    {time}
+                </span>
             </div>
         </div>
     </div>
 )
 
-export default function StudentDashboard() {
-    const navigate = useNavigate()
-    const [user, setUser] = useState(null)
-    const [stats, setStats] = useState({ gpa: 0, credits: 0 })
+// --- Overview Component (Original Dashboard Content) ---
 
-    // Initial Data Fetch
-    useEffect(() => {
-        const currentUser = authService.getUser()
-        setUser(currentUser)
-        if (currentUser?.studentRef) {
-            setStats({
-                gpa: currentUser.studentRef.cumulativeGPA || 0,
-                credits: currentUser.studentRef.totalCreditsEarned || 0,
-                level: currentUser.studentRef.level || 1
-            })
-        }
-    }, [])
+const DashboardOverview = ({ user, student, profile, modules }) => {
+    const navigate = useNavigate();
 
-    const firstName = user?.studentRef?.firstName || user?.username || 'Student'
-    const mockChartData = [
-        { val: 2.5 }, { val: 2.8 }, { val: 3.2 }, { val: 3.0 }, { val: 3.5 }, { val: 3.8 }, { val: 3.9 }
-    ]
+    // Mock Timetable Data
+    const timetable = [
+        { time: "09:00 AM", title: "Advanced Database Systems", subtitle: "Lecture Hall A • Prof. Smith", color: "blue" },
+        { time: "11:00 AM", title: "Artificial Intelligence", subtitle: "Lab 3 • Dr. Johnson", color: "purple" },
+        { time: "02:00 PM", title: "Software Engineering Project", subtitle: "Meeting Room 2 • Group 5", color: "emerald" },
+    ];
+
+    // Mock Enrolled Subjects for Tags
+    const subjects = modules.slice(0, 4).map(m => m.code);
 
     return (
-        <div className="min-h-screen bg-[#f8f9fa] dark:bg-black p-4 sm:p-6 lg:p-8 font-sans">
-            <div className="w-full max-w-[1600px] mx-auto space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-4">
+            {/* LEFT COLUMN (Wide) */}
+            <div className="lg:col-span-8 space-y-6">
 
-                {/* Content Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-4">
+                {/* Profile Banner Card */}
+                <div className="bg-white dark:bg-[#1e1e1e] rounded-[2.5rem] p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6 shadow-sm border border-gray-100 dark:border-[#303030] relative overflow-hidden group">
+                    {/* Decorative Background Element */}
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-blue-50 to-transparent dark:from-blue-900/10 rounded-bl-[100%] transition-transform group-hover:scale-110 duration-500"></div>
 
-                    {/* LEFT COLUMN (Wide) */}
-                    <div className="lg:col-span-8 space-y-6">
-
-                        {/* Profile Section */}
-                        <div className="grid md:grid-cols-2 gap-6">
-                            {/* Profile Card */}
-                            <Card className="flex flex-row items-center gap-6">
-                                <div className="w-24 h-24 rounded-3xl bg-gray-200 overflow-hidden flex-shrink-0">
-                                    <img
-                                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.username}`}
-                                        alt="Profile"
-                                        className="w-full h-full object-cover"
-                                    />
-                                </div>
-                                <div>
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <h2 className="text-xl font-black text-gray-900 dark:text-white">{firstName} {user?.studentRef?.lastName}</h2>
-                                        <span className="bg-[#f3184c] text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase">
-                                            Student (L{stats.level})
-                                        </span>
-                                    </div>
-                                    <div className="space-y-1 text-sm font-medium text-gray-500 dark:text-gray-400">
-                                        <p>Credits: {stats.credits}</p>
-                                        <p>GPA: {stats.gpa.toFixed(2)}</p>
-                                    </div>
-                                    <button
-                                        onClick={() => navigate('/profile')}
-                                        className="mt-3 flex items-center gap-2 text-xs font-bold text-gray-400 hover:text-[#f3184c] transition-colors"
-                                    >
-                                        <Edit className="w-3 h-3" /> Edit info
-                                    </button>
-                                </div>
-                            </Card>
-
-                            {/* Date Strip */}
-                            <div className="flex flex-col justify-center">
-                                <DateStrip />
-                            </div>
+                    {/* Avatar */}
+                    <div className="relative">
+                        <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-gray-200 dark:bg-[#303030] overflow-hidden shadow-xl ring-4 ring-white dark:ring-[#1e1e1e]">
+                            <img
+                                src={`https://ui-avatars.com/api/?name=${user?.username}&background=0D8ABC&color=fff&size=200`}
+                                alt="Profile"
+                                className="w-full h-full object-cover"
+                            />
                         </div>
-
-                        {/* Timetable Section */}
-                        <Card>
-                            <SectionTitle action="Add New">Timetable of classes</SectionTitle>
-                            <div className="grid grid-cols-[auto_1fr] gap-x-8 px-4">
-                                {/* Time Column Header */}
-                                <div className="flex justify-between w-full max-w-md mb-8 text-xs font-bold text-gray-400 border-b border-gray-100 dark:border-[#303030] pb-2 pl-12 gap-12">
-                                    <span>Today</span>
-                                    <span>Tomorrow</span>
-                                    <span>Next Week</span>
-                                </div>
-                                <div /> {/* spacer */}
-
-                                {/* Timeline */}
-                                <div className="col-span-2 mt-4 space-y-2">
-                                    <TimelineItem
-                                        time="10 am"
-                                        title="Practical group work"
-                                        type="Mathematical Analysis"
-                                        active={true}
-                                        users={true}
-                                    />
-                                    <TimelineItem
-                                        time="1 pm"
-                                        title="Lecture: Investing in unicorn companies"
-                                        type="Finance & Equity"
-                                    />
-                                    <TimelineItem
-                                        time="3 pm"
-                                        title="Meet with Academic Advisor"
-                                        type="Personal Development"
-                                        users={true}
-                                    />
-                                </div>
-                            </div>
-                        </Card>
+                        <button
+                            onClick={() => navigate('/dashboard?tab=profile')}
+                            className="absolute -bottom-2 -right-2 w-10 h-10 bg-[#f3184c] text-white rounded-xl flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+                        >
+                            <Edit className="w-4 h-4" />
+                        </button>
                     </div>
 
-                    {/* RIGHT COLUMN (Narrow) */}
-                    <div className="lg:col-span-4 space-y-6">
-
-                        {/* Search / Tags */}
-                        <Card>
-                            <SectionTitle action="View all">Profiling subjects</SectionTitle>
-                            <div className="relative mb-4">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                <input
-                                    type="text"
-                                    placeholder="Find subjects..."
-                                    className="w-full bg-gray-50 dark:bg-[#2a2a2a] rounded-2xl pl-10 pr-4 py-3 text-sm font-bold placeholder:text-gray-400 outline-none"
-                                />
-                            </div>
-                            <div className="flex flex-wrap gap-2">
-                                <Tag label="Analysis" onRemove={() => { }} />
-                                <Tag label="Geometry" onRemove={() => { }} />
-                                <Tag label="Python" onRemove={() => { }} />
-                                <Tag label="Management" onRemove={() => { }} />
-                            </div>
-                        </Card>
-
-                        {/* Premium / Degree Progress */}
-                        <div className="bg-[#1a1a1a] rounded-[2rem] p-8 text-center text-white relative overflow-hidden group hover:shadow-2xl transition-all cursor-pointer" onClick={() => navigate('/academic')}>
-                            <div className="relative z-10">
-                                <div className="w-16 h-16 bg-white rounded-2xl mx-auto mb-4 flex items-center justify-center transform group-hover:rotate-12 transition-transform">
-                                    <Award className="w-8 h-8 text-[#1a1a1a]" />
-                                </div>
-                                <h3 className="text-xl font-black mb-2">Academic Progress</h3>
-                                <p className="text-sm text-gray-400 mb-6">Track your degree completion and future milestones</p>
-                                <button className="bg-white text-black font-bold px-6 py-3 rounded-xl w-full hover:bg-gray-200 transition-colors">
-                                    View Details
-                                </button>
-                            </div>
+                    {/* Info */}
+                    <div className="flex-1 text-center sm:text-left relative z-10">
+                        <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-2">
+                            Hello, {user?.studentRef?.firstName || user?.username}!
+                        </h2>
+                        <p className="text-gray-500 dark:text-gray-400 font-medium mb-4 max-w-md">
+                            Welcome back to your portal. You have 3 classes today and 2 assignments due this week.
+                        </p>
+                        <div className="flex flex-wrap justify-center sm:justify-start gap-3">
+                            <Tag label={`Level ${student?.level || 1}`} color="blue" />
+                            <Tag label="Semester 1" color="purple" />
+                            <Tag label="Computer Science" color="orange" />
                         </div>
+                    </div>
 
-                        {/* Statistic Info */}
-                        <Card>
-                            <SectionTitle action="View all">Statistic info</SectionTitle>
-                            <div className="flex gap-4 mb-6">
-                                <div className="bg-[#1a1a1a] rounded-3xl p-5 text-white flex-1">
-                                    <p className="text-xs font-medium text-gray-400 mb-1">Total Credits</p>
-                                    <h3 className="text-3xl font-black">{stats.credits}</h3>
-                                    <div className="flex items-center gap-2 mt-4 text-[10px] font-bold text-gray-400">
-                                        details <ArrowRight className="w-3 h-3" />
-                                    </div>
-                                </div>
-                                <div className="bg-gray-50 dark:bg-[#2a2a2a] rounded-3xl p-5 flex-1">
-                                    <p className="text-xs font-medium text-gray-500">Current GPA</p>
-                                    <h3 className="text-3xl font-black text-gray-900 dark:text-white">{stats.gpa.toFixed(2)}</h3>
-                                    <div className="flex items-center gap-2 mt-4 text-[10px] font-bold text-gray-400">
-                                        details <ArrowRight className="w-3 h-3" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Simple Chart */}
-                            <div className="h-40 w-full relative">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <AreaChart data={mockChartData}>
-                                        <defs>
-                                            <linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor="#f3184c" stopOpacity={0.2} />
-                                                <stop offset="95%" stopColor="#f3184c" stopOpacity={0} />
-                                            </linearGradient>
-                                        </defs>
-                                        <Tooltip cursor={false} content={<></>} />
-                                        <Area type="monotone" dataKey="val" stroke="#f3184c" strokeWidth={3} fillOpacity={1} fill="url(#colorVal)" />
-                                    </AreaChart>
-                                </ResponsiveContainer>
-                            </div>
-                        </Card>
-
+                    {/* Quick Stats on Banner */}
+                    <div className="hidden xl:flex flex-col gap-3 min-w-[140px] border-l border-gray-100 dark:border-[#303030] pl-6">
+                        <div>
+                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">GPA</p>
+                            <p className="text-2xl font-black text-gray-900 dark:text-white">{profile?.gpa?.overall?.toFixed(2) || '0.00'}</p>
+                        </div>
+                        <div>
+                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Credits</p>
+                            <p className="text-2xl font-black text-gray-900 dark:text-white">{profile?.credits?.total || 0}</p>
+                        </div>
                     </div>
                 </div>
+
+                {/* Date Strip */}
+                <DateStrip />
+
+                {/* Timetable Section */}
+                <Card>
+                    <SectionTitle
+                        title="Today's Timetable"
+                        action={
+                            <button className="text-sm font-bold text-[#f3184c] hover:underline">View Full Schedule</button>
+                        }
+                    />
+                    <div className="mt-6">
+                        {timetable.map((event, i) => (
+                            <TimelineItem
+                                key={i}
+                                {...event}
+                                isLast={i === timetable.length - 1}
+                            />
+                        ))}
+                    </div>
+                </Card>
+
             </div>
 
-            <style jsx>{`
-                .scrollbar-hide {
-                    -ms-overflow-style: none;
-                    scrollbar-width: none;
-                }
-                .scrollbar-hide::-webkit-scrollbar {
-                    display: none;
-                }
-            `}</style>
+            {/* RIGHT COLUMN (Narrow) */}
+            <div className="lg:col-span-4 space-y-6">
+
+                {/* Statistic Info Widget */}
+                <div className="grid grid-cols-2 gap-4">
+                    <Card className="!p-5 bg-gradient-to-br from-purple-500 to-indigo-600 !border-none text-white shadow-lg shadow-purple-500/20">
+                        <TrendingUp className="w-8 h-8 text-white/80 mb-6" />
+                        <p className="text-3xl font-black mb-1">{profile?.gpa?.overall?.toFixed(2) || '3.42'}</p>
+                        <p className="text-xs font-bold text-white/80 uppercase">Current GPA</p>
+                    </Card>
+                    <Card className="!p-5 bg-[#1e1e1e] !border-none text-white shadow-lg shadow-gray-900/20">
+                        <Target className="w-8 h-8 text-emerald-400 mb-6" />
+                        <p className="text-3xl font-black mb-1">{profile?.credits?.total || 64}</p>
+                        <p className="text-xs font-bold text-gray-400 uppercase">Credits Earned</p>
+                    </Card>
+                </div>
+
+                {/* Degree Progress */}
+                <Card>
+                    <SectionTitle title="Degree Progress" />
+                    <div className="flex items-center justify-center py-6 relative">
+                        {/* Circular Progress Placeholder */}
+                        <div className="w-48 h-48 rounded-full border-[12px] border-gray-100 dark:border-[#303030] flex items-center justify-center relative">
+                            <div className="absolute inset-0 border-[12px] border-[#f3184c] rounded-full border-l-transparent border-b-transparent rotate-45"></div>
+                            <div className="text-center">
+                                <span className="text-4xl font-black text-gray-900 dark:text-white">65%</span>
+                                <span className="block text-xs font-bold text-gray-400 uppercase mt-1">Completed</span>
+                            </div>
+                        </div>
+                    </div>
+                </Card>
+
+                {/* Enrolled Subjects / Tags */}
+                <Card>
+                    <SectionTitle
+                        title="My Subjects"
+                        action={<button onClick={() => navigate('/dashboard?tab=academic')}><ArrowRight className="w-5 h-5 text-gray-400 hover:text-[#f3184c]" /></button>}
+                    />
+                    <div className="flex flex-wrap gap-2">
+                        {subjects.length > 0 ? (
+                            subjects.map(code => (
+                                <span key={code} className="px-3 py-2 bg-gray-50 hover:bg-gray-100 dark:bg-[#303030] dark:hover:bg-[#404040] rounded-xl text-sm font-bold text-gray-600 dark:text-gray-300 transition-colors cursor-default">
+                                    {code}
+                                </span>
+                            ))
+                        ) : (
+                            <p className="text-sm text-gray-400 font-medium">No enrolled subjects.</p>
+                        )}
+                        <button className="px-3 py-2 border-2 border-dashed border-gray-200 dark:border-[#303030] rounded-xl text-sm font-bold text-gray-400 hover:text-[#f3184c] hover:border-[#f3184c] transition-colors">
+                            + Add New
+                        </button>
+                    </div>
+                </Card>
+
+            </div>
         </div>
+    );
+};
+
+// --- Main Container Component ---
+
+export default function StudentDashboard() {
+    const [user, setUser] = useState(null)
+    const [student, setStudent] = useState(null)
+    const [profile, setProfile] = useState(null)
+    const [modules, setModules] = useState([])
+    const [loading, setLoading] = useState(true)
+
+    // Tab Management using URL Params
+    const [searchParams] = useSearchParams();
+    const activeTab = searchParams.get('tab') || 'overview';
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const currentUser = authService.getUser()
+                setUser(currentUser)
+
+                if (currentUser && currentUser.studentRef) {
+                    // Fetch Profile
+                    try {
+                        const profileRes = await academicService.getStudentProfile(currentUser.studentRef._id)
+                        if (profileRes.data) {
+                            setStudent(profileRes.data.studentDetails)
+                            setProfile(profileRes.data)
+                        }
+                    } catch (e) {
+                        console.warn("Could not fetch full profile", e)
+                    }
+
+                    // Fetch Modules (Static + User specific if needed)
+                    // For now using static
+                    setModules(MODULE_DATA)
+                }
+            } catch (error) {
+                console.error("Dashboard data fetch error", error)
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchData()
+    }, [])
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-[#f8f9fa] dark:bg-black">
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#f3184c] border-t-transparent"></div>
+            </div>
+        )
+    }
+
+    {/* Tab Header - Visible on Mobile to switch views if specific mobile nav isn't enough */ }
+    {/* On Desktop, SideNav handles switching. This area serves as title for sub-pages if needed */ }
+    {
+        activeTab !== 'overview' && (
+            <div className="mb-4">
+                <Link to="/dashboard?tab=overview" className="inline-flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-[#f3184c] transition-colors mb-2">
+                    <LayoutDashboard className="w-4 h-4" />
+                    Back to Dashboard
+                </Link>
+            </div>
+        )
+    }
+
+    {/* Main View Area */ }
+    { renderContent() }
+
+            </div >
+        </div >
     )
 }
 
-function ArrowRight({ className }) {
+const ArrowRight = ({ className }) => {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
