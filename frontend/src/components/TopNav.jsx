@@ -65,7 +65,7 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center gap-4">
 
-          {/* Logo + Mobile Menu */}
+          {/* Mobile Menu */}
           <div className="flex items-center gap-3">
             <button
               onClick={onToggleSidebar}
@@ -73,13 +73,6 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
             >
               <Menu className="w-5 h-5 text-gray-700" />
             </button>
-
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-gradient-to-br from-[#f3184c] to-[#d01440] rounded-full flex items-center justify-center">
-                <span className="text-white font-black text-sm">F</span>
-              </div>
-              <span className="text-gray-900 font-bold text-lg">fasnet</span>
-            </div>
           </div>
 
           {/* Main Container - Page Title, Search, Actions */}
