@@ -59,33 +59,27 @@ const Badge = ({ label, color = "gray" }) => {
     )
 }
 
-const DateStrip = () => {
-    // Generate dates for current week
-    const today = new Date();
-    const dates = [];
-    for (let i = 0; i < 5; i++) {
-        const d = new Date(today);
-        d.setDate(today.getDate() + i);
-        dates.push(d);
-    }
-    const todayIndex = 0; // Simplified for demo, ideally match actual date
+
+// --- Quick Actions Component ---
+const QuickActions = () => {
+    const actions = [
+        { label: 'Register', icon: Users, color: 'blue' },
+        { label: 'Exams', icon: FileText, color: 'purple' },
+        { label: 'Results', icon: Award, color: 'emerald' },
+        { label: 'Payments', icon: CheckCircle, color: 'orange' },
+    ]
 
     return (
-        <Card className="flex justify-between items-center py-5 px-8">
-            {dates.map((date, index) => {
-                const isSelected = index === todayIndex;
-                return (
-                    <div key={index} className="flex flex-col items-center gap-2 cursor-pointer group">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-sm font-bold transition-all ${isSelected ? 'bg-[#ff0033] text-white shadow-[0_0_15px_rgba(255,0,51,0.5)]' : 'bg-[#1a1a1a] text-gray-400 group-hover:bg-[#252525]'}`}>
-                            {date.getDate()}
-                        </div>
-                        <span className={`text-xs font-bold uppercase ${isSelected ? 'text-white' : 'text-gray-500'}`}>
-                            {date.toLocaleDateString('en-US', { weekday: 'short' })}
-                        </span>
+        <div className="grid grid-cols-4 gap-4 mb-8">
+            {actions.map((action, idx) => (
+                <button key={idx} className="flex flex-col items-center justify-center gap-3 p-4 bg-[#1a1a1a] hover:bg-[#252525] border border-[#2a2a2a] rounded-2xl group transition-all duration-300">
+                    <div className={`w-12 h-12 rounded-xl bg-${action.color}-500/10 flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                        <action.icon className={`w-6 h-6 text-${action.color}-400`} />
                     </div>
-                )
-            })}
-        </Card>
+                    <span className="text-xs font-bold text-gray-400 group-hover:text-white uppercase tracking-wider">{action.label}</span>
+                </button>
+            ))}
+        </div>
     )
 }
 
@@ -165,7 +159,7 @@ const DashboardOverview = ({ user, student, profile, modules }) => {
             <div className="lg:col-span-8 space-y-8">
 
                 {/* Hero / Profile Card */}
-                <Card className="!bg-[#121212] !p-0 overflow-hidden relative min-h-[220px] flex flex-col justify-between">
+                <Card className="!bg-[#121212] !p-0 overflow-hidden relative min-h-[220px] flex flex-col justify-between border border-[#303030]">
                     {/* Decorative Glow */}
                     <div className="absolute top-[-50px] right-[-50px] w-64 h-64 bg-[#ff0033] opacity-[0.08] blur-[80px] rounded-full pointing-events-none"></div>
 
@@ -210,13 +204,13 @@ const DashboardOverview = ({ user, student, profile, modules }) => {
                     </div>
                 </Card>
 
-                {/* Date Strip */}
-                <DateStrip />
+                {/* Quick Actions (Replaces DateStrip) */}
+                <QuickActions />
 
                 {/* Timetable */}
                 <Card className="min-h-[280px]">
                     <SectionTitle
-                        title="Today's Timetable"
+                        title="Academic Time Table"
                         action={<button className="text-[11px] font-bold text-[#ff0033] hover:text-[#ff3355] uppercase tracking-wide transition-colors">View Full Schedule</button>}
                     />
                     <div className="mt-6 space-y-2">
