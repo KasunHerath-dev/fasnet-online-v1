@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { authService } from '../services/authService'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import {
   LayoutDashboard,
   Users,
@@ -98,40 +98,40 @@ export default function SideNav({ isOpen, onClose }) {
       <aside
         className={`
           fixed md:sticky top-0 left-0 z-[100] h-screen
-          bg-[#0a0a0a] text-white
+          bg-[#1e1e1e] text-white
           transition-all duration-300 ease-out
-          flex flex-col border-r border-white/5
-          ${isOpen ? 'translate-x-0 w-72' : '-translate-x-full md:translate-x-0 w-20'}
-          md:w-20 hover:md:w-72
+          flex flex-col border-r border-[#303030]
+          ${isOpen ? 'translate-x-0 w-72' : '-translate-x-full md:translate-x-0'}
+          md:w-20 md:hover:w-72
           group shadow-2xl shadow-black/50
         `}
       >
         {/* Logo Section */}
-        <div className="h-20 flex items-center px-5 border-b border-white/5 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-rose-500/10 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="h-16 sm:h-20 flex items-center px-4 sm:px-5 border-b border-[#303030] relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-[#f3184c]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
           <div className="relative z-10 flex items-center gap-3 w-full">
-            <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-orange-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-rose-500/30">
-              <span className="text-white font-black text-xl">F</span>
+            <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-[#f3184c] to-[#d01440] rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-[#f3184c]/30">
+              <span className="text-white font-black text-lg sm:text-xl">F</span>
             </div>
 
-            <div className="overflow-hidden w-0 group-hover:w-auto transition-all duration-300 opacity-0 group-hover:opacity-100 whitespace-nowrap">
-              <span className="font-black text-lg tracking-tight bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">fasnet</span>
-              <span className="text-xs font-bold text-gray-500 block -mt-1">Student Portal</span>
+            <div className="overflow-hidden md:w-0 md:group-hover:w-auto transition-all duration-300 md:opacity-0 md:group-hover:opacity-100 whitespace-nowrap">
+              <span className="font-black text-base sm:text-lg tracking-tight">fasnet</span>
+              <span className="text-xs font-bold text-gray-400 block -mt-1">Student Portal</span>
             </div>
           </div>
 
           {/* Mobile Close */}
           <button
             onClick={onClose}
-            className="md:hidden absolute right-4 p-2 hover:bg-white/10 rounded-lg transition-colors"
+            className="md:hidden absolute right-3 sm:right-4 p-2 hover:bg-white/10 rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto scrollbar-hide">
+        <nav className="flex-1 py-4 sm:py-6 px-3 space-y-1 overflow-y-auto scrollbar-hide">
           {links.map((link, idx) => {
             const Icon = iconMap[link.icon] || LayoutDashboard
             const active = isActive(link.path)
@@ -140,14 +140,16 @@ export default function SideNav({ isOpen, onClose }) {
               <Link
                 key={link.path}
                 to={link.path}
-                onClick={() => window.innerWidth < 768 && onClose()}
+                onClick={() => {
+                  if (window.innerWidth < 768) onClose()
+                }}
                 onMouseEnter={() => setHoveredItem(idx)}
                 onMouseLeave={() => setHoveredItem(null)}
                 className={`
-                  relative flex items-center h-12 px-3 rounded-xl transition-all duration-200
+                  relative flex items-center h-11 sm:h-12 px-3 rounded-xl transition-all duration-200
                   ${active
-                    ? 'bg-gradient-to-r from-rose-500 to-orange-500 text-white shadow-lg shadow-rose-500/30'
-                    : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                    ? 'bg-gradient-to-r from-[#f3184c] to-[#d01440] text-white shadow-lg shadow-[#f3184c]/30'
+                    : 'text-gray-400 hover:bg-[#303030] hover:text-white'
                   }
                 `}
               >
@@ -157,29 +159,29 @@ export default function SideNav({ isOpen, onClose }) {
                 )}
 
                 <div className="w-8 flex justify-center flex-shrink-0">
-                  <Icon className={`w-5 h-5 transition-transform duration-200 ${active || hoveredItem === idx ? 'scale-110' : ''}`} />
+                  <Icon className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200 ${active || hoveredItem === idx ? 'scale-110' : ''}`} />
                 </div>
 
-                <span className="ml-3 font-semibold text-sm whitespace-nowrap overflow-hidden w-0 group-hover:w-auto opacity-0 group-hover:opacity-100 transition-all duration-300 delay-75">
+                <span className="ml-3 font-semibold text-sm whitespace-nowrap overflow-hidden md:w-0 md:group-hover:w-auto md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 delay-75">
                   {link.label}
                 </span>
 
-                {/* Hover Arrow */}
-                <ChevronRight className={`ml-auto w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${hoveredItem === idx ? 'translate-x-1' : ''}`} />
+                {/* Hover Arrow (desktop only) */}
+                <ChevronRight className={`ml-auto w-4 h-4 hidden md:block opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${hoveredItem === idx ? 'translate-x-1' : ''}`} />
               </Link>
             )
           })}
         </nav>
 
         {/* Footer Section */}
-        <div className="p-3 border-t border-white/5 space-y-2">
+        <div className="p-3 border-t border-[#303030] space-y-2">
 
           {/* User Info (Expanded) */}
-          <div className="overflow-hidden w-0 group-hover:w-auto opacity-0 group-hover:opacity-100 transition-all duration-300 mb-3">
-            <div className="bg-white/5 rounded-xl p-3 backdrop-blur-sm">
+          <div className="overflow-hidden md:w-0 md:group-hover:w-auto md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 mb-3">
+            <div className="bg-[#303030] rounded-xl p-3 backdrop-blur-sm">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center flex-shrink-0 shadow-lg">
-                  <span className="text-white font-bold text-sm">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center flex-shrink-0 shadow-lg">
+                  <span className="text-white font-bold text-xs sm:text-sm">
                     {(user?.username?.[0] || 'U').toUpperCase()}
                   </span>
                 </div>
@@ -198,28 +200,31 @@ export default function SideNav({ isOpen, onClose }) {
           {/* Settings */}
           <Link
             to="/settings"
+            onClick={() => {
+              if (window.innerWidth < 768) onClose()
+            }}
             className={`
-              relative flex items-center h-12 px-3 rounded-xl transition-all duration-200
-              ${isActive('/settings') ? 'bg-white/10 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white'}
+              relative flex items-center h-11 sm:h-12 px-3 rounded-xl transition-all duration-200
+              ${isActive('/settings') ? 'bg-[#303030] text-white' : 'text-gray-400 hover:bg-[#303030] hover:text-white'}
             `}
           >
             <div className="w-8 flex justify-center flex-shrink-0">
-              <Settings className="w-5 h-5" />
+              <Settings className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
-            <span className="ml-3 font-semibold text-sm whitespace-nowrap overflow-hidden w-0 group-hover:w-auto opacity-0 group-hover:opacity-100 transition-all duration-300">
+            <span className="ml-3 font-semibold text-sm whitespace-nowrap overflow-hidden md:w-0 md:group-hover:w-auto md:opacity-0 md:group-hover:opacity-100 transition-all duration-300">
               Settings
             </span>
           </Link>
 
           {/* Logout */}
           <button
-            className="w-full relative flex items-center h-12 px-3 rounded-xl transition-all duration-200 text-gray-400 hover:bg-rose-500/10 hover:text-rose-400"
+            className="w-full relative flex items-center h-11 sm:h-12 px-3 rounded-xl transition-all duration-200 text-gray-400 hover:bg-[#f3184c]/10 hover:text-[#f3184c]"
             onClick={() => authService.logout()}
           >
             <div className="w-8 flex justify-center flex-shrink-0">
-              <LogOut className="w-5 h-5" />
+              <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
-            <span className="ml-3 font-semibold text-sm whitespace-nowrap overflow-hidden w-0 group-hover:w-auto opacity-0 group-hover:opacity-100 transition-all duration-300">
+            <span className="ml-3 font-semibold text-sm whitespace-nowrap overflow-hidden md:w-0 md:group-hover:w-auto md:opacity-0 md:group-hover:opacity-100 transition-all duration-300">
               Logout
             </span>
           </button>
