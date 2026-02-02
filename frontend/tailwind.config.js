@@ -27,6 +27,13 @@ module.exports = {
 
         primary: 'var(--primary)',
         'primary-glow': 'var(--primary-glow)',
+
+        // Sidebar Specific
+        'sidebar-bg': 'var(--sidebar-bg)',
+        'sidebar-text': 'var(--sidebar-text)',
+        'sidebar-muted': 'var(--sidebar-muted)',
+        'sidebar-highlight': 'var(--sidebar-highlight)',
+        'sidebar-border': 'var(--sidebar-border)',
         // Stitch Theme Colors
         'stitch-blue': '#1313ec',
         'stitch-pink': '#ec1378',
