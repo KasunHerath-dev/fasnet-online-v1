@@ -1,43 +1,57 @@
 import React, { useState, useMemo } from 'react'
-import { EXAM_TIME_TABLE } from '../data/examTimeTable'
+import { EXAM_TIMETABLE } from '../data/examTimeTable'
 
 export default function ExamTimeTablePage() {
     const [selectedLevel, setSelectedLevel] = useState('All')
     const [searchQuery, setSearchQuery] = useState('')
 
     const filteredData = useMemo(() => {
-        return EXAM_TIME_TABLE.map(day => {
-            const filteredSessions = day.sessions.filter(session => {
-                // Search filter
-                const searchLower = searchQuery.toLowerCase()
-                const matchesSearch = session.code.toLowerCase().includes(searchLower) ||
-                    session.title.toLowerCase().includes(searchLower)
+        // 1. Filter the flat list first
+        const filteredSessions = EXAM_TIMETABLE.filter(session => {
+            // Search filter
+            const searchLower = searchQuery.toLowerCase()
+            const matchesSearch = session.code.toLowerCase().includes(searchLower) ||
+                session.title.toLowerCase().includes(searchLower)
 
-                if (!matchesSearch) return false
+            if (!matchesSearch) return false
 
-                // Level filter
-                if (selectedLevel === 'All') return true
+            // Level filter
+            if (selectedLevel === 'All') return true
 
-                // Infer level from code (e.g., CMIS 1113 -> Level 1)
-                // Codes are like CMIS 1113, CMIS 3124/3224
-                const codeParts = session.code.split(' ')
-                if (codeParts.length > 1) {
-                    const numPart = codeParts[1]
-                    // Handle slash cases like 3124/3224 - accept if any matches
-                    if (numPart.includes('/')) {
-                        const nums = numPart.split('/')
-                        return nums.some(n => n.startsWith(selectedLevel))
-                    }
-                    return numPart.startsWith(selectedLevel)
-                }
-                return true
-            })
-
-            return {
-                ...day,
-                sessions: filteredSessions
+            // Logic to check level (check session.level property if available, or infer from code)
+            if (session.level) {
+                return session.level.toString() === selectedLevel;
             }
-        }).filter(day => day.sessions.length > 0)
+
+            // Fallback inference from code (e.g., CMIS 1113 -> Level 1)
+            const codeParts = session.code.split(' ')
+            if (codeParts.length > 1) {
+                const numPart = codeParts[1]
+                if (numPart.includes('/')) {
+                    const nums = numPart.split('/')
+                    return nums.some(n => n.startsWith(selectedLevel))
+                }
+                return numPart.startsWith(selectedLevel)
+            }
+            return true
+        })
+
+        // 2. Group by Date
+        const grouped = filteredSessions.reduce((acc, session) => {
+            const date = session.date
+            if (!acc[date]) {
+                acc[date] = {
+                    date: date,
+                    day: new Date(date).toLocaleDateString('default', { weekday: 'long' }),
+                    sessions: []
+                }
+            }
+            acc[date].sessions.push(session)
+            return acc
+        }, {})
+
+        // 3. Convert to array and sort by date
+        return Object.values(grouped).sort((a, b) => new Date(a.date) - new Date(b.date))
     }, [selectedLevel, searchQuery])
 
     const getLevelBadgeColor = (code) => {
@@ -73,8 +87,8 @@ export default function ExamTimeTablePage() {
                                 key={level}
                                 onClick={() => setSelectedLevel(level)}
                                 className={`px-4 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${selectedLevel === level
-                                        ? 'bg-indigo-600 text-white shadow-md'
-                                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-slate-700 dark:text-gray-300'
+                                    ? 'bg-indigo-600 text-white shadow-md'
+                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-slate-700 dark:text-gray-300'
                                     }`}
                             >
                                 {level === 'All' ? 'All Levels' : `Level ${level}`}
