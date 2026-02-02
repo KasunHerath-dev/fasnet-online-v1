@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { authService } from '../services/authService'
-import { Bell, Search, Menu, User, ChevronDown, LogOut, Settings } from 'lucide-react'
+import { Bell, Search, Menu, User, ChevronDown, LogOut, Settings, MessageCircle, Sparkles } from 'lucide-react'
 import api from '../services/api'
 
 export default function TopNav({ user, onLogout, onToggleSidebar }) {
@@ -10,22 +10,23 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showNotifications, setShowNotifications] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [searchFocused, setSearchFocused] = useState(false)
   const userMenuRef = useRef(null)
+  const notifRef = useRef(null)
 
-  // Handle scroll effect
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10)
-    }
+    const handleScroll = () => setScrolled(window.scrollY > 10)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Close dropdowns on click outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
         setShowUserMenu(false)
+      }
+      if (notifRef.current && !notifRef.current.contains(event.target)) {
+        setShowNotifications(false)
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
@@ -37,106 +38,216 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
     return path.charAt(0).toUpperCase() + path.slice(1)
   }
 
+  const isAdmin = currentUser?.roles?.includes('admin') || currentUser?.roles?.includes('superadmin')
+
   return (
     <header
       className={`
-            sticky top-0 z-40 transition-all duration-300
-            ${scrolled ? 'bg-white/90 dark:bg-[#121212]/90 backdrop-blur-lg border-b border-gray-100 dark:border-gray-800 shadow-sm' : 'bg-transparent'}
-        `}
+        sticky top-0 z-40 transition-all duration-300
+        ${scrolled
+          ? 'bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-xl border-b border-gray-100 dark:border-white/5 shadow-lg shadow-black/5'
+          : 'bg-transparent'
+        }
+      `}
     >
-      <div className="px-4 md:px-8 py-4 flex items-center justify-between gap-4">
+      <div className="px-4 md:px-8 py-4">
+        <div className="flex items-center justify-between gap-6">
 
-        {/* Left: Mobile Toggle & Page Title */}
-        <div className="flex items-center gap-4 min-w-[140px]">
-          <button
-            onClick={onToggleSidebar}
-            className="md:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
-          >
-            <Menu className="w-6 h-6 text-gray-700 dark:text-gray-300" />
-          </button>
-
-          <div className="hidden md:block">
-            <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
-              {getPageTitle()}
-            </h1>
-          </div>
-        </div>
-
-        {/* Center: Search Bar */}
-        <div className="flex-1 max-w-2xl px-4 lg:px-8">
-          <div className="relative group w-full">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-indigo-500 transition-colors" />
-            <input
-              type="text"
-              placeholder="What assignment are you looking for?"
-              className="w-full bg-slate-100 dark:bg-[#1e1e1e] border-none rounded-full py-3.5 pl-11 pr-4 text-sm font-medium placeholder:text-gray-500 focus:ring-2 focus:ring-indigo-500/20 focus:bg-white dark:focus:bg-[#252525] transition-all"
-            />
-          </div>
-        </div>
-
-        {/* Right: Actions & Profile */}
-        <div className="flex items-center gap-2 sm:gap-4 min-w-[140px] justify-end">
-
-          {/* Notification Bell */}
-          <button className="relative p-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-gray-800 transition-colors group">
-            <Bell className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
-            <span className="absolute top-2 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white dark:border-[#121212]"></span>
-          </button>
-
-          {/* User Profile */}
-          <div className="relative" ref={userMenuRef}>
+          {/* Left: Mobile Toggle & Page Title */}
+          <div className="flex items-center gap-4 min-w-[200px]">
             <button
-              onClick={() => setShowUserMenu(!showUserMenu)}
-              className="flex items-center gap-3 pl-1 pr-2 py-1 rounded-full hover:bg-slate-100 dark:hover:bg-gray-800 transition-all border border-transparent hover:border-gray-200 dark:hover:border-gray-700"
+              onClick={onToggleSidebar}
+              className="md:hidden p-2.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-xl transition-all active:scale-95"
             >
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm shadow-md">
-                {(currentUser?.username?.[0] || 'U').toUpperCase()}
-              </div>
-              <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${showUserMenu ? 'rotate-180' : ''}`} />
+              <Menu className="w-5 h-5 text-gray-700 dark:text-gray-300" />
             </button>
 
-            {/* Dropdown Menu */}
-            {showUserMenu && (
-              <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-[#1e1e1e] rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 p-2 transform origin-top-right animate-in fade-in zoom-in-95 duration-200">
-                <div className="px-3 py-2 border-b border-gray-100 dark:border-gray-800 mb-1">
-                  <p className="font-bold text-slate-900 dark:text-white truncate">
+            <div className="hidden md:block">
+              <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+                {getPageTitle()}
+                <Sparkles className="w-5 h-5 text-rose-500" />
+              </h1>
+            </div>
+          </div>
+
+          {/* Center: Premium Search Bar */}
+          <div className="flex-1 max-w-2xl hidden sm:block">
+            <div className={`
+              relative group transition-all duration-300
+              ${searchFocused ? 'scale-105' : ''}
+            `}>
+              <Search className={`
+                absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 transition-all duration-300
+                ${searchFocused ? 'text-rose-500 scale-110' : 'text-gray-400'}
+              `} />
+              <input
+                type="text"
+                placeholder="Search anything..."
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => setSearchFocused(false)}
+                className={`
+                  w-full bg-slate-100 dark:bg-white/5 border-2 rounded-2xl py-3.5 pl-11 pr-4 
+                  text-sm font-medium placeholder:text-gray-400
+                  transition-all duration-300
+                  ${searchFocused
+                    ? 'border-rose-500 bg-white dark:bg-white/10 shadow-lg shadow-rose-500/10'
+                    : 'border-transparent hover:bg-slate-200 dark:hover:bg-white/10'
+                  }
+                  focus:outline-none
+                `}
+              />
+
+              {/* Search Suggestions (appears on focus) */}
+              {searchFocused && (
+                <div className="absolute top-full mt-2 w-full bg-white dark:bg-[#1a1a1a] rounded-2xl shadow-2xl border border-gray-100 dark:border-white/10 p-2 animate-in fade-in zoom-in-95 duration-200">
+                  <div className="text-xs font-bold text-gray-400 px-3 py-2">Quick Access</div>
+                  <Link to="/academic" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center">
+                      <span className="text-sm">📊</span>
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-slate-900 dark:text-white">Academic Records</div>
+                      <div className="text-xs text-gray-500">View your results</div>
+                    </div>
+                  </Link>
+                  <Link to="/resources" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/20 flex items-center justify-center">
+                      <span className="text-sm">📚</span>
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-slate-900 dark:text-white">Study Resources</div>
+                      <div className="text-xs text-gray-500">Access materials</div>
+                    </div>
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right: Actions & Profile */}
+          <div className="flex items-center gap-2 sm:gap-3">
+
+            {/* Messages */}
+            <button className="relative p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition-all active:scale-95 group">
+              <MessageCircle className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-rose-500 transition-colors" />
+              <span className="absolute top-2 right-2.5 w-2 h-2 bg-blue-500 rounded-full border-2 border-white dark:border-[#0a0a0a] animate-pulse"></span>
+            </button>
+
+            {/* Notifications */}
+            <div className="relative" ref={notifRef}>
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="relative p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition-all active:scale-95 group"
+              >
+                <Bell className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-rose-500 transition-colors" />
+                <span className="absolute top-2 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white dark:border-[#0a0a0a] animate-pulse"></span>
+              </button>
+
+              {/* Notifications Dropdown */}
+              {showNotifications && (
+                <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-[#1a1a1a] rounded-2xl shadow-2xl border border-gray-100 dark:border-white/10 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                  <div className="p-4 border-b border-gray-100 dark:border-white/10">
+                    <h3 className="font-black text-slate-900 dark:text-white">Notifications</h3>
+                    <p className="text-xs text-gray-500 mt-1">You have 3 unread notifications</p>
+                  </div>
+                  <div className="max-h-96 overflow-y-auto">
+                    <div className="p-3 hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer transition-colors border-b border-gray-50 dark:border-white/5">
+                      <div className="flex gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center flex-shrink-0">
+                          <span className="text-white text-sm">📝</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold text-slate-900 dark:text-white">New assignment posted</p>
+                          <p className="text-xs text-gray-500 mt-1">Mathematical Analysis - Due Feb 20</p>
+                          <p className="text-xs text-gray-400 mt-1">2 hours ago</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-3 hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer transition-colors border-b border-gray-50 dark:border-white/5">
+                      <div className="flex gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center flex-shrink-0">
+                          <span className="text-white text-sm">✅</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold text-slate-900 dark:text-white">Grade published</p>
+                          <p className="text-xs text-gray-500 mt-1">Database Systems - A</p>
+                          <p className="text-xs text-gray-400 mt-1">5 hours ago</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-3 border-t border-gray-100 dark:border-white/10">
+                    <button className="w-full text-center text-sm font-bold text-rose-500 hover:text-rose-600 transition-colors">
+                      View All Notifications
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* User Profile */}
+            <div className="relative" ref={userMenuRef}>
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex items-center gap-3 pl-1 pr-3 py-1 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 transition-all border-2 border-transparent hover:border-gray-200 dark:hover:border-white/10 active:scale-95"
+              >
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-rose-500 to-orange-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-rose-500/30">
+                  {(currentUser?.username?.[0] || 'U').toUpperCase()}
+                </div>
+                <div className="hidden lg:block text-left">
+                  <div className="text-sm font-bold text-slate-900 dark:text-white leading-none">
                     {currentUser?.username || 'User'}
-                  </p>
-                  <p className="text-xs text-gray-500 truncate">
-                    {currentUser?.email || 'student@fasnet.online'}
-                  </p>
+                  </div>
+                  <div className="text-xs text-gray-500 mt-0.5">
+                    {currentUser?.roles?.[0] || 'Student'}
+                  </div>
                 </div>
+                <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${showUserMenu ? 'rotate-180' : ''}`} />
+              </button>
 
-                <div className="space-y-0.5">
-                  <Link
-                    to="/profile"
-                    className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-800 hover:text-indigo-600 transition-colors"
-                    onClick={() => setShowUserMenu(false)}
-                  >
-                    <User className="w-4 h-4" />
-                    My Profile
-                  </Link>
-                  <Link
-                    to="/settings"
-                    className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-800 hover:text-indigo-600 transition-colors"
-                    onClick={() => setShowUserMenu(false)}
-                  >
-                    <Settings className="w-4 h-4" />
-                    Settings
-                  </Link>
-                </div>
+              {/* User Dropdown */}
+              {showUserMenu && (
+                <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-[#1a1a1a] rounded-2xl shadow-2xl border border-gray-100 dark:border-white/10 p-2 animate-in fade-in zoom-in-95 duration-200">
+                  <div className="px-3 py-3 border-b border-gray-100 dark:border-white/10 mb-1">
+                    <p className="font-black text-slate-900 dark:text-white truncate">
+                      {currentUser?.username || 'User'}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate mt-1">
+                      {currentUser?.email || 'student@fasnet.online'}
+                    </p>
+                  </div>
 
-                <div className="mt-1 pt-1 border-t border-gray-100 dark:border-gray-800">
-                  <button
-                    onClick={onLogout}
-                    className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/10 transition-colors"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    Sign Out
-                  </button>
+                  <div className="space-y-0.5">
+                    <Link
+                      to="/profile"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-rose-500 transition-all group"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      <User className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                      My Profile
+                    </Link>
+                    <Link
+                      to="/settings"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-rose-500 transition-all group"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      <Settings className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
+                      Settings
+                    </Link>
+                  </div>
+
+                  <div className="mt-1 pt-1 border-t border-gray-100 dark:border-white/10">
+                    <button
+                      onClick={onLogout}
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/10 transition-all group"
+                    >
+                      <LogOut className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      Sign Out
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>
