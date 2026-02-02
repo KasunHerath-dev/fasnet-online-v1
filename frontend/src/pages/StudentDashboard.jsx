@@ -22,7 +22,7 @@ import {
 } from 'lucide-react'
 import { authService, academicService } from '../services/authService'
 import { MODULE_DATA } from '../data/moduleList'
-import { EXAM_TIMETABLE, getStudentExams } from '../data/examTimetable'
+import { EXAM_TIMETABLE, getStudentExams } from '../data/examTimeTable'
 import { ACADEMIC_CALENDAR, getKeyDates } from '../data/academicCalendar'
 import HeroSection from '../components/HeroSection'
 
