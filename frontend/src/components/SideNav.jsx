@@ -12,10 +12,10 @@ import {
   User,
   GraduationCap,
   TrendingUp,
-  X,
   BookOpen,
   LogOut,
-  ChevronRight
+  Calendar,
+  BarChart3
 } from 'lucide-react'
 import { hasPermission, isRegularUser, isSuperAdmin, PERMISSIONS } from '../utils/permissions'
 
@@ -41,7 +41,9 @@ export default function SideNav({ isOpen, onClose }) {
     'Missing': AlertTriangle,
     'Admin': Settings,
     'Settings': Settings,
-    'Resources': BookOpen
+    'Resources': BookOpen,
+    'Calendar': Calendar,
+    'Reports': BarChart3
   }
 
   const links = []
@@ -95,151 +97,106 @@ export default function SideNav({ isOpen, onClose }) {
         />
       )}
 
+      {/* Sidebar - Pill Shape Design */}
       <aside
         className={`
           fixed md:sticky top-0 left-0 z-[100] h-screen
-          bg-[#1e1e1e] text-white
           transition-all duration-300 ease-out
-          flex flex-col border-r border-[#303030]
-          ${isOpen ? 'translate-x-0 w-72' : '-translate-x-full md:translate-x-0'}
-          md:w-20 md:hover:w-72
-          group shadow-2xl shadow-black/50
+          ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+          md:m-4 md:h-[calc(100vh-2rem)]
         `}
       >
-        {/* Logo Section */}
-        <div className="h-16 sm:h-20 flex items-center px-4 sm:px-5 border-b border-[#303030] relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-[#f3184c]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="h-full w-20 bg-[#1e1e1e] md:rounded-[2rem] flex flex-col items-center py-6 border-r md:border border-[#303030] shadow-2xl">
 
-          <div className="relative z-10 flex items-center gap-3 w-full">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-[#f3184c] to-[#d01440] rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-[#f3184c]/30">
-              <span className="text-white font-black text-lg sm:text-xl">F</span>
-            </div>
-
-            <div className="overflow-hidden md:w-0 md:group-hover:w-auto transition-all duration-300 md:opacity-0 md:group-hover:opacity-100 whitespace-nowrap">
-              <span className="font-black text-base sm:text-lg tracking-tight">fasnet</span>
-              <span className="text-xs font-bold text-gray-400 block -mt-1">Student Portal</span>
+          {/* Logo */}
+          <div className="mb-8">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#f3184c] to-[#d01440] rounded-2xl flex items-center justify-center shadow-lg shadow-[#f3184c]/30">
+              <span className="text-white font-black text-xl">F</span>
             </div>
           </div>
 
-          {/* Mobile Close */}
-          <button
-            onClick={onClose}
-            className="md:hidden absolute right-3 sm:right-4 p-2 hover:bg-white/10 rounded-lg transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+          {/* Navigation Icons */}
+          <nav className="flex-1 flex flex-col items-center gap-2 w-full px-3">
+            {links.map((link, idx) => {
+              const Icon = iconMap[link.icon] || LayoutDashboard
+              const active = isActive(link.path)
 
-        {/* Navigation */}
-        <nav className="flex-1 py-4 sm:py-6 px-3 space-y-1 overflow-y-auto scrollbar-hide">
-          {links.map((link, idx) => {
-            const Icon = iconMap[link.icon] || LayoutDashboard
-            const active = isActive(link.path)
+              return (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  onClick={() => {
+                    if (window.innerWidth < 768) onClose()
+                  }}
+                  onMouseEnter={() => setHoveredItem(idx)}
+                  onMouseLeave={() => setHoveredItem(null)}
+                  className={`
+                    relative w-full h-12 flex items-center justify-center rounded-xl transition-all duration-200 group
+                    ${active
+                      ? 'bg-[#f3184c] text-white shadow-lg shadow-[#f3184c]/30'
+                      : 'text-gray-400 hover:bg-[#303030] hover:text-white'
+                    }
+                  `}
+                  title={link.label}
+                >
+                  <Icon className={`w-5 h-5 transition-transform duration-200 ${active || hoveredItem === idx ? 'scale-110' : ''}`} />
 
-            return (
-              <Link
-                key={link.path}
-                to={link.path}
-                onClick={() => {
-                  if (window.innerWidth < 768) onClose()
-                }}
-                onMouseEnter={() => setHoveredItem(idx)}
-                onMouseLeave={() => setHoveredItem(null)}
-                className={`
-                  relative flex items-center h-11 sm:h-12 px-3 rounded-xl transition-all duration-200
-                  ${active
-                    ? 'bg-gradient-to-r from-[#f3184c] to-[#d01440] text-white shadow-lg shadow-[#f3184c]/30'
-                    : 'text-gray-400 hover:bg-[#303030] hover:text-white'
-                  }
-                `}
-              >
-                {/* Active Indicator */}
-                {active && (
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full" />
-                )}
+                  {/* Active Indicator */}
+                  {active && (
+                    <div className="absolute -right-1 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-l-full" />
+                  )}
 
-                <div className="w-8 flex justify-center flex-shrink-0">
-                  <Icon className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200 ${active || hoveredItem === idx ? 'scale-110' : ''}`} />
-                </div>
+                  {/* Tooltip on Hover */}
+                  <div className="absolute left-full ml-4 px-3 py-2 bg-[#303030] text-white text-sm font-bold rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap shadow-xl z-50">
+                    {link.label}
+                    <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-[#303030]" />
+                  </div>
+                </Link>
+              )
+            })}
+          </nav>
 
-                <span className="ml-3 font-semibold text-sm whitespace-nowrap overflow-hidden md:w-0 md:group-hover:w-auto md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 delay-75">
-                  {link.label}
-                </span>
+          {/* Bottom Actions */}
+          <div className="flex flex-col items-center gap-2 w-full px-3 pt-4 border-t border-[#303030]">
 
-                {/* Hover Arrow (desktop only) */}
-                <ChevronRight className={`ml-auto w-4 h-4 hidden md:block opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${hoveredItem === idx ? 'translate-x-1' : ''}`} />
-              </Link>
-            )
-          })}
-        </nav>
+            {/* Settings */}
+            <Link
+              to="/settings"
+              onClick={() => {
+                if (window.innerWidth < 768) onClose()
+              }}
+              className={`
+                relative w-full h-12 flex items-center justify-center rounded-xl transition-all duration-200 group
+                ${isActive('/settings') ? 'bg-[#303030] text-white' : 'text-gray-400 hover:bg-[#303030] hover:text-white'}
+              `}
+              title="Settings"
+            >
+              <Settings className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
 
-        {/* Footer Section */}
-        <div className="p-3 border-t border-[#303030] space-y-2">
-
-          {/* User Info (Expanded) */}
-          <div className="overflow-hidden md:w-0 md:group-hover:w-auto md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 mb-3">
-            <div className="bg-[#303030] rounded-xl p-3 backdrop-blur-sm">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center flex-shrink-0 shadow-lg">
-                  <span className="text-white font-bold text-xs sm:text-sm">
-                    {(user?.username?.[0] || 'U').toUpperCase()}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-white font-bold text-sm truncate">
-                    {user?.username || 'User'}
-                  </p>
-                  <p className="text-gray-400 text-xs truncate">
-                    {isStudent ? 'Student' : isSuperAdminUser ? 'Super Admin' : 'Admin'}
-                  </p>
-                </div>
+              {/* Tooltip */}
+              <div className="absolute left-full ml-4 px-3 py-2 bg-[#303030] text-white text-sm font-bold rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap shadow-xl z-50">
+                Settings
+                <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-[#303030]" />
               </div>
-            </div>
+            </Link>
+
+            {/* Logout */}
+            <button
+              className="relative w-full h-12 flex items-center justify-center rounded-xl transition-all duration-200 text-gray-400 hover:bg-[#f3184c]/10 hover:text-[#f3184c] group"
+              onClick={() => authService.logout()}
+              title="Logout"
+            >
+              <LogOut className="w-5 h-5" />
+
+              {/* Tooltip */}
+              <div className="absolute left-full ml-4 px-3 py-2 bg-[#303030] text-white text-sm font-bold rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap shadow-xl z-50">
+                Logout
+                <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-[#303030]" />
+              </div>
+            </button>
           </div>
-
-          {/* Settings */}
-          <Link
-            to="/settings"
-            onClick={() => {
-              if (window.innerWidth < 768) onClose()
-            }}
-            className={`
-              relative flex items-center h-11 sm:h-12 px-3 rounded-xl transition-all duration-200
-              ${isActive('/settings') ? 'bg-[#303030] text-white' : 'text-gray-400 hover:bg-[#303030] hover:text-white'}
-            `}
-          >
-            <div className="w-8 flex justify-center flex-shrink-0">
-              <Settings className="w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
-            <span className="ml-3 font-semibold text-sm whitespace-nowrap overflow-hidden md:w-0 md:group-hover:w-auto md:opacity-0 md:group-hover:opacity-100 transition-all duration-300">
-              Settings
-            </span>
-          </Link>
-
-          {/* Logout */}
-          <button
-            className="w-full relative flex items-center h-11 sm:h-12 px-3 rounded-xl transition-all duration-200 text-gray-400 hover:bg-[#f3184c]/10 hover:text-[#f3184c]"
-            onClick={() => authService.logout()}
-          >
-            <div className="w-8 flex justify-center flex-shrink-0">
-              <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
-            <span className="ml-3 font-semibold text-sm whitespace-nowrap overflow-hidden md:w-0 md:group-hover:w-auto md:opacity-0 md:group-hover:opacity-100 transition-all duration-300">
-              Logout
-            </span>
-          </button>
         </div>
       </aside>
-
-      <style jsx>{`
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
     </>
   )
 }
