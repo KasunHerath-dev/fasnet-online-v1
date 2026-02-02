@@ -107,12 +107,12 @@ export default function SideNav({ isOpen, onClose }) {
           group
         `}
       >
-        <div className="h-full w-20 md:group-hover:w-60 bg-[#1e1e1e] md:rounded-[2rem] flex flex-col items-center py-6 border-r md:border border-[#303030] shadow-2xl transition-all duration-300">
+        <div className="h-full w-16 md:w-20 md:group-hover:w-60 bg-[#1e1e1e] md:rounded-[2rem] flex flex-col items-center py-6 border-r md:border border-[#303030] shadow-2xl transition-all duration-300">
 
           {/* Logo */}
-          <div className="mb-8 flex items-center gap-3 w-full px-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-[#f3184c] to-[#d01440] rounded-2xl flex items-center justify-center shadow-lg shadow-[#f3184c]/30 flex-shrink-0">
-              <span className="text-white font-black text-xl">F</span>
+          <div className="mb-8 flex items-center justify-center md:justify-start gap-3 w-full px-2 md:px-4">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-[#f3184c] to-[#d01440] rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg shadow-[#f3184c]/30 flex-shrink-0">
+              <span className="text-white font-black text-lg md:text-xl">F</span>
             </div>
             <div className="overflow-hidden w-0 md:group-hover:w-auto transition-all duration-300 opacity-0 md:group-hover:opacity-100 whitespace-nowrap">
               <span className="font-black text-white text-lg">fasnet</span>
@@ -120,7 +120,7 @@ export default function SideNav({ isOpen, onClose }) {
           </div>
 
           {/* Navigation Icons */}
-          <nav className="flex-1 flex flex-col items-center gap-2 w-full px-3">
+          <nav className="flex-1 flex flex-col items-center gap-2 w-full px-2 md:px-3">
             {links.map((link, idx) => {
               const Icon = iconMap[link.icon] || LayoutDashboard
               const active = isActive(link.path)
@@ -135,7 +135,7 @@ export default function SideNav({ isOpen, onClose }) {
                   onMouseEnter={() => setHoveredItem(idx)}
                   onMouseLeave={() => setHoveredItem(null)}
                   className={`
-                    relative w-full h-12 flex items-center gap-3 px-4 rounded-xl transition-all duration-200
+                    relative w-full h-11 md:h-12 flex items-center justify-center md:justify-start gap-3 px-2 md:px-4 rounded-xl transition-all duration-200
                     ${active
                       ? 'bg-[#f3184c] text-white shadow-lg shadow-[#f3184c]/30'
                       : 'text-gray-400 hover:bg-[#303030] hover:text-white'
@@ -160,7 +160,7 @@ export default function SideNav({ isOpen, onClose }) {
           </nav>
 
           {/* Bottom Actions */}
-          <div className="flex flex-col items-center gap-2 w-full px-3 pt-4 border-t border-[#303030]">
+          <div className="flex flex-col items-center gap-2 w-full px-2 md:px-3 pt-4 border-t border-[#303030]">
 
             {/* Settings */}
             <Link
@@ -169,7 +169,7 @@ export default function SideNav({ isOpen, onClose }) {
                 if (window.innerWidth < 768) onClose()
               }}
               className={`
-                relative w-full h-12 flex items-center gap-3 px-4 rounded-xl transition-all duration-200
+                relative w-full h-11 md:h-12 flex items-center justify-center md:justify-start gap-3 px-2 md:px-4 rounded-xl transition-all duration-200
                 ${isActive('/settings') ? 'bg-[#303030] text-white' : 'text-gray-400 hover:bg-[#303030] hover:text-white'}
               `}
               title="Settings"
@@ -182,7 +182,7 @@ export default function SideNav({ isOpen, onClose }) {
 
             {/* Logout */}
             <button
-              className="relative w-full h-12 flex items-center gap-3 px-4 rounded-xl transition-all duration-200 text-gray-400 hover:bg-[#f3184c]/10 hover:text-[#f3184c]"
+              className="relative w-full h-11 md:h-12 flex items-center justify-center md:justify-start gap-3 px-2 md:px-4 rounded-xl transition-all duration-200 text-gray-400 hover:bg-[#f3184c]/10 hover:text-[#f3184c]"
               onClick={() => authService.logout()}
               title="Logout"
             >

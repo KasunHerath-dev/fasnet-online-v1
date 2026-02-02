@@ -30,8 +30,8 @@ module.exports = {
         'stitch-success': '#0bda68',
       },
       fontFamily: {
-        'sans': ['Fredoka', 'sans-serif'],
-        'display': ['Fredoka', 'sans-serif'],
+        'sans': ['Lato', 'sans-serif'],
+        'display': ['Lato', 'sans-serif'],
       },
       animation: {
         blob: "blob 7s infinite",
