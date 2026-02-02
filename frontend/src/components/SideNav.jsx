@@ -126,9 +126,11 @@ export default function SideNav({ isOpen, onClose }) {
               const active = isActive(link.path)
 
               return (
-                <Link
+                <a
                   key={link.path}
-                  to={link.path}
+                  href={link.path}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   onClick={() => {
                     if (window.innerWidth < 768) onClose()
                   }}
@@ -154,7 +156,7 @@ export default function SideNav({ isOpen, onClose }) {
                   {active && (
                     <div className="absolute -right-1 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-l-full" />
                   )}
-                </Link>
+                </a>
               )
             })}
           </nav>
@@ -163,8 +165,10 @@ export default function SideNav({ isOpen, onClose }) {
           <div className="flex flex-col items-center gap-2 w-full px-2 md:px-3 pt-4 border-t border-[#303030]">
 
             {/* Settings */}
-            <Link
-              to="/settings"
+            <a
+              href="/settings"
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={() => {
                 if (window.innerWidth < 768) onClose()
               }}
@@ -178,7 +182,7 @@ export default function SideNav({ isOpen, onClose }) {
               <span className="overflow-hidden w-0 md:group-hover:w-auto transition-all duration-300 opacity-0 md:group-hover:opacity-100 whitespace-nowrap font-bold text-sm">
                 Settings
               </span>
-            </Link>
+            </a>
 
             {/* Logout */}
             <button
