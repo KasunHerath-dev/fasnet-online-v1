@@ -65,4 +65,4 @@ A state-of-the-art, premium student management portal designed for the Faculty o
 The system uses **FASNET Secure Auth** for all student and admin interactions. Initial admin setup is handled via secure seeding scripts.
 
 ---
-© 2026 FASNET.ONLINE • POWERED BY LEARNIFY
+© 2026 FASNET.ONLINE • POWERED BY YOWEBZ
