@@ -5,6 +5,8 @@ const os = require('os');
 const Resource = require('../models/Resource');
 const megaService = require('../services/megaService');
 const Module = require('../models/Module');
+const ModuleEnrollment = require('../models/ModuleEnrollment');
+const { createNotification } = require('./notificationController');
 
 // Helper to resolve Module ID or Code -> Module Document
 const resolveModule = async (idOrCode) => {
@@ -83,6 +85,42 @@ exports.uploadResource = async (req, res) => {
         res.status(201).json({
             success: true,
             data: resource
+        });
+
+        // Non-blocking: notify all enrolled students about the new resource
+        setImmediate(async () => {
+            try {
+                const typeLabel = {
+                    tutorial: 'Tutorial',
+                    past_paper: 'Past Paper',
+                    assignment: 'Assignment',
+                    marking_scheme: 'Marking Scheme',
+                    book: 'Book',
+                    other: 'Resource',
+                }[type] || 'Resource';
+
+                const enrollments = await ModuleEnrollment.find({ module: moduleDoc._id })
+                    .populate({ path: 'student', populate: { path: 'user', select: '_id' } });
+
+                const notifPromises = enrollments
+                    .map(e => e?.student?.user?._id)
+                    .filter(Boolean)
+                    .map(userId =>
+                        createNotification({
+                            recipient: userId,
+                            type: 'resource_added',
+                            title: `New ${typeLabel} Added`,
+                            body: `"${title}" has been uploaded for ${moduleDoc.code} – ${moduleDoc.title}.`,
+                            link: '/learning',
+                            refModel: 'Resource',
+                            refId: resource._id,
+                        }).catch(() => { })
+                    );
+
+                await Promise.all(notifPromises);
+            } catch (_) {
+                // Silently ignore notification errors
+            }
         });
 
     } catch (error) {
@@ -194,5 +232,31 @@ exports.streamResource = async (req, res) => {
     } catch (error) {
         console.error('Download Proxy Error:', error);
         res.status(500).send('Failed to process download');
+    }
+};
+
+// @desc    Get resources for multiple modules at once (Frontend N+1 prevention)
+// @route   POST /api/v1/resources/my-resources
+// @access  Private (Students)
+exports.getBulkResources = async (req, res) => {
+    try {
+        const { moduleIds } = req.body;
+
+        if (!moduleIds || !Array.isArray(moduleIds)) {
+            return res.status(400).json({ success: false, message: 'moduleIds array is required' });
+        }
+
+        const resources = await Resource.find({ module: { $in: moduleIds } })
+            .lean()
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            count: resources.length,
+            data: resources
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server Error Fetching Bulk Resources' });
     }
 };

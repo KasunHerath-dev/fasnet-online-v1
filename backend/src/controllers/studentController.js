@@ -96,11 +96,14 @@ const createStudent = async (req, res) => {
 
     // Create User Account
     try {
+      const randomTempPassword = require('crypto').randomBytes(16).toString('hex');
+
       const user = new User({
         username: student.registrationNumber.toLowerCase(),
-        passwordHash: 'abc123', // Default password
+        passwordHash: randomTempPassword,
         roles: ['user'],
         studentRef: student._id,
+        isAccountLocked: true,
       });
       await user.save();
 
@@ -299,11 +302,13 @@ const createMissingUserAccounts = async (req, res) => {
         }
 
         // Create new user
+        const randomTempPassword = require('crypto').randomBytes(16).toString('hex');
         const user = new User({
           username: student.registrationNumber.toLowerCase(),
-          passwordHash: 'abc123', // Default password
+          passwordHash: randomTempPassword,
           roles: ['user'],
           studentRef: student._id,
+          isAccountLocked: true,
         });
         await user.save();
 

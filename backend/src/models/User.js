@@ -65,6 +65,22 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isAccountLocked: {
+      type: Boolean,
+      default: false,
+    },
+    otp: {
+      type: String,
+      default: null,
+    },
+    otpExpiresAt: {
+      type: Date,
+      default: null,
+    },
+    needsProfileSetup: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
@@ -87,10 +103,11 @@ userSchema.methods.comparePassword = async function (plainPassword) {
   return bcrypt.compare(plainPassword, this.passwordHash);
 };
 
-// Exclude passwordHash in toJSON
+// Exclude passwordHash and otp in toJSON
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.passwordHash;
+  delete obj.otp;
   return obj;
 };
 

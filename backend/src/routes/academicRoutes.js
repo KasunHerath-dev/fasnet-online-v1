@@ -4,12 +4,18 @@ const academicController = require('../controllers/academicController');
 const { authMiddleware: protect, roleMiddleware: authorize } = require('../middleware/auth');
 
 router.get('/modules', protect, academicController.getModules);
-router.get('/my-enrollments', protect, academicController.getMyEnrollments); // New Route
+router.get('/my-modules', protect, academicController.getStudentModules); // New Route for Combination-based modules
+router.get('/my-enrollments', protect, academicController.getMyEnrollments);
 router.post('/modules', protect, authorize('admin', 'superadmin'), academicController.createModule);
 
 router.post('/results', protect, authorize('admin', 'superadmin', 'editor'), academicController.addResult);
 router.put('/results/:resultId', protect, authorize('admin', 'superadmin', 'editor'), academicController.updateResult);
+
 router.get('/student/:studentId', protect, academicController.getStudentAcademicProfile);
+router.get('/history/:studentId', protect, academicController.getStudentHistory);
+router.get('/dashboard/:studentId', protect, academicController.getStudentDashboard);
+
+
 
 // Assessment Routes
 router.post('/assessments', protect, authorize('admin', 'superadmin', 'editor'), academicController.createAssessment);

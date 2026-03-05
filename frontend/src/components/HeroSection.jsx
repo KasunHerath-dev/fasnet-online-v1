@@ -25,7 +25,7 @@ export default function HeroSection({ firstName, student, gpa, credits, showDean
             <div className="relative z-10 w-full flex flex-col md:flex-row justify-between items-center gap-8">
                 <div>
                     <h1 className="text-4xl lg:text-5xl font-black text-text-main mb-4 tracking-tight">
-                        Welcome back,<br />
+                        <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-400">{firstName}</span>
                     </h1>
                     <div className="flex flex-wrap gap-2 mb-6">

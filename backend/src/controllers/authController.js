@@ -3,6 +3,9 @@ const User = require('../models/User');
 const Student = require('../models/Student');
 const { validatePassword } = require('../utils/validators');
 const logger = require('../utils/logger');
+const { createNotification } = require('./notificationController');
+const { sendOTPEmail, sendWelcomeEmail } = require('../utils/emailService');
+const bcrypt = require('bcryptjs');
 
 const generateToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE || '7d' });
@@ -70,6 +73,10 @@ const login = async (req, res) => {
       return res.status(401).json({ error: { message: 'Invalid credentials', code: 'INVALID_CREDENTIALS' } });
     }
 
+    if (user.isAccountLocked) {
+      return res.status(403).json({ error: { message: 'Account is not activated. Please click Sign Up / Activate Account to set your password.', code: 'ACCOUNT_LOCKED' } });
+    }
+
     const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
       logger.warn(`Login failed: Invalid password for user: ${username}`);
@@ -115,7 +122,18 @@ const login = async (req, res) => {
       });
     }
 
-    res.json({ message: 'Login successful', token, user: user.toJSON() });
+    const userJson = user.toJSON();
+    // Dynamic check for missing names - if student record exists but names are empty, force setup
+    const needsProfileSetup = user.needsProfileSetup || (user.studentRef && (!user.studentRef.firstName || !user.studentRef.lastName));
+
+    res.json({
+      message: 'Login successful',
+      token,
+      user: {
+        ...userJson,
+        needsProfileSetup
+      }
+    });
   } catch (error) {
     logger.error('Login error', { error: error.message });
     res.status(500).json({ error: { message: 'Login failed', code: 'LOGIN_FAILED', details: error.message } });
@@ -131,7 +149,15 @@ const getCurrentUser = async (req, res) => {
         select: 'code title credits'
       }
     });
-    res.json({ user: user.toJSON() });
+    const userJson = user.toJSON();
+    const needsProfileSetup = user.needsProfileSetup || (user.studentRef && (!user.studentRef.firstName || !user.studentRef.lastName));
+
+    res.json({
+      user: {
+        ...userJson,
+        needsProfileSetup
+      }
+    });
   } catch (error) {
     res.status(500).json({ error: { message: 'Failed to get user', code: 'GET_USER_FAILED' } });
   }
@@ -169,6 +195,15 @@ const changePassword = async (req, res) => {
     user.needsPasswordChange = false; // clear the flag
     await user.save();
 
+    // Fire notification (non-blocking — don't await so it doesn't affect response)
+    createNotification({
+      recipient: user._id,
+      type: 'password_changed',
+      title: 'Password Changed',
+      body: 'Your account password was successfully updated. If you did not do this, please contact support immediately.',
+      link: '/profile',
+    }).catch(() => { }); // Silently ignore notification errors
+
     logger.info('Password changed', { userId: user._id });
     res.json({ message: 'Password changed successfully' });
   } catch (error) {
@@ -203,10 +238,191 @@ const updatePreferences = async (req, res) => {
   }
 };
 
+const requestOTP = async (req, res) => {
+  try {
+    const { registrationNumber } = req.body;
+    if (!registrationNumber) {
+      return res.status(400).json({ error: { message: 'Registration number required', code: 'MISSING_FIELDS' } });
+    }
+
+    const regNum = registrationNumber.toLowerCase();
+    const user = await User.findOne({ username: regNum }).populate('studentRef');
+
+    if (!user) {
+      return res.status(404).json({ error: { message: 'Student account not found', code: 'USER_NOT_FOUND' } });
+    }
+
+    if (!user.isAccountLocked) {
+      return res.status(400).json({ error: { message: 'Account is already activated. Please login.', code: 'ALREADY_ACTIVE' } });
+    }
+
+    if (!user.studentRef || !user.studentRef.email) {
+      return res.status(400).json({ error: { message: 'No email address associated with your student profile. Please contact administration.', code: 'NO_EMAIL' } });
+    }
+
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Set expiry to 15 minutes
+    const expiresAt = new Date();
+    expiresAt.setMinutes(expiresAt.getMinutes() + 15);
+
+    // Hash OTP before storing
+    const salt = await bcrypt.genSalt(10);
+    const hashedOtp = await bcrypt.hash(otp, salt);
+
+    user.otp = hashedOtp;
+    user.otpExpiresAt = expiresAt;
+    await user.save();
+
+    // Send email
+    await sendOTPEmail(user.studentRef.email, otp, user.studentRef.firstName || user.studentRef.fullName);
+
+    // Return safe data (mask the email)
+    const email = user.studentRef.email;
+    const maskedEmail = email.replace(/(.{2})(.*)(?=@)/, (match, prefix, middle) => prefix + '*'.repeat(middle.length));
+
+    res.json({ message: `Activation code sent to ${maskedEmail}`, email: maskedEmail });
+  } catch (error) {
+    logger.error('Request OTP error', { error: error.message });
+    res.status(500).json({ error: { message: 'Failed to request OTP', code: 'OTP_REQUEST_FAILED' } });
+  }
+};
+
+const verifyOTP = async (req, res) => {
+  try {
+    const { registrationNumber, otp } = req.body;
+    if (!registrationNumber || !otp) {
+      return res.status(400).json({ error: { message: 'Registration number and OTP required', code: 'MISSING_FIELDS' } });
+    }
+
+    const user = await User.findOne({ username: registrationNumber.toLowerCase() });
+
+    if (!user) return res.status(404).json({ error: { message: 'Student account not found', code: 'USER_NOT_FOUND' } });
+    if (!user.isAccountLocked) return res.status(400).json({ error: { message: 'Account is already activated', code: 'ALREADY_ACTIVE' } });
+
+    if (!user.otp || !user.otpExpiresAt || user.otpExpiresAt < new Date()) {
+      return res.status(400).json({ error: { message: 'OTP is expired or invalid. Please request a new one.', code: 'OTP_EXPIRED' } });
+    }
+
+    const isValid = await bcrypt.compare(otp.toString(), user.otp);
+    if (!isValid) {
+      return res.status(400).json({ error: { message: 'Invalid activation code', code: 'INVALID_OTP' } });
+    }
+
+    res.json({ message: 'OTP verified successfully. Please set a new password.' });
+  } catch (error) {
+    logger.error('Verify OTP error', { error: error.message });
+    res.status(500).json({ error: { message: 'Failed to verify OTP', code: 'OTP_VERIFY_FAILED' } });
+  }
+};
+
+const setupPassword = async (req, res) => {
+  try {
+    const { registrationNumber, otp, newPassword } = req.body;
+
+    if (!registrationNumber || !otp || !newPassword) {
+      return res.status(400).json({ error: { message: 'All fields are required', code: 'MISSING_FIELDS' } });
+    }
+
+    if (!validatePassword(newPassword)) {
+      return res.status(400).json({
+        error: {
+          message: 'Password must be at least 6 chars, contain 1 uppercase and 1 number',
+          code: 'WEAK_PASSWORD',
+        },
+      });
+    }
+
+    const user = await User.findOne({ username: registrationNumber.toLowerCase() }).populate('studentRef');
+    if (!user) return res.status(404).json({ error: { message: 'Student account not found', code: 'USER_NOT_FOUND' } });
+    if (!user.isAccountLocked) return res.status(400).json({ error: { message: 'Account is already activated', code: 'ALREADY_ACTIVE' } });
+
+    if (!user.otp || !user.otpExpiresAt || user.otpExpiresAt < new Date()) {
+      return res.status(400).json({ error: { message: 'OTP is expired or invalid. Please request a new one.', code: 'OTP_EXPIRED' } });
+    }
+
+    const isValid = await bcrypt.compare(otp.toString(), user.otp);
+    if (!isValid) {
+      return res.status(400).json({ error: { message: 'Invalid activation code', code: 'INVALID_OTP' } });
+    }
+
+    // Success! Update password and unlock account
+    user.passwordHash = newPassword; // Pre-save hook will hash it
+    user.isAccountLocked = false;
+    user.otp = null;
+    user.otpExpiresAt = null;
+    user.needsPasswordChange = false;
+    user.needsProfileSetup = true; // Trigger first-time profile setup on next login
+
+    await user.save();
+
+    // Send Welcome Email
+    if (user.studentRef && user.studentRef.email) {
+      await sendWelcomeEmail(user.studentRef.email, user.studentRef.firstName || user.studentRef.fullName);
+    }
+
+    logger.info('Student account activated and password set', { userId: user._id, username: user.username });
+
+    res.json({ message: 'Account successfully activated! You can now log in.' });
+  } catch (error) {
+    logger.error('Setup password error', { error: error.message });
+    res.status(500).json({ error: { message: 'Failed to set up password', code: 'SETUP_PASSWORD_FAILED' } });
+  }
+};
+
+const completeProfileSetup = async (req, res) => {
+  try {
+    const { fullName, nameWithInitials, firstName, lastName } = req.body;
+
+    if (!fullName || !nameWithInitials) {
+      return res.status(400).json({ error: { message: 'Full name and Name with Initials are required', code: 'MISSING_FIELDS' } });
+    }
+
+    const userId = req.user.userId || req.user._id;
+    const user = await User.findById(userId).populate('studentRef');
+    if (!user) return res.status(404).json({ error: { message: 'User not found', code: 'USER_NOT_FOUND' } });
+
+    if (!user.studentRef) {
+      return res.status(400).json({ error: { message: 'Student profile not found for this user', code: 'STUDENT_NOT_FOUND' } });
+    }
+
+    const student = user.studentRef;
+    student.fullName = fullName.trim();
+    student.nameWithInitials = nameWithInitials.trim();
+
+    // Optional but good to have if provided
+    if (firstName) student.firstName = firstName.trim();
+    if (lastName) student.lastName = lastName.trim();
+
+    await student.save();
+
+    user.needsProfileSetup = false;
+    await user.save();
+
+    logger.info('Student profile setup completed', { userId: user._id, firstName, lastName });
+
+    res.json({
+      message: 'Profile setup completed successfully!',
+      user: {
+        ...user.toJSON(),
+        studentRef: student
+      }
+    });
+  } catch (error) {
+    logger.error('Profile setup error', { error: error.message });
+    res.status(500).json({ error: { message: 'Failed to complete profile setup', code: 'SETUP_FAILED' } });
+  }
+};
+
 module.exports = {
   register,
   login,
   getCurrentUser,
   changePassword,
   updatePreferences,
+  requestOTP,
+  verifyOTP,
+  setupPassword,
+  completeProfileSetup,
 };

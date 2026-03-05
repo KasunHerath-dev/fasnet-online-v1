@@ -7,10 +7,50 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#3B82F6',
+        primary: '#fa5f15',
         secondary: '#10B981',
         danger: '#EF4444',
         warning: '#F59E0B',
+        // User Custom Palette (Overriding Slate)
+        moccaccino: {
+          50: '#fff5ed',
+          100: '#ffe9d5',
+          200: '#fed0aa',
+          300: '#fdae74',
+          400: '#fb813c',
+          500: '#fa5f15',
+          600: '#eb440b',
+          700: '#c2310c',
+          800: '#9a2812',
+          900: '#691e0f',
+          950: '#430f07',
+        },
+        black: {
+          50: '#f6f6f6',
+          100: '#e7e7e7',
+          200: '#d1d1d1',
+          300: '#b0b0b0',
+          400: '#888888',
+          500: '#6d6d6d',
+          600: '#5d5d5d',
+          700: '#4f4f4f',
+          800: '#454545',
+          900: '#3d3d3d',
+          950: '#000000',
+        },
+        slate: {
+          50: '#f6f7f9',
+          100: '#ebeef3',
+          200: '#d4dae3',
+          300: '#adbacc',
+          400: '#8195af',
+          500: '#617796',
+          600: '#526684',
+          700: '#3f4d65',
+          800: '#374355',
+          900: '#313a49',
+          950: '#212630',
+        },
         // Monochrome Design System
         // Semantic Theme Colors
         background: 'var(--bg-base)',
@@ -65,6 +105,20 @@ module.exports = {
             transform: "translate(0px, 0px) scale(1)",
           },
         },
+        "fade-in-up": {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(20px)"
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)"
+          }
+        }
+      },
+      animation: {
+        blob: "blob 7s infinite",
+        "fade-in-up": "fade-in-up 0.5s ease-out forwards",
       },
     },
   },

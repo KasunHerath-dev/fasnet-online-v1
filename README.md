@@ -1,51 +1,62 @@
 # FASNet Online v1.0 🎓
+> **Faculty of Applied Sciences - Student Ecosystem & Command Center**
 
-**Faculty of Applied Sciences - Student Management & Resource System**
+A state-of-the-art, premium student management portal designed for the Faculty of Applied Sciences. Built with the **MERN Stack** (MongoDB, Express, React, Node.js), featuring high-fidelity UI/UX, precision analytics, and seamless resource management.
 
-A comprehensive web application for managing student profiles, academic progression, and faculty resources. Built with a modern **MERN Stack** (MongoDB, Express, React, Node.js).
+![FASNet Hero - Clean & Modern](https://img.shields.io/badge/Design-Learnify-ff5734?style=for-the-badge)
+![FASNet Tech - MERN Stack](https://img.shields.io/badge/Tech-MERN_Stack-be94f5?style=for-the-badge)
+![FASNet Status - Active](https://img.shields.io/badge/System-Active-059669?style=for-the-badge)
+
+## ✨ New Features (2026 Edition)
+
+- **Luxury Leanify Theme**: A complete UI overhaul with vibrant accents (Accent Orange, Warm Yellow, Lavender) and the `Kodchasan` brand typeface.
+- **Precision Analytics**: Visualize your academic growth with real-time GPA tracking and level-based performance metrics.
+- **Student Activation Flow**: Secure OTP-based account initiation and profile setup.
+- **Resources On-Demand**: Instant access to course materials and essential faculty documents.
+- **Smart Notifications**: Never miss an update on exams, news, or academic schedules.
 
 ## 🚀 Tech Stack
 
-*   **Frontend**: React (Vite), TailwindCSS, Framer Motion (Animations), Axios.
+*   **Frontend**: React (Vite), TailwindCSS, Framer Motion, Lucide Icons, Recharts.
 *   **Backend**: Node.js, Express.js.
 *   **Database**: MongoDB Atlas.
-*   **Authentication**: JWT (JSON Web Tokens).
-*   **Hosting**: Vercel (Frontend & Backend).
+*   **Authentication**: Secure JWT (JSON Web Tokens) with OTP verification.
+*   **Hosting**: Vercel (Optimized for Serverless).
 
 ## 📂 Project Structure
 
-*   `/frontend` - React User Interface.
-*   `/backend` - API Server & Database Logic.
+```bash
+├── frontend/         # Premium React Interface (Learnify UI)
+├── backend/          # Secure Express API Server
+└── docs/             # Technical documentation & WUSL guidelines
+```
 
-## 🛠️ Local Development
+## 🛠️ Local Installation
 
 1.  **Clone the repository**:
     ```bash
-    git clone <repo-url>
+    git clone https://github.com/KasunHerath-dev/fasnet-online-v1.git
     ```
 
-2.  **Install Dependencies**:
+2.  **Configure Environment**:
+    Create `.env` files in both `/frontend` and `/backend` based on the provided `.env.example` templates.
+
+3.  **Install & Start**:
     ```bash
-    # Install backend deps
+    # Setting up the Backend
     cd backend
     npm install
+    npm run dev
 
-    # Install frontend deps
+    # Setting up the Frontend
     cd ../frontend
     npm install
-    ```
-
-3.  **Run Locally**:
-    ```bash
-    # Backend (Port 5000)
-    cd backend
-    npm run dev
-
-    # Frontend (Port 5173)
-    cd frontend
     npm run dev
     ```
 
-## 🔐 Admin Setup
+## 🔐 Security & Identity
 
-The system requires an initial Admin user to be seeded into the database. Check `VERCEL_GUIDE.md` for production setup instructions.
+The system uses **FASNET Secure Auth** for all student and admin interactions. Initial admin setup is handled via secure seeding scripts.
+
+---
+© 2026 FASNET.ONLINE • POWERED BY LEARNIFY

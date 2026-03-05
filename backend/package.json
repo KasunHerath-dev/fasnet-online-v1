@@ -32,13 +32,14 @@
     "mongoose": "^9.0.0",
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
+    "nodemailer": "^8.0.1",
     "socket.io": "^4.8.1",
     "uuid": "^13.0.0",
     "xlsx": "^0.18.5",
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
-    "dotenv": "^17.2.3",
+    "dotenv": "^17.3.1",
     "eslint": "^9.39.1",
     "nodemon": "^3.1.11"
   }

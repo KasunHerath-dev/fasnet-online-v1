@@ -8,62 +8,184 @@
 
 @layer base {
   :root {
-    /* LIGHT THEME (Clean & Crisp) */
-    --bg-base: #F8FAFC;
-    /* Slate-50 */
+    /* Learnify Theme Variables */
+    --bg-base: #f7f7f5;
     --bg-surface: #FFFFFF;
-    /* White */
-    --bg-surface-glass: rgba(255, 255, 255, 0.7);
-    --bg-highlight: #F1F5F9;
-    /* Slate-100 */
+    --bg-dark: #151313;
 
-    --text-main: #0F172A;
-    /* Slate-900 */
+    --text-main: #151313;
     --text-muted: #64748B;
-    /* Slate-500 */
     --text-inverted: #FFFFFF;
 
-    --border-color: #E2E8F0;
-    /* Slate-200 */
-    --border-glass: rgba(15, 23, 42, 0.05);
+    --primary: #ff5734;
+    /* Accent Orange */
+    --primary-glow: rgba(255, 87, 52, 0.2);
 
-    --primary: #E11D48;
-    /* Rose-600 */
-    --primary-glow: rgba(225, 29, 72, 0.2);
+    --accent-yellow: #fccc42;
+    --accent-purple: #be94f5;
+    --accent-blue: #94d2f5;
+    /* Extracted approximate light blue from design */
+
+    --border-color: #E2E8F0;
+    --border-glass: rgba(21, 19, 19, 0.05);
 
     --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
 
+  /* NOTE: Dark theme variables are kept for compatibility but the Learnify spec only explicitly mentions the light theme canvas right now. */
   .dark {
-    /* DARK THEME (Pro Glass - Matches current hardcoded style) */
     --bg-base: #0F0F0F;
-    /* Deep Black */
-    --bg-surface: #121212;
-    /* Off-Black */
-    --bg-surface-glass: rgba(18, 18, 18, 0.8);
-    --bg-highlight: #1A1A1A;
+    --bg-surface: #1c1c1c;
+    --bg-dark: #151313;
 
     --text-main: #FFFFFF;
     --text-muted: #94A3B8;
-    /* Slate-400 */
-    --text-inverted: #0F172A;
+    --text-inverted: #151313;
 
-    --border-color: #262626;
-    /* Neutral-800 */
-    --border-glass: rgba(255, 255, 255, 0.08);
+    --primary: #ff5734;
+    --primary-glow: rgba(255, 87, 52, 0.3);
 
-    --primary: #F43F5E;
-    /* Rose-500 */
-    --primary-glow: rgba(244, 63, 94, 0.5);
+    --accent-yellow: #fccc42;
+    --accent-purple: #be94f5;
+    --accent-blue: #85bddc;
 
-    --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    --border-color: #2a2a2a;
+    --border-glass: rgba(255, 255, 255, 0.06);
+
+    --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
   }
 }
 
-body {
-  @apply bg-background text-text-main min-h-screen transition-colors duration-300;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+/* ── GLOBAL DARK MODE SURFACE OVERRIDES ──────────────────────
+   Flip every inline bg-white, bg-slate-*, border, and text
+   surface automatically when .dark is on <html>.             */
+.dark body {
+  background-color: #151313;
+  color: #ffffff;
 }
+
+/* White cards → dark surface */
+.dark .bg-white {
+  background-color: #1c1c1c !important;
+  color: #ffffff;
+}
+
+/* Light grey surfaces → slightly lighter dark */
+.dark .bg-slate-50,
+.dark .bg-slate-100 {
+  background-color: #242424 !important;
+}
+
+/* Borders */
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-slate-200\/70 {
+  border-color: #2a2a2a !important;
+}
+
+/* Text colors */
+.dark .text-\[\#151313\] {
+  color: #ffffff !important;
+}
+
+.dark .text-slate-800,
+.dark .text-slate-900 {
+  color: #f0f0f0 !important;
+}
+
+.dark .text-slate-700 {
+  color: #d0d0d0 !important;
+}
+
+.dark .text-slate-600 {
+  color: #b0b0b0 !important;
+}
+
+.dark .text-slate-500 {
+  color: #909090 !important;
+}
+
+.dark .text-slate-400 {
+  color: #707070 !important;
+}
+
+/* Inputs */
+.dark input[type="text"],
+.dark input[type="email"],
+.dark input[type="password"],
+.dark textarea {
+  background-color: #242424 !important;
+  border-color: #333333 !important;
+  color: #ffffff !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #555555 !important;
+}
+
+/* Learnify colored info pills — keep their colors but darken slightly */
+.dark .bg-\[\#bae6fd\] {
+  background-color: rgba(186, 230, 253, 0.15) !important;
+}
+
+.dark .bg-\[\#be94f5\]\/30 {
+  background-color: rgba(190, 148, 245, 0.18) !important;
+}
+
+.dark .bg-\[\#fccc42\]\/40 {
+  background-color: rgba(252, 204, 66, 0.2) !important;
+}
+
+.dark .bg-emerald-100 {
+  background-color: rgba(167, 243, 208, 0.15) !important;
+}
+
+.dark .bg-\[\#ff5734\]\/10 {
+  background-color: rgba(255, 87, 52, 0.15) !important;
+}
+
+/* Navbar search pill */
+.dark .bg-white.border.border-slate-200.rounded-full {
+  background-color: #242424 !important;
+  border-color: #333333 !important;
+  color: #ffffff !important;
+}
+
+.dark .border-slate-200.rounded-full input {
+  color: #ffffff !important;
+}
+
+/* Dropdown menus from Dropdown.jsx */
+.dark .shadow-xl.bg-white.rounded-2xl {
+  background-color: #1c1c1c !important;
+  border-color: #2a2a2a !important;
+  color: #ffffff !important;
+}
+
+/* Stat/summary pills that should stay using brand colours */
+.dark .bg-\[\#fccc42\] {
+  background-color: #fccc42 !important;
+}
+
+.dark .bg-\[\#ff5734\] {
+  background-color: #ff5734 !important;
+}
+
+.dark .bg-\[\#151313\] {
+  background-color: #1a1a1a !important;
+}
+
+.dark .bg-\[\#be94f5\] {
+  background-color: #be94f5 !important;
+}
+
+
+body {
+  @apply bg-[#f7f7f5] text-text-main min-h-screen transition-colors duration-300;
+  font-family: 'Kodchasan', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
 
 /* ========================================
    BUTTONS - Modern with hover effects
@@ -75,8 +197,8 @@ body {
 }
 
 .btn-primary {
-  @apply bg-gradient-to-r from-indigo-600 to-purple-600 text-white;
-  @apply hover:from-indigo-700 hover:to-purple-700;
+  @apply bg-gradient-to-r from-moccaccino-500 to-moccaccino-600 text-white;
+  @apply hover:from-moccaccino-600 hover:to-moccaccino-700;
   @apply focus:ring-indigo-500 shadow-md hover:shadow-lg;
 }
 
@@ -160,7 +282,7 @@ select.input {
 }
 
 .table thead {
-  @apply bg-gradient-to-r from-indigo-50 to-purple-50;
+  @apply bg-gradient-to-r from-moccaccino-50 to-orange-50;
 }
 
 .table th {
@@ -214,7 +336,7 @@ select.input {
 }
 
 .sidebar-link.active {
-  @apply bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg;
+  @apply bg-gradient-to-r from-moccaccino-500 to-moccaccino-600 text-white shadow-lg;
 }
 
 .topnav {
@@ -282,7 +404,7 @@ select.input {
    MODALS
    ======================================== */
 .modal-overlay {
-  @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50;
+  @apply fixed inset-0 bg-black-950/50 backdrop-blur-sm z-50;
   @apply flex items-center justify-center p-4;
 }
 
@@ -377,89 +499,21 @@ select.input {
    SCROLLBAR STYLING
    ======================================== */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-100 rounded-full;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gradient-to-b from-indigo-400 to-purple-400 rounded-full;
+  @apply bg-slate-300/50 rounded-full;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply from-indigo-500 to-purple-500;
+  @apply bg-slate-400/80;
 }
 
-/* ========================================
-   QUICK ACTION BUTTONS
-   ======================================== */
-.quick-action {
-  @apply flex items-center justify-center p-5 rounded-2xl;
-  @apply font-semibold transition-all duration-300;
-  @apply hover:-translate-y-1 hover:shadow-lg;
-}
-
-.quick-action.blue {
-  @apply bg-gradient-to-br from-blue-50 to-indigo-100 text-indigo-700;
-  @apply hover:from-blue-100 hover:to-indigo-200;
-}
-
-.quick-action.green {
-  @apply bg-gradient-to-br from-green-50 to-emerald-100 text-emerald-700;
-  @apply hover:from-green-100 hover:to-emerald-200;
-}
-
-.quick-action.purple {
-  @apply bg-gradient-to-br from-purple-50 to-violet-100 text-violet-700;
-  @apply hover:from-purple-100 hover:to-violet-200;
-}
-
-/* ========================================
-   PAGE TITLES
-   ======================================== */
-.page-title {
-  @apply text-3xl md:text-4xl font-extrabold;
-  @apply bg-gradient-to-r from-gray-900 via-indigo-900 to-purple-900 bg-clip-text text-transparent;
-}
-
-.page-subtitle {
-  @apply text-gray-500 text-sm md:text-base mt-1;
-}
-
-/* ========================================
-   EMPTY STATES
-   ======================================== */
-.empty-state {
-  @apply text-center py-16 px-6;
-}
-
-.empty-state-icon {
-  @apply text-6xl mb-4;
-}
-
-.empty-state-title {
-  @apply text-xl font-bold text-gray-700 mb-2;
-}
-
-.empty-state-text {
-  @apply text-gray-500;
-}
-
-/* ========================================
-   DANGER ZONE
-   ======================================== */
-.danger-zone {
-  @apply bg-gradient-to-br from-red-50 to-pink-50 border-2 border-red-200/50;
-  @apply rounded-2xl p-6;
-}
-
-.danger-zone-title {
-  @apply text-lg font-bold text-red-900 mb-2;
-}
-
-.danger-zone-text {
-  @apply text-sm text-red-800 mb-4;
-}

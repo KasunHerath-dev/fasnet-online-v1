@@ -22,6 +22,10 @@ const studentSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    nameWithInitials: {
+      type: String,
+      trim: true,
+    },
     nicNumber: {
       type: String,
       trim: true,

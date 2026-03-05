@@ -1,4 +1,12 @@
-require('dotenv').config({ path: require('path').resolve(__dirname, '../../secure_config/.env') });
+// Try loading from local .env first, then fallback to secure config
+const path = require('path');
+const fs = require('fs');
+const localEnvPath = path.resolve(__dirname, '../.env');
+if (fs.existsSync(localEnvPath)) {
+    require('dotenv').config({ path: localEnvPath });
+} else {
+    require('dotenv').config({ path: path.resolve(__dirname, '../../secure_config/.env') });
+}
 const mongoose = require('mongoose');
 const User = require('../src/models/User');
 
@@ -22,7 +30,7 @@ const seedAdmin = async () => {
 
         const admin = new User({
             username: 'admin',
-            passwordHash: 'Fas@2024!', // Default strong password
+            passwordHash: process.env.ADMIN_INITIAL_PASSWORD || 'Fas@2026!', // Use env or secure default
             roles: ['superadmin'],
             permissions: [
                 'view_students',

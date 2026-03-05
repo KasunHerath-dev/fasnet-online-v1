@@ -57,6 +57,9 @@ export const authService = {
   updateUser: (id, userData) => api.put(`/users/${id}`, userData),
   deleteUser: (id) => api.delete(`/users/${id}`),
 
+  completeProfileSetup: (firstName, lastName, fullName, nameWithInitials) =>
+    api.post('/auth/complete-profile-setup', { firstName, lastName, fullName, nameWithInitials }),
+
   getOnlineUsers: () => api.get('/users/online'),
   lockAllUsers: () => api.post('/users/lock-all'),
   unlockAllUsers: () => api.post('/users/unlock-all'),
@@ -64,6 +67,9 @@ export const authService = {
 
 export const studentService = {
   getAll: (params = {}) =>
+    api.get('/students', { params }),
+
+  getAllStudents: (params = {}) =>
     api.get('/students', { params }),
 
   getDemographics: (params = {}) =>
@@ -147,9 +153,22 @@ export const batchYearService = {
     api.delete(`/batch-years/${id}`),
 }
 
+const cache = {
+  dashboard: {},
+  profile: {},
+  modules: null
+};
+
 export const academicService = {
   getModules: () =>
     api.get('/academic/modules'),
+
+  getStudentModules: async () => {
+    if (cache.modules) return Promise.resolve(cache.modules);
+    const res = await api.get('/academic/my-modules');
+    cache.modules = res;
+    return res;
+  },
 
   createModule: (data) =>
     api.post('/academic/modules', data),
@@ -160,8 +179,32 @@ export const academicService = {
   updateResult: (id, data) =>
     api.put(`/academic/results/${id}`, data),
 
-  getStudentProfile: (studentId) =>
-    api.get(`/academic/student/${studentId}`),
+  getResources: (moduleId) =>
+    api.get(`/resources/module/${moduleId}`),
+
+  streamResource: (id) =>
+    `/api/v1/resources/stream/${id}`,
+
+  getStudentProfile: async (studentId) => {
+    if (cache.profile[studentId]) return Promise.resolve(cache.profile[studentId]);
+    const res = await api.get(`/academic/student/${studentId}`);
+    cache.profile[studentId] = res;
+    return res;
+  },
+
+  getStudentHistory: (studentId) =>
+    api.get(`/academic/history/${studentId}`),
+
+  getStudentDashboard: async (studentId) => {
+    // Basic in-memory cache to prevent redundant fetches during SPA navigation
+    if (cache.dashboard[studentId]) {
+      return Promise.resolve(cache.dashboard[studentId]);
+    }
+    const response = await api.get(`/academic/dashboard/${studentId}`);
+    cache.dashboard[studentId] = response;
+    return response;
+  },
+
 
   // Assessment System
   createAssessment: (data) =>
@@ -206,6 +249,7 @@ export const resourceService = {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
   getByModule: (moduleId) => api.get(`/resources/module/${moduleId}`),
+  getBulkResources: (moduleIds) => api.post('/resources/my-resources', { moduleIds }),
   delete: (id) => api.delete(`/resources/${id}`),
   // Stream URL is /api/v1/resources/stream/:id (handled via direct link)
 }

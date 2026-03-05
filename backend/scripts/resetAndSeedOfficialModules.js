@@ -1,14 +1,14 @@
-require('dotenv').config({ path: require('path').resolve(__dirname, '../../secure_config/.env') });
+require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const mongoose = require('mongoose');
 const Module = require('../src/models/Module');
 
 const resetAndSeedOfficialModules = async () => {
     try {
-        if (!process.env.MONGODB_URI) {
-            console.error('MONGODB_URI is undefined.');
+        if (!process.env.MONGO_URI) {
+            console.error('MONGO_URI is undefined.');
             process.exit(1);
         }
-        await mongoose.connect(process.env.MONGODB_URI);
+        await mongoose.connect(process.env.MONGO_URI);
         console.log('✅ Connected to MongoDB');
 
         // Step 1: Delete all existing modules

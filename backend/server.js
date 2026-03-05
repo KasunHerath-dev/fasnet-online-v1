@@ -1,3 +1,10 @@
+// Mute NodeJS Deprecation Warning for legacy packages using util._extend
+const originalEmitWarning = process.emitWarning;
+process.emitWarning = function (warning, type, code, ctor) {
+  if (code === 'DEP0060') return; // Silence util._extend
+  originalEmitWarning.call(process, warning, type, code, ctor);
+};
+
 require('dotenv').config(); // Standard config, relies on Vercel Env Vars in production
 const express = require('express');
 const mongoose = require('mongoose');
@@ -37,6 +44,7 @@ const connectDB = async () => {
 
   try {
     const uri = process.env.MONGO_URI || 'mongodb://localhost:27017/fas_db';
+    // console.log('Attempting to connect to MongoDB URI:', uri.includes('@') ? uri.split('@')[1] : uri); // Debug log removed
 
     // Create new connection if none exists or previous one died
     // Mongoose 6+ buffers by default, but explicit connect is safer
@@ -109,11 +117,19 @@ const allowedOrigins = [
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
+
+    // Allow standard origins
     if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+      return callback(null, true);
     }
+
+    // Allow local network IPs (192.168.x.x, 10.x.x.x, 172.16-31.x.x)
+    const localIpPattern = /^http:\/\/(192\.168\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3})(:\d+)?$/;
+    if (localIpPattern.test(origin)) {
+      return callback(null, true);
+    }
+
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
@@ -137,6 +153,10 @@ app.use('/api/v1/batch-years', require('./src/routes/batchYearRoutes'));
 app.use('/api/v1/assessments', require('./src/routes/assessmentRoutes'));
 app.use('/api/v1/system', require('./src/routes/systemRoutes'));
 app.use('/api/v1/resources', require('./src/routes/resourceRoutes'));
+app.use('/api/v1/settings', require('./src/routes/settingsRoutes'));
+app.use('/api/v1/notifications', require('./src/routes/notificationRoutes'));
+app.use('/api/v1/notices', require('./src/routes/noticeRoutes'));
+app.use('/uploads', express.static(require('path').join(__dirname, 'uploads')));
 
 // Health Check
 app.get('/api/v1/health', (req, res) => {
@@ -184,7 +204,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const startServer = () => {
-  server.listen(PORT, () => {
+  server.listen(PORT, '0.0.0.0', () => {
     logger.info(`Server running on port ${PORT}`, { env: process.env.NODE_ENV });
   });
 };

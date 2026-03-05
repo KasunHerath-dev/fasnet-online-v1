@@ -18,6 +18,43 @@ const getGradeDetails = (marks) => {
     return { grade: 'E', gp: 0.0 };
 };
 
+// Auto-Progression Helper: Evaluates earned credits and promotes student level/semester
+const evaluateStudentProgression = async (studentId) => {
+    try {
+        const results = await Result.find({ student: studentId }).populate('module');
+        let earnedCredits = 0;
+
+        results.forEach(r => {
+            // Only count passing grades (exclude I, F, E, N for progression triggers)
+            if (r.module && r.grade && !['I', 'F', 'E', 'N'].includes(r.grade.toUpperCase())) {
+                earnedCredits += r.module.credits;
+            }
+        });
+
+        // WUSL Threshold Estimation (Assuming ~15 credits per semester, ~30 per level)
+        let newLevel = 1;
+        let newSemester = 1;
+
+        if (earnedCredits >= 103) { newLevel = 4; newSemester = 2; }
+        else if (earnedCredits >= 88) { newLevel = 4; newSemester = 1; }
+        else if (earnedCredits >= 73) { newLevel = 3; newSemester = 2; }
+        else if (earnedCredits >= 58) { newLevel = 3; newSemester = 1; }
+        else if (earnedCredits >= 43) { newLevel = 2; newSemester = 2; }
+        else if (earnedCredits >= 28) { newLevel = 2; newSemester = 1; }
+        else if (earnedCredits >= 14) { newLevel = 1; newSemester = 2; }
+
+        // Update the Student record silently
+        await Student.findByIdAndUpdate(studentId, {
+            level: newLevel,
+            currentSemester: newSemester,
+            totalCreditsEarned: earnedCredits
+        });
+
+    } catch (error) {
+        console.error("Auto-progression evaluation failed:", error);
+    }
+};
+
 // Get all modules
 exports.getModules = async (req, res) => {
     try {
@@ -76,6 +113,9 @@ exports.addResult = async (req, res) => {
         // Populate module details for response
         await result.populate('module');
 
+        // Trigger Auto-Progression evaluation silently
+        await evaluateStudentProgression(studentId);
+
         res.status(201).json(result);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -117,6 +157,9 @@ exports.updateResult = async (req, res) => {
         await result.save();
         await result.populate('module'); // Return populated for UI update
 
+        // Trigger Auto-Progression evaluation silently
+        await evaluateStudentProgression(result.student);
+
         res.json(result);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -132,6 +175,8 @@ exports.getStudentAcademicProfile = async (req, res) => {
             .populate('module')
             .sort({ 'module.level': 1, 'module.code': 1 });
 
+        const validResults = results.filter(r => r.module); // Filter out orphaned results
+
         // Calculate GPAs
         const calculateGPA = (moduleResults) => {
             if (!moduleResults.length) return 0;
@@ -140,10 +185,10 @@ exports.getStudentAcademicProfile = async (req, res) => {
             return totalCredits > 0 ? (totalWeightedGP / totalCredits).toFixed(2) : 0;
         };
 
-        const level1Results = results.filter(r => r.module.level === 1);
-        const level2Results = results.filter(r => r.module.level === 2);
-        const level3Results = results.filter(r => r.module.level === 3);
-        const level4Results = results.filter(r => r.module.level === 4);
+        const level1Results = validResults.filter(r => r.module.level === 1);
+        const level2Results = validResults.filter(r => r.module.level === 2);
+        const level3Results = validResults.filter(r => r.module.level === 3);
+        const level4Results = validResults.filter(r => r.module.level === 4);
 
         // Honours Classification Logic
         const getHonoursClass = (gpa, credits, degreeProgramme) => {
@@ -357,6 +402,9 @@ exports.calculateFinalGrade = async (req, res) => {
                 { upsert: true, new: true }
             );
             finalResults.push(finalResult);
+
+            // Trigger progression evaluation for this student
+            await evaluateStudentProgression(student._id);
         }
 
         res.json({ message: 'Final grades calculated', count: finalResults.length });
@@ -709,7 +757,7 @@ exports.unlockCombination = async (req, res) => {
     }
 };
 
-// Bulk Update Combinations (Excel)
+// Bulk Update Combinations (Excel/CSV)
 exports.bulkUpdateCombination = async (req, res) => {
     try {
         const { batchYear, combination } = req.body;
@@ -725,26 +773,66 @@ exports.bulkUpdateCombination = async (req, res) => {
             return res.status(400).json({ message: 'No file uploaded' });
         }
 
-        // Parse Excel
         const XLSX = require('xlsx');
-        const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
-        const sheetName = workbook.SheetNames[0];
-        const sheet = workbook.Sheets[sheetName];
-        const data = XLSX.utils.sheet_to_json(sheet);
+
+        let data = [];
+        try {
+            // Read the buffer
+            const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+
+            // Parse as objects (not 2D array) to handle headers dynamically
+            data = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+        } catch (parseError) {
+            console.error("File Parse Error:", parseError);
+            return res.status(400).json({ message: 'Failed to parse file. Ensure it is a valid CSV or Excel file.' });
+        }
+
+        if (!data || data.length === 0) {
+            return res.status(400).json({ message: 'The uploaded file is empty or unreadable.' });
+        }
 
         let updatedCount = 0;
         let errors = [];
 
-        for (const row of data) {
-            // Flexible column matching for Registration Number
-            const regNum = row['Registration Number'] || row['regNumber'] || row['Reg No'] || row['Registration No'];
+        for (let i = 0; i < data.length; i++) {
+            const row = data[i];
 
-            if (!regNum) continue;
+            // Aggressive Header Matching for Registration Number
+            let regNumStr = '';
+            for (const key of Object.keys(row)) {
+                // Clean the key (header name) from the file
+                const cleanKey = String(key).trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+
+                // Look for common variations of Registration Number
+                if (
+                    cleanKey.includes('reg') ||
+                    cleanKey.includes('id') ||
+                    cleanKey.includes('index') ||
+                    cleanKey.includes('student')
+                ) {
+                    regNumStr = String(row[key]).trim(); // Extract value
+                    break;
+                }
+            }
+
+            // Fallback: If no header matches, assume it's a file without headers and the reg num is the first key's value
+            if (!regNumStr) {
+                const firstKey = Object.keys(row)[0];
+                regNumStr = String(row[firstKey]).trim();
+            }
+
+            if (!regNumStr || regNumStr.length < 4) {
+                errors.push({ regNum: `Row ${i + 2}`, message: 'Invalid or missing Registration Number in file' });
+                continue;
+            }
 
             try {
+                // Find student by Registration Number AND Batch
                 const student = await Student.findOne({
-                    registrationNumber: String(regNum).toUpperCase(),
-                    batchYear: batchYear
+                    registrationNumber: new RegExp('^' + regNumStr + '$', 'i'), // Case-insensitive exact match
+                    batchYear: new RegExp(batchYear, 'i') // Flexible matching (e.g., "2020" matches "2020/2021")
                 });
 
                 if (student) {
@@ -753,21 +841,26 @@ exports.bulkUpdateCombination = async (req, res) => {
                     await student.save();
                     updatedCount++;
                 } else {
-                    errors.push({ regNum, message: 'Student not found in this batch' });
+                    console.warn(`Bulk Update: Student ${regNumStr} not found in batch matching "${batchYear}"`);
+                    errors.push({ regNum: regNumStr, message: `Student ${regNumStr} not found in batch "${batchYear}"` });
                 }
             } catch (err) {
-                errors.push({ regNum, message: err.message });
+                console.error(`DB Error for ${regNumStr}:`, err);
+                errors.push({ regNum: regNumStr, message: 'Database lookup error' });
             }
         }
 
         res.json({
+            success: true,
             message: 'Bulk update completed',
-            updated: updatedCount,
+            updatedCount: updatedCount,
+            totalProcessed: data.length,
             errors: errors
         });
 
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error("Bulk Update Crash:", error);
+        res.status(500).json({ message: error.message || 'An unexpected error occurred during bulk update' });
     }
 };
 
@@ -853,3 +946,249 @@ exports.getMyEnrollments = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+// Get Modules for Current Student (Specific to Combination)
+exports.getStudentModules = async (req, res) => {
+    try {
+        const studentId = req.user.studentRef;
+        if (!studentId) {
+            return res.status(400).json({ message: 'No student profile linked' });
+        }
+
+        const Student = require('../models/Student');
+        const student = await Student.findById(studentId);
+        if (!student) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+
+        const combination = student.combination;
+
+        // 1. Try to get Combination Definitions from SystemSettings
+        const SystemSetting = require('../models/SystemSetting');
+        const settings = await SystemSetting.findOne({ key: 'academic_combinations' });
+
+        let allowedDepartments = [];
+        let description = '';
+
+        if (settings && combination && settings.value[combination]) {
+            allowedDepartments = settings.value[combination].subjects || [];
+            description = settings.value[combination].description;
+        } else if (combination) {
+            // Fallback: Hardcoded combination -> department mapping
+            console.warn(`Combination ${combination} not in SystemSettings — using hardcoded fallback.`);
+            const rawCombo = combination.toUpperCase();
+            const normalizedCombo = rawCombo.replace(/[^A-Z0-9]/g, '');
+
+            const COMBINATION_MAP = {
+                'COMB1': { departments: ['MATH', 'CMIS', 'ELTN', 'STAT'], description: 'Combination 1: Mathematics, Computing, Electronics & Statistics' },
+                'COMB2': { departments: ['MATH', 'ELTN', 'IMGT', 'STAT'], description: 'Combination 2: Mathematics, Electronics, Information Management & Statistics' },
+                'COMB3': { departments: ['MATH', 'IMGT', 'CMIS', 'STAT'], description: 'Combination 3: Mathematics, Information Management, Computing & Statistics' },
+                'INDT': { departments: ['CMIS', 'MATH', 'STAT', 'ELTN'], description: 'Industrial Technology Combination' },
+                'MMOD': { departments: ['MATH', 'STAT', 'IMGT', 'CMIS'], description: 'Mathematical Modelling Combination' },
+            };
+
+            // Match against known keys
+            const matchedKey = Object.keys(COMBINATION_MAP).find(k => normalizedCombo.includes(k));
+            if (matchedKey) {
+                allowedDepartments = COMBINATION_MAP[matchedKey].departments;
+                description = COMBINATION_MAP[matchedKey].description;
+            } else {
+                // Last resort: return all modules so the page isn't blank
+                console.warn(`No fallback found for combination: ${combination}. Returning all modules.`);
+            }
+        }
+
+        // 2. Fetch Modules
+        let query = {};
+        if (allowedDepartments.length > 0) {
+            query.department = { $in: allowedDepartments };
+        }
+        // If no combination set at all AND no departments → returns all modules
+        // If combination set but no match found → also returns all modules (last resort)
+
+        const modules = await Module.find(query)
+            .lean()
+            .sort({ level: 1, semester: 1, code: 1 });
+
+        // 3. Fetch Student Results (to merge grade/status)
+        const results = await Result.find({ student: studentId }).lean();
+
+        // 4. Merge Data
+        const modulesWithResults = modules.map(m => {
+            const result = results.find(r => r.module.toString() === m._id.toString());
+            let status = 'Not Enrolled';
+            if (result) {
+                if (result.gradePoint >= 2.0) status = 'Completed';
+                else if (result.marks > 0 || result.grade) status = 'Completed';
+                else status = 'Enrolled';
+            }
+
+            return {
+                ...m,
+                result: result ? result : null,
+                status
+            };
+        });
+
+        res.json({
+            combination,
+            description,
+            modules: modulesWithResults
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Get Student History (Semester-wise Results for Progression)
+exports.getStudentHistory = async (req, res) => {
+    try {
+        const { studentId } = req.params;
+
+        const results = await Result.find({ student: studentId })
+            .populate('module')
+            .sort({ 'module.level': 1, 'module.semester': 1 }); // Sort by time
+
+        // Group by Level + Semester
+        // Key: L1S1, L1S2, etc.
+        const historyMap = new Map();
+
+        results.forEach(result => {
+            if (!result.module) return; // Skip orphaned results
+            const level = result.module.level;
+            const semester = result.module.semester;
+            const key = `L${level}S${semester}`;
+
+            if (!historyMap.has(key)) {
+                historyMap.set(key, {
+                    key,
+                    level,
+                    semester,
+                    totalGP: 0,
+                    totalCredits: 0,
+                    earnedCredits: 0,
+                    results: []
+                });
+            }
+
+            const semesterJava = historyMap.get(key);
+            semesterJava.results.push(result);
+
+            // GPA Calculation Logic
+            semesterJava.totalGP += (result.gradePoint * result.module.credits);
+            semesterJava.totalCredits += result.module.credits;
+
+            // Credits Earned (Passed)
+            if (result.gradePoint >= 2.0 || result.grade === 'C' || result.grade === 'D') { // D is a pass? Usually D is pass but low.
+                // Assuming >= 2.0 is solid pass, but D (1.0) earns credits?
+                // Standard: E (0.0) fails. D(1.0) usually earns credits but brings down GPA.
+                if (result.grade !== 'E' && result.grade !== 'F' && result.grade !== 'I') {
+                    semesterJava.earnedCredits += result.module.credits;
+                }
+            }
+        });
+
+        const history = Array.from(historyMap.values()).map(sem => {
+            return {
+                semester: sem.key,
+                level: sem.level,
+                semNo: sem.semester,
+                gpa: sem.totalCredits > 0 ? parseFloat((sem.totalGP / sem.totalCredits).toFixed(2)) : 0,
+                totalCredits: sem.totalCredits,
+                earnedCredits: sem.earnedCredits,
+                status: sem.totalCredits > 0 ? 'Completed' : 'Pending'
+            };
+        });
+
+        // Sort to ensure order
+        history.sort((a, b) => {
+            if (a.level !== b.level) return a.level - b.level;
+            return a.semNo - b.semNo;
+        });
+
+        res.json(history);
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Get Student Dashboard Data
+exports.getStudentDashboard = async (req, res) => {
+    try {
+        const { studentId } = req.params;
+        console.log('📊 Dashboard endpoint called with studentId:', studentId);
+
+        // Fetch student details
+        const student = await Student.findById(studentId);
+        if (!student) {
+            console.log('❌ Student not found for ID:', studentId);
+            return res.status(404).json({ message: 'Student not found' });
+        }
+        console.log('✅ Student found:', student.name);
+
+        // Fetch all results for GPA calculation
+        const results = await Result.find({ student: studentId })
+            .populate('module')
+            .lean()
+            .sort({ 'module.level': 1, 'module.code': 1 });
+        console.log(`📚 Found ${results.length} results`);
+
+        // Filter out orphaned results (where module was deleted)
+        const validResults = results.filter(r => r.module);
+        console.log(`✅ Valid results: ${validResults.length}`);
+
+        // Calculate overall GPA
+        const calculateGPA = (moduleResults) => {
+            if (!moduleResults.length) return 0;
+            const totalWeightedGP = moduleResults.reduce((sum, r) => sum + (r.gradePoint * r.module.credits), 0);
+            const totalCredits = moduleResults.reduce((sum, r) => sum + r.module.credits, 0);
+            return totalCredits > 0 ? parseFloat((totalWeightedGP / totalCredits).toFixed(2)) : 0;
+        };
+
+        const overallGPA = calculateGPA(validResults);
+        const totalCreditsEarned = validResults.reduce((sum, r) => sum + r.module.credits, 0);
+        console.log(`📊 GPA: ${overallGPA}, Credits: ${totalCreditsEarned}`);
+
+        // Determine total credits required based on degree programme
+        const creditsRequired = student.degreeProgramme?.includes('General') ? 90 : 120;
+
+        // Fetch Combination Subjects from System Settings
+        const SystemSetting = require('../models/SystemSetting');
+        const settings = await SystemSetting.findOne({ key: 'academic_combinations' });
+        let combinationSubjects = [];
+        if (student.combination && settings && settings.value[student.combination]) {
+            combinationSubjects = settings.value[student.combination].subjects || [];
+        }
+
+        // Prepare dashboard response
+        const dashboardData = {
+            student: {
+                name: student.fullName || `${student.firstName} ${student.lastName}`.trim(),
+                firstName: student.firstName || student.fullName?.split(' ')[0] || '',
+                registrationNumber: student.registrationNumber,
+                level: student.level,
+                batch: student.batch,
+                combination: student.combination || 'Not Set',
+                combinationSubjects: combinationSubjects,
+                degreeProgramme: student.degreeProgramme || 'Not Set'
+            },
+            academic: {
+                gpa: overallGPA,
+                creditsEarned: totalCreditsEarned,
+                creditsTotal: creditsRequired,
+                currentLevel: student.level,
+                currentSemester: 1 // This could be calculated based on academic calendar
+            }
+        };
+
+        console.log('✅ Sending dashboard data');
+        res.json(dashboardData);
+    } catch (error) {
+        console.error('❌ Dashboard endpoint error:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+

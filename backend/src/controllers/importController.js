@@ -130,11 +130,13 @@ const importStudents = async (req, res) => {
 
             // Create User Account
             try {
+              const randomTempPassword = require('crypto').randomBytes(16).toString('hex');
               const user = new User({
                 username: newStudent.registrationNumber.toLowerCase(),
-                passwordHash: 'abc123', // Default password
+                passwordHash: randomTempPassword,
                 roles: ['user'],
                 studentRef: newStudent._id,
+                isAccountLocked: true,
               });
               await user.save();
 
