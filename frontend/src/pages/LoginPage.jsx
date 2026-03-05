@@ -123,7 +123,7 @@ export default function LoginPage() {
 
         {/* Bottom Tagline */}
         <div className="relative z-10 flex items-center justify-between text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">
-          <span>&copy; 2026 FASNET.ONLINE</span>
+          <span>&copy; 2026 FASNET.ONLINE • Developed by <a href="https://github.com/KasunHerath-dev" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors underline-offset-4 decoration-[#ff5734]">Kasun Herath</a></span>
           <span className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
             System Status: Active

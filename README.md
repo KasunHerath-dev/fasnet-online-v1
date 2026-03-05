@@ -54,6 +54,12 @@ A state-of-the-art, premium student management portal designed for the Faculty o
     npm run dev
     ```
 
+## 👨‍💻 Developed By
+
+**Kasun Herath**
+- GitHub: [@KasunHerath-dev](https://github.com/KasunHerath-dev)
+- Faculty: Faculty of Applied Sciences
+
 ## 🔐 Security & Identity
 
 The system uses **FASNET Secure Auth** for all student and admin interactions. Initial admin setup is handled via secure seeding scripts.
