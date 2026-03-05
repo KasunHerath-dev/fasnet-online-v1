@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@react-three/drei": "^9.102.0",
-    "@react-three/fiber": "^9.5.0",
+    "@react-three/fiber": "^8.15.11",
     "axios": "^1.6.0",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.556.0",
