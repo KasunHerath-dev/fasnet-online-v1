@@ -1,6 +1,6 @@
 import api from './api';
 
-export const resourceService = {
+const resourceService = {
     // Upload a resource
     upload: (formData) => api.post('/resources', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
@@ -17,4 +17,18 @@ export const resourceService = {
 
     // Download resource (Blob)
     download: (id) => api.get(`/resources/stream/${id}`, { responseType: 'blob' }),
+
+    // Sync Cloudinary files
+    syncCloudinary: () => api.post('/resources/sync-cloudinary'),
+
+    // Mega Migration
+    getPendingMega: () => api.get('/resources/mega-pending'),
+    migrateSingleMega: (id) => api.post(`/resources/migrate-single/${id}`),
+
+    // Cloudinary Sync & Init (Granular)
+    getSyncPreview: () => api.get('/resources/sync-preview'),
+    initFolders: () => api.post('/resources/init-folders'),
 };
+
+export default resourceService;
+

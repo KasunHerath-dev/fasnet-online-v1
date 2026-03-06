@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { authService, studentService, systemService } from '../../services/authService'
+import resourceService from '../../services/resourceService'
 import BatchYearManagement from '../../components/admin/BatchYearManagement'
 import AssessmentManagement from '../../components/admin/AssessmentManagement'
 import ResourceManagement from '../../components/admin/ResourceManagement'
+import MegaMigrationModal from '../../components/admin/MegaMigrationModal'
+import CloudinarySyncModal from '../../components/admin/CloudinarySyncModal'
+import { toast } from 'react-hot-toast'
 import {
   Settings,
   Users,
@@ -30,7 +34,8 @@ import {
   Upload,
   Eye,
   Bell,
-  Calendar
+  Calendar,
+  Cloud
 } from 'lucide-react'
 
 export default function AdminPage() {
@@ -41,8 +46,14 @@ export default function AdminPage() {
     status: 'Unknown'
   })
   const [isLoading, setIsLoading] = useState(true)
+  const [isSyncingCloudinary, setIsSyncingCloudinary] = useState(false)
+  const [isInitializingFolders, setIsInitializingFolders] = useState(false)
+  const [showMegaModal, setShowMegaModal] = useState(false)
+  const [showSyncModal, setShowSyncModal] = useState(false)
+  const [user, setUser] = useState(null)
 
   useEffect(() => {
+    setUser(authService.getUser())
     fetchStats()
   }, [])
 
@@ -95,6 +106,30 @@ export default function AdminPage() {
       alert('Password changed successfully!')
     } catch (err) {
       alert('Error: ' + (err.response?.data?.error?.message || err.message))
+    }
+  }
+
+  const handleMigrateMega = () => {
+    setShowMegaModal(true);
+  }
+
+  const handleSyncCloudinary = () => {
+    setShowSyncModal(true);
+  }
+
+  const handleInitCloudinaryFolders = async () => {
+    if (!window.confirm("Initialize Cloudinary folder structure? This will create level, semester, and module-specific directories for manual uploads.")) return;
+
+    setIsInitializingFolders(true);
+    const toastId = toast.loading("Initializing Cloudinary structure...");
+    try {
+      const res = await resourceService.initFolders();
+      toast.success(res.data.message, { id: toastId });
+    } catch (error) {
+      console.error('Init Error:', error);
+      toast.error(error.response?.data?.message || 'Failed to initialize folders', { id: toastId });
+    } finally {
+      setIsInitializingFolders(false);
     }
   }
 
@@ -711,6 +746,75 @@ export default function AdminPage() {
                       </div>
                     </div>
                   </button>
+
+                  {/* Cloudinary Sync - Ash */}
+                  <button
+                    onClick={handleSyncCloudinary}
+                    className="group relative overflow-hidden bg-indigo-50 border border-indigo-200 hover:border-indigo-400 rounded-2xl sm:rounded-3xl p-6 sm:p-8 transition-all duration-200 hover:shadow-lg hover:shadow-indigo-100"
+                  >
+                    <div className="relative">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-indigo-100 flex items-center justify-center mb-6 overflow-hidden">
+                        <RefreshCw className="w-7 h-7 sm:w-8 sm:h-8 text-indigo-600 group-hover:rotate-180 transition-transform duration-500" />
+                      </div>
+
+                      <h3 className="font-bold text-base sm:text-lg text-indigo-900 mb-2">Sync Cloudinary</h3>
+                      <p className="text-xs sm:text-sm text-indigo-700/80 mb-4">Scan and insert new manual uploads from Cloudinary</p>
+
+                      <div className="flex items-center gap-2 text-indigo-700 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
+                        <span>Open Sync Tool</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </div>
+                    </div>
+                  </button>
+
+                  {/* Superadmin Only: Mega Migration - Ash */}
+                  {user?.roles?.includes('superadmin') && (
+                    <button
+                      onClick={handleMigrateMega}
+                      className="group relative overflow-hidden bg-rose-50 border border-rose-200 hover:border-rose-400 rounded-2xl sm:rounded-3xl p-6 sm:p-8 transition-all duration-200 hover:shadow-lg hover:shadow-rose-100"
+                    >
+                      <div className="relative">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-rose-100 flex items-center justify-center mb-6 overflow-hidden">
+                          <Cloud className="w-7 h-7 sm:w-8 sm:h-8 text-rose-600 group-hover:scale-110 transition-transform" />
+                        </div>
+
+                        <h3 className="font-bold text-base sm:text-lg text-rose-900 mb-2">Migrate Mega</h3>
+                        <p className="text-xs sm:text-sm text-rose-700/80 mb-4">Granular UI file transfer assistant</p>
+
+                        <div className="flex items-center gap-2 text-rose-700 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
+                          <span>Open Tool</span>
+                          <ChevronRight className="w-4 h-4" />
+                        </div>
+                      </div>
+                    </button>
+                  )}
+
+                  {/* Superadmin Only: Init Cloudinary Folders - Ash */}
+                  {user?.roles?.includes('superadmin') && (
+                    <button
+                      onClick={handleInitCloudinaryFolders}
+                      disabled={isInitializingFolders}
+                      className="group relative overflow-hidden bg-blue-50 border border-blue-200 hover:border-blue-400 rounded-2xl sm:rounded-3xl p-6 sm:p-8 transition-all duration-200 hover:shadow-lg hover:shadow-blue-100"
+                    >
+                      <div className="relative">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-blue-100 flex items-center justify-center mb-6 overflow-hidden">
+                          {isInitializingFolders ? (
+                            <RefreshCw className="w-7 h-7 sm:w-8 sm:h-8 text-blue-600 animate-spin" />
+                          ) : (
+                            <Upload className="w-7 h-7 sm:w-8 sm:h-8 text-blue-600 group-hover:scale-110 transition-transform" />
+                          )}
+                        </div>
+
+                        <h3 className="font-bold text-base sm:text-lg text-blue-900 mb-2">Setup Folders</h3>
+                        <p className="text-xs sm:text-sm text-blue-700/80 mb-4">Pre-generate Cloudinary directories</p>
+
+                        <div className="flex items-center gap-2 text-blue-700 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
+                          <span>{isInitializingFolders ? 'Building...' : 'Initialize Now'}</span>
+                          <ChevronRight className="w-4 h-4" />
+                        </div>
+                      </div>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -939,6 +1043,10 @@ export default function AdminPage() {
           scrollbar-width: none;
         }
       `}</style>
+
+      {/* Cloudinary & Mega Modals */}
+      <MegaMigrationModal isOpen={showMegaModal} onClose={() => setShowMegaModal(false)} />
+      <CloudinarySyncModal isOpen={showSyncModal} onClose={() => setShowSyncModal(false)} />
     </div>
   )
 }

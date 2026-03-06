@@ -40,9 +40,10 @@ const sendOTPEmail = async (toEmail, otpCode, studentName) => {
               margin: 0; 
               padding: 0; 
               color: #151313; 
+              -webkit-font-smoothing: antialiased;
             }
             .wrapper { 
-              padding: 40px 20px; 
+              padding: 40px 10px; 
               background-color: #f7f7f5; 
             }
             .container { 
@@ -97,17 +98,17 @@ const sendOTPEmail = async (toEmail, otpCode, studentName) => {
             }
             .otp-box { 
               background-color: #151313; 
-              padding: 30px; 
+              padding: 30px 15px; 
               border-radius: 2rem; 
               margin: 40px 0; 
               box-shadow: 0 10px 20px -5px rgba(255, 87, 52, 0.2);
             }
             .otp-code { 
-              font-size: 48px; 
+              font-size: 42px; 
               font-weight: 700; 
               color: #ff5734; 
-              letter-spacing: 12px; 
-              margin-left: 12px; /* compensate for last item's spacing */
+              letter-spacing: 8px; 
+              margin-left: 8px;
               display: inline-block;
             }
             .footer { 
@@ -134,6 +135,13 @@ const sendOTPEmail = async (toEmail, otpCode, studentName) => {
             .highlight {
               color: #151313;
               font-weight: 700;
+            }
+            @media only screen and (max-width: 480px) {
+              .content { padding: 40px 20px !important; }
+              .title { font-size: 24px !important; }
+              .otp-code { font-size: 32px !important; letter-spacing: 6px !important; margin-left: 6px !important; }
+              .otp-box { padding: 20px 10px !important; }
+              .container { border-radius: 1.5rem !important; }
             }
           </style>
         </head>
@@ -217,9 +225,10 @@ const sendWelcomeEmail = async (toEmail, studentName) => {
               margin: 0; 
               padding: 0; 
               color: #151313; 
+              -webkit-font-smoothing: antialiased;
             }
             .wrapper { 
-              padding: 40px 20px; 
+              padding: 40px 10px; 
               background-color: #f7f7f5; 
             }
             .container { 
@@ -317,6 +326,15 @@ const sendWelcomeEmail = async (toEmail, studentName) => {
               font-size: 24px;
               margin-bottom: 15px;
             }
+            @media only screen and (max-width: 480px) {
+              .header-banner { padding: 40px 20px !important; }
+              .welcome-title { font-size: 28px !important; }
+              .content { padding: 40px 20px !important; }
+              .title { font-size: 22px !important; }
+              .btn { padding: 15px 30px !important; font-size: 14px !important; }
+              .container { border-radius: 1.5rem !important; }
+            }
+            
           </style>
         </head>
         <body>

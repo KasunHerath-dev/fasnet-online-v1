@@ -29,7 +29,11 @@ const resourceSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    // storageType: { type: String, enum: ['google_drive', 'mega'], default: 'mega' }, // Optional for dual support
+    storageType: {
+        type: String,
+        enum: ['google_drive', 'mega', 'cloudinary'],
+        default: 'mega'
+    },
     webViewLink: {
         type: String,
         required: true

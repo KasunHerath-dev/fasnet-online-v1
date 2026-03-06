@@ -19,7 +19,8 @@ import {
     ChevronDown,
     ChevronUp,
     Grid3x3,
-    Sparkles
+    Sparkles,
+    Bookmark
 } from 'lucide-react';
 import { academicService } from '../../services/academicService';
 import { authService } from '../../services/authService';
@@ -27,6 +28,69 @@ import { MODULE_DATA } from '../../data/moduleList';
 import { resourceService } from '../../services/resourceService';
 import UnifiedPageLoader from '../../components/loaders/UnifiedPageLoader';
 import { useToast } from '../../context/ToastContext';
+
+const getCardTheme = (type) => {
+    switch (type) {
+        case 'past_paper':
+            return {
+                bg: 'bg-[#fccc42]', // Warm Yellow
+                text: 'text-[#151313]',
+                pillBg: 'bg-[#151313]',
+                pillText: 'text-white',
+                btnBg: 'bg-[#ff5734]',
+                btnText: 'text-white'
+            };
+        case 'tutorial':
+            return {
+                bg: 'bg-[#be94f5]', // Soft Purple
+                text: 'text-[#151313]',
+                pillBg: 'bg-white/50',
+                pillText: 'text-[#151313]',
+                btnBg: 'bg-[#ff5734]',
+                btnText: 'text-white'
+            };
+        case 'assignment':
+            return {
+                bg: 'bg-[#bae6fd]', // Sky Blue
+                text: 'text-[#151313]',
+                pillBg: 'bg-white/50',
+                pillText: 'text-[#151313]',
+                btnBg: 'bg-[#ff5734]',
+                btnText: 'text-white'
+            };
+        case 'marking_scheme':
+            return {
+                bg: 'bg-[#151313]', // Dark Promo Card
+                text: 'text-white',
+                pillBg: 'bg-[#fccc42]',
+                pillText: 'text-[#151313]',
+                btnBg: 'bg-[#ff5734]',
+                btnText: 'text-white'
+            };
+        case 'book':
+        default:
+            return {
+                bg: 'bg-white',
+                text: 'text-[#151313]',
+                pillBg: 'bg-slate-100',
+                pillText: 'text-[#151313]',
+                btnBg: 'bg-[#151313]',
+                btnText: 'text-white'
+            };
+    }
+}
+
+const getTypeLabel = (type) => {
+    const labels = {
+        'past_paper': 'Past Paper',
+        'tutorial': 'Tutorial',
+        'assignment': 'Assignment',
+        'marking_scheme': 'Mark. Scheme',
+        'book': 'Resource Book',
+        'other': 'Other'
+    };
+    return labels[type] || 'Resource';
+};
 
 const ResourceCard = ({ resource, viewMode = 'cards' }) => {
     const toast = useToast();
@@ -64,43 +128,19 @@ const ResourceCard = ({ resource, viewMode = 'cards' }) => {
     };
 
     const handleDownload = async () => {
-        try {
-            if (resource.downloadUrl) {
-                window.open(resource.downloadUrl, '_blank');
-                return;
-            }
-
-            if (!resource._id) {
-                console.error('No resource ID');
-                return;
-            }
-
-            const response = await resourceService.download(resource._id);
-
-            const contentType = response.headers['content-type'];
-            if (contentType && contentType.includes('text/html')) {
-                console.error('Download failed: Backend returned HTML (likely 404 or error)');
-                toast.error('Failed to download file. Please try again later.');
-                return;
-            }
-
-            const blob = new Blob([response.data], {
-                type: contentType || 'application/octet-stream'
-            });
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = resource.fileName || resource.title || 'download';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
-
-        } catch (error) {
-            console.error("Download failed", error);
-            toast.error("Failed to download file.");
+        // If Cloudinary link, download directly natively
+        if (resource.webContentLink && resource.webContentLink.includes('cloudinary')) {
+            const url = resource.webContentLink.includes('/upload/')
+                ? resource.webContentLink.replace('/upload/', '/upload/fl_attachment/')
+                : resource.webContentLink;
+            window.location.href = url;
+            return;
         }
+
+        // Otherwise (Mega link), stream it through our backend route proxy
+        window.open(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1'}/resources/stream/${resource._id}`, '_blank');
     };
+
 
     // List View
     if (viewMode === 'list') {
@@ -148,59 +188,50 @@ const ResourceCard = ({ resource, viewMode = 'cards' }) => {
     }
 
     // Card View (Default)
+    const theme = getCardTheme(resource.type);
+
     return (
-        <div className="group bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 overflow-hidden">
-            {/* Header */}
-            <div className="p-5 border-b border-slate-100 dark:border-slate-800">
-                <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${getTypeColor(resource.type)}`}>
-                        {getTypeIcon(resource.type)}
-                    </div>
-                    {resource.answerFor && (
-                        <span className="px-2.5 py-1 bg-moccaccino-100 dark:bg-moccaccino-900/30 text-moccaccino-700 dark:text-moccaccino-300 rounded-lg text-xs font-bold">
-                            Answer Key
-                        </span>
-                    )}
+        <div className={`rounded-[2.5rem] border font-sans tracking-wide ${theme.bg === 'bg-[#151313]' ? 'border-transparent shadow-xl shadow-black/10' : 'border-[#151313] border-[2px]'} ${theme.bg} p-8 sm:p-9 flex flex-col justify-between min-h-[300px] relative hover:-translate-y-1.5 transition-all duration-300 group`}>
+
+            {/* Top row: Pill & Bookmark */}
+            <div className="flex justify-between items-start mb-8">
+                <div className={`px-5 py-2 rounded-full text-[12px] font-black tracking-widest uppercase ${theme.pillBg} ${theme.pillText} ${theme.bg === 'bg-white' ? 'border border-[#151313]/20' : ''}`}>
+                    {resource.academicYear ? resource.academicYear : getTypeLabel(resource.type)}
                 </div>
-                <h3 className="font-bold text-base text-slate-900 dark:text-white line-clamp-2 mb-2">
-                    {resource.title}
-                </h3>
-                {resource.academicYear && (
-                    <span className="inline-block px-2.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-full text-xs font-bold text-slate-600 dark:text-slate-400">
-                        {resource.academicYear}
-                    </span>
-                )}
+                <button className={`w-10 h-10 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors ${theme.text}`}>
+                    <Bookmark className="w-[26px] h-[26px]" strokeWidth={2.5} />
+                </button>
             </div>
 
-            {/* Content */}
-            <div className="p-5 space-y-4">
-                {/* File Info */}
-                <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600 dark:text-slate-400 font-medium truncate">
-                        {resource.fileName || 'Resource File'}
-                    </span>
-                    {resource.fileSize && (
-                        <span className="text-slate-400 dark:text-slate-500 text-xs font-semibold ml-2">
-                            {formatFileSize(resource.fileSize)}
-                        </span>
-                    )}
-                </div>
+            {/* Title */}
+            <h3 className={`font-black text-[26px] sm:text-3xl leading-[1.1] mb-10 line-clamp-3 ${theme.text}`}>
+                {resource.title}
+            </h3>
 
-                {/* Type Badge */}
-                <div className="flex items-center gap-2">
-                    <span className={`px-3 py-1.5 rounded-xl text-xs font-bold border ${getTypeColor(resource.type)}`}>
-                        {resource.type.replace('_', ' ')}
+            {/* Middle: Info line & Visual Bar */}
+            <div className="mt-auto">
+                <div className="flex justify-between items-end mb-3">
+                    <span className={`text-[12px] font-black ${theme.text} opacity-70 uppercase tracking-widest`}>
+                        {getTypeLabel(resource.type)}
+                    </span>
+                    <span className={`text-[12px] font-black ${theme.text} opacity-70 tracking-widest`}>
+                        {formatFileSize(resource.fileSize)}
                     </span>
                 </div>
 
-                {/* Download Button */}
-                <button
-                    onClick={handleDownload}
-                    className="w-full min-h-[44px] flex items-center justify-center gap-2 px-4 py-3 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold rounded-xl transition-all shadow-md hover:shadow-lg active:scale-95"
-                >
-                    <Download className="w-4 h-4" />
-                    Download
-                </button>
+                {/* Thick horizontal bar (Iconic style) */}
+                <div className="h-[7px] w-full bg-[#151313] rounded-full mb-8"></div>
+
+                {/* Bottom row: Action Button */}
+                <div className="flex justify-end">
+                    <button
+                        onClick={handleDownload}
+                        className={`${theme.btnBg} ${theme.btnText} border-[2px] border-[#151313] px-8 py-3.5 rounded-full font-black text-sm sm:text-base tracking-wide flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-[4px_4px_0px_0px_rgba(21,19,19,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]`}
+                    >
+                        <span>Download</span>
+                        <Download className="w-5 h-5" strokeWidth={3} />
+                    </button>
+                </div>
             </div>
         </div>
     );

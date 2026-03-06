@@ -662,6 +662,12 @@ function ResourceItem({ resource, onDelete, color }) {
                                 {resource.academicYear}
                             </span>
                         )}
+                        <span className={`px-2 py-1 rounded-lg text-[10px] uppercase font-bold tracking-wide ${resource.storageType === 'cloudinary'
+                                ? 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300'
+                                : 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                            }`}>
+                            {resource.storageType || 'mega'}
+                        </span>
                     </h4>
                     <p className="text-xs font-bold text-slate-400 mt-1">
                         {(resource.size / 1024 / 1024).toFixed(2)} MB • {new Date(resource.createdAt).toLocaleDateString()}

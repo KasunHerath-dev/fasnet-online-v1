@@ -8,42 +8,142 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kodchasan:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Kodchasan', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f7f7f5; margin: 0; padding: 0; color: #151313; }
-    .container { max-width: 500px; margin: 40px auto; background-color: #ffffff; border-radius: 2rem; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; }
-    .header { background-color: #151313; padding: 40px 20px; text-align: center; }
-    .logo { width: 64px; height: 64px; border-radius: 1rem; margin-bottom: 15px; }
-    .header h1 { color: #fccc42; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 0.05em; }
-    .header p { color: #be94f5; margin: 5px 0 0; font-size: 14px; }
-    .content { padding: 40px 30px; text-align: center; }
-    .title { font-size: 22px; font-weight: 700; margin-bottom: 20px; color: #151313; }
-    .otp-container { background-color: #f7f7f5; padding: 25px; border-radius: 1.5rem; margin: 30px 0; border: 2px dashed #ff5734; }
-    .otp-code { font-size: 42px; font-weight: 700; color: #ff5734; letter-spacing: 8px; margin: 0; }
-    .footer { padding: 20px 30px; background-color: #f8fafc; text-align: center; border-top: 1px solid #f1f5f9; }
-    .footer p { color: #64748b; font-size: 12px; margin: 0; }
-    .accent-orange { color: #ff5734; }
+    body { 
+      font-family: 'Kodchasan', 'Segoe UI', sans-serif; 
+      background-color: #f7f7f5; 
+      margin: 0; 
+      padding: 0; 
+      color: #151313; 
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrapper { 
+      padding: 40px 10px; 
+      background-color: #f7f7f5; 
+    }
+    .container { 
+      max-width: 500px; 
+      margin: 0 auto; 
+      background-color: #ffffff; 
+      border-radius: 2.5rem; 
+      overflow: hidden; 
+      box-shadow: 0 20px 40px -10px rgba(21, 19, 19, 0.08); 
+      border: 1px solid #e2e8f0; 
+    }
+    .accent-bar {
+      height: 8px;
+      background: linear-gradient(90deg, #ff5734, #fccc42, #be94f5);
+    }
+    .content { 
+      padding: 60px 40px; 
+      text-align: center; 
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+    .brand-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      background-color: #ff5734;
+      margin-right: 8px;
+    }
+    .brand-text {
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      font-size: 14px;
+      text-transform: uppercase;
+      color: #151313;
+    }
+    .title { 
+      font-size: 28px; 
+      font-weight: 700; 
+      margin-bottom: 20px; 
+      color: #151313; 
+      letter-spacing: -0.02em;
+    }
+    .message {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #64748b;
+      margin-bottom: 40px;
+    }
+    .otp-box { 
+      background-color: #151313; 
+      padding: 30px 15px; 
+      border-radius: 2rem; 
+      margin: 40px 0; 
+      box-shadow: 0 10px 20px -5px rgba(255, 87, 52, 0.2);
+    }
+    .otp-code { 
+      font-size: 42px; 
+      font-weight: 700; 
+      color: #ff5734; 
+      letter-spacing: 8px; 
+      margin-left: 8px;
+      display: inline-block;
+    }
+    .footer { 
+      padding: 40px; 
+      background-color: #f8fafc; 
+      text-align: center; 
+      border-top: 1px solid #f1f5f9; 
+    }
+    .footer p { 
+      color: #94a3b8; 
+      font-size: 12px; 
+      margin: 0; 
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .support {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px dashed #e2e8f0;
+    }
+    .highlight {
+      color: #151313;
+      font-weight: 700;
+    }
+    @media only screen and (max-width: 480px) {
+      .content { padding: 40px 20px !important; }
+      .title { font-size: 24px !important; }
+      .otp-code { font-size: 32px !important; letter-spacing: 6px !important; margin-left: 6px !important; }
+      .otp-box { padding: 20px 10px !important; }
+      .container { border-radius: 1.5rem !important; }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <img src="http://localhost:5000/uploads/site-logo.png" alt="FASNET Logo" class="logo">
-      <h1>FASNET PORTAL</h1>
-      <p>Faculty of Applied Sciences</p>
-    </div>
-    <div class="content">
-      <div class="title">Hello, Test Student!</div>
-      <p>Welcome to the <span class="accent-orange font-bold">FASNET student portal</span>. Your account activation code is ready.</p>
-      <p>Use the 6-digit code below to verify your identity and set up your password.</p>
-      
-      <div class="otp-container">
-        <div class="otp-code">123456</div>
+  <div class="wrapper">
+    <div class="container">
+      <div class="accent-bar"></div>
+      <div class="content">
+        <div class="brand">
+          <div class="brand-dot"></div>
+          <span class="brand-text">FASNET PORTAL</span>
+        </div>
+        <div class="title">Verify Identity</div>
+        <div class="message">
+          Hello, <span class="highlight">Kasun Herath</span>! Your request for an activation code was successful. Use the secure code below to finalize your account setup.
+        </div>
+        
+        <div class="otp-box">
+          <div class="otp-code">582931</div>
+        </div>
+        
+        <div class="support">
+          This code expires in 15 minutes. For assistance, reach out to <span class="highlight">Kasun Herath</span>.
+        </div>
       </div>
-      
-      <p style="font-size: 14px; color: #64748b;">This verification code is valid for <strong>15 minutes</strong>. If you didn't request this, please ignore this email.</p>
-    </div>
-    <div class="footer">
-      <p>&copy; 2026 FASNET.ONLINE. All rights reserved.</p>
-      <p style="margin-top: 5px;">Empowering Higher Education through Technology</p>
+      <div class="footer">
+        <p>&copy; 2026 FASNET.ONLINE • STUDENT ECOSYSTEM</p>
+      </div>
     </div>
   </div>
 </body>
