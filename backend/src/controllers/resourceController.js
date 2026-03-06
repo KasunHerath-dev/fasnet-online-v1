@@ -531,38 +531,111 @@ exports.getCloudinarySyncPreview = async (req, res) => {
 // @access  Private (Superadmin)
 exports.initCloudinaryFolders = async (req, res) => {
     try {
-        const modules = await Module.find().lean();
+        const dbModules = await Module.find().lean();
         const batchYears = await BatchYear.find().lean();
         const historicYears = await Resource.distinct('academicYear');
 
-        // Combine all possible years
-        const allYears = new Set(['General']);
+        // ─── COMPLETE WUSL MODULE LIST (guaranteed fallback) ─────────────────────
+        const WUSL_MODULES = [
+            // L1-S1
+            { code: 'CMIS1113', level: '1', semester: '1' }, { code: 'CMIS1123', level: '1', semester: '1' },
+            { code: 'CMIS1131', level: '1', semester: '1' }, { code: 'ELTN1112', level: '1', semester: '1' },
+            { code: 'ELTN1122', level: '1', semester: '1' }, { code: 'ELTN1132', level: '1', semester: '1' },
+            { code: 'MATH1112', level: '1', semester: '1' }, { code: 'STAT1113', level: '1', semester: '1' },
+            { code: 'IMGT1112', level: '1', semester: '1' }, { code: 'IMGT1122', level: '1', semester: '1' },
+            { code: 'IMGT1132', level: '1', semester: '1' },
+            // L1-S2
+            { code: 'CMIS1212', level: '1', semester: '2' }, { code: 'CMIS1221', level: '1', semester: '2' },
+            { code: 'ELTN1212', level: '1', semester: '2' }, { code: 'ELTN1222', level: '1', semester: '2' },
+            { code: 'MATH1212', level: '1', semester: '2' }, { code: 'MATH1222', level: '1', semester: '2' },
+            { code: 'STAT1213', level: '1', semester: '2' }, { code: 'IMGT1212', level: '1', semester: '2' },
+            { code: 'IMGT1222', level: '1', semester: '2' },
+            // L2-S1
+            { code: 'CMIS2113', level: '2', semester: '1' }, { code: 'CMIS2123', level: '2', semester: '1' },
+            { code: 'ELTN2112', level: '2', semester: '1' }, { code: 'ELTN2121', level: '2', semester: '1' },
+            { code: 'MATH2114', level: '2', semester: '1' }, { code: 'STAT2112', level: '2', semester: '1' },
+            { code: 'IMGT2112', level: '2', semester: '1' }, { code: 'IMGT2122', level: '2', semester: '1' },
+            { code: 'IMGT2132', level: '2', semester: '1' },
+            // L2-S2
+            { code: 'CMIS2214', level: '2', semester: '2' }, { code: 'ELTN2213', level: '2', semester: '2' },
+            { code: 'ELTN2221', level: '2', semester: '2' }, { code: 'ELTN2232', level: '2', semester: '2' },
+            { code: 'ELTN2241', level: '2', semester: '2' }, { code: 'MATH2213', level: '2', semester: '2' },
+            { code: 'STAT2212', level: '2', semester: '2' }, { code: 'STAT2222', level: '2', semester: '2' },
+            { code: 'IMGT2212', level: '2', semester: '2' }, { code: 'IMGT2222', level: '2', semester: '2' },
+            // L3-S1
+            { code: 'CMIS3114', level: '3', semester: '1' }, { code: 'CMIS3122', level: '3', semester: '1' },
+            { code: 'CMIS3134', level: '3', semester: '1' }, { code: 'CMIS3142', level: '3', semester: '1' },
+            { code: 'CMIS3153', level: '3', semester: '1' }, { code: 'ELTN3113', level: '3', semester: '1' },
+            { code: 'ELTN3121', level: '3', semester: '1' }, { code: 'ELTN3133', level: '3', semester: '1' },
+            { code: 'ELTN3141', level: '3', semester: '1' }, { code: 'MMOD3113', level: '3', semester: '1' },
+            { code: 'MMOD3124', level: '3', semester: '1' }, { code: 'STAT3112', level: '3', semester: '1' },
+            { code: 'STAT3124', level: '3', semester: '1' }, { code: 'IMGT3112', level: '3', semester: '1' },
+            { code: 'IMGT3122', level: '3', semester: '1' }, { code: 'IMGT3162', level: '3', semester: '1' },
+            // L3-S2
+            { code: 'CMIS3214', level: '3', semester: '2' }, { code: 'CMIS3224', level: '3', semester: '2' },
+            { code: 'CMIS3234', level: '3', semester: '2' }, { code: 'CMIS3242', level: '3', semester: '2' },
+            { code: 'CMIS3253', level: '3', semester: '2' }, { code: 'ELTN3212', level: '3', semester: '2' },
+            { code: 'ELTN3222', level: '3', semester: '2' }, { code: 'ELTN3233', level: '3', semester: '2' },
+            { code: 'ELTN3241', level: '3', semester: '2' }, { code: 'MMOD3214', level: '3', semester: '2' },
+            { code: 'STAT3212', level: '3', semester: '2' }, { code: 'STAT3223', level: '3', semester: '2' },
+            { code: 'STAT3232', level: '3', semester: '2' }, { code: 'IMGT3212', level: '3', semester: '2' },
+            { code: 'IMGT3222', level: '3', semester: '2' }, { code: 'IMGT3232', level: '3', semester: '2' },
+            // L4-S1
+            { code: 'CMIS4114', level: '4', semester: '1' }, { code: 'CMIS4123', level: '4', semester: '1' },
+            { code: 'CMIS4134', level: '4', semester: '1' }, { code: 'CMIS4142', level: '4', semester: '1' },
+            { code: 'CMIS4153', level: '4', semester: '1' }, { code: 'CMIS4118', level: '4', semester: '1' },
+            { code: 'CMIS4126', level: '4', semester: '1' }, { code: 'ELTN4114', level: '4', semester: '1' },
+            { code: 'ELTN4143', level: '4', semester: '1' }, { code: 'ELTN4151', level: '4', semester: '1' },
+            { code: 'MATH4114', level: '4', semester: '1' }, { code: 'STAT4114', level: '4', semester: '1' },
+            { code: 'STAT4134', level: '4', semester: '1' }, { code: 'IMGT4123', level: '4', semester: '1' },
+            { code: 'IMGT4133', level: '4', semester: '1' }, { code: 'IMGT4142', level: '4', semester: '1' },
+            { code: 'IMGT4152', level: '4', semester: '1' }, { code: 'IMGT4162', level: '4', semester: '1' },
+            { code: 'IMGT4172', level: '4', semester: '1' },
+            // L4-S2
+            { code: 'CMIS4216', level: '4', semester: '2' }, { code: 'INDT4216', level: '4', semester: '2' },
+            { code: 'ELTN4213', level: '4', semester: '2' }, { code: 'MATH4214', level: '4', semester: '2' },
+            { code: 'MATH4224', level: '4', semester: '2' }, { code: 'IMGT4213', level: '4', semester: '2' },
+            { code: 'IMGT4222', level: '4', semester: '2' }, { code: 'IMGT4234', level: '4', semester: '2' },
+            { code: 'IMGT4242', level: '4', semester: '2' },
+        ];
+
+        // Merge DB modules with complete list (DB takes precedence for extra fields)
+        const dbCodes = new Set(dbModules.map(m => m.code));
+        const allModules = [...dbModules, ...WUSL_MODULES.filter(m => !dbCodes.has(m.code))];
+
+        // ─── ALL YEARS (default + DB batch years + historic resource years) ───────
+        const allYears = new Set(['General', '2019/2020', '2020/2021', '2021/2022', '2022/2023', '2023/2024', '2024/2025', '2025/2026']);
         batchYears.forEach(b => allYears.add(b.year));
         historicYears.forEach(y => { if (y) allYears.add(y); });
 
         const types = ['lecture_note', 'tutorial', 'past_paper', 'assignment', 'book', 'other'];
-
-        if (modules.length === 0) {
-            return res.status(400).json({ success: false, message: 'No modules found in database to initialize folders.' });
-        }
-
-        console.log(`Starting Exhaustive Folder Initialization for ${modules.length} modules and ${allYears.size} years...`);
+        console.log(`[INIT] ${allModules.length} modules × ${types.length} types × ${allYears.size} years`);
 
         let createdCount = 0;
+        let errorCount = 0;
 
-        for (const mod of modules) {
+        for (const mod of allModules) {
             for (const type of types) {
                 for (const year of allYears) {
                     const folderPath = `lms_materials/Level_${mod.level}/Semester_${mod.semester}/${mod.code}/${type}/${year}`;
-                    await cloudinary.api.create_folder(folderPath);
-                    createdCount++;
+                    try {
+                        await cloudinary.api.create_folder(folderPath);
+                        createdCount++;
+                    } catch (folderErr) {
+                        if (folderErr.http_code === 409 || folderErr.message?.includes('already exists')) {
+                            createdCount++;
+                        } else {
+                            console.warn(`[INIT] Could not create ${folderPath}:`, folderErr.message);
+                            errorCount++;
+                        }
+                    }
                 }
             }
         }
 
         res.status(200).json({
             success: true,
-            message: `Cloudinary folder structure initialization triggered successfully. Created/Verified ${createdCount} directory endpoints.`
+            message: `✅ Folder init complete! Created/Verified ${createdCount} folders across ${allModules.length} modules, ${types.length} types, ${allYears.size} years. (${errorCount} unexpected errors)`
         });
 
     } catch (error) {
