@@ -28,6 +28,9 @@ const resourceService = {
     // Cloudinary Sync & Init (Granular)
     getSyncPreview: () => api.get('/resources/sync-preview'),
     initFolders: () => api.post('/resources/init-folders'),
+
+    // Danger: Clear ALL Cloudinary data + reset DB
+    clearCloudinary: () => api.delete('/resources/clear-cloudinary'),
 };
 
 export default resourceService;

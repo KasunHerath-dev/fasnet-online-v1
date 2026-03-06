@@ -35,7 +35,8 @@ import {
   Eye,
   Bell,
   Calendar,
-  Cloud
+  Cloud,
+  Trash2
 } from 'lucide-react'
 
 export default function AdminPage() {
@@ -48,6 +49,7 @@ export default function AdminPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSyncingCloudinary, setIsSyncingCloudinary] = useState(false)
   const [isInitializingFolders, setIsInitializingFolders] = useState(false)
+  const [isClearingCloudinary, setIsClearingCloudinary] = useState(false)
   const [showMegaModal, setShowMegaModal] = useState(false)
   const [showSyncModal, setShowSyncModal] = useState(false)
   const [user, setUser] = useState(null)
@@ -130,6 +132,24 @@ export default function AdminPage() {
       toast.error(error.response?.data?.message || 'Failed to initialize folders', { id: toastId });
     } finally {
       setIsInitializingFolders(false);
+    }
+  }
+
+  const handleClearCloudinary = async () => {
+    const firstConfirm = window.confirm('⚠️ DANGER: This will DELETE ALL files and folders in Cloudinary under lms_materials, and reset all DB records to pending migration. This CANNOT be undone. Continue?');
+    if (!firstConfirm) return;
+    const secondConfirm = window.confirm('🔴 FINAL WARNING: Are you 100% sure? All Cloudinary assets will be permanently deleted.');
+    if (!secondConfirm) return;
+
+    setIsClearingCloudinary(true);
+    const toastId = toast.loading('Clearing Cloudinary... This may take a few minutes.');
+    try {
+      const res = await resourceService.clearCloudinary();
+      toast.success(res.data.message, { id: toastId, duration: 8000 });
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Clear failed', { id: toastId });
+    } finally {
+      setIsClearingCloudinary(false);
     }
   }
 
@@ -811,6 +831,36 @@ export default function AdminPage() {
                         <div className="flex items-center gap-2 text-blue-700 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
                           <span>{isInitializingFolders ? 'Building...' : 'Initialize Now'}</span>
                           <ChevronRight className="w-4 h-4" />
+                        </div>
+                      </div>
+                    </button>
+                  )}
+
+                  {/* Superadmin Only: DANGER Clear Cloudinary */}
+                  {user?.roles?.includes('superadmin') && (
+                    <button
+                      onClick={handleClearCloudinary}
+                      disabled={isClearingCloudinary}
+                      className="group relative overflow-hidden bg-red-50 border-2 border-red-300 hover:border-red-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 transition-all duration-200 hover:shadow-lg hover:shadow-red-100 col-span-full"
+                    >
+                      <div className="relative flex items-start gap-5">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-red-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                          {isClearingCloudinary ? (
+                            <RefreshCw className="w-7 h-7 sm:w-8 sm:h-8 text-red-600 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-7 h-7 sm:w-8 sm:h-8 text-red-600 group-hover:scale-110 transition-transform" />
+                          )}
+                        </div>
+                        <div className="flex-1 text-left">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-xs font-black uppercase tracking-wider text-red-500 bg-red-100 px-2 py-0.5 rounded-md">⚠ DANGER ZONE</span>
+                          </div>
+                          <h3 className="font-black text-base sm:text-lg text-red-900 mb-1">Clear Cloudinary &amp; Reset</h3>
+                          <p className="text-xs sm:text-sm text-red-700/80 mb-3">Wipe ALL lms_materials assets and folders, reset DB records to pending. Use before a clean rebuild.</p>
+                          <div className="flex items-center gap-2 text-red-700 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
+                            <span>{isClearingCloudinary ? 'Clearing... please wait' : 'Clear Everything & Start Fresh'}</span>
+                            <ChevronRight className="w-4 h-4" />
+                          </div>
                         </div>
                       </div>
                     </button>

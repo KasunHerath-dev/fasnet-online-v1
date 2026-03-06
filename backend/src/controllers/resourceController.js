@@ -643,3 +643,63 @@ exports.initCloudinaryFolders = async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to initialize Cloudinary folders', error: error.message });
     }
 };
+
+// @desc    DANGER: Delete ALL Cloudinary resources and folders under lms_materials, reset DB storageType
+// @route   DELETE /api/v1/resources/clear-cloudinary
+// @access  Private (Superadmin ONLY)
+exports.clearCloudinary = async (req, res) => {
+    try {
+        console.log('[CLEAR] Starting full Cloudinary wipe...');
+        let deletedAssets = 0;
+
+        // 1. Delete ALL uploaded resources in lms_materials/* for each resource type
+        for (const rtype of ['raw', 'image', 'video']) {
+            try {
+                let nextCursor = null;
+                do {
+                    const params = { resource_type: rtype, prefix: 'lms_materials', max_results: 500, type: 'upload' };
+                    if (nextCursor) params.next_cursor = nextCursor;
+                    const listResult = await cloudinary.api.resources(params);
+                    const publicIds = listResult.resources.map(r => r.public_id);
+                    if (publicIds.length > 0) {
+                        await cloudinary.api.delete_resources(publicIds, { resource_type: rtype });
+                        deletedAssets += publicIds.length;
+                        console.log(`[CLEAR] Deleted ${publicIds.length} ${rtype} assets`);
+                    }
+                    nextCursor = listResult.next_cursor;
+                } while (nextCursor);
+            } catch (typeErr) {
+                console.warn(`[CLEAR] Error clearing ${rtype}:`, typeErr.message);
+            }
+        }
+
+        // 2. Delete ALL folders under lms_materials (Cloudinary requires folders to be empty first)
+        const deleteSubFolders = async (parentPath) => {
+            try {
+                const { folders } = await cloudinary.api.sub_folders(parentPath);
+                for (const f of folders) {
+                    await deleteSubFolders(f.path);
+                }
+                await cloudinary.api.delete_folder(parentPath);
+                console.log(`[CLEAR] Deleted folder: ${parentPath}`);
+            } catch (err) {
+                console.warn(`[CLEAR] Could not delete folder ${parentPath}:`, err.message);
+            }
+        };
+        await deleteSubFolders('lms_materials');
+
+        // 3. Reset ALL DB resource storageType back to 'mega' so migration modal shows all files as pending
+        const dbReset = await Resource.updateMany({}, { $set: { storageType: 'mega' } });
+        console.log(`[CLEAR] DB reset: ${dbReset.modifiedCount} resources reset to 'mega'`);
+
+        res.status(200).json({
+            success: true,
+            message: `✅ Cloudinary fully cleared! Deleted ${deletedAssets} assets and all lms_materials folders. ${dbReset.modifiedCount} DB records reset to 'mega'. Now run "Setup Folders" then migrate your files.`,
+            stats: { deletedAssets, dbRecordsReset: dbReset.modifiedCount }
+        });
+
+    } catch (error) {
+        console.error('[CLEAR] Cloudinary Clear Error:', error);
+        res.status(500).json({ success: false, message: 'Failed to clear Cloudinary', error: error.message });
+    }
+};
