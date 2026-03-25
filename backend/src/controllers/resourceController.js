@@ -535,7 +535,6 @@ exports.initCloudinaryFolders = async (req, res) => {
         const batchYears = await BatchYear.find().lean();
         const historicYears = await Resource.distinct('academicYear');
 
-        // ─── COMPLETE WUSL MODULE LIST (guaranteed fallback) ─────────────────────
         const WUSL_MODULES = [
             // L1-S1
             { code: 'CMIS1113', level: '1', semester: '1' }, { code: 'CMIS1123', level: '1', semester: '1' },
@@ -558,28 +557,17 @@ exports.initCloudinaryFolders = async (req, res) => {
             { code: 'IMGT2132', level: '2', semester: '1' },
             // L2-S2
             { code: 'CMIS2214', level: '2', semester: '2' }, { code: 'ELTN2213', level: '2', semester: '2' },
-            { code: 'ELTN2221', level: '2', semester: '2' }, { code: 'ELTN2232', level: '2', semester: '2' },
-            { code: 'ELTN2241', level: '2', semester: '2' }, { code: 'MATH2213', level: '2', semester: '2' },
-            { code: 'STAT2212', level: '2', semester: '2' }, { code: 'STAT2222', level: '2', semester: '2' },
+            { code: 'MATH2214', level: '2', semester: '2' }, { code: 'STAT2212', level: '2', semester: '2' },
             { code: 'IMGT2212', level: '2', semester: '2' }, { code: 'IMGT2222', level: '2', semester: '2' },
             // L3-S1
-            { code: 'CMIS3114', level: '3', semester: '1' }, { code: 'CMIS3122', level: '3', semester: '1' },
-            { code: 'CMIS3134', level: '3', semester: '1' }, { code: 'CMIS3142', level: '3', semester: '1' },
-            { code: 'CMIS3153', level: '3', semester: '1' }, { code: 'ELTN3113', level: '3', semester: '1' },
-            { code: 'ELTN3121', level: '3', semester: '1' }, { code: 'ELTN3133', level: '3', semester: '1' },
-            { code: 'ELTN3141', level: '3', semester: '1' }, { code: 'MMOD3113', level: '3', semester: '1' },
-            { code: 'MMOD3124', level: '3', semester: '1' }, { code: 'STAT3112', level: '3', semester: '1' },
-            { code: 'STAT3124', level: '3', semester: '1' }, { code: 'IMGT3112', level: '3', semester: '1' },
-            { code: 'IMGT3122', level: '3', semester: '1' }, { code: 'IMGT3162', level: '3', semester: '1' },
+            { code: 'CMIS3114', level: '3', semester: '1' }, { code: 'CMIS3123', level: '3', semester: '1' },
+            { code: 'CMIS3132', level: '3', semester: '1' }, { code: 'ELTN3112', level: '3', semester: '1' },
+            { code: 'MATH3114', level: '3', semester: '1' }, { code: 'STAT3113', level: '3', semester: '1' },
+            { code: 'IMGT3113', level: '3', semester: '1' }, { code: 'IMGT3122', level: '3', semester: '1' },
             // L3-S2
-            { code: 'CMIS3214', level: '3', semester: '2' }, { code: 'CMIS3224', level: '3', semester: '2' },
-            { code: 'CMIS3234', level: '3', semester: '2' }, { code: 'CMIS3242', level: '3', semester: '2' },
-            { code: 'CMIS3253', level: '3', semester: '2' }, { code: 'ELTN3212', level: '3', semester: '2' },
-            { code: 'ELTN3222', level: '3', semester: '2' }, { code: 'ELTN3233', level: '3', semester: '2' },
-            { code: 'ELTN3241', level: '3', semester: '2' }, { code: 'MMOD3214', level: '3', semester: '2' },
-            { code: 'STAT3212', level: '3', semester: '2' }, { code: 'STAT3223', level: '3', semester: '2' },
-            { code: 'STAT3232', level: '3', semester: '2' }, { code: 'IMGT3212', level: '3', semester: '2' },
-            { code: 'IMGT3222', level: '3', semester: '2' }, { code: 'IMGT3232', level: '3', semester: '2' },
+            { code: 'CMIS3214', level: '3', semester: '2' }, { code: 'ELTN3212', level: '3', semester: '2' },
+            { code: 'MATH3214', level: '3', semester: '2' }, { code: 'STAT3213', level: '3', semester: '2' },
+            { code: 'IMGT3212', level: '3', semester: '2' }, { code: 'IMGT3222', level: '3', semester: '2' },
             // L4-S1
             { code: 'CMIS4114', level: '4', semester: '1' }, { code: 'CMIS4123', level: '4', semester: '1' },
             { code: 'CMIS4134', level: '4', semester: '1' }, { code: 'CMIS4142', level: '4', semester: '1' },
@@ -609,33 +597,67 @@ exports.initCloudinaryFolders = async (req, res) => {
         historicYears.forEach(y => { if (y) allYears.add(y); });
 
         const types = ['lecture_note', 'tutorial', 'past_paper', 'assignment', 'book', 'other'];
-        console.log(`[INIT] ${allModules.length} modules × ${types.length} types × ${allYears.size} years`);
-
-        let createdCount = 0;
-        let errorCount = 0;
-
+        
+        // Flatten into a single array of paths to create
+        const pathsToCreate = [];
         for (const mod of allModules) {
             for (const type of types) {
                 for (const year of allYears) {
-                    const folderPath = `lms_materials/Level_${mod.level}/Semester_${mod.semester}/${mod.code}/${type}/${year}`;
-                    try {
-                        await cloudinary.api.create_folder(folderPath);
-                        createdCount++;
-                    } catch (folderErr) {
-                        if (folderErr.http_code === 409 || folderErr.message?.includes('already exists')) {
-                            createdCount++;
-                        } else {
-                            console.warn(`[INIT] Could not create ${folderPath}:`, folderErr.message);
-                            errorCount++;
-                        }
-                    }
+                    pathsToCreate.push({
+                        path: `lms_materials/Level_${mod.level}/Semester_${mod.semester}/${mod.code}/${type}/${year}`
+                    });
                 }
             }
         }
 
-        res.status(200).json({
-            success: true,
-            message: `✅ Folder init complete! Created/Verified ${createdCount} folders across ${allModules.length} modules, ${types.length} types, ${allYears.size} years. (${errorCount} unexpected errors)`
+        console.log(`[INIT] Planning creation of ${pathsToCreate.length} folders...`);
+
+        let createdCount = 0;
+        let errorCount = 0;
+        let limitExceeded = false;
+        
+        // Process in batches of 10 to prevent overwhelming Cloudinary and avoid timeouts
+        const BATCH_SIZE = 10;
+        for (let i = 0; i < pathsToCreate.length; i += BATCH_SIZE) {
+            if (limitExceeded) break;
+            
+            const batch = pathsToCreate.slice(i, i + BATCH_SIZE);
+            const promises = batch.map(async (item) => {
+                try {
+                    await cloudinary.api.create_folder(item.path);
+                    return { success: true };
+                } catch (folderErr) {
+                    if (folderErr.http_code === 409 || folderErr.message?.includes('already exists')) {
+                        return { success: true }; // Treated as success if it already exists
+                    } else if (folderErr.http_code === 429 || folderErr.http_code === 420 || folderErr.error?.http_code === 420) {
+                        return { rateLimit: true };
+                    } else {
+                        const errMsg = folderErr.message || folderErr.error?.message || JSON.stringify(folderErr);
+                        console.warn(`[INIT] Could not create ${item.path}:`, errMsg);
+                        return { error: true };
+                    }
+                }
+            });
+
+            const results = await Promise.all(promises);
+            for (const res of results) {
+                if (res.rateLimit) {
+                    limitExceeded = true;
+                    console.warn(`[INIT] Cloudinary Rate Limit Exceeded (Admin API 500/hr) at batch ${i}. Stopping early.`);
+                    break;
+                }
+                if (res.success) createdCount++;
+                if (res.error) errorCount++;
+            }
+        }
+
+        const msg = limitExceeded 
+            ? `⚠️ Cloudinary Rate Limit Hit! Created/Verified ${createdCount} folders so far. Please wait an hour before continuing.`
+            : `✅ Folder init complete! Created/Verified ${createdCount} folders. (${errorCount} unexpected errors)`;
+
+        res.status(limitExceeded ? 429 : 200).json({
+            success: !limitExceeded,
+            message: msg
         });
 
     } catch (error) {
@@ -651,29 +673,27 @@ exports.clearCloudinary = async (req, res) => {
     try {
         console.log('[CLEAR] Starting full Cloudinary wipe...');
         let deletedAssets = 0;
+        const deletedFilePaths = [];
+        const deletedFolderPaths = [];
 
-        // 1. Delete ALL uploaded resources in lms_materials/* for each resource type
+        // 1. Bulk Delete ALL resources strictly under the 'lms_materials' prefix
         for (const rtype of ['raw', 'image', 'video']) {
             try {
-                let nextCursor = null;
-                do {
-                    const params = { resource_type: rtype, prefix: 'lms_materials', max_results: 500, type: 'upload' };
-                    if (nextCursor) params.next_cursor = nextCursor;
-                    const listResult = await cloudinary.api.resources(params);
-                    const publicIds = listResult.resources.map(r => r.public_id);
-                    if (publicIds.length > 0) {
-                        await cloudinary.api.delete_resources(publicIds, { resource_type: rtype });
-                        deletedAssets += publicIds.length;
-                        console.log(`[CLEAR] Deleted ${publicIds.length} ${rtype} assets`);
-                    }
-                    nextCursor = listResult.next_cursor;
-                } while (nextCursor);
+                const bulkResult = await cloudinary.api.delete_resources_by_prefix('lms_materials', {
+                    resource_type: rtype
+                });
+                if (bulkResult && bulkResult.deleted) {
+                    const keys = Object.keys(bulkResult.deleted);
+                    deletedAssets += keys.length;
+                    deletedFilePaths.push(...keys);
+                    console.log(`[CLEAR] Bulk deleted ${keys.length} ${rtype} assets`);
+                }
             } catch (typeErr) {
-                console.warn(`[CLEAR] Error clearing ${rtype}:`, typeErr.message);
+                console.warn(`[CLEAR] Warning checking ${rtype}:`, typeErr.message);
             }
         }
 
-        // 2. Delete ALL folders under lms_materials (Cloudinary requires folders to be empty first)
+        // 2. Delete ALL folders under lms_materials 
         const deleteSubFolders = async (parentPath) => {
             try {
                 const { folders } = await cloudinary.api.sub_folders(parentPath);
@@ -681,21 +701,26 @@ exports.clearCloudinary = async (req, res) => {
                     await deleteSubFolders(f.path);
                 }
                 await cloudinary.api.delete_folder(parentPath);
+                deletedFolderPaths.push(parentPath);
                 console.log(`[CLEAR] Deleted folder: ${parentPath}`);
             } catch (err) {
-                console.warn(`[CLEAR] Could not delete folder ${parentPath}:`, err.message);
+                console.warn(`[CLEAR] Could not fully delete folder ${parentPath} (files might still be deleting in background):`, err.message);
             }
         };
         await deleteSubFolders('lms_materials');
 
-        // 3. Reset ALL DB resource storageType back to 'mega' so migration modal shows all files as pending
+        // 3. Reset ALL DB resource storageType back to 'mega'
         const dbReset = await Resource.updateMany({}, { $set: { storageType: 'mega' } });
         console.log(`[CLEAR] DB reset: ${dbReset.modifiedCount} resources reset to 'mega'`);
 
         res.status(200).json({
             success: true,
-            message: `✅ Cloudinary fully cleared! Deleted ${deletedAssets} assets and all lms_materials folders. ${dbReset.modifiedCount} DB records reset to 'mega'. Now run "Setup Folders" then migrate your files.`,
-            stats: { deletedAssets, dbRecordsReset: dbReset.modifiedCount }
+            message: `✅ Cloudinary wiped successfully! Triggered bulk deletion for ~${deletedAssets} assets. ${dbReset.modifiedCount} DB records reset to 'mega'.`,
+            stats: { deletedAssetsEstimate: deletedAssets, dbRecordsReset: dbReset.modifiedCount },
+            preview: {
+                files: deletedFilePaths,
+                folders: deletedFolderPaths
+            }
         });
 
     } catch (error) {

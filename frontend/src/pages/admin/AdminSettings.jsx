@@ -7,6 +7,7 @@ import AssessmentManagement from '../../components/admin/AssessmentManagement'
 import ResourceManagement from '../../components/admin/ResourceManagement'
 import MegaMigrationModal from '../../components/admin/MegaMigrationModal'
 import CloudinarySyncModal from '../../components/admin/CloudinarySyncModal'
+import CloudinaryClearPreviewModal from '../../components/admin/CloudinaryClearPreviewModal'
 import { toast } from 'react-hot-toast'
 import {
   Settings,
@@ -52,6 +53,7 @@ export default function AdminPage() {
   const [isClearingCloudinary, setIsClearingCloudinary] = useState(false)
   const [showMegaModal, setShowMegaModal] = useState(false)
   const [showSyncModal, setShowSyncModal] = useState(false)
+  const [clearPreviewData, setClearPreviewData] = useState(null)
   const [user, setUser] = useState(null)
 
   useEffect(() => {
@@ -146,6 +148,7 @@ export default function AdminPage() {
     try {
       const res = await resourceService.clearCloudinary();
       toast.success(res.data.message, { id: toastId, duration: 8000 });
+      setClearPreviewData(res.data);
     } catch (error) {
       toast.error(error.response?.data?.message || 'Clear failed', { id: toastId });
     } finally {
@@ -1097,6 +1100,7 @@ export default function AdminPage() {
       {/* Cloudinary & Mega Modals */}
       <MegaMigrationModal isOpen={showMegaModal} onClose={() => setShowMegaModal(false)} />
       <CloudinarySyncModal isOpen={showSyncModal} onClose={() => setShowSyncModal(false)} />
+      <CloudinaryClearPreviewModal isOpen={!!clearPreviewData} onClose={() => setClearPreviewData(null)} data={clearPreviewData} />
     </div>
   )
 }
