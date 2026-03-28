@@ -11,12 +11,6 @@ const router = express.Router();
 
 // Resource Management
 router.post('/', protect, authorize('admin', 'superadmin', 'editor'), upload.single('file'), resourceController.uploadResource);
-router.post('/sync-cloudinary', protect, authorize('admin', 'superadmin'), resourceController.scanCloudinaryResources);
-router.get('/mega-pending', protect, authorize('superadmin'), resourceController.getPendingMegaResources);
-router.post('/migrate-single/:id', protect, authorize('superadmin'), resourceController.migrateSingleResource);
-router.post('/init-folders', protect, authorize('superadmin'), resourceController.initCloudinaryFolders);
-router.get('/sync-preview', protect, authorize('admin', 'superadmin'), resourceController.getCloudinarySyncPreview);
-router.delete('/clear-cloudinary', protect, authorize('superadmin'), resourceController.clearCloudinary);
 router.get('/module/:moduleId', protect, resourceController.getResourcesByModule);
 router.post('/my-resources', protect, resourceController.getBulkResources);
 router.delete('/:id', protect, authorize('admin', 'superadmin'), resourceController.deleteResource);

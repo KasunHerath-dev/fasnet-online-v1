@@ -128,16 +128,6 @@ const ResourceCard = ({ resource, viewMode = 'cards' }) => {
     };
 
     const handleDownload = async () => {
-        // If Cloudinary link, download directly natively
-        if (resource.webContentLink && resource.webContentLink.includes('cloudinary')) {
-            const url = resource.webContentLink.includes('/upload/')
-                ? resource.webContentLink.replace('/upload/', '/upload/fl_attachment/')
-                : resource.webContentLink;
-            window.location.href = url;
-            return;
-        }
-
-        // Otherwise (Mega link), stream it through our backend route proxy
         window.open(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1'}/resources/stream/${resource._id}`, '_blank');
     };
 

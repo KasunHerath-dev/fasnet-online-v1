@@ -15,22 +15,7 @@ const resourceService = {
     // Get Auth URL
     getAuthUrl: () => api.get('/resources/auth/url'),
 
-    // Download resource (Blob)
-    download: (id) => api.get(`/resources/stream/${id}`, { responseType: 'blob' }),
-
-    // Sync Cloudinary files
-    syncCloudinary: () => api.post('/resources/sync-cloudinary'),
-
-    // Mega Migration
-    getPendingMega: () => api.get('/resources/mega-pending'),
-    migrateSingleMega: (id) => api.post(`/resources/migrate-single/${id}`),
-
-    // Cloudinary Sync & Init (Granular)
-    getSyncPreview: () => api.get('/resources/sync-preview'),
-    initFolders: () => api.post('/resources/init-folders'),
-
-    // Danger: Clear ALL Cloudinary data + reset DB
-    clearCloudinary: () => api.delete('/resources/clear-cloudinary'),
+    download: (id) => api.get(`/resources/stream/${id}`, { responseType: 'blob' })
 };
 
 export default resourceService;

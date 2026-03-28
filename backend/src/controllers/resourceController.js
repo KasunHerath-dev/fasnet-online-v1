@@ -1,20 +1,9 @@
 const mongoose = require('mongoose');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-const cloudinary = require('cloudinary').v2;
 const Resource = require('../models/Resource');
 const Module = require('../models/Module');
-const BatchYear = require('../models/BatchYear');
 const ModuleEnrollment = require('../models/ModuleEnrollment');
 const { createNotification } = require('./notificationController');
-
-// Configure Cloudinary
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+const megaService = require('../services/megaService'); // Using Mega Service
 
 // Helper to resolve Module ID or Code -> Module Document
 const resolveModule = async (idOrCode) => {
@@ -68,93 +57,66 @@ exports.uploadResource = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Module not found' });
         }
 
-        // Upload to Cloudinary
-        const folderPath = `lms_materials/Level_${moduleDoc.level}/Semester_${moduleDoc.semester}/${moduleDoc.code}/${type}/${academicYear || 'General'}`;
+        // Upload to Mega
+        const fileName = `${moduleDoc.code}_${type}_${Date.now()}_${req.file.originalname}`;
+        const megaUploadResult = await megaService.uploadToMega(req.file.buffer, fileName, req.file.size);
 
-        const uploadStream = cloudinary.uploader.upload_stream(
-            {
-                folder: folderPath,
-                resource_type: 'auto',
-                public_id: req.file.originalname.split('.')[0] + '_' + Date.now()
-            },
-            async (error, result) => {
-                if (error) {
-                    console.error("Cloudinary Error:", error);
-                    return res.status(500).json({ success: false, message: 'Upload to Cloudinary failed' });
-                }
+        // Create Resource Record
+        const resource = await Resource.create({
+            title,
+            type,
+            answerFor,
+            academicYear,
+            module: moduleDoc._id,
+            fileId: megaUploadResult.nodeId, // Mega nodeId
+            webViewLink: megaUploadResult.link,
+            webContentLink: megaUploadResult.link, 
+            storageType: 'mega', // Enforcing mega
+            mimeType: req.file.mimetype,
+            size: req.file.size,
+            uploadedBy: req.user ? req.user.id : null
+        });
 
-                try {
-                    // Create Resource Record
-                    const resource = await Resource.create({
-                        title,
-                        type,
-                        answerFor,
-                        academicYear,
-                        module: moduleDoc._id,
-                        fileId: result.public_id, // Cloudinary public_id
-                        webViewLink: result.secure_url,
-                        webContentLink: result.secure_url, // For Cloudinary, secure_url is used for downloading
-                        mimeType: req.file.mimetype,
-                        size: req.file.size,
-                        uploadedBy: req.user ? req.user.id : null
-                    });
+        res.status(201).json({
+            success: true,
+            data: resource
+        });
 
-                    res.status(201).json({
-                        success: true,
-                        data: resource
-                    });
+        // Non-blocking: notify all enrolled students about the new resource
+        setImmediate(async () => {
+            try {
+                const typeLabel = {
+                    tutorial: 'Tutorial',
+                    past_paper: 'Past Paper',
+                    assignment: 'Assignment',
+                    marking_scheme: 'Marking Scheme',
+                    book: 'Book',
+                    other: 'Resource',
+                }[type] || 'Resource';
 
-                    // Non-blocking: notify all enrolled students about the new resource
-                    setImmediate(async () => {
-                        try {
-                            const typeLabel = {
-                                tutorial: 'Tutorial',
-                                past_paper: 'Past Paper',
-                                assignment: 'Assignment',
-                                marking_scheme: 'Marking Scheme',
-                                book: 'Book',
-                                other: 'Resource',
-                            }[type] || 'Resource';
+                const enrollments = await ModuleEnrollment.find({ module: moduleDoc._id })
+                    .populate({ path: 'student', populate: { path: 'user', select: '_id' } });
 
-                            const enrollments = await ModuleEnrollment.find({ module: moduleDoc._id })
-                                .populate({ path: 'student', populate: { path: 'user', select: '_id' } });
+                const notifPromises = enrollments
+                    .map(e => e?.student?.user?._id)
+                    .filter(Boolean)
+                    .map(userId =>
+                        createNotification({
+                            recipient: userId,
+                            type: 'resource_added',
+                            title: `New ${typeLabel} Added`,
+                            body: `"${title}" has been uploaded for ${moduleDoc.code} - ${moduleDoc.title}.`,
+                            link: '/learning',
+                            refModel: 'Resource',
+                            refId: resource._id,
+                        }).catch(() => { })
+                    );
 
-                            const notifPromises = enrollments
-                                .map(e => e?.student?.user?._id)
-                                .filter(Boolean)
-                                .map(userId =>
-                                    createNotification({
-                                        recipient: userId,
-                                        type: 'resource_added',
-                                        title: `New ${typeLabel} Added`,
-                                        body: `"${title}" has been uploaded for ${moduleDoc.code} – ${moduleDoc.title}.`,
-                                        link: '/learning',
-                                        refModel: 'Resource',
-                                        refId: resource._id,
-                                    }).catch(() => { })
-                                );
-
-                            await Promise.all(notifPromises);
-                        } catch (_) {
-                            // Silently ignore notification errors
-                        }
-                    });
-
-                } catch (dbErr) {
-                    console.error('Upload Controller DB Error:', dbErr);
-                    // Optional: Delete from Cloudinary if DB save fails
-                    cloudinary.uploader.destroy(result.public_id).catch(console.error);
-
-                    res.status(500).json({
-                        success: false,
-                        message: 'Server Error saving resource',
-                        error: dbErr.message || JSON.stringify(dbErr)
-                    });
-                }
+                await Promise.all(notifPromises);
+            } catch (_) {
+                // Silently ignore notification errors
             }
-        );
-
-        uploadStream.end(req.file.buffer);
+        });
 
     } catch (error) {
         console.error('Upload Controller Error:', error);
@@ -173,7 +135,6 @@ exports.getResourcesByModule = async (req, res) => {
     try {
         const moduleDoc = await resolveModule(req.params.moduleId);
 
-        // If module not found (invalid code or ID), return empty list or 404
         if (!moduleDoc) {
             return res.status(404).json({ success: false, message: 'Module not found' });
         }
@@ -203,15 +164,15 @@ exports.deleteResource = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Resource not found' });
         }
 
-        // Delete from Cloudinary
+        // Delete from Mega
         if (resource.fileId) {
             try {
-                await cloudinary.uploader.destroy(resource.fileId, { resource_type: 'raw' });
-                // We also attempt with 'image' and 'video' if 'raw' fails, as Cloudinary types it sometimes
-                await cloudinary.uploader.destroy(resource.fileId, { resource_type: 'image' }).catch(() => { });
-                await cloudinary.uploader.destroy(resource.fileId, { resource_type: 'video' }).catch(() => { });
-            } catch (cloudErr) {
-                console.error("Cloudinary deletion error:", cloudErr);
+                const deleted = await megaService.deleteFromMega(resource.fileId);
+                if (!deleted) {
+                    console.warn(`Mega file ${resource.fileId} not found, proceeding to delete DB record anyway.`);
+                }
+            } catch (megaErr) {
+                console.error("Mega deletion error:", megaErr);
             }
         }
 
@@ -229,7 +190,7 @@ exports.deleteResource = async (req, res) => {
     }
 };
 
-// @desc    Stream a resource (Download Proxy)
+// @desc    Stream a resource (Download Proxy) from Mega
 // @route   GET /api/v1/resources/stream/:id
 // @access  Public (or Private if you want)
 exports.streamResource = async (req, res) => {
@@ -239,13 +200,37 @@ exports.streamResource = async (req, res) => {
             return res.status(404).send('Resource not found');
         }
 
-        // For Cloudinary, we can redirect directly to the secure URL
-        // Append fl_attachment to force download for images/videos
-        const downloadUrl = resource.webContentLink.includes('/upload/')
-            ? resource.webContentLink.replace('/upload/', '/upload/fl_attachment/')
-            : resource.webContentLink;
+        // Check if file is stored on mega
+        if (resource.storageType === 'mega') {
+            try {
+                const { stream, name, size } = await megaService.getFileStream(resource.fileId);
 
-        res.redirect(downloadUrl);
+                // Add fallback generic name if Mega API doesn't find the name
+                const filenameToUse = encodeURIComponent(name || resource.title || 'downloaded_resource');
+
+                res.setHeader('Content-Type', resource.mimeType || 'application/octet-stream');
+                res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${filenameToUse}`);
+                
+                if (size) {
+                    res.setHeader('Content-Length', size);
+                }
+
+                stream.pipe(res);
+                
+                stream.on('error', (err) => {
+                    console.error('Mega File Stream Piping Error:', err);
+                    if (!res.headersSent) {
+                        res.status(500).send('Network error while streaming the file');
+                    }
+                });
+            } catch (megaError) {
+                console.error('Requesting Mega file stream failed:', megaError);
+                return res.status(500).send('Failed to fetch file from Mega servers');
+            }
+        } else {
+            // Native fallback for any remaining legacy links
+            res.redirect(resource.webContentLink);
+        }
 
     } catch (error) {
         console.error('Download Proxy Error:', error);
@@ -276,455 +261,5 @@ exports.getBulkResources = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Server Error Fetching Bulk Resources' });
-    }
-};
-
-// @desc    Scan Cloudinary to manually sync uploaded large files
-// @route   POST /api/v1/resources/sync-cloudinary
-// @access  Private (Admin/Superadmin)
-exports.scanCloudinaryResources = async (req, res) => {
-    try {
-        console.log('Initiating Cloudinary Sync...');
-
-        // Use Cloudinary Search API to find all files in our managed folder
-        const { resources: cloudFiles } = await cloudinary.search
-            .expression('folder:lms_materials/*')
-            .sort_by('created_at', 'desc')
-            .max_results(500)
-            .execute();
-
-        console.log(`Found ${cloudFiles.length} files in Cloudinary.`);
-        let syncedCount = 0;
-        let skippedCount = 0;
-        let errorCount = 0;
-
-        for (const file of cloudFiles) {
-            try {
-                // Check if this fileId (public_id) already exists in our DB
-                const existing = await Resource.findOne({ fileId: file.public_id });
-                if (existing) {
-                    skippedCount++;
-                    continue;
-                }
-
-                // Parse Folder Structure: lms_materials/Level_X/Semester_Y/ModuleCode/Type/Year
-                const pathParts = file.folder.split('/');
-                // Example pathParts: ['lms_materials', 'Level_1', 'Semester_1', 'CMIS1113', 'past_paper', '2023']
-
-                if (pathParts.length < 5) {
-                    console.log(`Skipping ${file.public_id} - doesn't match expected folder depth.`);
-                    skippedCount++;
-                    continue;
-                }
-
-                const moduleCode = pathParts[3];
-                const resourceType = pathParts[4];
-                const academicYear = pathParts[5] || 'General';
-
-                // Find the corresponding module in the DB
-                const moduleDoc = await resolveModule(moduleCode);
-
-                if (!moduleDoc) {
-                    console.log(`Module ${moduleCode} not found in DB for file ${file.public_id}. Skipping.`);
-                    skippedCount++;
-                    continue;
-                }
-
-                const fileName = file.filename || file.public_id.split('/').pop();
-
-                // Build a title from the filename, removing underscores/hyphens for readability
-                const humanTitle = fileName.replace(/_/g, ' ').replace(/-/g, ' ');
-
-                // Create DB Record
-                await Resource.create({
-                    title: humanTitle,
-                    type: resourceType,
-                    academicYear: academicYear,
-                    module: moduleDoc._id,
-                    fileId: file.public_id,
-                    webViewLink: file.secure_url,
-                    webContentLink: file.secure_url,
-                    mimeType: `${file.resource_type}/${file.format}`, // e.g. image/png or raw/pdf
-                    size: file.bytes,
-                    uploadedBy: req.user ? req.user.id : await mongoose.model('User').findOne({ role: 'admin' }).select('_id'), // Fallback to a random admin if somehow detached
-                });
-
-                syncedCount++;
-                console.log(`Successfully synced: ${fileName}`);
-
-            } catch (itemErr) {
-                console.error(`Error syncing individual file ${file.public_id}:`, itemErr);
-                errorCount++;
-            }
-        }
-
-        res.status(200).json({
-            success: true,
-            message: 'Cloudinary sync complete',
-            stats: {
-                totalFound: cloudFiles.length,
-                newlySynced: syncedCount,
-                skipped: skippedCount,
-                errors: errorCount
-            }
-        });
-
-    } catch (error) {
-        console.error('Cloudinary Sync Error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Server Error during Cloudinary Sync',
-            error: error.message
-        });
-    }
-};
-
-// @desc    Get all resources still hosted on Mega
-// @route   GET /api/v1/resources/mega-pending
-// @access  Private (Superadmin)
-exports.getPendingMegaResources = async (req, res) => {
-    try {
-        const megaResources = await Resource.find({
-            $or: [
-                { storageType: 'mega' },
-                { webViewLink: { $not: /res\.cloudinary\.com/ }, storageType: { $exists: false } }
-            ]
-        }).populate('module', 'name code level semester').lean();
-
-        res.status(200).json({
-            success: true,
-            count: megaResources.length,
-            data: megaResources
-        });
-    } catch (error) {
-        console.error('Fetch Pending Mega Resources Error:', error);
-        res.status(500).json({ success: false, message: 'Failed to fetch pending resources' });
-    }
-};
-
-// @desc    Migrate a single resource from Mega to Cloudinary
-// @route   POST /api/v1/resources/migrate-single/:id
-// @access  Private (Superadmin)
-exports.migrateSingleResource = async (req, res) => {
-    try {
-        const resourceId = req.params.id;
-        const resource = await Resource.findById(resourceId).populate('module');
-
-        if (!resource) {
-            return res.status(404).json({ success: false, message: 'Resource not found' });
-        }
-
-        if (resource.webViewLink && resource.webViewLink.includes('res.cloudinary.com')) {
-            return res.status(400).json({ success: false, message: 'Resource is already on Cloudinary' });
-        }
-
-        const megaService = require('../services/megaService');
-
-        // 1. Get the stream from Mega
-        const { stream, name } = await megaService.getFileStream(resource.fileId);
-
-        // Construct Cloudinary Folder Path
-        const level = resource.module ? resource.module.level : 'Unknown_Level';
-        const semester = resource.module ? resource.module.semester : 'Unknown_Semester';
-        const modCode = resource.module ? resource.module.code : 'Unknown_Module';
-        const resType = resource.type || 'other';
-        const year = resource.academicYear || 'General';
-
-        const folderPath = `lms_materials/Level_${level}/Semester_${semester}/${modCode}/${resType}/${year}`;
-
-        // 2. Upload Stream to Cloudinary
-        console.log(`[MIGRATION] Starting upload to Cloudinary for: ${name}`);
-        const cloudinaryUploadResult = await new Promise((resolve, reject) => {
-            const uploadStream = cloudinary.uploader.upload_stream(
-                {
-                    folder: folderPath,
-                    resource_type: 'auto',
-                    public_id: name.split('.')[0] + '_' + Date.now()
-                },
-                (error, result) => {
-                    if (error) {
-                        console.error('[MIGRATION] Cloudinary Upload Error:', error);
-                        reject(error);
-                    } else {
-                        console.log('[MIGRATION] Cloudinary Upload Success');
-                        resolve(result);
-                    }
-                }
-            );
-
-            // Handle stream errors
-            stream.on('error', (err) => {
-                console.error('[MIGRATION] Mega Stream Error:', err);
-                reject(err);
-            });
-
-            // Pipe the mega stream directly to Cloudinary
-            stream.pipe(uploadStream);
-        });
-
-        // 3. Update Database
-        resource.fileId = cloudinaryUploadResult.public_id;
-        resource.webViewLink = cloudinaryUploadResult.secure_url;
-        resource.webContentLink = cloudinaryUploadResult.secure_url;
-        resource.storageType = 'cloudinary';
-
-        await resource.save();
-
-        res.status(200).json({
-            success: true,
-            message: `Successfully migrated ${resource.title}`,
-            url: resource.webViewLink
-        });
-
-    } catch (error) {
-        console.error('Single Migration Error:', error);
-        res.status(500).json({ success: false, message: 'Failed to migrate resource via stream', error: error.message });
-    }
-};
-
-// @desc    Get preview of files in Cloudinary not yet synced to MongoDB
-// @route   GET /api/v1/resources/sync-preview
-// @access  Private (Admin/Superadmin)
-exports.getCloudinarySyncPreview = async (req, res) => {
-    try {
-        const cloudinaryResources = await cloudinary.search
-            .expression('folder:lms_materials/*')
-            .max_results(500)
-            .execute();
-
-        const cloudFiles = cloudinaryResources.resources;
-        const existingResources = await Resource.find({}, 'fileId').lean();
-        const existingIds = new Set(existingResources.map(r => r.fileId));
-
-        const unsyncedFiles = cloudFiles.filter(file => !existingIds.has(file.public_id));
-
-        const previewData = unsyncedFiles.map(file => {
-            const parts = file.public_id.split('/');
-            return {
-                public_id: file.public_id,
-                secure_url: file.secure_url,
-                filename: parts[parts.length - 1],
-                level: parts[1]?.split('_')[1] || '?',
-                semester: parts[2]?.split('_')[1] || '?',
-                moduleCode: parts[3] || 'Unknown',
-                type: parts[4] || 'other',
-                year: parts[5] || 'General',
-                size: (file.bytes / (1024 * 1024)).toFixed(2) + ' MB',
-                createdAt: file.created_at
-            };
-        });
-
-        res.status(200).json({
-            success: true,
-            count: previewData.length,
-            data: previewData
-        });
-
-    } catch (error) {
-        console.error('Cloudinary Preview Error:', error);
-        res.status(500).json({ success: false, message: 'Failed to fetch Cloudinary preview', error: error.message });
-    }
-};
-
-// @desc    Initialize the entire Cloudinary folder structure based on DB modules and years
-// @route   POST /api/v1/resources/init-folders
-// @access  Private (Superadmin)
-exports.initCloudinaryFolders = async (req, res) => {
-    try {
-        const dbModules = await Module.find().lean();
-        const batchYears = await BatchYear.find().lean();
-        const historicYears = await Resource.distinct('academicYear');
-
-        const WUSL_MODULES = [
-            // L1-S1
-            { code: 'CMIS1113', level: '1', semester: '1' }, { code: 'CMIS1123', level: '1', semester: '1' },
-            { code: 'CMIS1131', level: '1', semester: '1' }, { code: 'ELTN1112', level: '1', semester: '1' },
-            { code: 'ELTN1122', level: '1', semester: '1' }, { code: 'ELTN1132', level: '1', semester: '1' },
-            { code: 'MATH1112', level: '1', semester: '1' }, { code: 'STAT1113', level: '1', semester: '1' },
-            { code: 'IMGT1112', level: '1', semester: '1' }, { code: 'IMGT1122', level: '1', semester: '1' },
-            { code: 'IMGT1132', level: '1', semester: '1' },
-            // L1-S2
-            { code: 'CMIS1212', level: '1', semester: '2' }, { code: 'CMIS1221', level: '1', semester: '2' },
-            { code: 'ELTN1212', level: '1', semester: '2' }, { code: 'ELTN1222', level: '1', semester: '2' },
-            { code: 'MATH1212', level: '1', semester: '2' }, { code: 'MATH1222', level: '1', semester: '2' },
-            { code: 'STAT1213', level: '1', semester: '2' }, { code: 'IMGT1212', level: '1', semester: '2' },
-            { code: 'IMGT1222', level: '1', semester: '2' },
-            // L2-S1
-            { code: 'CMIS2113', level: '2', semester: '1' }, { code: 'CMIS2123', level: '2', semester: '1' },
-            { code: 'ELTN2112', level: '2', semester: '1' }, { code: 'ELTN2121', level: '2', semester: '1' },
-            { code: 'MATH2114', level: '2', semester: '1' }, { code: 'STAT2112', level: '2', semester: '1' },
-            { code: 'IMGT2112', level: '2', semester: '1' }, { code: 'IMGT2122', level: '2', semester: '1' },
-            { code: 'IMGT2132', level: '2', semester: '1' },
-            // L2-S2
-            { code: 'CMIS2214', level: '2', semester: '2' }, { code: 'ELTN2213', level: '2', semester: '2' },
-            { code: 'MATH2214', level: '2', semester: '2' }, { code: 'STAT2212', level: '2', semester: '2' },
-            { code: 'IMGT2212', level: '2', semester: '2' }, { code: 'IMGT2222', level: '2', semester: '2' },
-            // L3-S1
-            { code: 'CMIS3114', level: '3', semester: '1' }, { code: 'CMIS3123', level: '3', semester: '1' },
-            { code: 'CMIS3132', level: '3', semester: '1' }, { code: 'ELTN3112', level: '3', semester: '1' },
-            { code: 'MATH3114', level: '3', semester: '1' }, { code: 'STAT3113', level: '3', semester: '1' },
-            { code: 'IMGT3113', level: '3', semester: '1' }, { code: 'IMGT3122', level: '3', semester: '1' },
-            // L3-S2
-            { code: 'CMIS3214', level: '3', semester: '2' }, { code: 'ELTN3212', level: '3', semester: '2' },
-            { code: 'MATH3214', level: '3', semester: '2' }, { code: 'STAT3213', level: '3', semester: '2' },
-            { code: 'IMGT3212', level: '3', semester: '2' }, { code: 'IMGT3222', level: '3', semester: '2' },
-            // L4-S1
-            { code: 'CMIS4114', level: '4', semester: '1' }, { code: 'CMIS4123', level: '4', semester: '1' },
-            { code: 'CMIS4134', level: '4', semester: '1' }, { code: 'CMIS4142', level: '4', semester: '1' },
-            { code: 'CMIS4153', level: '4', semester: '1' }, { code: 'CMIS4118', level: '4', semester: '1' },
-            { code: 'CMIS4126', level: '4', semester: '1' }, { code: 'ELTN4114', level: '4', semester: '1' },
-            { code: 'ELTN4143', level: '4', semester: '1' }, { code: 'ELTN4151', level: '4', semester: '1' },
-            { code: 'MATH4114', level: '4', semester: '1' }, { code: 'STAT4114', level: '4', semester: '1' },
-            { code: 'STAT4134', level: '4', semester: '1' }, { code: 'IMGT4123', level: '4', semester: '1' },
-            { code: 'IMGT4133', level: '4', semester: '1' }, { code: 'IMGT4142', level: '4', semester: '1' },
-            { code: 'IMGT4152', level: '4', semester: '1' }, { code: 'IMGT4162', level: '4', semester: '1' },
-            { code: 'IMGT4172', level: '4', semester: '1' },
-            // L4-S2
-            { code: 'CMIS4216', level: '4', semester: '2' }, { code: 'INDT4216', level: '4', semester: '2' },
-            { code: 'ELTN4213', level: '4', semester: '2' }, { code: 'MATH4214', level: '4', semester: '2' },
-            { code: 'MATH4224', level: '4', semester: '2' }, { code: 'IMGT4213', level: '4', semester: '2' },
-            { code: 'IMGT4222', level: '4', semester: '2' }, { code: 'IMGT4234', level: '4', semester: '2' },
-            { code: 'IMGT4242', level: '4', semester: '2' },
-        ];
-
-        // Merge DB modules with complete list (DB takes precedence for extra fields)
-        const dbCodes = new Set(dbModules.map(m => m.code));
-        const allModules = [...dbModules, ...WUSL_MODULES.filter(m => !dbCodes.has(m.code))];
-
-        // ─── ALL YEARS (default + DB batch years + historic resource years) ───────
-        const allYears = new Set(['General', '2019/2020', '2020/2021', '2021/2022', '2022/2023', '2023/2024', '2024/2025', '2025/2026']);
-        batchYears.forEach(b => allYears.add(b.year));
-        historicYears.forEach(y => { if (y) allYears.add(y); });
-
-        const types = ['lecture_note', 'tutorial', 'past_paper', 'assignment', 'book', 'other'];
-        
-        // Flatten into a single array of paths to create
-        const pathsToCreate = [];
-        for (const mod of allModules) {
-            for (const type of types) {
-                for (const year of allYears) {
-                    pathsToCreate.push({
-                        path: `lms_materials/Level_${mod.level}/Semester_${mod.semester}/${mod.code}/${type}/${year}`
-                    });
-                }
-            }
-        }
-
-        console.log(`[INIT] Planning creation of ${pathsToCreate.length} folders...`);
-
-        let createdCount = 0;
-        let errorCount = 0;
-        let limitExceeded = false;
-        
-        // Process in batches of 10 to prevent overwhelming Cloudinary and avoid timeouts
-        const BATCH_SIZE = 10;
-        for (let i = 0; i < pathsToCreate.length; i += BATCH_SIZE) {
-            if (limitExceeded) break;
-            
-            const batch = pathsToCreate.slice(i, i + BATCH_SIZE);
-            const promises = batch.map(async (item) => {
-                try {
-                    await cloudinary.api.create_folder(item.path);
-                    return { success: true };
-                } catch (folderErr) {
-                    if (folderErr.http_code === 409 || folderErr.message?.includes('already exists')) {
-                        return { success: true }; // Treated as success if it already exists
-                    } else if (folderErr.http_code === 429 || folderErr.http_code === 420 || folderErr.error?.http_code === 420) {
-                        return { rateLimit: true };
-                    } else {
-                        const errMsg = folderErr.message || folderErr.error?.message || JSON.stringify(folderErr);
-                        console.warn(`[INIT] Could not create ${item.path}:`, errMsg);
-                        return { error: true };
-                    }
-                }
-            });
-
-            const results = await Promise.all(promises);
-            for (const res of results) {
-                if (res.rateLimit) {
-                    limitExceeded = true;
-                    console.warn(`[INIT] Cloudinary Rate Limit Exceeded (Admin API 500/hr) at batch ${i}. Stopping early.`);
-                    break;
-                }
-                if (res.success) createdCount++;
-                if (res.error) errorCount++;
-            }
-        }
-
-        const msg = limitExceeded 
-            ? `⚠️ Cloudinary Rate Limit Hit! Created/Verified ${createdCount} folders so far. Please wait an hour before continuing.`
-            : `✅ Folder init complete! Created/Verified ${createdCount} folders. (${errorCount} unexpected errors)`;
-
-        res.status(limitExceeded ? 429 : 200).json({
-            success: !limitExceeded,
-            message: msg
-        });
-
-    } catch (error) {
-        console.error('Folder Init Error:', error);
-        res.status(500).json({ success: false, message: 'Failed to initialize Cloudinary folders', error: error.message });
-    }
-};
-
-// @desc    DANGER: Delete ALL Cloudinary resources and folders under lms_materials, reset DB storageType
-// @route   DELETE /api/v1/resources/clear-cloudinary
-// @access  Private (Superadmin ONLY)
-exports.clearCloudinary = async (req, res) => {
-    try {
-        console.log('[CLEAR] Starting full Cloudinary wipe...');
-        let deletedAssets = 0;
-        const deletedFilePaths = [];
-        const deletedFolderPaths = [];
-
-        // 1. Bulk Delete ALL resources strictly under the 'lms_materials' prefix
-        for (const rtype of ['raw', 'image', 'video']) {
-            try {
-                const bulkResult = await cloudinary.api.delete_resources_by_prefix('lms_materials', {
-                    resource_type: rtype
-                });
-                if (bulkResult && bulkResult.deleted) {
-                    const keys = Object.keys(bulkResult.deleted);
-                    deletedAssets += keys.length;
-                    deletedFilePaths.push(...keys);
-                    console.log(`[CLEAR] Bulk deleted ${keys.length} ${rtype} assets`);
-                }
-            } catch (typeErr) {
-                console.warn(`[CLEAR] Warning checking ${rtype}:`, typeErr.message);
-            }
-        }
-
-        // 2. Delete ALL folders under lms_materials 
-        const deleteSubFolders = async (parentPath) => {
-            try {
-                const { folders } = await cloudinary.api.sub_folders(parentPath);
-                for (const f of folders) {
-                    await deleteSubFolders(f.path);
-                }
-                await cloudinary.api.delete_folder(parentPath);
-                deletedFolderPaths.push(parentPath);
-                console.log(`[CLEAR] Deleted folder: ${parentPath}`);
-            } catch (err) {
-                console.warn(`[CLEAR] Could not fully delete folder ${parentPath} (files might still be deleting in background):`, err.message);
-            }
-        };
-        await deleteSubFolders('lms_materials');
-
-        // 3. Reset ALL DB resource storageType back to 'mega'
-        const dbReset = await Resource.updateMany({}, { $set: { storageType: 'mega' } });
-        console.log(`[CLEAR] DB reset: ${dbReset.modifiedCount} resources reset to 'mega'`);
-
-        res.status(200).json({
-            success: true,
-            message: `✅ Cloudinary wiped successfully! Triggered bulk deletion for ~${deletedAssets} assets. ${dbReset.modifiedCount} DB records reset to 'mega'.`,
-            stats: { deletedAssetsEstimate: deletedAssets, dbRecordsReset: dbReset.modifiedCount },
-            preview: {
-                files: deletedFilePaths,
-                folders: deletedFolderPaths
-            }
-        });
-
-    } catch (error) {
-        console.error('[CLEAR] Cloudinary Clear Error:', error);
-        res.status(500).json({ success: false, message: 'Failed to clear Cloudinary', error: error.message });
     }
 };

@@ -5,9 +5,6 @@ import resourceService from '../../services/resourceService'
 import BatchYearManagement from '../../components/admin/BatchYearManagement'
 import AssessmentManagement from '../../components/admin/AssessmentManagement'
 import ResourceManagement from '../../components/admin/ResourceManagement'
-import MegaMigrationModal from '../../components/admin/MegaMigrationModal'
-import CloudinarySyncModal from '../../components/admin/CloudinarySyncModal'
-import CloudinaryClearPreviewModal from '../../components/admin/CloudinaryClearPreviewModal'
 import { toast } from 'react-hot-toast'
 import {
   Settings,
@@ -48,12 +45,6 @@ export default function AdminPage() {
     status: 'Unknown'
   })
   const [isLoading, setIsLoading] = useState(true)
-  const [isSyncingCloudinary, setIsSyncingCloudinary] = useState(false)
-  const [isInitializingFolders, setIsInitializingFolders] = useState(false)
-  const [isClearingCloudinary, setIsClearingCloudinary] = useState(false)
-  const [showMegaModal, setShowMegaModal] = useState(false)
-  const [showSyncModal, setShowSyncModal] = useState(false)
-  const [clearPreviewData, setClearPreviewData] = useState(null)
   const [user, setUser] = useState(null)
 
   useEffect(() => {
@@ -110,49 +101,6 @@ export default function AdminPage() {
       alert('Password changed successfully!')
     } catch (err) {
       alert('Error: ' + (err.response?.data?.error?.message || err.message))
-    }
-  }
-
-  const handleMigrateMega = () => {
-    setShowMegaModal(true);
-  }
-
-  const handleSyncCloudinary = () => {
-    setShowSyncModal(true);
-  }
-
-  const handleInitCloudinaryFolders = async () => {
-    if (!window.confirm("Initialize Cloudinary folder structure? This will create level, semester, and module-specific directories for manual uploads.")) return;
-
-    setIsInitializingFolders(true);
-    const toastId = toast.loading("Initializing Cloudinary structure...");
-    try {
-      const res = await resourceService.initFolders();
-      toast.success(res.data.message, { id: toastId });
-    } catch (error) {
-      console.error('Init Error:', error);
-      toast.error(error.response?.data?.message || 'Failed to initialize folders', { id: toastId });
-    } finally {
-      setIsInitializingFolders(false);
-    }
-  }
-
-  const handleClearCloudinary = async () => {
-    const firstConfirm = window.confirm('⚠️ DANGER: This will DELETE ALL files and folders in Cloudinary under lms_materials, and reset all DB records to pending migration. This CANNOT be undone. Continue?');
-    if (!firstConfirm) return;
-    const secondConfirm = window.confirm('🔴 FINAL WARNING: Are you 100% sure? All Cloudinary assets will be permanently deleted.');
-    if (!secondConfirm) return;
-
-    setIsClearingCloudinary(true);
-    const toastId = toast.loading('Clearing Cloudinary... This may take a few minutes.');
-    try {
-      const res = await resourceService.clearCloudinary();
-      toast.success(res.data.message, { id: toastId, duration: 8000 });
-      setClearPreviewData(res.data);
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Clear failed', { id: toastId });
-    } finally {
-      setIsClearingCloudinary(false);
     }
   }
 
@@ -749,7 +697,6 @@ export default function AdminPage() {
                     </div>
                   </button>
 
-                  {/* Organize Resources */}
                   {/* Organize Resources - Ash */}
                   <button
                     onClick={() => navigate('/admin/resources')}
@@ -769,105 +716,6 @@ export default function AdminPage() {
                       </div>
                     </div>
                   </button>
-
-                  {/* Cloudinary Sync - Ash */}
-                  <button
-                    onClick={handleSyncCloudinary}
-                    className="group relative overflow-hidden bg-indigo-50 border border-indigo-200 hover:border-indigo-400 rounded-2xl sm:rounded-3xl p-6 sm:p-8 transition-all duration-200 hover:shadow-lg hover:shadow-indigo-100"
-                  >
-                    <div className="relative">
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-indigo-100 flex items-center justify-center mb-6 overflow-hidden">
-                        <RefreshCw className="w-7 h-7 sm:w-8 sm:h-8 text-indigo-600 group-hover:rotate-180 transition-transform duration-500" />
-                      </div>
-
-                      <h3 className="font-bold text-base sm:text-lg text-indigo-900 mb-2">Sync Cloudinary</h3>
-                      <p className="text-xs sm:text-sm text-indigo-700/80 mb-4">Scan and insert new manual uploads from Cloudinary</p>
-
-                      <div className="flex items-center gap-2 text-indigo-700 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
-                        <span>Open Sync Tool</span>
-                        <ChevronRight className="w-4 h-4" />
-                      </div>
-                    </div>
-                  </button>
-
-                  {/* Superadmin Only: Mega Migration - Ash */}
-                  {user?.roles?.includes('superadmin') && (
-                    <button
-                      onClick={handleMigrateMega}
-                      className="group relative overflow-hidden bg-rose-50 border border-rose-200 hover:border-rose-400 rounded-2xl sm:rounded-3xl p-6 sm:p-8 transition-all duration-200 hover:shadow-lg hover:shadow-rose-100"
-                    >
-                      <div className="relative">
-                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-rose-100 flex items-center justify-center mb-6 overflow-hidden">
-                          <Cloud className="w-7 h-7 sm:w-8 sm:h-8 text-rose-600 group-hover:scale-110 transition-transform" />
-                        </div>
-
-                        <h3 className="font-bold text-base sm:text-lg text-rose-900 mb-2">Migrate Mega</h3>
-                        <p className="text-xs sm:text-sm text-rose-700/80 mb-4">Granular UI file transfer assistant</p>
-
-                        <div className="flex items-center gap-2 text-rose-700 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
-                          <span>Open Tool</span>
-                          <ChevronRight className="w-4 h-4" />
-                        </div>
-                      </div>
-                    </button>
-                  )}
-
-                  {/* Superadmin Only: Init Cloudinary Folders - Ash */}
-                  {user?.roles?.includes('superadmin') && (
-                    <button
-                      onClick={handleInitCloudinaryFolders}
-                      disabled={isInitializingFolders}
-                      className="group relative overflow-hidden bg-blue-50 border border-blue-200 hover:border-blue-400 rounded-2xl sm:rounded-3xl p-6 sm:p-8 transition-all duration-200 hover:shadow-lg hover:shadow-blue-100"
-                    >
-                      <div className="relative">
-                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-blue-100 flex items-center justify-center mb-6 overflow-hidden">
-                          {isInitializingFolders ? (
-                            <RefreshCw className="w-7 h-7 sm:w-8 sm:h-8 text-blue-600 animate-spin" />
-                          ) : (
-                            <Upload className="w-7 h-7 sm:w-8 sm:h-8 text-blue-600 group-hover:scale-110 transition-transform" />
-                          )}
-                        </div>
-
-                        <h3 className="font-bold text-base sm:text-lg text-blue-900 mb-2">Setup Folders</h3>
-                        <p className="text-xs sm:text-sm text-blue-700/80 mb-4">Pre-generate Cloudinary directories</p>
-
-                        <div className="flex items-center gap-2 text-blue-700 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
-                          <span>{isInitializingFolders ? 'Building...' : 'Initialize Now'}</span>
-                          <ChevronRight className="w-4 h-4" />
-                        </div>
-                      </div>
-                    </button>
-                  )}
-
-                  {/* Superadmin Only: DANGER Clear Cloudinary */}
-                  {user?.roles?.includes('superadmin') && (
-                    <button
-                      onClick={handleClearCloudinary}
-                      disabled={isClearingCloudinary}
-                      className="group relative overflow-hidden bg-red-50 border-2 border-red-300 hover:border-red-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 transition-all duration-200 hover:shadow-lg hover:shadow-red-100 col-span-full"
-                    >
-                      <div className="relative flex items-start gap-5">
-                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-red-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                          {isClearingCloudinary ? (
-                            <RefreshCw className="w-7 h-7 sm:w-8 sm:h-8 text-red-600 animate-spin" />
-                          ) : (
-                            <Trash2 className="w-7 h-7 sm:w-8 sm:h-8 text-red-600 group-hover:scale-110 transition-transform" />
-                          )}
-                        </div>
-                        <div className="flex-1 text-left">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-xs font-black uppercase tracking-wider text-red-500 bg-red-100 px-2 py-0.5 rounded-md">⚠ DANGER ZONE</span>
-                          </div>
-                          <h3 className="font-black text-base sm:text-lg text-red-900 mb-1">Clear Cloudinary &amp; Reset</h3>
-                          <p className="text-xs sm:text-sm text-red-700/80 mb-3">Wipe ALL lms_materials assets and folders, reset DB records to pending. Use before a clean rebuild.</p>
-                          <div className="flex items-center gap-2 text-red-700 font-bold text-xs sm:text-sm group-hover:gap-3 transition-all">
-                            <span>{isClearingCloudinary ? 'Clearing... please wait' : 'Clear Everything & Start Fresh'}</span>
-                            <ChevronRight className="w-4 h-4" />
-                          </div>
-                        </div>
-                      </div>
-                    </button>
-                  )}
                 </div>
               </div>
             </div>
@@ -1097,10 +945,6 @@ export default function AdminPage() {
         }
       `}</style>
 
-      {/* Cloudinary & Mega Modals */}
-      <MegaMigrationModal isOpen={showMegaModal} onClose={() => setShowMegaModal(false)} />
-      <CloudinarySyncModal isOpen={showSyncModal} onClose={() => setShowSyncModal(false)} />
-      <CloudinaryClearPreviewModal isOpen={!!clearPreviewData} onClose={() => setClearPreviewData(null)} data={clearPreviewData} />
     </div>
   )
 }
