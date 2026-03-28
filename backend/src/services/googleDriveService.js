@@ -1,135 +1,136 @@
 const { google } = require('googleapis');
 const stream = require('stream');
-const SystemSetting = require('../models/SystemSetting');
 
-class GoogleDriveService {
-    constructor() {
-        this.oauth2Client = new google.auth.OAuth2(
-            process.env.GOOGLE_CLIENT_ID,
-            process.env.GOOGLE_CLIENT_SECRET,
-            process.env.GOOGLE_REDIRECT_URI
-        );
-
-        this.drive = google.drive({ version: 'v3', auth: this.oauth2Client });
-        this.isAuthorized = false;
+// Setup Google Drive Auth Client
+const createDriveClient = () => {
+    if (!process.env.GOOGLE_CLIENT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY) {
+        throw new Error("Missing Google Drive credentials in environment variables.");
     }
 
-    /**
-     * Ensure the client has valid credentials (from memory or DB)
-     */
-    async ensureAuthorized() {
-        if (this.isAuthorized) return;
+    const auth = new google.auth.GoogleAuth({
+        credentials: {
+            client_email: process.env.GOOGLE_CLIENT_EMAIL,
+            private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'), // Handle env stringified newlines
+        },
+        scopes: ['https://www.googleapis.com/auth/drive'],
+    });
 
-        try {
-            // Try fetching token from DB
-            const setting = await SystemSetting.findOne({ key: 'GOOGLE_REFRESH_TOKEN' });
+    return google.drive({ version: 'v3', auth });
+};
 
-            if (setting && setting.value) {
-                this.oauth2Client.setCredentials({
-                    refresh_token: setting.value
-                });
-                this.isAuthorized = true;
-                console.log('Google Drive: Authorized using DB token');
-            } else if (process.env.GOOGLE_REFRESH_TOKEN) {
-                // Fallback to Env
-                this.oauth2Client.setCredentials({
-                    refresh_token: process.env.GOOGLE_REFRESH_TOKEN
-                });
-                this.isAuthorized = true;
-                console.log('Google Drive: Authorized using ENV token');
-            } else {
-                console.log('Google Drive: No refresh token found in DB or ENV');
-            }
-        } catch (error) {
-            console.error('Google Drive Auth Check Failed:', error);
+/**
+ * Uploads a file buffer to Google Drive.
+ * @param {Buffer} fileBuffer - The memory buffer of the file.
+ * @param {string} fileName - Destination file name.
+ * @param {string} mimeType - The mime type of the file.
+ * @returns {Promise<{nodeId: string, link: string}>} - The ID and Web View Link.
+ */
+const uploadToDrive = async (fileBuffer, fileName, mimeType) => {
+    const drive = createDriveClient();
+    
+    if (!process.env.GOOGLE_DRIVE_FOLDER_ID) {
+        throw new Error("Missing GOOGLE_DRIVE_FOLDER_ID in environment variables.");
+    }
+
+    const bufferStream = new stream.PassThrough();
+    bufferStream.end(fileBuffer);
+
+    const fileMetadata = {
+        name: fileName,
+        parents: [process.env.GOOGLE_DRIVE_FOLDER_ID]
+    };
+
+    const media = {
+        mimeType: mimeType || 'application/octet-stream',
+        body: bufferStream,
+    };
+
+    // 1. Create the file in Drive
+    const createOptions = {
+        requestBody: fileMetadata,
+        media: media,
+        fields: 'id, webViewLink, webContentLink',
+        supportsAllDrives: true,
+        includeItemsFromAllDrives: true,
+    };
+
+    if (process.env.GOOGLE_DRIVE_SHARED_DRIVE_ID) {
+        createOptions.driveId = process.env.GOOGLE_DRIVE_SHARED_DRIVE_ID;
+    }
+
+    const driveResponse = await drive.files.create(createOptions);
+
+    const fileId = driveResponse.data.id;
+
+    // 2. Set Public Read Permissions so anyone can access via link
+    await drive.permissions.create({
+        fileId: fileId,
+        requestBody: { role: 'reader', type: 'anyone' },
+        supportsAllDrives: true,
+    });
+
+    return {
+        nodeId: fileId, // Using 'nodeId' naming convention to match Mega
+        // use webContentLink for direct download fallback, webViewLink for viewing
+        link: driveResponse.data.webContentLink || driveResponse.data.webViewLink
+    };
+};
+
+/**
+ * Deletes a file from Google Drive.
+ * @param {string} fileId - The Google Drive file ID.
+ * @returns {Promise<boolean>}
+ */
+const deleteFromDrive = async (fileId) => {
+    const drive = createDriveClient();
+    
+    try {
+        await drive.files.delete({ fileId, supportsAllDrives: true });
+        return true;
+    } catch (error) {
+        if (error.code === 404 || error.message.includes('File not found')) {
+            console.warn(`[Google Drive] Delete ignored. File ${fileId} not found.`);
+            return true; // Already gone
         }
+        console.error(`[Google Drive] Error deleting file ${fileId}:`, error);
+        throw error;
     }
+};
 
-    /**
-     * Generate the URL for the user to authorize the app
-     */
-    generateAuthUrl() {
-        const scopes = [
-            'https://www.googleapis.com/auth/drive.file' // Only access files created by this app
-        ];
+/**
+ * Pipes a Google Drive file as a stream (Used by our stream proxy).
+ * @param {string} fileId - The Google Drive file ID.
+ * @returns {Promise<{ stream: NodeJS.ReadableStream, name: string, size: number, mimeType: string }>}
+ */
+const getFileStream = async (fileId) => {
+    const drive = createDriveClient();
 
-        return this.oauth2Client.generateAuthUrl({
-            access_type: 'offline', // Required to get a refresh token
-            scope: scopes,
-            prompt: 'consent' // Force consent to ensure refresh token is returned
-        });
-    }
+    // 1. Get Metadata for size and name
+    const metadataResponse = await drive.files.get({
+        fileId: fileId,
+        fields: 'name, size, mimeType',
+        supportsAllDrives: true,
+        includeItemsFromAllDrives: true,
+    });
+    
+    const { name, size, mimeType } = metadataResponse.data;
 
-    /**
-     * Exchange authorization code for tokens
-     * @param {string} code - The code from the callback URL
-     */
-    async getTokens(code) {
-        const { tokens } = await this.oauth2Client.getToken(code);
-        return tokens;
-    }
+    // 2. Get Media Stream
+    const streamResponse = await drive.files.get(
+        { fileId: fileId, alt: 'media', supportsAllDrives: true, includeItemsFromAllDrives: true },
+        { responseType: 'stream' }
+    );
 
-    /**
-     * Upload a file to Google Drive
-     * @param {Object} fileObject - The file object from Multer (buffer, mimetype, originalname)
-     * @param {string} folderId - (Optional) The ID of the folder to upload to
-     */
-    async uploadFile(fileObject, folderId = null) {
-        await this.ensureAuthorized();
+    return {
+        stream: streamResponse.data,
+        name: name,
+        size: Number(size),
+        mimeType: mimeType
+    };
+};
 
-        if (!this.isAuthorized) {
-            throw new Error('Google Drive is not authorized. Please visit Admin > Resources to connect.');
-        }
-
-        const bufferStream = new stream.PassThrough();
-        bufferStream.end(fileObject.buffer);
-
-        // Preference: 1. Argument, 2. Env, 3. Root (null)
-        const targetFolder = folderId || process.env.GOOGLE_DRIVE_FOLDER_ID;
-
-        const fileMetadata = {
-            name: fileObject.originalname,
-            mimeType: fileObject.mimetype
-        };
-
-        if (targetFolder) {
-            fileMetadata.parents = [targetFolder];
-        }
-
-        try {
-            const response = await this.drive.files.create({
-                requestBody: fileMetadata,
-                media: {
-                    mimeType: fileObject.mimetype,
-                    body: bufferStream
-                }
-            });
-
-            return response.data;
-        } catch (error) {
-            // Check for specific error reasons
-            const reason = error.errors?.[0]?.reason || 'unknown';
-            console.error(`Google Drive Upload Error (${reason}):`, error.message);
-            throw error;
-        }
-    }
-
-    /**
-     * Delete a file from Google Drive
-     * @param {string} fileId 
-     */
-    async deleteFile(fileId) {
-        await this.ensureAuthorized();
-        try {
-            await this.drive.files.delete({
-                fileId: fileId
-            });
-            return true;
-        } catch (error) {
-            console.error('Google Drive Delete Error:', error.message);
-            return false;
-        }
-    }
-}
-
-module.exports = new GoogleDriveService();
+module.exports = {
+    uploadToDrive,
+    deleteFromDrive,
+    getFileStream
+};

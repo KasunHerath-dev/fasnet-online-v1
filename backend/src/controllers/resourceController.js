@@ -4,6 +4,7 @@ const Module = require('../models/Module');
 const ModuleEnrollment = require('../models/ModuleEnrollment');
 const { createNotification } = require('./notificationController');
 const megaService = require('../services/megaService'); // Using Mega Service
+const googleDriveService = require('../services/googleDriveService'); // Using Google Drive Service
 
 // Helper to resolve Module ID or Code -> Module Document
 const resolveModule = async (idOrCode) => {
@@ -26,7 +27,7 @@ exports.uploadResource = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Please upload a file' });
         }
 
-        const { title, type, moduleId, answerFor, moduleContext, academicYear } = req.body;
+        const { title, type, moduleId, answerFor, moduleContext, academicYear, storageType } = req.body;
 
         // Verify module exists (By ID or Code)
         let moduleDoc = await resolveModule(moduleId);
@@ -57,9 +58,23 @@ exports.uploadResource = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Module not found' });
         }
 
-        // Upload to Mega
+        // Upload to Storage
         const fileName = `${moduleDoc.code}_${type}_${Date.now()}_${req.file.originalname}`;
-        const megaUploadResult = await megaService.uploadToMega(req.file.buffer, fileName, req.file.size);
+        
+        // Use specifically passed storageType, OR use the system's ACTIVE_STORAGE_PROVIDER flag, OR fallback to mega
+        const activeStorage = storageType || process.env.ACTIVE_STORAGE_PROVIDER || 'mega';
+        const isGoogleDrive = activeStorage === 'google_drive';
+
+        if (isGoogleDrive && !process.env.GOOGLE_DRIVE_FOLDER_ID) {
+            return res.status(400).json({ success: false, message: 'Google Drive is set as active storage but is not configured yet. Please configure it in Settings -> Resources.' });
+        }
+        let uploadResult;
+        
+        if (isGoogleDrive) {
+            uploadResult = await googleDriveService.uploadToDrive(req.file.buffer, fileName, req.file.mimetype);
+        } else {
+            uploadResult = await megaService.uploadToMega(req.file.buffer, fileName, req.file.size);
+        }
 
         // Create Resource Record
         const resource = await Resource.create({
@@ -68,10 +83,10 @@ exports.uploadResource = async (req, res) => {
             answerFor,
             academicYear,
             module: moduleDoc._id,
-            fileId: megaUploadResult.nodeId, // Mega nodeId
-            webViewLink: megaUploadResult.link,
-            webContentLink: megaUploadResult.link, 
-            storageType: 'mega', // Enforcing mega
+            fileId: uploadResult.nodeId, // Mega/Drive nodeId
+            webViewLink: uploadResult.link,
+            webContentLink: uploadResult.link, 
+            storageType: isGoogleDrive ? 'google_drive' : 'mega',
             mimeType: req.file.mimetype,
             size: req.file.size,
             uploadedBy: req.user ? req.user.id : null
@@ -164,15 +179,19 @@ exports.deleteResource = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Resource not found' });
         }
 
-        // Delete from Mega
+        // Delete from Storage
         if (resource.fileId) {
             try {
-                const deleted = await megaService.deleteFromMega(resource.fileId);
-                if (!deleted) {
-                    console.warn(`Mega file ${resource.fileId} not found, proceeding to delete DB record anyway.`);
+                if (resource.storageType === 'google_drive') {
+                    await googleDriveService.deleteFromDrive(resource.fileId);
+                } else {
+                    const deleted = await megaService.deleteFromMega(resource.fileId);
+                    if (!deleted) {
+                        console.warn(`Mega file ${resource.fileId} not found, proceeding to delete DB record anyway.`);
+                    }
                 }
-            } catch (megaErr) {
-                console.error("Mega deletion error:", megaErr);
+            } catch (storageErr) {
+                console.error("Storage deletion error:", storageErr);
             }
         }
 
@@ -200,12 +219,16 @@ exports.streamResource = async (req, res) => {
             return res.status(404).send('Resource not found');
         }
 
-        // Check if file is stored on mega
-        if (resource.storageType === 'mega') {
+        // Check if file is stored on mega or google_drive
+        if (resource.storageType === 'mega' || resource.storageType === 'google_drive') {
             try {
-                const { stream, name, size } = await megaService.getFileStream(resource.fileId);
+                const streamData = resource.storageType === 'google_drive' 
+                    ? await googleDriveService.getFileStream(resource.fileId)
+                    : await megaService.getFileStream(resource.fileId);
 
-                // Add fallback generic name if Mega API doesn't find the name
+                const { stream, name, size } = streamData;
+
+                // Add fallback generic name if API doesn't find the name
                 const filenameToUse = encodeURIComponent(name || resource.title || 'downloaded_resource');
 
                 res.setHeader('Content-Type', resource.mimeType || 'application/octet-stream');
@@ -218,14 +241,14 @@ exports.streamResource = async (req, res) => {
                 stream.pipe(res);
                 
                 stream.on('error', (err) => {
-                    console.error('Mega File Stream Piping Error:', err);
+                    console.error('File Stream Piping Error:', err);
                     if (!res.headersSent) {
                         res.status(500).send('Network error while streaming the file');
                     }
                 });
-            } catch (megaError) {
-                console.error('Requesting Mega file stream failed:', megaError);
-                return res.status(500).send('Failed to fetch file from Mega servers');
+            } catch (streamError) {
+                console.error(`Requesting file stream failed (${resource.storageType}):`, streamError);
+                return res.status(500).send('Failed to fetch file from storage servers');
             }
         } else {
             // Native fallback for any remaining legacy links

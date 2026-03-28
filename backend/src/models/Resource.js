@@ -31,6 +31,7 @@ const resourceSchema = new mongoose.Schema({
     },
     storageType: {
         type: String,
+        enum: ['mega', 'google_drive'],
         default: 'mega'
     },
     webViewLink: {

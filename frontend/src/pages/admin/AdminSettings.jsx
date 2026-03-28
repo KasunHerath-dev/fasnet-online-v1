@@ -5,6 +5,8 @@ import resourceService from '../../services/resourceService'
 import BatchYearManagement from '../../components/admin/BatchYearManagement'
 import AssessmentManagement from '../../components/admin/AssessmentManagement'
 import ResourceManagement from '../../components/admin/ResourceManagement'
+import GoogleDriveConfig from '../../components/admin/GoogleDriveConfig'
+import ActiveStorageToggle from '../../components/admin/ActiveStorageToggle'
 import { toast } from 'react-hot-toast'
 import {
   Settings,
@@ -662,6 +664,12 @@ export default function AdminPage() {
                 </div>
                 <ResourceManagement />
               </div>
+
+              {/* Active Storage Configuration - Ash */}
+              <ActiveStorageToggle />
+
+              {/* Google Drive Configuration - Ash */}
+              <GoogleDriveConfig />
 
               {/* Quick Resource Actions - Ash */}
               <div>

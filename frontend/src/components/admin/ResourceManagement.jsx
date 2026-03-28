@@ -142,6 +142,7 @@ export default function ResourceManagement() {
         moduleId: '',
         category: 'question', // 'question' or 'answer'
         context: 'tutorial', // 'tutorial', 'assignment', 'past_paper', 'other'
+        storageType: 'mega', // 'mega' or 'google_drive'
         title: '',
         file: null
     });
@@ -281,6 +282,7 @@ export default function ResourceManagement() {
         data.append('file', formData.file);
         data.append('title', formData.title);
         data.append('moduleId', formData.moduleId);
+        data.append('storageType', formData.storageType);
 
         // Logic to map Category + Context -> Type + AnswerFor
         let finalType = 'other';
@@ -455,6 +457,20 @@ export default function ResourceManagement() {
                                     </div>
                                 </div>
                             )}
+
+                            {/* Storage Provider Selection */}
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">Storage Provider</label>
+                                <Dropdown
+                                    value={formData.storageType}
+                                    onChange={(e) => setFormData({ ...formData, storageType: e.target.value })}
+                                    options={[
+                                        { value: 'mega', label: 'Mega Drive (Primary)' },
+                                        { value: 'google_drive', label: 'Google Drive (Secondary)' }
+                                    ]}
+                                    className="w-full"
+                                />
+                            </div>
 
                             {/* File Upload */}
                             <div className="border-2 border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 rounded-2xl p-6 text-center hover:bg-slate-100 hover:border-slate-400 dark:hover:bg-slate-800 dark:hover:border-slate-600 transition-all duration-300 cursor-pointer relative group">
@@ -662,6 +678,13 @@ function ResourceItem({ resource, onDelete, color }) {
                                 {resource.academicYear}
                             </span>
                         )}
+                        <span className={`px-2 py-1 rounded-lg text-[10px] uppercase font-bold tracking-wide border ml-2 ${
+                            resource.storageType === 'google_drive' 
+                                ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-500/30'
+                                : 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-500/30'
+                        }`}>
+                            {resource.storageType === 'google_drive' ? 'Drive' : 'Mega'}
+                        </span>
                     </h4>
                     <p className="text-xs font-bold text-slate-400 mt-1">
                         {(resource.size / 1024 / 1024).toFixed(2)} MB • {new Date(resource.createdAt).toLocaleDateString()}

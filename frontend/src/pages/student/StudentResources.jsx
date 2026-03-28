@@ -67,7 +67,7 @@ const getCardTheme = (type) => {
                 btnBg: 'bg-[#ff5734]',
                 btnText: 'text-white'
             };
-        case 'book':
+        case 'Theorys':
         default:
             return {
                 bg: 'bg-white',
