@@ -68,12 +68,35 @@ exports.uploadResource = async (req, res) => {
         if (isGoogleDrive && !process.env.GOOGLE_DRIVE_FOLDER_ID) {
             return res.status(400).json({ success: false, message: 'Google Drive is set as active storage but is not configured yet. Please configure it in Settings -> Resources.' });
         }
+
+        const CATEGORY_MAP = {
+            tutorial: 'Tutorials',
+            past_paper: 'Past Papers',
+            assignment: 'Assignments',
+            marking_scheme: 'Marking Schemes',
+            book: 'Reference Books',
+            other: 'General Resources'
+        };
+
+        // ─── Build Folder Hierarchy inside the Active Storage ──────────────
+        let targetFolderId = isGoogleDrive ? process.env.GOOGLE_DRIVE_FOLDER_ID : 'root';
+        const activeDriver = isGoogleDrive ? googleDriveService : megaService;
+
+        if (moduleDoc) {
+            console.log(`[Storage] Building hierarchy for ${moduleDoc.code} on ${activeStorage}...`);
+            const levelDir = await activeDriver.getOrCreateFolder(targetFolderId, `Level ${moduleDoc.level}`);
+            const semDir = await activeDriver.getOrCreateFolder(levelDir, `Semester ${moduleDoc.semester}`);
+            const moduleDir = await activeDriver.getOrCreateFolder(semDir, `${moduleDoc.code} - ${moduleDoc.title}`);
+            const categoryName = CATEGORY_MAP[type] || 'Other';
+            targetFolderId = await activeDriver.getOrCreateFolder(moduleDir, categoryName);
+        }
+
         let uploadResult;
         
         if (isGoogleDrive) {
-            uploadResult = await googleDriveService.uploadToDrive(req.file.buffer, fileName, req.file.mimetype);
+            uploadResult = await googleDriveService.uploadToDrive(req.file.buffer, fileName, req.file.mimetype, targetFolderId);
         } else {
-            uploadResult = await megaService.uploadToMega(req.file.buffer, fileName, req.file.size);
+            uploadResult = await megaService.uploadToMega(req.file.buffer, fileName, req.file.size, targetFolderId);
         }
 
         // Create Resource Record
@@ -230,9 +253,10 @@ exports.streamResource = async (req, res) => {
 
                 // Add fallback generic name if API doesn't find the name
                 const filenameToUse = encodeURIComponent(name || resource.title || 'downloaded_resource');
+                const isInline = req.query.inline === 'true';
 
                 res.setHeader('Content-Type', resource.mimeType || 'application/octet-stream');
-                res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${filenameToUse}`);
+                res.setHeader('Content-Disposition', `${isInline ? 'inline' : 'attachment'}; filename*=UTF-8''${filenameToUse}`);
                 
                 if (size) {
                     res.setHeader('Content-Length', size);

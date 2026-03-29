@@ -347,21 +347,21 @@ export default function ResourceManagement() {
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                 {/* Upload Form */}
                 <div className="xl:col-span-1">
-                    <div className="bg-white dark:bg-stitch-card-dark rounded-[2rem] shadow-xl border border-slate-100 dark:border-white/5 p-6 md:p-8 sticky top-6">
+                    <div className="bg-white rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100 p-6 md:p-8 sticky top-6">
                         <div className="flex items-center gap-4 mb-8">
-                            <div className="w-14 h-14 bg-slate-900 dark:bg-black rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10">
+                            <div className="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/20">
                                 <Upload className="w-7 h-7 text-white" />
                             </div>
                             <div>
-                                <h2 className="text-xl font-black text-slate-900 dark:text-white">Upload</h2>
-                                <p className="text-sm font-bold text-slate-500 dark:text-slate-400">Add new materials</p>
+                                <h2 className="text-xl font-black text-slate-900">Upload</h2>
+                                <p className="text-sm font-bold text-slate-500">Add new materials</p>
                             </div>
                         </div>
 
                         <form onSubmit={handleUpload} className="space-y-6">
                             {/* Level Selection */}
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">Academic Level</label>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Academic Level</label>
                                 <Dropdown
                                     value={formData.level}
                                     onChange={(e) => setFormData({ ...formData, level: e.target.value })}
@@ -372,7 +372,7 @@ export default function ResourceManagement() {
 
                             {/* Semester Selection */}
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">Semester</label>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Semester</label>
                                 <Dropdown
                                     value={formData.semester}
                                     onChange={(e) => setFormData({ ...formData, semester: e.target.value })}
@@ -384,8 +384,8 @@ export default function ResourceManagement() {
                             {/* Module Selection */}
                             <div>
                                 <div className="flex justify-between items-baseline mb-2">
-                                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Target Module</label>
-                                    <span className="text-[10px] font-bold text-stitch-blue">
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Target Module</label>
+                                    <span className="text-[10px] font-bold text-indigo-600">
                                         L{formData.level} • S{formData.semester}
                                     </span>
                                 </div>
@@ -397,18 +397,18 @@ export default function ResourceManagement() {
                                     className="w-full"
                                 />
                                 {filteredModules.length === 0 && (
-                                    <div className="flex items-center gap-2 mt-2 text-red-500 dark:text-red-400">
+                                    <div className="flex items-center gap-2 mt-2 text-red-500">
                                         <AlertCircle className="w-4 h-4" />
                                         <p className="text-xs font-bold">No modules available</p>
                                     </div>
                                 )}
                             </div>
 
-                            <div className="h-px bg-slate-100 dark:bg-white/5 my-2"></div>
+                            <div className="h-px bg-slate-100 my-2"></div>
 
                             {/* Resource Category Selection */}
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">Category</label>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Category</label>
                                 <Dropdown
                                     value={formData.category}
                                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
@@ -420,7 +420,7 @@ export default function ResourceManagement() {
                             {/* Resource Context Selection (Tutorial, Past Paper, etc.) */}
                             {formData.category !== 'book' && (
                                 <div className="animate-fadeIn">
-                                    <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">
+                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">
                                         {formData.category === 'question' ? 'Document Type' : 'Answer For'}
                                     </label>
                                     <Dropdown
@@ -435,7 +435,7 @@ export default function ResourceManagement() {
                             {/* Academic Year Selection (Only for Past Papers) */}
                             {((formData.context === 'past_paper') || (formData.category === 'answer' && formData.context === 'past_paper')) && (
                                 <div className="animate-fadeIn">
-                                    <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">Academic Year</label>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Academic Year</label>
                                     <div className="flex gap-2">
                                         <Dropdown
                                             value={formData.batchYear}
@@ -448,7 +448,7 @@ export default function ResourceManagement() {
                                             <button
                                                 type="button"
                                                 onClick={() => setShowBatchModal(true)}
-                                                className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-xl transition-all flex items-center justify-center border-2 border-indigo-100 dark:border-indigo-500/20 flex-shrink-0"
+                                                className="w-12 h-12 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl transition-all flex items-center justify-center border-2 border-indigo-100 flex-shrink-0"
                                                 title="Add New Academic Year"
                                             >
                                                 <Plus className="w-5 h-5" />
@@ -460,20 +460,27 @@ export default function ResourceManagement() {
 
                             {/* Storage Provider Selection */}
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">Storage Provider</label>
-                                <Dropdown
-                                    value={formData.storageType}
-                                    onChange={(e) => setFormData({ ...formData, storageType: e.target.value })}
-                                    options={[
-                                        { value: 'mega', label: 'Mega Drive (Primary)' },
-                                        { value: 'google_drive', label: 'Google Drive (Secondary)' }
-                                    ]}
-                                    className="w-full"
-                                />
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Storage Provider</label>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {['mega', 'google_drive'].map(type => (
+                                        <button
+                                            key={type}
+                                            type="button"
+                                            onClick={() => setFormData({ ...formData, storageType: type })}
+                                            className={`py-2 px-3 rounded-xl text-[11px] font-bold border-2 transition-all ${
+                                                formData.storageType === type 
+                                                    ? (type === 'mega' ? 'bg-red-50 border-red-200 text-red-600' : 'bg-indigo-50 border-indigo-200 text-indigo-600')
+                                                    : 'bg-white border-slate-100 text-slate-400 hover:border-slate-200'
+                                            }`}
+                                        >
+                                            {type === 'mega' ? 'Mega Drive' : 'Google Drive'}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
 
                             {/* File Upload */}
-                            <div className="border-2 border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 rounded-2xl p-6 text-center hover:bg-slate-100 hover:border-slate-400 dark:hover:bg-slate-800 dark:hover:border-slate-600 transition-all duration-300 cursor-pointer relative group">
+                            <div className="border-2 border-dashed border-slate-200 bg-slate-50 rounded-2xl p-6 text-center hover:bg-white hover:border-indigo-400 transition-all duration-300 cursor-pointer relative group shadow-inner">
                                 <input
                                     type="file"
                                     onChange={handleFileChange}
@@ -481,31 +488,31 @@ export default function ResourceManagement() {
                                 />
                                 {formData.file ? (
                                     <div className="flex flex-col items-center animate-fadeIn">
-                                        <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-3">
-                                            <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
+                                        <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mb-3">
+                                            <CheckCircle className="w-6 h-6 text-emerald-600" />
                                         </div>
-                                        <p className="font-bold text-slate-900 dark:text-white truncate max-w-full px-2">{formData.file.name}</p>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400">{(formData.file.size / 1024 / 1024).toFixed(2)} MB</p>
+                                        <p className="font-bold text-slate-900 truncate max-w-full px-2">{formData.file.name}</p>
+                                        <p className="text-xs text-slate-500 font-medium">{(formData.file.size / 1024 / 1024).toFixed(2)} MB</p>
                                     </div>
                                 ) : (
                                     <div className="flex flex-col items-center">
-                                        <div className="w-12 h-12 bg-white dark:bg-white/10 rounded-full flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition-transform">
-                                            <Upload className="w-6 h-6 text-stitch-blue" />
+                                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition-transform border border-slate-100">
+                                            <Upload className="w-6 h-6 text-indigo-600" />
                                         </div>
-                                        <p className="font-bold text-slate-900 dark:text-slate-200">Tap to upload file</p>
-                                        <p className="text-xs text-slate-400">PDF, Word, PPT • Max 50MB</p>
+                                        <p className="font-bold text-slate-900">Tap to upload file</p>
+                                        <p className="text-xs text-slate-400 font-medium tracking-tight">PDF, Word, PPT • Max 50MB</p>
                                     </div>
                                 )}
                             </div>
 
                             {/* Title Input */}
                             <div>
-                                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">Resource Title</label>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Resource Title</label>
                                 <input
                                     type="text"
                                     value={formData.title}
                                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                    className="w-full p-4 bg-white dark:bg-black/20 border-2 border-slate-200 dark:border-white/10 rounded-2xl focus:border-stitch-blue dark:focus:border-stitch-blue font-bold text-slate-900 dark:text-white transition-all outline-none"
+                                    className="w-full p-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-indigo-500 font-bold text-slate-900 transition-all outline-none"
                                     placeholder="e.g. Lecture 01 Slides"
                                     required
                                 />
@@ -514,10 +521,10 @@ export default function ResourceManagement() {
                             <button
                                 type="submit"
                                 disabled={uploading || !formData.file || !formData.moduleId}
-                                className={`w-full py-4 rounded-xl font-black text-white shadow-lg shadow-slate-900/10 flex items-center justify-center gap-3 transition-all transform hover:translate-y-[-2px]
+                                className={`w-full py-4 rounded-xl font-black text-white shadow-lg flex items-center justify-center gap-3 transition-all transform active:scale-95
                                     ${uploading || !formData.file
-                                        ? 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed shadow-none'
-                                        : 'bg-slate-900 hover:bg-black dark:bg-white dark:hover:bg-slate-200 dark:text-black hover:shadow-xl active:scale-95'}`}
+                                        ? 'bg-slate-200 cursor-not-allowed shadow-none text-slate-400'
+                                        : 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-200 hover:shadow-indigo-300'}`}
                             >
                                 {uploading ? (
                                     <>
@@ -538,73 +545,72 @@ export default function ResourceManagement() {
                 {/* Resource List */}
                 <div className="xl:col-span-2 space-y-8">
                     {!formData.moduleId ? (
-                        <div className="h-96 flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 border-3 border-dashed border-slate-200 dark:border-slate-800 rounded-[2.5rem] bg-slate-50/50 dark:bg-white/5 p-8 text-center">
-                            <div className="w-24 h-24 bg-slate-100 dark:bg-white/5 rounded-full flex items-center justify-center mb-6">
-                                <FileText className="w-10 h-10 opacity-50" />
+                        <div className="h-96 flex flex-col items-center justify-center text-slate-400 border-2 border-dashed border-slate-200 rounded-[2.5rem] bg-white p-8 text-center shadow-sm">
+                            <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-6 border border-slate-100">
+                                <FileText className="w-10 h-10 opacity-30" />
                             </div>
-                            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2">No Module Selected</h3>
-                            <p className="font-medium max-w-sm mx-auto">Please select a Level, Semester, and Module from the left panel to view and manage resources.</p>
+                            <h3 className="text-xl font-black text-slate-900 mb-2">No Module Selected</h3>
+                            <p className="font-semibold text-slate-500 max-w-sm mx-auto">Please select a Level, Semester, and Module from the left panel to view and manage resources.</p>
                         </div>
                     ) : (
                         loading ? (
                             <div className="h-96 flex flex-col items-center justify-center">
-                                <div className="w-12 h-12 border-4 border-stitch-blue/30 border-t-stitch-blue rounded-full animate-spin mb-4"></div>
-                                <p className="font-bold text-slate-500 dark:text-slate-400">Loading resources...</p>
+                                <div className="w-12 h-12 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
+                                <p className="font-bold text-slate-500">Loading resources...</p>
                             </div>
                         ) : (
-                            <>
-                                {/* Tutorials Section */}
+                            <div className="space-y-6">
+                                {/* Section Components */}
                                 <ResourceSection
                                     title="Tutorials"
                                     resources={resources.filter(r => r.type === 'tutorial')}
-                                    icon={<FileQuestion className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />}
+                                    icon={<FileQuestion className="w-5 h-5 text-indigo-600" />}
                                     color="indigo"
                                     onDelete={handleDelete}
                                 />
 
-                                {/* Assignments Section */}
                                 <ResourceSection
                                     title="Assignments"
                                     resources={resources.filter(r => r.type === 'assignment')}
-                                    icon={<PenTool className="w-5 h-5 text-orange-600 dark:text-orange-400" />}
+                                    icon={<PenTool className="w-5 h-5 text-amber-600" />}
                                     color="orange"
                                     onDelete={handleDelete}
                                 />
 
-                                {/* Past Papers Section */}
                                 <ResourceSection
                                     title="Question Papers"
                                     resources={resources.filter(r => r.type === 'past_paper')}
-                                    icon={<FileText className="w-5 h-5 text-purple-600 dark:text-purple-400" />}
+                                    icon={<FileText className="w-5 h-5 text-purple-600" />}
                                     color="purple"
                                     onDelete={handleDelete}
                                 />
 
-                                {/* Marking Schemes Section */}
                                 <ResourceSection
                                     title="Marking Schemes"
                                     resources={resources.filter(r => r.type === 'marking_scheme')}
-                                    icon={<CheckCircle className="w-5 h-5 text-teal-600 dark:text-teal-400" />}
+                                    icon={<CheckCircle className="w-5 h-5 text-emerald-600" />}
                                     color="teal"
                                     onDelete={handleDelete}
                                 />
 
-                                {/* Books Section */}
                                 <ResourceSection
                                     title="Books & Reading"
                                     resources={resources.filter(r => r.type === 'book')}
-                                    icon={<Book className="w-5 h-5 text-rose-600 dark:text-rose-400" />}
+                                    icon={<Book className="w-5 h-5 text-rose-600" />}
                                     color="rose"
                                     onDelete={handleDelete}
                                 />
 
                                 {resources.length === 0 && (
-                                    <div className="bg-white dark:bg-stitch-card-dark rounded-[2rem] p-12 text-center border border-slate-100 dark:border-white/5">
-                                        <p className="text-lg font-bold text-slate-900 dark:text-white mb-2">No resources found</p>
-                                        <p className="text-slate-500 dark:text-slate-400">Be the first to upload materials for this module.</p>
+                                    <div className="bg-white rounded-[2rem] p-16 text-center border border-slate-100 shadow-sm">
+                                        <div className="mb-4 inline-flex w-16 h-16 bg-slate-50 rounded-full items-center justify-center border border-slate-100">
+                                            <Book className="w-8 h-8 text-slate-300" />
+                                        </div>
+                                        <h3 className="text-xl font-bold text-slate-900 mb-2">No resources found</h3>
+                                        <p className="text-slate-500 font-medium">Be the first to upload materials for this module.</p>
                                     </div>
                                 )}
-                            </>
+                            </div>
                         )
                     )}
                 </div>
@@ -624,14 +630,12 @@ export default function ResourceManagement() {
 }
 
 function ResourceSection({ title, resources, icon, color, onDelete }) {
-    // Dynamic color classes based on the 'color' prop would typically need a lookup or full classes
-    // simplifying for safety using direct mappings for the ones we generally use
     const colors = {
-        indigo: 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-900 dark:text-indigo-100 border-indigo-100 dark:border-indigo-500/20',
-        orange: 'bg-orange-50 dark:bg-orange-900/20 text-orange-900 dark:text-orange-100 border-orange-100 dark:border-orange-500/20',
-        purple: 'bg-purple-50 dark:bg-purple-900/20 text-purple-900 dark:text-purple-100 border-purple-100 dark:border-purple-500/20',
-        teal: 'bg-teal-50 dark:bg-teal-900/20 text-teal-900 dark:text-teal-100 border-teal-100 dark:border-teal-500/20',
-        rose: 'bg-rose-50 dark:bg-rose-900/20 text-rose-900 dark:text-rose-100 border-rose-100 dark:border-rose-500/20'
+        indigo: 'bg-indigo-50 text-indigo-900 border-indigo-100',
+        orange: 'bg-amber-50 text-amber-900 border-amber-100',
+        purple: 'bg-purple-50 text-purple-900 border-purple-100',
+        teal: 'bg-emerald-50 text-emerald-900 border-emerald-100',
+        rose: 'bg-rose-50 text-rose-900 border-rose-100'
     };
 
     const headerClass = colors[color] || colors.indigo;
@@ -639,17 +643,17 @@ function ResourceSection({ title, resources, icon, color, onDelete }) {
     if (resources.length === 0) return null;
 
     return (
-        <div className="bg-white dark:bg-stitch-card-dark rounded-[2.5rem] shadow-xl border border-slate-100 dark:border-white/5 overflow-hidden transition-all hover:translate-y-[-4px] duration-300">
+        <div className="bg-white rounded-[2.5rem] shadow-lg shadow-slate-200/40 border border-slate-100 overflow-hidden transition-all hover:translate-y-[-4px] duration-300">
             <div className={`p-6 border-b flex items-center gap-4 ${headerClass}`}>
-                <div className="p-3 bg-white dark:bg-white/10 rounded-xl shadow-sm backdrop-blur-sm">
+                <div className="p-3 bg-white rounded-xl shadow-sm border border-black/5">
                     {icon}
                 </div>
                 <h3 className="text-lg font-black">{title}</h3>
-                <span className="ml-auto bg-white dark:bg-black/20 px-3 py-1 rounded-lg text-xs font-bold shadow-sm">
+                <span className="ml-auto bg-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm border border-black/5">
                     {resources.length}
                 </span>
             </div>
-            <div className="divide-y divide-slate-100 dark:divide-white/5">
+            <div className="divide-y divide-slate-50">
                 {resources.map(resource => (
                     <ResourceItem key={resource._id} resource={resource} onDelete={onDelete} color={color} />
                 ))}
@@ -660,34 +664,36 @@ function ResourceSection({ title, resources, icon, color, onDelete }) {
 
 function ResourceItem({ resource, onDelete, color }) {
     return (
-        <div className="p-5 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors flex items-center justify-between group">
+        <div className="p-5 hover:bg-slate-50/80 transition-colors flex items-center justify-between group">
             <div className="flex items-center gap-5">
-                <div className="w-12 h-12 bg-slate-100 dark:bg-white/5 rounded-xl flex items-center justify-center font-bold text-xs text-slate-500 dark:text-slate-400 uppercase border border-slate-200 dark:border-white/10">
+                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center font-black text-[10px] text-slate-500 uppercase border border-slate-200 shadow-sm leading-none text-center">
                     {resource.mimeType?.includes('pdf') ? 'PDF' : resource.mimeType?.split('/')[1]?.slice(0, 3) || 'FILE'}
                 </div>
                 <div>
-                    <h4 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-3 text-base">
+                    <h4 className="font-bold text-slate-800 flex items-center gap-3 text-base">
                         {resource.title}
                         {resource.type === 'marking_scheme' && resource.answerFor && (
-                            <span className="px-2 py-1 rounded-lg bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 text-[10px] uppercase font-bold tracking-wide">
+                            <span className="px-2 py-1 rounded-lg bg-emerald-100 text-emerald-700 text-[9px] uppercase font-black tracking-wider">
                                 {resource.answerFor.replace('_', ' ')} Answer
                             </span>
                         )}
                         {resource.academicYear && (
-                            <span className="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wide">
+                            <span className="px-2 py-1 rounded-lg bg-indigo-50 text-indigo-600 text-[9px] uppercase font-black tracking-wider border border-indigo-100">
                                 {resource.academicYear}
                             </span>
                         )}
-                        <span className={`px-2 py-1 rounded-lg text-[10px] uppercase font-bold tracking-wide border ml-2 ${
+                        <span className={`px-2 py-1 rounded-lg text-[9px] uppercase font-black tracking-wider border ml-2 ${
                             resource.storageType === 'google_drive' 
-                                ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-500/30'
-                                : 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-500/30'
+                                ? 'bg-amber-50 text-amber-600 border-amber-200'
+                                : 'bg-red-50 text-red-600 border-red-200'
                         }`}>
                             {resource.storageType === 'google_drive' ? 'Drive' : 'Mega'}
                         </span>
                     </h4>
-                    <p className="text-xs font-bold text-slate-400 mt-1">
-                        {(resource.size / 1024 / 1024).toFixed(2)} MB • {new Date(resource.createdAt).toLocaleDateString()}
+                    <p className="text-[11px] font-bold text-slate-400 mt-1 flex items-center gap-2">
+                        {(resource.size / 1024 / 1024).toFixed(2)} MB 
+                        <span className="w-1 h-1 rounded-full bg-slate-200" />
+                        {new Date(resource.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
                     </p>
                 </div>
             </div>
@@ -696,14 +702,14 @@ function ResourceItem({ resource, onDelete, color }) {
                     href={`/api/v1/resources/stream/${resource._id}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 text-slate-400 hover:text-stitch-blue hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all"
+                    className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
                     title="Download / View"
                 >
                     <ExternalLink className="w-5 h-5" />
                 </a>
                 <button
                     onClick={() => onDelete(resource._id)}
-                    className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all"
+                    className="p-2.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
                     title="Delete"
                 >
                     <Trash2 className="w-5 h-5" />

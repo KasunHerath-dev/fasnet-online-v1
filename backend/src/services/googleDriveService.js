@@ -3,6 +3,18 @@ const stream = require('stream');
 
 // Setup Google Drive Auth Client
 const createDriveClient = () => {
+    // 1. Prefer OAuth2 Delegation (Bypasses 0GB Service Account Quota on free accounts)
+    if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_REFRESH_TOKEN) {
+        const oauth2Client = new google.auth.OAuth2(
+            process.env.GOOGLE_CLIENT_ID,
+            process.env.GOOGLE_CLIENT_SECRET,
+            "https://developers.google.com/oauthplayground"
+        );
+        oauth2Client.setCredentials({ refresh_token: process.env.GOOGLE_REFRESH_TOKEN });
+        return google.drive({ version: 'v3', auth: oauth2Client });
+    }
+
+    // 2. Fallback to Service Account (Requires Workspace "Shared Drives" to avoid 0GB Quota)
     if (!process.env.GOOGLE_CLIENT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY) {
         throw new Error("Missing Google Drive credentials in environment variables.");
     }
@@ -23,13 +35,17 @@ const createDriveClient = () => {
  * @param {Buffer} fileBuffer - The memory buffer of the file.
  * @param {string} fileName - Destination file name.
  * @param {string} mimeType - The mime type of the file.
+ * @param {string} parentId - Optional parent folder ID (defaults to root).
  * @returns {Promise<{nodeId: string, link: string}>} - The ID and Web View Link.
  */
-const uploadToDrive = async (fileBuffer, fileName, mimeType) => {
+const uploadToDrive = async (fileBuffer, fileName, mimeType, parentId = null) => {
     const drive = createDriveClient();
     
-    if (!process.env.GOOGLE_DRIVE_FOLDER_ID) {
-        throw new Error("Missing GOOGLE_DRIVE_FOLDER_ID in environment variables.");
+    // Fallback to GOOGLE_DRIVE_FOLDER_ID from .env if parentId is not provided
+    const folderId = parentId || process.env.GOOGLE_DRIVE_FOLDER_ID;
+
+    if (!folderId) {
+        throw new Error("Missing parent folder ID or GOOGLE_DRIVE_FOLDER_ID in environment variables.");
     }
 
     const bufferStream = new stream.PassThrough();
@@ -37,7 +53,7 @@ const uploadToDrive = async (fileBuffer, fileName, mimeType) => {
 
     const fileMetadata = {
         name: fileName,
-        parents: [process.env.GOOGLE_DRIVE_FOLDER_ID]
+        parents: [folderId]
     };
 
     const media = {
@@ -129,8 +145,60 @@ const getFileStream = async (fileId) => {
     };
 };
 
+/**
+ * Ensures a folder exists under a parent. Returns folder ID.
+ * Supports Shared Drives by using appropriate corpora and driveId settings.
+ */
+const getOrCreateFolder = async (parentId, folderName) => {
+    const drive = createDriveClient();
+    const sharedDriveId = process.env.GOOGLE_DRIVE_SHARED_DRIVE_ID;
+    
+    // Clean name for sanity
+    const cleanName = folderName.trim().replace(/'/g, "\\'");
+
+    // 1. Check if folder already exists under this parent
+    const q = `name = '${cleanName}' and mimeType = 'application/vnd.google-apps.folder' and '${parentId}' in parents and trashed = false`;
+    
+    const listOptions = {
+        q,
+        fields: 'files(id)',
+        spaces: 'drive',
+        supportsAllDrives: true,
+        includeItemsFromAllDrives: true,
+    };
+
+    // If we're in a Shared Drive context, search the specific drive
+    if (sharedDriveId) {
+        listOptions.corpora = 'drive';
+        listOptions.driveId = sharedDriveId;
+    }
+
+    const findResponse = await drive.files.list(listOptions);
+
+    if (findResponse.data.files && findResponse.data.files.length > 0) {
+        return findResponse.data.files[0].id;
+    }
+
+    // 2. Create it if not found
+    const folderMetadata = {
+        name: folderName,
+        mimeType: 'application/vnd.google-apps.folder',
+        parents: [parentId],
+    };
+
+    const createResponse = await drive.files.create({
+        requestBody: folderMetadata,
+        fields: 'id',
+        supportsAllDrives: true, // Crucial for Shared Drives
+    });
+
+    return createResponse.data.id;
+};
+
 module.exports = {
+    createDriveClient,
     uploadToDrive,
     deleteFromDrive,
-    getFileStream
+    getFileStream,
+    getOrCreateFolder
 };

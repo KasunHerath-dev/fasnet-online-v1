@@ -5,6 +5,7 @@ import UnifiedPageLoader from '../../components/loaders/UnifiedPageLoader';
 import ScrollReveal from '../../components/ui/ScrollReveal';
 import ResourceCard from './StudentLearning/ResourceCard';
 import Dropdown from '../../components/Dropdown';
+import DocumentViewerModal from '../../components/ui/DocumentViewerModal';
 import { toast } from 'react-hot-toast';
 
 
@@ -23,6 +24,7 @@ const StudentLearning = () => {
     const [selectedSemester, setSelectedSemester] = useState('All');
     const [selectedModule, setSelectedModule] = useState('All');
     const [selectedType, setSelectedType] = useState('All');
+    const [selectedPreview, setSelectedPreview] = useState(null);
 
     useEffect(() => {
         fetchLearningData();
@@ -102,6 +104,12 @@ const StudentLearning = () => {
 
     return (
         <div className="w-full mx-auto min-h-full pb-10 pt-4 font-['Kodchasan'] tracking-wide">
+            
+            <DocumentViewerModal 
+                isOpen={!!selectedPreview} 
+                onClose={() => setSelectedPreview(null)} 
+                resource={selectedPreview} 
+            />
 
             {/* ── SINGLE UNIFIED CARD: filters + content ── */}
             <div className="bg-white rounded-[2rem] border border-slate-200/70 shadow-sm overflow-visible">
@@ -211,6 +219,7 @@ const StudentLearning = () => {
                                     key={resource._id}
                                     resource={resource}
                                     moduleCode={resource.moduleObj?.code}
+                                    onPreview={(res) => setSelectedPreview(res)}
                                 />
                             ))}
                         </div>

@@ -15,6 +15,7 @@ import AdminAnalytics from './pages/admin/AdminAnalytics'
 import AdminUsers from './pages/admin/AdminUsers'
 import AdminSettings from './pages/admin/AdminSettings'
 import AdminResources from './pages/admin/AdminResources'
+import StorageManagement from './pages/admin/StorageManagement'
 import PromotedUserDashboard from './pages/admin/PromotedUserDashboard'
 import ExamTimeTablePage from './pages/admin/ExamTimeTablePage'
 
@@ -183,6 +184,7 @@ export default function App() {
                         <Route path="/admin" element={<AdminSettings />} />
                         <Route path="/admin/users" element={<AdminUsers />} />
                         <Route path="/admin/resources" element={<AdminResources />} />
+                        <Route path="/admin/storage" element={<StorageManagement />} />
                         <Route path="/admin/bulk-combination" element={<BulkCombinationPage />} />
                         <Route path="/admin/analytics" element={<AdminAnalytics />} />
                         <Route path="*" element={<Navigate to={`/${user?.studentRef?.registrationNumber || user?.username}/dashboard`} replace />} />
@@ -205,6 +207,7 @@ export default function App() {
                         <Route path="/admin" element={<AdminSettings />} />
                         <Route path="/admin/users" element={<AdminUsers />} />
                         <Route path="/admin/resources" element={<AdminResources />} />
+                        <Route path="/admin/storage" element={<StorageManagement />} />
                         <Route path="/admin/analytics" element={<AdminAnalytics />} />
                         <Route path="/admin/bulk-combination" element={<BulkCombinationPage />} />
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />

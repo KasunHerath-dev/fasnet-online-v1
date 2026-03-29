@@ -28,6 +28,7 @@ import { MODULE_DATA } from '../../data/moduleList';
 import { resourceService } from '../../services/resourceService';
 import UnifiedPageLoader from '../../components/loaders/UnifiedPageLoader';
 import { useToast } from '../../context/ToastContext';
+import DocumentViewerModal from '../../components/ui/DocumentViewerModal';
 
 const getCardTheme = (type) => {
     switch (type) {
@@ -67,7 +68,7 @@ const getCardTheme = (type) => {
                 btnBg: 'bg-[#ff5734]',
                 btnText: 'text-white'
             };
-        case 'Theorys':
+        case 'book':
         default:
             return {
                 bg: 'bg-white',
@@ -92,7 +93,7 @@ const getTypeLabel = (type) => {
     return labels[type] || 'Resource';
 };
 
-const ResourceCard = ({ resource, viewMode = 'cards' }) => {
+const ResourceCard = ({ resource, viewMode = 'cards', onPreview }) => {
     const toast = useToast();
     const getTypeColor = (type) => {
         const colors = {
@@ -128,7 +129,11 @@ const ResourceCard = ({ resource, viewMode = 'cards' }) => {
     };
 
     const handleDownload = async () => {
-        window.open(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1'}/resources/stream/${resource._id}`, '_blank');
+        if (resource.storageType === 'google_drive' && resource.webContentLink) {
+            window.open(resource.webContentLink, '_blank');
+        } else {
+            window.open(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1'}/resources/stream/${resource._id}`, '_blank');
+        }
     };
 
 
@@ -164,14 +169,24 @@ const ResourceCard = ({ resource, viewMode = 'cards' }) => {
                         </div>
                     </div>
 
-                    {/* Download Button */}
-                    <button
-                        onClick={handleDownload}
-                        className="min-h-[44px] flex items-center gap-2 px-6 py-2.5 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold rounded-xl transition-all shadow-md hover:shadow-lg active:scale-95"
-                    >
-                        <Download className="w-4 h-4" />
-                        <span className="hidden sm:inline">Download</span>
-                    </button>
+                    {/* Action Buttons */}
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={handleDownload}
+                            className="min-h-[44px] w-[44px] flex items-center justify-center bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold rounded-xl transition-all active:scale-95"
+                            title="Download File"
+                        >
+                            <Download className="w-5 h-5" />
+                        </button>
+                        <button
+                            onClick={() => onPreview && onPreview(resource)}
+                            className="min-h-[44px] flex items-center gap-2 px-6 py-2.5 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold rounded-xl transition-all shadow-md hover:shadow-lg active:scale-95"
+                            title="Preview File"
+                        >
+                            <FileText className="w-4 h-4" />
+                            <span className="hidden sm:inline">Preview</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         );
@@ -212,14 +227,22 @@ const ResourceCard = ({ resource, viewMode = 'cards' }) => {
                 {/* Thick horizontal bar (Iconic style) */}
                 <div className="h-[7px] w-full bg-[#151313] rounded-full mb-8"></div>
 
-                {/* Bottom row: Action Button */}
-                <div className="flex justify-end">
+                {/* Bottom row: Action Buttons */}
+                <div className="flex justify-end gap-3">
                     <button
                         onClick={handleDownload}
-                        className={`${theme.btnBg} ${theme.btnText} border-[2px] border-[#151313] px-8 py-3.5 rounded-full font-black text-sm sm:text-base tracking-wide flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-[4px_4px_0px_0px_rgba(21,19,19,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]`}
+                        className={`bg-transparent border-[2px] ${theme.bg === 'bg-[#151313]' ? 'border-white text-white' : 'border-[#151313] text-[#151313]'} w-[52px] h-[52px] rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-[4px_4px_0px_0px_rgba(21,19,19,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]`}
+                        title="Download File"
                     >
-                        <span>Download</span>
                         <Download className="w-5 h-5" strokeWidth={3} />
+                    </button>
+                    <button
+                        onClick={() => onPreview && onPreview(resource)}
+                        className={`${theme.btnBg} ${theme.btnText} ${theme.bg === 'bg-[#151313]' ? 'border-white' : 'border-[#151313]'} border-[2px] px-8 py-3.5 rounded-full font-black text-sm sm:text-base tracking-wide flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-[4px_4px_0px_0px_rgba(21,19,19,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]`}
+                        title="Preview File"
+                    >
+                        <span>Preview</span>
+                        <FileText className="w-5 h-5" strokeWidth={3} />
                     </button>
                 </div>
             </div>
@@ -271,6 +294,7 @@ export default function StudentResources() {
     const [query, setQuery] = useState('');
     const [viewMode, setViewMode] = useState('cards');
     const [showModuleGrid, setShowModuleGrid] = useState(false);
+    const [selectedPreview, setSelectedPreview] = useState(null);
 
     // Load enrolled modules from Static Data
     useEffect(() => {
@@ -418,6 +442,11 @@ export default function StudentResources() {
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-black font-display text-slate-900 dark:text-white transition-colors duration-500">
+            <DocumentViewerModal 
+                isOpen={!!selectedPreview} 
+                onClose={() => setSelectedPreview(null)} 
+                resource={selectedPreview} 
+            />
 
             {/* Enhanced Hero Section - Command Center Style */}
             <div className="relative w-full overflow-hidden pb-12 sm:pb-16 lg:pb-20">
@@ -669,7 +698,7 @@ export default function StudentResources() {
                 ) : (
                     <div className={`grid gap-6 ${viewMode === 'cards' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
                         {categorizedFiltered[activeTab].map(resource => (
-                            <ResourceCard key={resource._id} resource={resource} viewMode={viewMode} />
+                            <ResourceCard key={resource._id} resource={resource} viewMode={viewMode} onPreview={(res) => setSelectedPreview(res)} />
                         ))}
                     </div>
                 )}

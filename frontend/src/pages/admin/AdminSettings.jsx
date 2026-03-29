@@ -5,8 +5,6 @@ import resourceService from '../../services/resourceService'
 import BatchYearManagement from '../../components/admin/BatchYearManagement'
 import AssessmentManagement from '../../components/admin/AssessmentManagement'
 import ResourceManagement from '../../components/admin/ResourceManagement'
-import GoogleDriveConfig from '../../components/admin/GoogleDriveConfig'
-import ActiveStorageToggle from '../../components/admin/ActiveStorageToggle'
 import { toast } from 'react-hot-toast'
 import {
   Settings,
@@ -665,11 +663,22 @@ export default function AdminPage() {
                 <ResourceManagement />
               </div>
 
-              {/* Active Storage Configuration - Ash */}
-              <ActiveStorageToggle />
-
-              {/* Google Drive Configuration - Ash */}
-              <GoogleDriveConfig />
+              {/* Cloud Storage Management Redirect */}
+              <div className="bg-gradient-to-br from-blue-50 to-slate-50 border border-blue-200 rounded-3xl p-8 mb-6 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+                <div className="relative z-10">
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">Cloud Storage & Visual Explorer</h3>
+                  <p className="text-sm text-slate-600 max-w-lg">
+                    Manage active storage platforms (Mega / Google Drive), configure Secure Service Accounts, and visually explore your cloud architecture via the interactive Grid Editor.
+                  </p>
+                </div>
+                <button 
+                  onClick={() => navigate('/admin/storage')}
+                  className="relative z-10 whitespace-nowrap bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
+                >
+                  <Database className="w-5 h-5" /> Launch Storage Coordinator
+                </button>
+                <Cloud className="absolute -right-8 -bottom-8 w-48 h-48 text-blue-100 opacity-50 z-0 pointer-events-none" />
+              </div>
 
               {/* Quick Resource Actions - Ash */}
               <div>
