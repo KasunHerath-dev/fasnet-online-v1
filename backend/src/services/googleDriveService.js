@@ -195,10 +195,48 @@ const getOrCreateFolder = async (parentId, folderName) => {
     return createResponse.data.id;
 };
 
+/**
+ * Uploads a file stream to Google Drive.
+ */
+const uploadStreamToDrive = async (fileStream, fileName, mimeType, parentId = null) => {
+    const drive = createDriveClient();
+    const folderId = parentId || process.env.GOOGLE_DRIVE_FOLDER_ID;
+    if (!folderId) throw new Error("Missing parent folder ID.");
+
+    const fileMetadata = { name: fileName, parents: [folderId] };
+    const media = { mimeType: mimeType || 'application/octet-stream', body: fileStream };
+
+    const createOptions = {
+        requestBody: fileMetadata,
+        media: media,
+        fields: 'id, webContentLink, webViewLink',
+        supportsAllDrives: true,
+        includeItemsFromAllDrives: true,
+    };
+
+    if (process.env.GOOGLE_DRIVE_SHARED_DRIVE_ID) {
+        createOptions.driveId = process.env.GOOGLE_DRIVE_SHARED_DRIVE_ID;
+    }
+
+    const res = await drive.files.create(createOptions);
+    
+    await drive.permissions.create({
+        fileId: res.data.id,
+        requestBody: { role: 'reader', type: 'anyone' },
+        supportsAllDrives: true,
+    });
+
+    return {
+        nodeId: res.data.id,
+        link: res.data.webContentLink || res.data.webViewLink
+    };
+};
+
 module.exports = {
     createDriveClient,
     uploadToDrive,
     deleteFromDrive,
     getFileStream,
-    getOrCreateFolder
+    getOrCreateFolder,
+    uploadStreamToDrive
 };

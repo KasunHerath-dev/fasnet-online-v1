@@ -378,11 +378,8 @@ async function runMigration(resources) {
             // 3. Upload to Target
             let uploadResult;
             if (isTargetGoogleDrive) {
-                // To Drive
-                uploadResult = await uploadStreamToDrive(streamData.stream, streamData.name, resource.mimeType, categoryDir);
+                uploadResult = await googleDriveService.uploadStreamToDrive(streamData.stream, streamData.name, resource.mimeType, categoryDir);
             } else {
-                // To Mega
-                // Mega expects fileSize to safely allocate block streams.
                 uploadResult = await megaService.uploadToMega(streamData.stream, streamData.name, resource.size || streamData.size, categoryDir);
             }
 
@@ -407,48 +404,4 @@ async function runMigration(resources) {
     migrationProgress.active = false;
     migrationProgress.endTime = new Date();
     console.log('[Migration] Process Complete. Errors:', migrationProgress.errors.length);
-}
-
-/**
- * Helper to upload a stream to Drive with robust Shared Drive support
- */
-async function uploadStreamToDrive(fileStream, fileName, mimeType, parentId) {
-    const drive = require('../services/googleDriveService').createDriveClient();
-    
-    const fileMetadata = {
-        name: fileName,
-        parents: [parentId]
-    };
-
-    const media = {
-        mimeType: mimeType || 'application/octet-stream',
-        body: fileStream,
-    };
-
-    const createOptions = {
-        requestBody: fileMetadata,
-        media: media,
-        fields: 'id, webContentLink, webViewLink',
-        supportsAllDrives: true,
-        includeItemsFromAllDrives: true, // Ensured for Shared Drive
-    };
-
-    // Explicitly bind to Drive ID if Shared Drive is used
-    if (process.env.GOOGLE_DRIVE_SHARED_DRIVE_ID) {
-        createOptions.driveId = process.env.GOOGLE_DRIVE_SHARED_DRIVE_ID;
-    }
-
-    const res = await drive.files.create(createOptions);
-    
-    // Set permissions
-    await drive.permissions.create({
-        fileId: res.data.id,
-        requestBody: { role: 'reader', type: 'anyone' },
-        supportsAllDrives: true,
-    });
-
-    return {
-        nodeId: res.data.id,
-        link: res.data.webContentLink || res.data.webViewLink
-    };
 }

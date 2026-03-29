@@ -227,6 +227,42 @@ exports.getActiveStorage = async (req, res) => {
     }
 };
 
+exports.getStorageHealth = async (req, res) => {
+    try {
+        const activeStorage = process.env.ACTIVE_STORAGE_PROVIDER || 'mega';
+
+        // --- Mega Health ---
+        const megaConfigured = !!(process.env.MEGA_EMAIL && process.env.MEGA_PASSWORD);
+
+        // --- Google Drive Health ---
+        const hasOAuth = !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_REFRESH_TOKEN);
+        const hasServiceAccount = !!(process.env.GOOGLE_CLIENT_EMAIL && process.env.GOOGLE_PRIVATE_KEY);
+        const driveConfigured = hasOAuth || hasServiceAccount;
+        const driveType = hasOAuth ? 'oauth2' : hasServiceAccount ? 'service_account' : null;
+        const driveAccount = hasOAuth ? process.env.GOOGLE_CLIENT_ID?.split('-')[0] + '...' : process.env.GOOGLE_CLIENT_EMAIL || null;
+        const driveFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID || null;
+
+        res.status(200).json({
+            success: true,
+            health: {
+                activeStorage,
+                mega: {
+                    configured: megaConfigured,
+                    email: megaConfigured ? process.env.MEGA_EMAIL : null,
+                },
+                googleDrive: {
+                    configured: driveConfigured,
+                    type: driveType,
+                    account: driveAccount,
+                    folderId: driveFolderId,
+                }
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
 exports.setActiveStorage = async (req, res) => {
     try {
         const { provider } = req.body;

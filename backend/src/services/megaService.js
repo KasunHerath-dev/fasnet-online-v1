@@ -52,7 +52,10 @@ const getOrCreateFolder = async (parentId, folderName) => {
     return createdFolder.nodeId;
 };
 
-const uploadToMega = async (fileBuffer, fileName, fileSize, parentId = 'root') => {
+/**
+ * Uploads a file (Buffer or Stream) to MEGA.
+ */
+const uploadToMega = async (fileSource, fileName, fileSize, parentId = 'root') => {
     const conn = await connectToMega();
     
     let parentNode = conn.root;
@@ -61,11 +64,12 @@ const uploadToMega = async (fileBuffer, fileName, fileSize, parentId = 'root') =
         if (!parentNode) throw new Error(`MEGA Target Folder not found: ${parentId}`);
     }
 
+    // megajs upload() accepts buffer or stream
     const result = await conn.upload({
         name: fileName,
         size: fileSize,
         target: parentNode
-    }, fileBuffer).complete;
+    }, fileSource).complete;
 
     const link = await result.link();
 

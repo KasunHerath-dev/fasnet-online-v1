@@ -22,6 +22,7 @@ router.post('/drive/save', protect, authorize('admin', 'superadmin'), driveSetti
 // Active Storage Configuration Routes
 router.get('/storage/active', protect, authorize('admin', 'superadmin'), driveSettingsController.getActiveStorage);
 router.post('/storage/active', protect, authorize('admin', 'superadmin'), driveSettingsController.setActiveStorage);
+router.get('/storage/health', protect, authorize('admin', 'superadmin'), driveSettingsController.getStorageHealth);
 
 // Visual Explorer GUI Routes
 router.get('/drive/explore', protect, authorize('admin', 'superadmin'), driveSettingsController.exploreDriveFolder);
