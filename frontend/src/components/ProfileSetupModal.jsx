@@ -3,8 +3,6 @@ import { User, CheckCircle2, ChevronRight, Loader2, Sparkles } from 'lucide-reac
 import { authService } from '../services/authService';
 
 const ProfileSetupModal = ({ isOpen, user, onComplete }) => {
-    const [fullName, setFullName] = useState('');
-    const [nameWithInitials, setNameWithInitials] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [loading, setLoading] = useState(false);
@@ -12,8 +10,8 @@ const ProfileSetupModal = ({ isOpen, user, onComplete }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!fullName.trim() || !nameWithInitials.trim()) {
-            setError('Please enter both your Full Name and Name with Initials.');
+        if (!firstName.trim() || !lastName.trim()) {
+            setError('Please enter both your First Name and Last Name.');
             return;
         }
 
@@ -21,12 +19,7 @@ const ProfileSetupModal = ({ isOpen, user, onComplete }) => {
         setError(null);
 
         try {
-            const response = await authService.completeProfileSetup(
-                firstName,
-                lastName,
-                fullName,
-                nameWithInitials
-            );
+            const response = await authService.completeProfileSetup(firstName, lastName);
             if (response.data && response.data.user) {
                 onComplete(response.data.user);
             } else {
@@ -70,25 +63,25 @@ const ProfileSetupModal = ({ isOpen, user, onComplete }) => {
                         <h2 className="text-3xl md:text-4xl font-black text-[#151313] dark:text-white mb-4 tracking-tight">
                             Personalize Your <br />
                             <span className="text-[#ff5734]">
-                                Experience
+                                Dashboard
                             </span>
                         </h2>
 
                         <p className="text-slate-500 dark:text-slate-400 font-bold mb-10 max-w-sm">
-                            Welcome, <span className="text-[#ff5734]">{user?.username}</span>. Let's finish setting up your account for the student portal.
+                            Welcome, <span className="text-[#ff5734]">{user?.username}</span>. Please enter your name to finalize your account activation.
                         </p>
 
                         <form onSubmit={handleSubmit} className="w-full space-y-6">
-                            <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="text-left group">
                                     <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2 ml-4">
-                                        Full Name
+                                        First Name
                                     </label>
                                     <input
                                         type="text"
-                                        value={fullName}
-                                        onChange={(e) => setFullName(e.target.value)}
-                                        placeholder="Full name as per birth certificate"
+                                        value={firstName}
+                                        onChange={(e) => setFirstName(e.target.value)}
+                                        placeholder="E.g. Kasun"
                                         className="w-full h-16 px-6 bg-[#f7f7f5] dark:bg-[#151313] border border-slate-200 dark:border-white/10 rounded-2xl text-[#151313] dark:text-white font-bold transition-all focus:outline-none focus:ring-4 focus:ring-[#ff5734]/10 focus:border-[#ff5734] placeholder:text-slate-300 dark:placeholder:text-white/10"
                                         required
                                     />
@@ -96,44 +89,16 @@ const ProfileSetupModal = ({ isOpen, user, onComplete }) => {
 
                                 <div className="text-left group">
                                     <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2 ml-4">
-                                        Name with Initials
+                                        Last Name
                                     </label>
                                     <input
                                         type="text"
-                                        value={nameWithInitials}
-                                        onChange={(e) => setNameWithInitials(e.target.value)}
-                                        placeholder="E.g. K. Herath"
+                                        value={lastName}
+                                        onChange={(e) => setLastName(e.target.value)}
+                                        placeholder="E.g. Herath"
                                         className="w-full h-16 px-6 bg-[#f7f7f5] dark:bg-[#151313] border border-slate-200 dark:border-white/10 rounded-2xl text-[#151313] dark:text-white font-bold transition-all focus:outline-none focus:ring-4 focus:ring-[#ff5734]/10 focus:border-[#ff5734] placeholder:text-slate-300 dark:placeholder:text-white/10"
                                         required
                                     />
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="text-left group">
-                                        <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2 ml-4">
-                                            First Name
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={firstName}
-                                            onChange={(e) => setFirstName(e.target.value)}
-                                            placeholder="E.g. Kasun"
-                                            className="w-full h-16 px-6 bg-[#f7f7f5] dark:bg-[#151313] border border-slate-200 dark:border-white/10 rounded-2xl text-[#151313] dark:text-white font-bold transition-all focus:outline-none focus:ring-4 focus:ring-[#ff5734]/10 focus:border-[#ff5734] placeholder:text-slate-300 dark:placeholder:text-white/10"
-                                        />
-                                    </div>
-
-                                    <div className="text-left group">
-                                        <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2 ml-4">
-                                            Last Name
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={lastName}
-                                            onChange={(e) => setLastName(e.target.value)}
-                                            placeholder="E.g. Herath"
-                                            className="w-full h-16 px-6 bg-[#f7f7f5] dark:bg-[#151313] border border-slate-200 dark:border-white/10 rounded-2xl text-[#151313] dark:text-white font-bold transition-all focus:outline-none focus:ring-4 focus:ring-[#ff5734]/10 focus:border-[#ff5734] placeholder:text-slate-300 dark:placeholder:text-white/10"
-                                        />
-                                    </div>
                                 </div>
                             </div>
 
@@ -154,11 +119,11 @@ const ProfileSetupModal = ({ isOpen, user, onComplete }) => {
                                     {loading ? (
                                         <>
                                             <Loader2 className="w-6 h-6 animate-spin" />
-                                            <span className="animate-pulse tracking-widest uppercase text-sm">Saving...</span>
+                                            <span className="animate-pulse tracking-widest uppercase text-sm">Activating...</span>
                                         </>
                                     ) : (
                                         <>
-                                            <span className="uppercase tracking-widest text-sm">Enter Dashboard</span>
+                                            <span className="uppercase tracking-widest text-sm">Secure My Account</span>
                                             <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                         </>
                                     )}
@@ -168,7 +133,7 @@ const ProfileSetupModal = ({ isOpen, user, onComplete }) => {
 
                         <div className="mt-10 flex items-center gap-2 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.15em]">
                             <CheckCircle2 size={12} className="text-emerald-500" />
-                            Secured Identity Verification
+                            Final Security Check Complete
                         </div>
                     </div>
                 </div>

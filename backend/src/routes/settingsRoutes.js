@@ -3,6 +3,7 @@ const router = express.Router();
 const settingsController = require('../controllers/settingsController');
 const driveSettingsController = require('../controllers/driveSettingsController');
 const migrationController = require('../controllers/migrationController');
+const aiSettingsController = require('../controllers/aiSettingsController');
 const { protect, authorize } = require('../middleware/auth');
 const multer = require('multer');
 
@@ -11,6 +12,11 @@ const upload = multer({
     storage: multer.memoryStorage(),
     limits: { fileSize: 2 * 1024 * 1024 } // 2MB limit for JSON
 });
+
+// AI Configuration Routes
+router.get('/ai/gemini', protect, authorize('admin', 'superadmin'), aiSettingsController.getGeminiConfig);
+router.post('/ai/gemini', protect, authorize('admin', 'superadmin'), aiSettingsController.updateGeminiConfig);
+router.post('/ai/gemini/test', protect, authorize('admin', 'superadmin'), aiSettingsController.testGeminiConfig);
 
 // Public route to get site logo
 router.get('/logo', settingsController.getLogo);

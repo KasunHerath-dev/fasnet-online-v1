@@ -12,6 +12,8 @@ router.get('/me', authMiddleware, authController.getCurrentUser);
 router.post('/change-password', authMiddleware, authController.changePassword);
 router.post('/preferences', authMiddleware, authController.updatePreferences);
 
+router.post('/change-password/request-otp', authMiddleware, authController.requestPasswordChangeOTP);
+router.post('/change-password/confirm', authMiddleware, authController.confirmPasswordChangeWithOTP);
 router.post('/complete-profile-setup', authMiddleware, authController.completeProfileSetup);
 
 module.exports = router;

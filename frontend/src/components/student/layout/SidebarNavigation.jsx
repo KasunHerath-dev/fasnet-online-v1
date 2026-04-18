@@ -2,41 +2,58 @@ import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
     Home, GraduationCap, BookOpen, UserRound, LogOut,
-    Users, Cake, UserPlus, RefreshCw, Settings, Shield, BookMarked
+    Users, Cake, UserPlus, RefreshCw, Settings, Shield, BookMarked, Megaphone
 } from 'lucide-react';
 import { authService } from '../../../services/authService';
 import { hasPermission, PERMISSIONS } from '../../../utils/permissions';
 
-const NavItem = ({ to, icon: Icon, label, isActive, isMobile, onHover, accent = false }) => {
+const NavItem = ({ to, icon: Icon, label, isActive, isMobile, onHover, isExpanded, accent = false }) => {
+    const activeBg   = accent ? '#ff5734' : '#fccc42';
+    const activeText = accent ? '#ffffff' : '#151313';
+
     return (
         <NavLink
             to={to}
             onMouseEnter={() => onHover && onHover(to)}
-            className={`group relative flex items-center justify-center transition-all duration-300
-                ${isMobile ? 'w-10 h-10 rounded-2xl' : 'w-10 h-10 rounded-[12px] mx-auto mb-1'}
-                ${isActive
-                    ? accent
-                        ? 'bg-[#ff5734] text-white shadow-lg shadow-[#ff5734]/30'
-                        : 'bg-[#fccc42] text-[#151313]'
-                    : accent
-                        ? 'text-[#ff5734]/60 hover:text-[#ff5734] hover:bg-[#ff5734]/10'
-                        : 'text-white/50 hover:text-white hover:bg-white/10'
-                }`}
+            className={`group/item relative flex items-center w-full px-3 py-1.5 mb-0.5
+                transition-all duration-300 rounded-xl select-none`}
         >
-            <Icon size={20} className={`transition-transform duration-300 ${isActive ? 'scale-110' : ''}`} strokeWidth={isActive ? 2.5 : 2} />
+            {/* ── Icon Container (the "badge") ── */}
+            <div
+                className={`flex-shrink-0 flex items-center justify-center rounded-[14px]
+                    transition-all duration-300
+                    ${isMobile ? 'w-10 h-10' : 'w-11 h-11'}
+                    ${isActive
+                        ? 'scale-105 shadow-lg'
+                        : 'hover:bg-white/10 group-hover/item:scale-105'
+                    }`}
+                style={isActive ? { backgroundColor: activeBg } : {}}
+            >
+                <Icon
+                    size={20}
+                    style={{ color: isActive ? activeText : 'rgba(255,255,255,0.45)' }}
+                    className="transition-all duration-300 group-hover/item:text-white"
+                    strokeWidth={isActive ? 2.5 : 1.8}
+                />
+            </div>
 
-            {/* Desktop Tooltip */}
+            {/* ── Label (only when sidebar expanded) ── */}
             {!isMobile && (
-                <span className="absolute left-14 bg-[#151313] border border-white/10 text-white text-xs font-semibold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 whitespace-nowrap shadow-xl z-[100]">
+                <span
+                    className={`ml-3 text-[13px] font-bold tracking-tight whitespace-nowrap
+                        transition-all duration-300
+                        ${isActive ? 'text-white' : 'text-white/40 group-hover/item:text-white'}
+                        ${isExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-3 pointer-events-none'}`}
+                >
                     {label}
-                    <span className="absolute left-[-4px] top-1/2 -translate-y-1/2 border-y-4 border-y-transparent border-r-4 border-r-[#151313]"></span>
                 </span>
             )}
         </NavLink>
     );
 };
 
-const SidebarNavigation = ({ user }) => {
+
+const SidebarNavigation = ({ user, isExpanded }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const [logoUrl, setLogoUrl] = useState(null);
@@ -85,6 +102,7 @@ const SidebarNavigation = ({ user }) => {
 
     const navItems = [
         { to: `${basePath}/dashboard`, icon: Home, label: 'Dashboard' },
+        { to: `${basePath}/notices`, icon: Megaphone, label: 'Notices' },
         { to: `${basePath}/academics`, icon: GraduationCap, label: 'Academic Growth' },
         { to: `${basePath}/learning`, icon: BookOpen, label: 'Resource Center' },
     ];
@@ -114,21 +132,35 @@ const SidebarNavigation = ({ user }) => {
 
     return (
         <>
-            {/* Desktop Sidebar */}
-            <aside className="hidden md:flex flex-col w-16 shrink-0 bg-[#151313] z-[100] py-6 transition-colors duration-300">
-                {/* Logo Area */}
-                <div className="flex justify-center mb-8 cursor-pointer" onClick={() => navigate(`${basePath}/dashboard`)}>
-                    <div className="w-10 h-10 bg-[#fccc42] rounded-[14px] flex items-center justify-center shadow-lg overflow-hidden hover:scale-105 transition-transform">
-                        {logoUrl ? (
-                            <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
-                        ) : (
-                            <span className="font-black text-xl text-[#151313]">F</span>
-                        )}
+            {/* Desktop Sidebar - State-Driven Variable Width */}
+            <aside 
+                className="hidden md:flex flex-col h-screen bg-[#151313] border-r border-white/5 transition-all duration-300 ease-out z-[100] py-6 shadow-2xl overflow-hidden"
+                style={{ width: 'var(--sidebar-width)' }}
+            >
+                
+                {/* Logo Area — aligned to match nav item badges */}
+                <div className="flex items-center px-3 mb-8 cursor-pointer group/logo" onClick={() => navigate(`${basePath}/dashboard`)}>
+                    {/* Icon — same size as nav badges (w-11 h-11) */}
+                    <div className="relative flex-shrink-0 w-11 h-11 flex items-center justify-center group-hover/logo:scale-105 transition-transform duration-300">
+                        <div className="absolute inset-0 bg-gradient-to-tr from-[#fccc42] to-[#ffda6b] rounded-[14px] shadow-lg shadow-yellow-500/25" />
+                        <div className="relative flex items-center justify-center w-full h-full">
+                            {logoUrl ? (
+                                <img src={logoUrl} alt="Logo" className="w-full h-full object-cover rounded-[14px]" />
+                            ) : (
+                                <span className="font-black text-[22px] text-[#151313] leading-none">F</span>
+                            )}
+                        </div>
+                    </div>
+                    {/* Text — same ml-3 offset as nav labels */}
+                    <div className={`ml-3 transition-all duration-300
+                        ${isExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-3 pointer-events-none'}`}>
+                        <span className="block font-black text-[17px] text-white tracking-tighter leading-none">fasnet</span>
+                        <span className="block font-bold text-[8px] uppercase tracking-[0.25em] text-[#fccc42]/70 mt-[3px]">Management Hub</span>
                     </div>
                 </div>
 
                 {/* Student Nav Links */}
-                <nav className="flex-1 flex flex-col items-center w-full px-2 space-y-1 overflow-y-auto no-scrollbar">
+                <nav className="flex-1 flex flex-col w-full px-3 space-y-1 overflow-y-auto no-scrollbar overflow-x-hidden">
                     {navItems.map((item) => (
                         <NavItem
                             key={item.to}
@@ -138,10 +170,11 @@ const SidebarNavigation = ({ user }) => {
                             isActive={isLinkActive(item.to)}
                             isMobile={false}
                             onHover={handlePrefetch}
+                            isExpanded={isExpanded}
                         />
                     ))}
 
-                    <div className="w-6 h-px bg-white/10 my-3 mx-auto rounded-full"></div>
+                    <div className="w-8 h-px bg-white/10 my-4 mx-auto rounded-full flex-shrink-0"></div>
 
                     <NavItem
                         to={`${basePath}/profile`}
@@ -150,49 +183,55 @@ const SidebarNavigation = ({ user }) => {
                         isActive={isLinkActive(`${basePath}/profile`)}
                         isMobile={false}
                         onHover={handlePrefetch}
+                        isExpanded={isExpanded}
                     />
 
                     {/* Admin Section — only for promoted admins */}
                     {isPromotedAdmin && adminItems.length > 0 && (
-                        <>
-                            {/* Admin divider with shield icon */}
-                            <div className="w-full flex flex-col items-center gap-1 my-2">
-                                <div className="w-6 h-px bg-[#ff5734]/30 rounded-full"></div>
-                                <div className="relative group cursor-default">
-                                    <div className="w-7 h-7 rounded-lg bg-[#ff5734]/10 border border-[#ff5734]/20 flex items-center justify-center">
-                                        <Shield size={13} className="text-[#ff5734]" />
-                                    </div>
-                                    <span className="absolute left-10 top-1/2 -translate-y-1/2 bg-[#ff5734] text-white text-[10px] font-black px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none transition-all duration-200 shadow-lg z-[100]">
-                                        Admin Tools
-                                    </span>
+                        <div className="pt-2 animate-in fade-in duration-500">
+                            {/* Perfect Alignment Divider */}
+                            <div className="flex items-center px-4.5 py-4 gap-4">
+                                <div className={`h-px bg-white/10 transition-all ${isExpanded ? 'w-6' : 'w-11'}`}></div>
+                                <div className="flex-shrink-0 w-7 h-7 rounded-lg bg-[#ff5734]/10 border border-[#ff5734]/20 flex items-center justify-center">
+                                    <Shield size={13} className="text-[#ff5734]" />
                                 </div>
+                                <span className={`text-[10px] font-black text-[#ff5734] uppercase tracking-widest transition-all whitespace-nowrap
+                                    ${isExpanded ? 'opacity-100' : 'opacity-0'}`}>
+                                    Admin Tools
+                                </span>
+                                <div className={`flex-1 h-px bg-[#ff5734]/10 transition-all ${isExpanded ? 'opacity-100' : 'opacity-0'}`}></div>
                             </div>
 
-                            {adminItems.map((item) => (
-                                <NavItem
-                                    key={item.to}
-                                    to={item.to}
-                                    icon={item.icon}
-                                    label={item.label}
-                                    isActive={isLinkActive(item.to)}
-                                    isMobile={false}
-                                    accent={true}
-                                />
-                            ))}
-                        </>
+                            <div className="space-y-1">
+                                {adminItems.map((item) => (
+                                    <NavItem
+                                        key={item.to}
+                                        to={item.to}
+                                        icon={item.icon}
+                                        label={item.label}
+                                        isActive={isLinkActive(item.to)}
+                                        isMobile={false}
+                                        accent={true}
+                                        isExpanded={isExpanded}
+                                    />
+                                ))}
+                            </div>
+                        </div>
                     )}
                 </nav>
 
                 {/* Bottom Actions */}
-                <div className="mt-auto flex flex-col items-center w-full px-2">
+                <div className="mt-auto px-1.5">
                     <button
                         onClick={handleLogout}
-                        className="group relative flex items-center justify-center w-10 h-10 rounded-[14px] text-white/50 hover:text-white hover:bg-white/10 transition-all duration-300"
+                        className="group/logout flex items-center w-full h-12 px-4 rounded-2xl text-white/40 hover:text-rose-500 hover:bg-rose-500/10 transition-all duration-300"
                     >
-                        <LogOut size={20} />
-                        <span className="absolute left-14 bg-[#151313] border border-white/10 text-white text-xs font-semibold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 whitespace-nowrap shadow-xl z-[100]">
+                        <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                            <LogOut size={20} />
+                        </div>
+                        <span className={`ml-4 text-sm font-bold transition-all duration-300 whitespace-nowrap
+                            ${isExpanded ? 'opacity-100' : 'opacity-0 pointer-events-none hidden'}`}>
                             Logout
-                            <span className="absolute left-[-4px] top-1/2 -translate-y-1/2 border-y-4 border-y-transparent border-r-4 border-r-[#151313]"></span>
                         </span>
                     </button>
                 </div>

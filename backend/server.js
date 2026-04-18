@@ -18,7 +18,7 @@ const { initializeSocket } = require('./src/socket');
 
 // Prevent crashes from unhandled errors
 mongoose.set('strictQuery', false);
-mongoose.set('bufferCommands', false); // Fail immediately if disconnected (Serverless Best Practice)
+mongoose.set('bufferCommands', true); // Enable buffering to handle connection races
 
 process.on('uncaughtException', (err) => {
   console.error('UNCAUGHT EXCEPTION! 💥 Shutting down gracefully...');
@@ -155,7 +155,11 @@ app.use('/api/v1/system', require('./src/routes/systemRoutes'));
 app.use('/api/v1/resources', require('./src/routes/resourceRoutes'));
 app.use('/api/v1/settings', require('./src/routes/settingsRoutes'));
 app.use('/api/v1/notifications', require('./src/routes/notificationRoutes'));
-app.use('/api/v1/notices', require('./src/routes/noticeRoutes'));
+app.use('/api/v1/notices', require('./src/routes/notices.routes'));
+app.use('/api/v1/lms', require('./src/routes/lmsRoutes'));
+app.use('/api/internal', require('./src/routes/internal/lmsAssignmentsRoute'));
+app.use('/api/v1/admin/lms', require('./src/routes/admin/lmsAdminRoutes'));
+app.use('/attachments', express.static(require('path').join(__dirname, '../scraper/attachments')));
 app.use('/uploads', express.static(require('path').join(__dirname, 'uploads')));
 
 // Health Check

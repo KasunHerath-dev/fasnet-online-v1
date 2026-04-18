@@ -145,7 +145,15 @@ const studentSchema = new mongoose.Schema(
       failedLevel: Number,
       failedSemester: Number,
       deadlineDate: Date // If max repeat time exists
-    }]
+    }],
+
+    // LMS Sync Credentials (AES-256 encrypted password)
+    lmsCredentials: {
+      username: { type: String, trim: true },
+      password: { type: String }, // Stored AES-256 encrypted via encryption.js
+      lastSync: { type: Date, default: null },
+      syncEnabled: { type: Boolean, default: false },
+    }
   },
   { timestamps: true }
 );

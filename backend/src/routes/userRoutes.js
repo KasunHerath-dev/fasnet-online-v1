@@ -1,11 +1,14 @@
 const express = require('express')
-const { getAllUsers, createUser, updateUser, deleteUser, getOnlineUsers, promoteUser, demoteUser, updatePermissions, linkStudentToUser, lockAllUsers, unlockAllUsers } = require('../controllers/userController')
+const { getAllUsers, createUser, updateUser, deleteUser, getOnlineUsers, promoteUser, demoteUser, updatePermissions, linkStudentToUser, lockAllUsers, unlockAllUsers, setupProfile } = require('../controllers/userController')
 const { authMiddleware, roleMiddleware } = require('../middleware/auth')
 
 const router = express.Router()
 
-// All user routes require authentication and admin role
+// Authenticated routes (all users)
 router.use(authMiddleware)
+router.put('/setup-profile', setupProfile)
+
+// Admin-only routes
 router.use(roleMiddleware('admin', 'superadmin'))
 
 router.get('/online', getOnlineUsers)

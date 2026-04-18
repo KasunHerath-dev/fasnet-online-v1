@@ -87,7 +87,26 @@ const getIo = () => {
     return io;
 };
 
+// Target emission helper
+const sendToUser = (userId, event, data) => {
+    if (!io) return;
+    const userSession = connectedUsers.get(userId.toString());
+    if (userSession) {
+        io.to(userSession.socketId).emit(event, data);
+        return true;
+    }
+    return false;
+};
+
+// Global emission helper
+const broadcast = (event, data) => {
+    if (!io) return;
+    io.emit(event, data);
+};
+
 module.exports = {
     initializeSocket,
-    getIo
+    getIo,
+    sendToUser,
+    broadcast
 };

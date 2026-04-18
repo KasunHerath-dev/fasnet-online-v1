@@ -377,7 +377,69 @@ const sendWelcomeEmail = async (toEmail, studentName) => {
   }
 };
 
+const sendPasswordChangeOTPEmail = async (toEmail, otpCode, studentName) => {
+  logger.info(`[PASSWORD CHANGE OTP] Sending code to: ${toEmail}`);
+
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    logger.info(`[MOCK EMAIL] SMTP not configured. OTP: ${otpCode}`);
+    return true;
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    });
+
+    const mailOptions = {
+      from: `"FASNET Portal" <${process.env.SMTP_USER}>`,
+      to: toEmail,
+      subject: 'Security Verification - Password Change',
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <link href="https://fonts.googleapis.com/css2?family=Kodchasan:wght@400;700&display=swap" rel="stylesheet">
+          <style>
+            body { font-family: 'Kodchasan', sans-serif; background-color: #f7f7f5; color: #151313; margin: 0; padding: 0; }
+            .container { max-width: 500px; margin: 40px auto; background: #ffffff; border-radius: 2.5rem; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+            .content { padding: 60px 40px; text-align: center; }
+            .otp-box { background: #151313; padding: 30px; border-radius: 2rem; margin: 30px 0; }
+            .otp-code { font-size: 42px; font-weight: 700; color: #ff5734; letter-spacing: 8px; }
+            .title { font-size: 24px; font-weight: 700; margin-bottom: 20px; }
+            .text { color: #64748b; line-height: 1.6; margin-bottom: 30px; }
+            .footer { padding: 30px; background: #f8fafc; text-align: center; font-size: 12px; color: #94a3b8; font-weight: 600; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div style="height: 8px; background: #ff5734;"></div>
+            <div class="content">
+              <div class="title">Security Verification</div>
+              <p class="text">Hello ${studentName}, you are attempting to change your account password. Please use the verification code below to confirm your identity.</p>
+              <div class="otp-box">
+                <div class="otp-code">${otpCode}</div>
+              </div>
+              <p class="text" style="font-size: 13px;">If you did not request this change, please ignore this email or contact support immediately.</p>
+            </div>
+            <div class="footer">FASNET.ONLINE • SECURE AUTHENTICATION</div>
+          </div>
+        </body>
+        </html>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    return true;
+  } catch (error) {
+    logger.error('Failed to send password change OTP', { error: error.message });
+    return false;
+  }
+};
+
 module.exports = {
   sendOTPEmail,
   sendWelcomeEmail,
+  sendPasswordChangeOTPEmail,
 };

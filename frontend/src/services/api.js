@@ -25,6 +25,14 @@ api.interceptors.response.use(
       localStorage.removeItem('token')
       window.location.href = '/login'
     }
+    
+    // Explicitly handle Security Lockdown (403 ACCOUNT_LOCKED)
+    if (error.response?.status === 403 && error.response?.data?.error?.code === 'ACCOUNT_LOCKED') {
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      // No redirect here - allow LoginPage.jsx to handle showing the modall
+    }
+
     return Promise.reject(error)
   }
 )

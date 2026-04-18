@@ -11,12 +11,14 @@ import {
     LogOut,
     User,
     Sun,
-    Moon
+    Moon,
+    Monitor
 } from 'lucide-react';
 
 import { authService } from '../services/authService';
 import spaceHeroImg from '../assets/images/space_nebula_hero.png';
 import ProfileSetupModal from '../components/ProfileSetupModal';
+import api from '../services/api';
 
 const StudentLayout = () => {
     const [user] = useState(authService.getUser());
@@ -333,6 +335,9 @@ const StudentLayout = () => {
                     />
                 </main>
             </div>
+
+            {/* Modals */}
+            {showProfileSetup && <ProfileSetupModal onClose={() => setShowProfileSetup(false)} />}
         </div>
     );
 };

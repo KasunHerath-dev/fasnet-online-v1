@@ -1,5 +1,9 @@
 import React from 'react';
-import { Bookmark, Download, FileText } from 'lucide-react';
+import { 
+    Download, Eye, BookmarkSimple, FileText, 
+    BookOpen, GraduationCap, Lightning, Quotes,
+    ArrowsClockwise, FilePdf, CalendarBlank
+} from '@phosphor-icons/react';
 
 const formatBytes = (bytes, decimals = 2) => {
     if (!+bytes) return '0 Bytes';
@@ -14,52 +18,54 @@ const getCardTheme = (type) => {
     switch (type) {
         case 'past_paper':
             return {
-                bg: 'bg-[#fccc42]', // Warm Yellow
-                text: 'text-[#151313]',
-                pillBg: 'bg-[#151313]',
-                pillText: 'text-white',
-                btnBg: 'bg-[#ff5734]',
-                btnText: 'text-white'
+                bg: 'bg-orange-50/50',
+                border: 'border-orange-100',
+                color: 'text-orange-500',
+                iconBg: 'bg-orange-500/10',
+                tag: 'bg-orange-500/10 text-orange-500 border-orange-500/10'
             };
         case 'tutorial':
             return {
-                bg: 'bg-[#be94f5]', // Soft Purple
-                text: 'text-[#151313]',
-                pillBg: 'bg-white/50',
-                pillText: 'text-[#151313]',
-                btnBg: 'bg-[#ff5734]',
-                btnText: 'text-white'
+                bg: 'bg-blue-50/50',
+                border: 'border-blue-100',
+                color: 'text-blue-500',
+                iconBg: 'bg-blue-500/10',
+                tag: 'bg-blue-500/10 text-blue-500 border-blue-500/10'
             };
         case 'assignment':
             return {
-                bg: 'bg-[#bae6fd]', // Sky Blue
-                text: 'text-[#151313]',
-                pillBg: 'bg-white/50',
-                pillText: 'text-[#151313]',
-                btnBg: 'bg-[#ff5734]',
-                btnText: 'text-white'
+                bg: 'bg-purple-50/50',
+                border: 'border-purple-100',
+                color: 'text-purple-500',
+                iconBg: 'bg-purple-500/10',
+                tag: 'bg-purple-500/10 text-purple-500 border-purple-500/10'
             };
         case 'marking_scheme':
             return {
-                bg: 'bg-[#151313]', // Dark Promo Card
-                text: 'text-white',
-                pillBg: 'bg-[#fccc42]',
-                pillText: 'text-[#151313]',
-                btnBg: 'bg-[#ff5734]',
-                btnText: 'text-white'
+                bg: 'bg-emerald-50/50',
+                border: 'border-emerald-100',
+                color: 'text-emerald-500',
+                iconBg: 'bg-emerald-500/10',
+                tag: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/10'
             };
         case 'book':
         default:
             return {
-                bg: 'bg-white',
-                text: 'text-[#151313]',
-                pillBg: 'bg-slate-100',
-                pillText: 'text-[#151313]',
-                btnBg: 'bg-[#151313]',
-                btnText: 'text-white'
+                bg: 'bg-slate-50/50',
+                border: 'border-slate-100',
+                color: 'text-slate-500',
+                iconBg: 'bg-slate-500/10',
+                tag: 'bg-slate-100 text-slate-500 border-slate-200'
             };
     }
 }
+
+const typeIcon = (type) => {
+    if (type === 'past_paper') return <FilePdf size={22} weight="duotone" />;
+    if (type === 'tutorial') return <BookOpen size={22} weight="duotone" />;
+    if (type === 'assignment') return <Lightning size={22} weight="duotone" />;
+    return <FileText size={22} weight="duotone" />;
+};
 
 const getTypeLabel = (type) => {
     const labels = {
@@ -73,7 +79,7 @@ const getTypeLabel = (type) => {
     return labels[type] || 'Resource';
 };
 
-const ResourceCard = ({ resource, moduleCode, onPreview }) => {
+const ResourceCard = ({ resource, moduleCode, onPreview, index = 0 }) => {
     const handleDownload = () => {
         if (resource.storageType === 'google_drive' && resource.webContentLink) {
             window.open(resource.webContentLink, '_blank');
@@ -85,53 +91,60 @@ const ResourceCard = ({ resource, moduleCode, onPreview }) => {
     const theme = getCardTheme(resource.type);
 
     return (
-        <div className={`rounded-[2.5rem] border font-['Kodchasan'] tracking-wide ${theme.bg === 'bg-[#151313]' ? 'border-transparent shadow-xl shadow-black/10' : 'border-[#151313] border-[2px]'} ${theme.bg} p-8 sm:p-9 flex flex-col justify-between min-h-[300px] relative hover:-translate-y-1.5 transition-all duration-300 group`}>
-
-            {/* Top row: Pill & Bookmark */}
-            <div className="flex justify-between items-start mb-8">
-                <div className={`px-5 py-2 rounded-full text-[12px] font-black tracking-widest uppercase ${theme.pillBg} ${theme.pillText} ${theme.bg === 'bg-white' ? 'border border-[#151313]/20' : ''}`}>
-                    {moduleCode || getTypeLabel(resource.type)}
+        <div 
+            className="group relative flex flex-col bg-white rounded-[2rem] border border-slate-200 overflow-hidden transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] hover:-translate-y-1 hover:border-[#ff5734]/30 animate-in fade-in slide-in-from-bottom-4"
+            style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'both' }}
+        >
+            {/* Upper Section: Type & Module */}
+            <div className="p-5 flex items-start justify-between gap-4">
+                <div className={`w-12 h-12 rounded-2xl ${theme.iconBg} flex items-center justify-center ${theme.color} group-hover:scale-110 transition-transform duration-500 ease-out`}>
+                    {typeIcon(resource.type)}
                 </div>
-                <button className={`w-10 h-10 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors ${theme.text}`}>
-                    <Bookmark className="w-[26px] h-[26px]" strokeWidth={2.5} />
-                </button>
-            </div>
-
-            {/* Title */}
-            <h3 className={`font-black text-[26px] sm:text-3xl leading-[1.1] mb-10 line-clamp-3 ${theme.text}`}>
-                {resource.title}
-            </h3>
-
-            {/* Middle: Info line & Visual Bar */}
-            <div className="mt-auto">
-                <div className="flex justify-between items-end mb-3">
-                    <span className={`text-[12px] font-black ${theme.text} opacity-70 uppercase tracking-widest`}>
+                
+                <div className="flex flex-col items-end gap-1.5">
+                    <span className={`text-[9px] font-black uppercase tracking-[0.15em] px-2.5 py-1 rounded-full border ${theme.tag}`}>
                         {getTypeLabel(resource.type)}
                     </span>
-                    <span className={`text-[12px] font-black ${theme.text} opacity-70 tracking-widest`}>
+                    {moduleCode && (
+                        <span className="text-[9px] font-black uppercase tracking-[0.15em] bg-slate-100 text-slate-500 px-2.5 py-1 rounded-full border border-slate-200/50">
+                            {moduleCode}
+                        </span>
+                    )}
+                </div>
+            </div>
+
+            {/* Middle Section: Title */}
+            <div className="px-5 pb-4">
+                <h4 className="text-sm font-black text-[#151313] leading-[1.3] group-hover:text-[#ff5734] transition-colors duration-300 line-clamp-2 min-h-[2.6rem]">
+                    {resource.title}
+                </h4>
+            </div>
+
+            {/* Bottom Section: Info & Actions */}
+            <div className="mt-auto p-4 bg-slate-50/50 border-t border-slate-100/80 flex items-center justify-between">
+                <div className="flex flex-col gap-0.5">
+                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
                         {formatBytes(resource.size)}
+                    </span>
+                    <span className="text-[9px] font-bold text-slate-300 uppercase tracking-[0.05em]">
+                        {new Date(resource.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                     </span>
                 </div>
 
-                {/* Thick horizontal bar (Iconic style) */}
-                <div className="h-[7px] w-full bg-[#151313] rounded-full mb-8"></div>
-
-                {/* Bottom row: Action Buttons */}
-                <div className="flex justify-end gap-3">
-                    <button
-                        onClick={handleDownload}
-                        className={`bg-transparent border-[2px] ${theme.bg === 'bg-[#151313]' ? 'border-white text-white' : 'border-[#151313] text-[#151313]'} w-[52px] h-[52px] rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-[4px_4px_0px_0px_rgba(21,19,19,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]`}
-                        title="Download File"
-                    >
-                        <Download className="w-5 h-5" strokeWidth={3} />
-                    </button>
+                <div className="flex items-center gap-3">
                     <button
                         onClick={() => onPreview && onPreview(resource)}
-                        className={`${theme.btnBg} ${theme.btnText} ${theme.bg === 'bg-[#151313]' ? 'border-white' : 'border-[#151313]'} border-[2px] px-8 py-3.5 rounded-full font-black text-sm sm:text-base tracking-wide flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-[4px_4px_0px_0px_rgba(21,19,19,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]`}
-                        title="Preview File"
+                        className="w-11 h-11 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#ff5734] hover:border-[#ff5734]/30 hover:shadow-md transition-all duration-300"
+                        title="Preview"
                     >
-                        <span>Preview</span>
-                        <FileText className="w-5 h-5" strokeWidth={3} />
+                        <Eye size={20} weight="bold" />
+                    </button>
+                    <button
+                        onClick={handleDownload}
+                        className="w-11 h-11 rounded-2xl bg-[#151313] flex items-center justify-center text-white hover:bg-[#ff5734] hover:shadow-[0_8px_20px_rgba(255,87,52,0.3)] transition-all duration-300"
+                        title="Download"
+                    >
+                        <Download size={20} weight="bold" />
                     </button>
                 </div>
             </div>

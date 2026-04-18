@@ -57,12 +57,18 @@ export const authService = {
   updateUser: (id, userData) => api.put(`/users/${id}`, userData),
   deleteUser: (id) => api.delete(`/users/${id}`),
 
-  completeProfileSetup: (firstName, lastName, fullName, nameWithInitials) =>
-    api.post('/auth/complete-profile-setup', { firstName, lastName, fullName, nameWithInitials }),
+  completeProfileSetup: (firstName, lastName) =>
+    api.post('/auth/complete-profile-setup', { firstName, lastName }),
 
   getOnlineUsers: () => api.get('/users/online'),
   lockAllUsers: () => api.post('/users/lock-all'),
   unlockAllUsers: () => api.post('/users/unlock-all'),
+
+  requestPasswordChangeOTP: (currentPassword) =>
+    api.post('/auth/change-password/request-otp', { currentPassword }),
+
+  confirmPasswordChange: (currentPassword, newPassword, otp) =>
+    api.post('/auth/change-password/confirm', { currentPassword, newPassword, otp }),
 }
 
 export const studentService = {
@@ -236,6 +242,9 @@ export const academicService = {
 
 export const systemService = {
   getStats: () => api.get('/system/stats'),
+  getGeminiConfig: () => api.get('/settings/ai/gemini'),
+  updateGeminiConfig: (apiKey) => api.post('/settings/ai/gemini', { apiKey }),
+  testGeminiConfig: (apiKey) => api.post('/settings/ai/gemini/test', { apiKey }),
 }
 
 export const assessmentService = {

@@ -1,18 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, CheckCircle2, Lock, Key, Mail, ArrowRight, User, Sparkles } from 'lucide-react';
 import { otpService } from '../services/otpService';
 
-const AccountActivationModal = ({ isOpen, onClose }) => {
+const AccountActivationModal = ({ isOpen, onClose, initialRegistrationNumber = '' }) => {
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
     // State
-    const [registrationNumber, setRegistrationNumber] = useState('');
+    const [registrationNumber, setRegistrationNumber] = useState(initialRegistrationNumber);
     const [otp, setOtp] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [maskedEmail, setMaskedEmail] = useState('');
+
+    useEffect(() => {
+        if (initialRegistrationNumber) {
+            setRegistrationNumber(initialRegistrationNumber.toUpperCase());
+        }
+    }, [initialRegistrationNumber]);
 
     if (!isOpen) return null;
 
@@ -85,7 +91,9 @@ const AccountActivationModal = ({ isOpen, onClose }) => {
             {/* Backdrop */}
             <div
                 className="absolute inset-0 bg-[#151313]/90 backdrop-blur-xl transition-opacity duration-500"
-                onClick={resetAndClose}
+                onClick={(e) => {
+                    if (e.target === e.currentTarget) resetAndClose();
+                }}
             />
 
             {/* Modal Container */}

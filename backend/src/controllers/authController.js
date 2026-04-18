@@ -62,24 +62,30 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { username, password } = req.body;
+    logger.info(`Login approach: ${username}`);
 
     if (!username || !password) {
       return res.status(400).json({ error: { message: 'Username and password required', code: 'MISSING_FIELDS' } });
     }
 
+    logger.info('DB Lookup Start');
     const user = await User.findOne({ username: username.toLowerCase() });
+    logger.info('DB Lookup Finish', { found: !!user });
+
     if (!user) {
-      logger.warn(`Login failed: User not found for username: ${username.toLowerCase()}`);
+      logger.warn(`Login failed: User not found: ${username.toLowerCase()}`);
       return res.status(401).json({ error: { message: 'Invalid credentials', code: 'INVALID_CREDENTIALS' } });
     }
 
     if (user.isAccountLocked) {
-      return res.status(403).json({ error: { message: 'Account is not activated. Please click Sign Up / Activate Account to set your password.', code: 'ACCOUNT_LOCKED' } });
+      return res.status(403).json({ error: { message: 'Account is not activated.', code: 'ACCOUNT_LOCKED' } });
     }
 
+    logger.info('Password Validation Start');
     const isPasswordValid = await user.comparePassword(password);
+    logger.info('Password Validation Finish', { valid: isPasswordValid });
+
     if (!isPasswordValid) {
-      logger.warn(`Login failed: Invalid password for user: ${username}`);
       return res.status(401).json({ error: { message: 'Invalid credentials', code: 'INVALID_CREDENTIALS' } });
     }
 
@@ -89,53 +95,38 @@ const login = async (req, res) => {
 
     const token = generateToken(user._id);
 
-    // If password change is required, return early with minimal data
-    // Do NOT update lastActiveAt (db save) and do NOT fetch extra data
     if (user.needsPasswordChange) {
       return res.json({
         message: 'Please change your password',
         token,
-        user: {
-          _id: user._id,
-          username: user.username,
-          roles: user.roles,
-          needsPasswordChange: true,
-          isActive: user.isActive
-        }
+        user: { _id: user._id, username: user.username, roles: user.roles, needsPasswordChange: true }
       });
     }
 
-    // Update lastActiveAt immediately
+    logger.info('User Save Start');
     user.lastActiveAt = new Date();
     await user.save();
+    logger.info('User Save Finish');
 
-    logger.info('User logged in', { userId: user._id, username });
-
-    // Populate studentRef with deep population for repeatModules
     if (user.studentRef) {
+      logger.info('Population Start');
       await user.populate({
         path: 'studentRef',
-        populate: {
-          path: 'repeatModules.module',
-          select: 'code title credits'
-        }
+        populate: { path: 'repeatModules.module', select: 'code title credits' }
       });
+      logger.info('Population Finish');
     }
 
     const userJson = user.toJSON();
-    // Dynamic check for missing names - if student record exists but names are empty, force setup
     const needsProfileSetup = user.needsProfileSetup || (user.studentRef && (!user.studentRef.firstName || !user.studentRef.lastName));
 
-    res.json({
-      message: 'Login successful',
-      token,
-      user: {
-        ...userJson,
-        needsProfileSetup
-      }
-    });
+    res.json({ message: 'Login successful', token, user: { ...userJson, needsProfileSetup } });
   } catch (error) {
-    logger.error('Login error', { error: error.message });
+    logger.error('Login error CRITICAL', { 
+      message: error.message, 
+      stack: error.stack,
+      name: error.name
+    });
     res.status(500).json({ error: { message: 'Login failed', code: 'LOGIN_FAILED', details: error.message } });
   }
 };
@@ -373,10 +364,10 @@ const setupPassword = async (req, res) => {
 
 const completeProfileSetup = async (req, res) => {
   try {
-    const { fullName, nameWithInitials, firstName, lastName } = req.body;
+    const { firstName, lastName } = req.body;
 
-    if (!fullName || !nameWithInitials) {
-      return res.status(400).json({ error: { message: 'Full name and Name with Initials are required', code: 'MISSING_FIELDS' } });
+    if (!firstName || !lastName) {
+      return res.status(400).json({ error: { message: 'First name and Last name are required', code: 'MISSING_FIELDS' } });
     }
 
     const userId = req.user.userId || req.user._id;
@@ -388,19 +379,21 @@ const completeProfileSetup = async (req, res) => {
     }
 
     const student = user.studentRef;
-    student.fullName = fullName.trim();
-    student.nameWithInitials = nameWithInitials.trim();
-
-    // Optional but good to have if provided
-    if (firstName) student.firstName = firstName.trim();
-    if (lastName) student.lastName = lastName.trim();
+    student.firstName = firstName.trim();
+    student.lastName = lastName.trim();
+    
+    // Automatically construct fullName for system compatibility
+    student.fullName = `${student.firstName} ${student.lastName}`;
+    // Construct name with initials (naive but works for profile setup)
+    const initials = student.firstName.charAt(0).toUpperCase();
+    student.nameWithInitials = `${initials}. ${student.lastName}`;
 
     await student.save();
 
     user.needsProfileSetup = false;
     await user.save();
 
-    logger.info('Student profile setup completed', { userId: user._id, firstName, lastName });
+    logger.info('Student profile setup completed (Simplified)', { userId: user._id, firstName, lastName });
 
     res.json({
       message: 'Profile setup completed successfully!',
@@ -415,6 +408,111 @@ const completeProfileSetup = async (req, res) => {
   }
 };
 
+const requestPasswordChangeOTP = async (req, res) => {
+  try {
+    const { currentPassword } = req.body;
+    const userId = req.user._id;
+
+    if (!currentPassword) {
+      return res.status(400).json({ error: { message: 'Current password required to verify identity', code: 'MISSING_FIELDS' } });
+    }
+
+    const user = await User.findById(userId).populate('studentRef');
+    if (!user) {
+      return res.status(404).json({ error: { message: 'User not found', code: 'USER_NOT_FOUND' } });
+    }
+
+    const isPasswordValid = await user.comparePassword(currentPassword);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: { message: 'Invalid current password', code: 'INVALID_PASSWORD' } });
+    }
+
+    if (!user.studentRef || !user.studentRef.email) {
+      return res.status(400).json({ error: { message: 'No email associated with profile', code: 'NO_EMAIL' } });
+    }
+
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date();
+    expiresAt.setMinutes(expiresAt.getMinutes() + 10); // 10 mins for password change
+
+    // Hash OTP
+    const salt = await bcrypt.genSalt(10);
+    const hashedOtp = await bcrypt.hash(otp, salt);
+
+    user.otp = hashedOtp;
+    user.otpExpiresAt = expiresAt;
+    await user.save();
+
+    const emailSent = await sendPasswordChangeOTPEmail(user.studentRef.email, otp, user.studentRef.firstName || user.username);
+
+    const maskedEmail = user.studentRef.email.replace(/(.{2})(.*)(?=@)/, (m, p, mid) => p + '*'.repeat(mid.length));
+    
+    res.json({ 
+      success: true, 
+      message: emailSent ? `Verification code sent to ${maskedEmail}` : 'Code generated but email failed. Contact admin.',
+      email: maskedEmail 
+    });
+  } catch (error) {
+    logger.error('Password change OTP request error', { error: error.message });
+    res.status(500).json({ error: { message: 'Failed to request verification code', code: 'OTP_ERROR' } });
+  }
+};
+
+const confirmPasswordChangeWithOTP = async (req, res) => {
+  try {
+    const { currentPassword, newPassword, otp } = req.body;
+    const userId = req.user._id;
+
+    if (!currentPassword || !newPassword || !otp) {
+      return res.status(400).json({ error: { message: 'All fields including OTP are required', code: 'MISSING_FIELDS' } });
+    }
+
+    if (!validatePassword(newPassword)) {
+      return res.status(400).json({ error: { message: 'Weak new password', code: 'WEAK_PASSWORD' } });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: { message: 'User not found' } });
+
+    // 1. Verify Current Password again for safety
+    const isPasswordValid = await user.comparePassword(currentPassword);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: { message: 'Invalid current password', code: 'INVALID_PASSWORD' } });
+    }
+
+    // 2. Verify OTP
+    if (!user.otp || !user.otpExpiresAt || user.otpExpiresAt < new Date()) {
+      return res.status(400).json({ error: { message: 'Verification code expired or invalid', code: 'OTP_EXPIRED' } });
+    }
+
+    const isOtpValid = await bcrypt.compare(otp.toString(), user.otp);
+    if (!isOtpValid) {
+      return res.status(400).json({ error: { message: 'Invalid verification code', code: 'INVALID_OTP' } });
+    }
+
+    // 3. Update Password
+    user.passwordHash = newPassword;
+    user.otp = null;
+    user.otpExpiresAt = null;
+    await user.save();
+
+    createNotification({
+      recipient: user._id,
+      type: 'security',
+      title: 'Security Alert',
+      body: 'Your password was successfully updated via email verification.',
+      link: '/student/profile'
+    }).catch(() => {});
+
+    logger.info('Password updated with OTP', { userId: user._id });
+    res.json({ success: true, message: 'Password updated successfully' });
+  } catch (error) {
+    logger.error('Confirm password change error', { error: error.message });
+    res.status(500).json({ error: { message: 'Failed to update password', code: 'UPDATE_FAILED' } });
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -425,4 +523,6 @@ module.exports = {
   verifyOTP,
   setupPassword,
   completeProfileSetup,
+  requestPasswordChangeOTP,
+  confirmPasswordChangeWithOTP
 };

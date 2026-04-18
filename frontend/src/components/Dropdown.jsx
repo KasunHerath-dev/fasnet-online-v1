@@ -42,17 +42,35 @@ export default function Dropdown({
             button: `bg-white/20 backdrop-blur-sm text-white border-2 border-white/30 hover:bg-white/30 focus:border-white`,
             text: `font-semibold`,
             icon: `text-white`,
-            menu: `border-slate-200`,
-            item: `hover:bg-slate-50`,
-            itemActive: `text-slate-900 bg-slate-50/50 font-bold`,
-            itemInactive: `text-slate-700`
+            menu: `bg-white/20 backdrop-blur-sm border-2 border-white/30 rounded-xl shadow-xl`,
+            item: `hover:bg-white/10 py-3`,
+            itemActive: `text-white bg-white/20 font-bold`,
+            itemInactive: `text-white/70`
+        },
+        dark: {
+            button: `bg-[#151313] text-white border-none hover:bg-slate-900 focus:ring-4 focus:ring-black/10`,
+            text: `font-black uppercase tracking-widest text-[11px]`,
+            icon: `text-[#ff5734]`,
+            menu: `bg-[#151313] border border-white/10 rounded-[1.5rem] shadow-2xl`,
+            item: `hover:bg-white/10 py-4 px-6`,
+            itemActive: `text-[#ff5734] bg-white/5 font-black`,
+            itemInactive: `text-white/60`
+        },
+        'premium-light': {
+            button: `bg-white text-slate-800 border border-slate-100 hover:border-slate-200 hover:shadow-sm focus:ring-4 focus:ring-slate-100`,
+            text: `font-black uppercase tracking-widest text-[11px]`,
+            icon: `text-[#ff5734]`,
+            menu: `bg-white border border-slate-100 rounded-[1.5rem] shadow-2xl shadow-slate-200/50`,
+            item: `hover:bg-slate-50 py-4 px-6`,
+            itemActive: `text-[#ff5734] bg-slate-50 font-black`,
+            itemInactive: `text-slate-500`
         },
         default: {
             button: `bg-white text-slate-900 border border-slate-300 hover:border-slate-900 focus:border-slate-900 focus:ring-1 focus:ring-slate-900`,
             text: `font-medium`,
             icon: `text-slate-500`,
-            menu: `border-slate-200`,
-            item: `hover:bg-slate-100`,
+            menu: `bg-white border border-slate-200 rounded-xl shadow-xl`,
+            item: `hover:bg-slate-100 py-3`,
             itemActive: `text-slate-900 bg-slate-100 font-bold`,
             itemInactive: `text-slate-600`
         }
@@ -79,7 +97,7 @@ export default function Dropdown({
             </button>
 
             <div
-                className={`absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border overflow-hidden transition-all duration-200 origin-top z-50
+                className={`absolute top-full left-0 right-0 mt-2 overflow-hidden transition-all duration-200 origin-top z-50
         ${currentStyle.menu}
         ${isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'}`}
             >

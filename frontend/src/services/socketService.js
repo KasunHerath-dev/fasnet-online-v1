@@ -10,7 +10,7 @@ export const socketService = {
         const token = authService.getToken();
         if (!token) return null;
 
-        const socketUrl = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:5000`;
+        const socketUrl = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:5001`;
         socket = io(socketUrl, {
             auth: { token },
             reconnection: true,

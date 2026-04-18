@@ -29,7 +29,9 @@ const Toast = ({ id, message, type, onClose }) => {
       ${bgColors[type] || bgColors.info}
     `}>
             {icons[type] || icons.info}
-            <p className="flex-1 text-sm font-medium text-gray-700 dark:text-gray-200">{message}</p>
+            <p className="flex-1 text-sm font-medium text-gray-700 dark:text-gray-200">
+                {typeof message === 'string' ? message : (message?.message || message?.error || 'An unexpected error occurred')}
+            </p>
             <button
                 onClick={() => onClose(id)}
                 className="p-1 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors"

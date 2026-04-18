@@ -1,7 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { authService } from '../services/authService'
-import { Bell, Search, Menu, User, ChevronDown, LogOut, Settings, MessageCircle, Sun, Moon } from 'lucide-react'
+import { Bell, Search, Menu, User, ChevronDown, LogOut, Settings, MessageCircle, Sun, Moon, X, Info } from 'lucide-react'
+import { notificationService } from '../services/notificationService'
+import { socketService } from '../services/socketService'
+import FluidGlass from './FluidGlass'
 
 export default function TopNav({ user, onLogout, onToggleSidebar }) {
   const navigate = useNavigate()
@@ -10,6 +13,7 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showNotifications, setShowNotifications] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedNotif, setSelectedNotif] = useState(null)
 
   // Theme Toggle State
   const [isDark, setIsDark] = useState(() => {
@@ -39,14 +43,113 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
     }
   }, [isDark])
 
-  // Mock notifications
-  const notifications = [
-    { id: 1, title: 'New grade published', message: 'Database Systems - A', time: '2h ago', unread: true },
-    { id: 2, title: 'Assignment due soon', message: 'Web Development Project', time: '5h ago', unread: true },
-    { id: 3, title: 'New study material', message: 'AI & ML - Week 5', time: '1d ago', unread: false }
-  ]
+  const [notifications, setNotifications] = useState([])
+  const [unreadCount, setUnreadCount] = useState(0)
+  const [isFetchingNotifs, setIsFetchingNotifs] = useState(false)
 
-  const unreadCount = notifications.filter(n => n.unread).length
+  // Fetch real notifications
+  const fetchNotifications = async () => {
+    setIsFetchingNotifs(true)
+    try {
+      const res = await notificationService.getAll()
+      if (res.data && res.data.success) {
+        setNotifications(res.data.data)
+        setUnreadCount(res.data.unreadCount)
+      }
+    } catch (err) {
+      console.error('Failed to fetch notifications:', err)
+    } finally {
+      setIsFetchingNotifs(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchNotifications()
+
+    // Real-time socket listener
+    socketService.on('newNotification', (newNotif) => {
+      setNotifications(prev => [newNotif, ...prev])
+      setUnreadCount(prev => prev + 1)
+      
+      if (Notification.permission === 'granted') {
+          new window.Notification(newNotif.title, { body: newNotif.body });
+      }
+    })
+
+    return () => {
+      socketService.off('newNotification')
+    }
+  }, [])
+
+  const handleMarkRead = async (id) => {
+    try {
+      await notificationService.markRead(id)
+      setNotifications(prev => prev.map(n => n._id === id ? { ...n, isRead: true } : n))
+      setUnreadCount(prev => Math.max(0, prev - 1))
+    } catch (err) {
+      console.error('Error marking as read:', err)
+    }
+  }
+
+  // Resolve a notification link to the correct routed path.
+  // Bare paths like /profile, /settings?section=lms become /:studentId/path?query etc.
+  const resolveLink = (link) => {
+    if (!link) return null
+    
+    const isSuperAdmin = currentUser?.roles?.includes('superadmin')
+    if (isSuperAdmin) return link
+
+    // Try to get the student ID from the current URL first (most reliable)
+    const pathSegments = location.pathname.split('/')
+    let currentId = pathSegments[1]
+    
+    // Fallback if we're not on a student-prefixed page
+    if (!currentId || currentId === 'admin' || currentId === 'login' || currentId === 'messages') {
+      currentId = currentUser?.studentRef?.registrationNumber || currentUser?.username
+    }
+
+    if (!currentId) return link
+    
+    // If the link already starts with the registration number, return as is
+    if (link.startsWith(`/${currentId}/`)) return link
+    
+    // Split path from query string before prefixing
+    const [path, qs] = link.split('?')
+    const bare = path.startsWith('/') ? path.slice(1) : path
+    
+    // Special case: if it's already a full path with an ID, don't re-prefix
+    const firstSegment = bare.split('/')[0]
+    if (/^[A-Z]\d+$/i.test(firstSegment)) return link
+
+    return `/${currentId}/${bare}${qs ? `?${qs}` : ''}`
+  }
+
+  const handleNotificationClick = async (n) => {
+    if (!n.isRead) await handleMarkRead(n._id)
+    setShowNotifications(false)
+    
+    // If it has a link, try to navigate
+    if (n.link && n.link !== '#' && n.link !== '') {
+      const dest = resolveLink(n.link)
+      if (dest) {
+        navigate(dest)
+        return
+      }
+    }
+    
+    // If no link or specifically requested, show as popup (Reminder)
+    setSelectedNotif(n)
+  }
+
+  const handleMarkAllRead = async () => {
+    try {
+      await notificationService.markAllRead()
+      setNotifications(prev => prev.map(n => ({ ...n, isRead: true })))
+      setUnreadCount(0)
+    } catch (err) {
+      console.error('Error marking all read:', err)
+    }
+  }
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -61,13 +164,6 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const handleSearch = (e) => {
-    e.preventDefault()
-    if (searchQuery.trim()) {
-      console.log('Searching for:', searchQuery)
-    }
-  }
-
   const handleLogout = () => {
     if (onLogout) {
       onLogout()
@@ -78,7 +174,7 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
   }
 
   const getPageTitle = () => {
-    const path = location.pathname.split('/')[1] || 'dashboard'
+    const path = location.pathname.split('/')[2] || 'dashboard'
     return path.charAt(0).toUpperCase() + path.slice(1).replace(/-/g, ' ')
   }
 
@@ -149,19 +245,44 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
                   <div className="p-4 border-b border-border-glass">
                     <h3 className="font-black text-sm text-text-main">Notifications</h3>
                   </div>
-                  {/* ... Notifications List ... */}
-                  {notifications.map(n => (
-                    <div key={n.id} className="p-4 border-b border-border-glass hover:bg-highlight/30 transition-colors cursor-pointer">
-                      <div className="flex justify-between mb-1">
-                        <span className={`text-xs font-bold ${n.unread ? 'text-text-main' : 'text-text-muted'}`}>{n.title}</span>
-                        <span className="text-[10px] text-text-muted">{n.time}</span>
+                  <div className="max-h-[400px] overflow-y-auto no-scrollbar">
+                    {notifications.length > 0 ? (
+                      notifications.map(n => (
+                        <div 
+                          key={n._id} 
+                          onClick={() => handleNotificationClick(n)}
+                          className={`p-4 border-b border-border-glass hover:bg-highlight/30 transition-colors group ${n.link ? 'cursor-pointer' : 'cursor-default'}`}
+                        >
+                          <div className="flex justify-between mb-1">
+                            <span className={`text-xs font-bold ${!n.isRead ? 'text-text-main flex items-center gap-2' : 'text-text-muted'}`}>
+                              {!n.isRead && <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>}
+                              {n.title}
+                            </span>
+                            <span className="text-[10px] text-text-muted">
+                              {new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          </div>
+                          <p className="text-xs text-text-muted line-clamp-2">{n.body}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="p-8 text-center bg-highlight/5">
+                        <Bell className="w-8 h-8 text-text-muted/20 mx-auto mb-2" />
+                        <p className="text-xs text-text-muted italic">No notifications yet</p>
                       </div>
-                      <p className="text-xs text-text-muted">{n.message}</p>
-                    </div>
-                  ))}
-                  <div className="p-3 text-center border-t border-border-glass">
-                    <button className="text-xs font-bold text-primary hover:text-primary-glow transition-colors">Mark all reading</button>
+                    )}
                   </div>
+
+                  {notifications.length > 0 && (
+                    <div className="p-3 text-center border-t border-border-glass">
+                      <button 
+                        onClick={handleMarkAllRead}
+                        className="text-xs font-bold text-primary hover:text-primary-glow transition-colors"
+                      >
+                        Mark all as read
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -186,7 +307,6 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
                 <ChevronDown className={`w-3 h-3 text-text-muted transition-transform ${showUserMenu ? 'rotate-180' : ''}`} />
               </button>
 
-              {/* User Menu Dropdown (Glass) */}
               {showUserMenu && (
                 <div className="absolute right-0 mt-4 w-60 bg-surface-glass backdrop-blur-2xl border border-border-glass rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-4 duration-200">
                   <div className="p-4 border-b border-border-glass">
@@ -194,10 +314,10 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
                     <p className="text-xs text-text-muted truncate">{currentUser?.email}</p>
                   </div>
                   <div className="p-2">
-                    <button onClick={() => { navigate('/profile'); setShowUserMenu(false) }} className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-bold text-text-muted hover:bg-highlight transition-colors">
+                    <button onClick={() => { navigate(resolveLink('/profile')); setShowUserMenu(false) }} className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-bold text-text-muted hover:bg-highlight transition-colors">
                       <User className="w-4 h-4" /> Profile
                     </button>
-                    <button onClick={() => { navigate('/settings'); setShowUserMenu(false) }} className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-bold text-text-muted hover:bg-highlight transition-colors">
+                    <button onClick={() => { navigate(resolveLink('/settings')); setShowUserMenu(false) }} className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-bold text-text-muted hover:bg-highlight transition-colors">
                       <Settings className="w-4 h-4" /> Settings
                     </button>
                     <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-bold text-primary hover:bg-primary/10 transition-colors mt-2">
@@ -211,6 +331,63 @@ export default function TopNav({ user, onLogout, onToggleSidebar }) {
           </div>
         </div>
       </div>
+
+      {/* Notification Detail Modal (Reminder) */}
+      {selectedNotif && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
+          <FluidGlass className="w-full max-w-md overflow-hidden rounded-[2.5rem] border border-white/20 shadow-2xl animate-in zoom-in-95 duration-300">
+            <div className="p-8">
+              <div className="flex justify-between items-start mb-6">
+                <div className="w-12 h-12 rounded-2xl bg-highlight/20 flex items-center justify-center">
+                  <Bell className="w-6 h-6 text-text-main" />
+                </div>
+                <button 
+                  onClick={() => setSelectedNotif(null)}
+                  className="p-2 rounded-xl hover:bg-white/10 transition-colors"
+                >
+                  <X className="w-5 h-5 text-text-muted" />
+                </button>
+              </div>
+
+              <h3 className="text-xl font-black text-text-main mb-2 tracking-tight">
+                {selectedNotif.title || 'Notification'}
+              </h3>
+              
+              <div className="flex items-center gap-2 text-xs text-text-muted mb-6 font-bold uppercase tracking-widest">
+                <Info className="w-3.5 h-3.5" />
+                {new Date(selectedNotif.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
+              </div>
+
+              <div className="bg-white/5 rounded-3xl p-6 border border-white/5 mb-8">
+                <p className="text-text-main/90 leading-relaxed whitespace-pre-wrap">
+                  {selectedNotif.body}
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                {selectedNotif.link && selectedNotif.link !== '#' && (
+                  <button
+                    onClick={() => {
+                      const dest = resolveLink(selectedNotif.link)
+                      setSelectedNotif(null)
+                      if (dest) navigate(dest)
+                    }}
+                    className="flex-1 py-4 bg-highlight text-black font-black rounded-2xl hover:scale-[1.02] active:scale-95 transition-all"
+                  >
+                    Take Action
+                  </button>
+                )}
+                <button
+                  onClick={() => setSelectedNotif(null)}
+                  className={`py-4 px-8 font-black rounded-2xl border border-border-glass hover:bg-white/5 transition-all ${selectedNotif.link ? 'flex-shrink-0' : 'flex-1 bg-highlight text-black'}`}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </FluidGlass>
+        </div>
+      )}
     </header>
   )
 }

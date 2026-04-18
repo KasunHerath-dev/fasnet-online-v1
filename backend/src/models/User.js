@@ -81,6 +81,14 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    firstName: {
+      type: String,
+      trim: true,
+    },
+    lastName: {
+      type: String,
+      trim: true,
+    },
   },
   { timestamps: true }
 );

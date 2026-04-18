@@ -16,6 +16,10 @@ const authMiddleware = async (req, res, next) => {
       return res.status(401).json({ error: { message: 'Invalid or inactive user', code: 'INVALID_USER' } });
     }
 
+    if (user.isAccountLocked && req.path !== '/complete-profile-setup') {
+      return res.status(403).json({ error: { message: 'Account is locked for security re-verification.', code: 'ACCOUNT_LOCKED' } });
+    }
+
     req.user = user;
 
     // Track user activity (throttle to 1 minute)
@@ -30,14 +34,19 @@ const authMiddleware = async (req, res, next) => {
   }
 };
 
-const roleMiddleware = (...allowedRoles) => {
+const roleMiddleware = (...args) => {
+  const allowedRoles = args.flat();
   return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({ error: { message: 'Unauthorized', code: 'UNAUTHORIZED' } });
     }
 
-    const hasRole = req.user.roles.some((role) => allowedRoles.includes(role));
+    const hasRole = req.user.roles.some((role) => 
+      allowedRoles.map(r => r.toLowerCase()).includes(role.toLowerCase())
+    );
+    
     if (!hasRole) {
+      console.warn(`[Auth] Access Denied. User: ${req.user.username}, Roles: ${req.user.roles}, Required: ${allowedRoles}`);
       return res.status(403).json({ error: { message: 'Forbidden', code: 'FORBIDDEN' } });
     }
 

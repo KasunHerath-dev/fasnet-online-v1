@@ -9,7 +9,7 @@ const getAllStudents = async (req, res) => {
       return res.status(403).json({ error: { message: 'Forbidden: Students cannot listen all student data', code: 'FORBIDDEN' } });
     }
 
-    const { q, district, batch, limit = 50, page = 1, sort = 'fullName' } = req.query;
+    const { q, district, batch, combination, limit = 50, page = 1, sort = 'fullName' } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
     let filter = { ...(req.batchFilter || {}) };  // Apply batch scope filter
@@ -22,8 +22,13 @@ const getAllStudents = async (req, res) => {
     }
     if (district) filter.district = district;
     if (batch) filter.batchYear = batch;
+    if (combination) filter.combination = combination;
 
-    const students = await Student.find(filter).sort(sort).limit(parseInt(limit)).skip(skip);
+    const students = await Student.find(filter)
+      .populate('userRef', 'username isActive lastActiveAt roles')
+      .sort(sort)
+      .limit(parseInt(limit))
+      .skip(skip);
     const total = await Student.countDocuments(filter);
 
     res.json({ students, total, page: parseInt(page), limit: parseInt(limit), pages: Math.ceil(total / parseInt(limit)) });

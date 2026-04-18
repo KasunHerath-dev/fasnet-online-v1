@@ -1,4 +1,5 @@
 const Notification = require('../models/Notification');
+const { sendToUser } = require('../socket');
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
@@ -7,7 +8,12 @@ const Notification = require('../models/Notification');
  * Can be called internally by other controllers.
  */
 const createNotification = async ({ recipient, type, title, body, link = null, refModel = null, refId = null }) => {
-    return Notification.create({ recipient, type, title, body, link, refModel, refId });
+    const notification = await Notification.create({ recipient, type, title, body, link, refModel, refId });
+    
+    // Real-time emission
+    sendToUser(recipient, 'newNotification', notification);
+    
+    return notification;
 };
 
 // ── Controllers ────────────────────────────────────────────────────────────────

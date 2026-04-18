@@ -1,0 +1,25 @@
+{
+  "name": "notice-scraper",
+  "version": "1.0.0",
+  "description": "Automated notice aggregator with AI rewriting",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "scrape:once": "node index.js --once"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.24.0",
+    "@google/genai": "^1.48.0",
+    "axios": "^1.7.2",
+    "cheerio": "^1.0.0",
+    "cron-parser": "^5.5.0",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.4.5",
+    "mongoose": "^8.4.0",
+    "node-cron": "^3.0.3",
+    "openai": "^6.33.0",
+    "playwright": "^1.44.0"
+  }
+}

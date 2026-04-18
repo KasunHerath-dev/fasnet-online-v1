@@ -18,7 +18,8 @@ import AdminResources from './pages/admin/AdminResources'
 import StorageManagement from './pages/admin/StorageManagement'
 import PromotedUserDashboard from './pages/admin/PromotedUserDashboard'
 import ExamTimeTablePage from './pages/admin/ExamTimeTablePage'
-
+import AdminNoticesPage from './pages/admin/AdminNoticesPage'
+import LmsAdminPage from './pages/admin/LmsAdminPage'
 // Admin > Student Management
 import StudentsPage from './pages/admin/Students/StudentsPage'
 import StudentDetailPage from './pages/admin/Students/StudentDetailPage'
@@ -35,11 +36,13 @@ import { socketService } from './services/socketService'
 import LayoutWrapper from './components/student/layout/LayoutWrapper'
 
 // Lazy Load Student Pages
-const Dashboard = lazy(() => import('./pages/student/Dashboard'))
-const AcademicGrowth = lazy(() => import('./pages/student/AcademicGrowth'))
-const StudentLearning = lazy(() => import('./pages/student/StudentLearning'))
-const SettingsProfile = lazy(() => import('./pages/student/SettingsProfile'))
-const StudentSchedule = lazy(() => import('./pages/student/StudentSchedule'))
+// Student Portal — Direct Imports (Fix for lazy load redirect issues)
+import Dashboard from './pages/student/StudentDashboard'
+import AcademicGrowth from './pages/student/AcademicGrowth'
+import StudentLearning from './pages/student/StudentLearning'
+import SettingsProfile from './pages/student/SettingsProfile'
+import StudentSchedule from './pages/student/StudentSchedule'
+import NoticesPage from './pages/student/NoticesPage'
 import './styles/globals.css'
 
 function ProtectedRoute({ children }) {
@@ -58,10 +61,20 @@ function ProtectedRoute({ children }) {
   ) : <Navigate to="/login" />
 }
 
-// Role Protection Wrapper
-function AdminRoute({ children, user }) {
-  const isStudent = user?.roles?.includes('user') && !user?.roles?.includes('admin') && !user?.roles?.includes('superadmin')
-  return isStudent ? <Navigate to="/dashboard" replace /> : children
+// Role-based protection wrapper
+function RoleProtectedRoute({ children, roles, user }) {
+  if (!user) return <div className="h-screen w-screen flex items-center justify-center bg-[#f7f7f5]"><UnifiedPageLoader /></div>
+  
+  const hasAccess = roles.some(role => user.roles?.includes(role))
+  if (hasAccess) return children
+
+  // If unauthorized, redirect to their primary dashboard
+  if (user.roles?.includes('superadmin')) {
+    return <Navigate to="/dashboard" replace />
+  }
+  
+  const regNum = user.studentRef?.registrationNumber || user.username || 'user'
+  return <Navigate to={`/${regNum}/dashboard`} replace />
 }
 
 export default function App() {
@@ -143,84 +156,58 @@ export default function App() {
 
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route
-          path="/*"
-          element={
-            <ProtectedRoute>
-              {isStudent ? (
-                <Suspense fallback={<UnifiedPageLoader />}>
-                  <Routes>
-                    <Route element={<LayoutWrapper />}>
-                      <Route path="/:id/dashboard" element={<Dashboard />} />
-                      <Route path="/:id/academics" element={<AcademicGrowth />} />
-                      <Route path="/:id/learning" element={<StudentLearning />} />
-                      <Route path="/:id/schedule" element={<StudentSchedule />} />
-                      <Route path="/:id/profile" element={<SettingsProfile />} />
-                      {/* Fallback for any other route to dashboard */}
-                      <Route path="*" element={<Navigate to="/login" replace />} />
-                    </Route>
-                  </Routes>
-                </Suspense>
-              ) : (
-                <Suspense fallback={<UnifiedPageLoader />}>
-                  <Routes>
-                    {/* Promoted User (student-admin dual role) — uses student layout */}
-                    {isPromotedUser && (
-                      <Route element={<LayoutWrapper />}>
-                        <Route path="/:id/dashboard" element={<Dashboard />} />
-                        <Route path="/:id/academics" element={<AcademicGrowth />} />
-                        <Route path="/:id/learning" element={<StudentLearning />} />
-                        <Route path="/:id/schedule" element={<StudentSchedule />} />
-                        <Route path="/:id/profile" element={<SettingsProfile />} />
-                        <Route path="/students" element={<StudentsPage />} />
-                        <Route path="/students/new" element={<StudentCreatePage />} />
-                        <Route path="/students/:registrationNumber" element={<StudentDetailPage />} />
-                        <Route path="/birthdays" element={<BirthdaysPage />} />
-                        <Route path="/profile-requests" element={<ProfileRequestsPage />} />
-                        <Route path="/register-students" element={<RegisterStudentsPage />} />
-                        <Route path="/update-students" element={<UpdateStudentsPage />} />
-                        <Route path="/admin" element={<AdminSettings />} />
-                        <Route path="/admin/users" element={<AdminUsers />} />
-                        <Route path="/admin/resources" element={<AdminResources />} />
-                        <Route path="/admin/storage" element={<StorageManagement />} />
-                        <Route path="/admin/bulk-combination" element={<BulkCombinationPage />} />
-                        <Route path="/admin/analytics" element={<AdminAnalytics />} />
-                        <Route path="*" element={<Navigate to={`/${user?.studentRef?.registrationNumber || user?.username}/dashboard`} replace />} />
-                      </Route>
-                    )}
+      <ToastProvider>
+        <IdleTimerProvider>
+          <IdleWarningModal />
+          <Suspense fallback={<UnifiedPageLoader />}>
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              
+              {/* ── Student Routes ── */}
+              <Route element={<ProtectedRoute><LayoutWrapper /></ProtectedRoute>}>
+                <Route path="/:id/dashboard" element={<Dashboard />} />
+                <Route path="/:id/academics" element={<AcademicGrowth />} />
+                <Route path="/:id/learning" element={<StudentLearning />} />
+                <Route path="/:id/schedule" element={<StudentSchedule />} />
+                <Route path="/:id/profile" element={<SettingsProfile />} />
+                <Route path="/:id/notices" element={<NoticesPage />} />
+                {/* Root Redirect Logic */}
+                <Route path="/" element={<Navigate to={isSuperAdmin ? "/dashboard" : `/${user?.studentRef?.registrationNumber || user?.username || 'user'}/dashboard`} replace />} />
+              </Route>
 
-                    {/* Superadmin — full admin layout */}
-                    {isSuperAdmin && (
-                      <Route element={<AdminLayout user={user} onLogout={handleLogout} />}>
-                        <Route path="/dashboard" element={<AdminDashboard />} />
-                        <Route path="/analytics" element={<AdminAnalytics />} />
-                        <Route path="/students" element={<StudentsPage />} />
-                        <Route path="/students/new" element={<StudentCreatePage />} />
-                        <Route path="/students/:registrationNumber" element={<StudentDetailPage />} />
-                        <Route path="/birthdays" element={<BirthdaysPage />} />
-                        <Route path="/profile-requests" element={<ProfileRequestsPage />} />
-                        <Route path="/register-students" element={<RegisterStudentsPage />} />
-                        <Route path="/update-students" element={<UpdateStudentsPage />} />
-                        <Route path="/missing-students" element={<MissingStudentsPage />} />
-                        <Route path="/admin" element={<AdminSettings />} />
-                        <Route path="/admin/users" element={<AdminUsers />} />
-                        <Route path="/admin/resources" element={<AdminResources />} />
-                        <Route path="/admin/storage" element={<StorageManagement />} />
-                        <Route path="/admin/analytics" element={<AdminAnalytics />} />
-                        <Route path="/admin/bulk-combination" element={<BulkCombinationPage />} />
-                        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                        <Route path="*" element={<Navigate to="/dashboard" replace />} />
-                      </Route>
-                    )}
-                  </Routes>
-                </Suspense>
-              )}
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
+              {/* ── Admin / Superadmin Shared UI ── */}
+              <Route element={<ProtectedRoute><RoleProtectedRoute roles={['admin', 'superadmin']} user={user}><AdminLayout user={user} onLogout={handleLogout} /></RoleProtectedRoute></ProtectedRoute>}>
+                {/* Dashboard & Analytics */}
+                <Route path="/dashboard" element={<RoleProtectedRoute roles={['superadmin']} user={user}><AdminDashboard /></RoleProtectedRoute>} />
+                <Route path="/analytics" element={<RoleProtectedRoute roles={['superadmin']} user={user}><AdminAnalytics /></RoleProtectedRoute>} />
+
+                {/* Student Management */}
+                <Route path="/students" element={<StudentsPage />} />
+                <Route path="/students/new" element={<StudentCreatePage />} />
+                <Route path="/students/:regNum" element={<StudentDetailPage />} />
+                <Route path="/register-students" element={<RegisterStudentsPage />} />
+                <Route path="/update-students" element={<UpdateStudentsPage />} />
+                <Route path="/birthdays" element={<BirthdaysPage />} />
+                <Route path="/missing-students" element={<MissingStudentsPage />} />
+                <Route path="/profile-requests" element={<ProfileRequestsPage />} />
+                
+                {/* Admin Tools */}
+                <Route path="/admin" element={<AdminSettings />} />
+                <Route path="/admin/notices" element={<AdminNoticesPage />} />
+                <Route path="/admin/lms" element={<RoleProtectedRoute roles={['superadmin']} user={user}><LmsAdminPage /></RoleProtectedRoute>} />
+                <Route path="/admin/storage" element={<RoleProtectedRoute roles={['superadmin']} user={user}><StorageManagement /></RoleProtectedRoute>} />
+                <Route path="/admin/users" element={<RoleProtectedRoute roles={['superadmin']} user={user}><AdminUsers /></RoleProtectedRoute>} />
+                <Route path="/admin/bulk-combination" element={<BulkCombinationPage />} />
+                <Route path="/admin/resources" element={<AdminResources />} />
+                <Route path="/admin/exams" element={<ExamTimeTablePage />} />
+              </Route>
+
+              {/* Catch-all */}
+              <Route path="*" element={<Navigate to="/login" replace />} />
+            </Routes>
+          </Suspense>
+        </IdleTimerProvider>
+      </ToastProvider>
     </BrowserRouter>
   )
 }

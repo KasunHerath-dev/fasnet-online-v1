@@ -31,6 +31,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (e.stopPropagation) e.stopPropagation();
     setLoading(true)
     setError('')
 
@@ -39,10 +40,24 @@ export default function LoginPage() {
       authService.setToken(response.data.token)
       const authenticatedUser = response.data.user;
       authService.setUser(authenticatedUser)
-      const regNum = authenticatedUser?.studentRef?.registrationNumber || authenticatedUser?.username || '';
-      navigate(regNum ? `/${regNum}/dashboard` : '/login', { replace: true })
+      const user = response.data.user;
+      const isSuperAdmin = user?.roles?.includes('superadmin');
+      
+      if (isSuperAdmin) {
+        navigate('/dashboard', { replace: true });
+      } else {
+        const regNum = user?.studentRef?.registrationNumber || user?.username || '';
+        navigate(regNum ? `/${regNum}/dashboard` : '/login', { replace: true });
+      }
     } catch (err) {
-      setError(err.response?.data?.error?.message || 'Login failed')
+      const errCode = err.response?.data?.error?.code;
+      if (errCode === 'ACCOUNT_LOCKED') {
+        setTimeout(() => {
+          setIsActivationModalOpen(true);
+        }, 200);
+      } else {
+        setError(err.response?.data?.error?.message || 'Login failed')
+      }
     } finally {
       setLoading(false)
     }
@@ -218,16 +233,8 @@ export default function LoginPage() {
           <div className="mt-12 pt-8 border-t border-slate-200 space-y-6">
             <div className="flex flex-col items-center gap-4">
               <p className="text-[10px] font-black text-slate-400 bg-[#f7f7f5] px-4 -mt-10 mb-4 uppercase tracking-[0.2em]">
-                New to the portal?
+                Secure Identity Portal
               </p>
-              <button
-                onClick={() => setIsActivationModalOpen(true)}
-                className="w-full flex items-center justify-center gap-3 h-14 border-2 border-[#151313] bg-transparent rounded-2xl text-[13px] font-black text-[#151313] hover:bg-[#151313] hover:text-white transition-all transform hover:shadow-lg active:scale-95 group uppercase tracking-widest"
-              >
-                <UserPlus size={18} />
-                Activate Student Account
-                <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
-              </button>
             </div>
 
             <div className="flex items-center justify-center gap-6">
@@ -248,6 +255,7 @@ export default function LoginPage() {
       <AccountActivationModal
         isOpen={isActivationModalOpen}
         onClose={() => setIsActivationModalOpen(false)}
+        initialRegistrationNumber={username}
       />
     </div>
   )

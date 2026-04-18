@@ -1,15 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import WelcomeBanner from './WelcomeBanner';
 import NoticeBoard from './NoticeBoard';
-import RecentResourcesList from './RecentResourcesList';
+import AdminToolkit from './AdminToolkit';
+
 import { authService, academicService } from '../../../services/authService';
 import { noticeService } from '../../../services/noticeService';
 import UnifiedPageLoader from '../../../components/loaders/UnifiedPageLoader';
+import { socketService } from '../../../services/socketService';
+import { useToast } from '../../../context/ToastContext';
 
 const Dashboard = () => {
+    const toast = useToast();
     const [loading, setLoading] = useState(true);
     const [dashboardData, setDashboardData] = useState(null);
     const [notices, setNotices] = useState([]);
+
+    const fetchNotices = async () => {
+        try {
+            const res = await noticeService.getAll().catch(() => ({ data: { data: [] } }));
+            setNotices(res?.data?.data || []);
+        } catch (err) {
+            console.error('Failed to refresh notices', err);
+        }
+    };
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -19,15 +32,12 @@ const Dashboard = () => {
                     const studentId = currentUser.studentRef._id || currentUser.studentRef;
 
                     // Fetch Dashboard and Notices in parallel
-                    const [dashRes, noticesRes] = await Promise.all([
+                    const [dashRes] = await Promise.all([
                         academicService.getStudentDashboard(studentId),
-                        noticeService.getAll().catch(() => ({ data: { data: [] } }))
+                        fetchNotices()
                     ]);
 
                     setDashboardData(dashRes.data);
-
-                    // Set notices from the global notice API
-                    setNotices(noticesRes?.data?.data || []);
                 }
             } catch (err) {
                 console.error('Failed to load data', err);
@@ -36,6 +46,23 @@ const Dashboard = () => {
             }
         };
         fetchDashboardData();
+
+        // ── Real-time Socket Listeners ──
+        socketService.on('new_notice', fetchNotices);
+        socketService.on('notice_deleted', ({ id }) => {
+            setNotices(prev => prev.filter(n => n._id !== id));
+        });
+        socketService.on('all_notices_deleted', () => {
+            setNotices([]);
+        });
+
+
+        return () => {
+            socketService.off('new_notice');
+            socketService.off('notice_deleted');
+            socketService.off('all_notices_deleted');
+
+        };
     }, []);
 
     if (loading) return <UnifiedPageLoader />;
@@ -61,19 +88,18 @@ const Dashboard = () => {
                     combinationSubjects={student?.combinationSubjects}
                 />
             </div>
+ 
+            {/* Admin Toolkit for Promoted Users (Dual Role) */}
+            {authService.getUser()?.roles?.includes('admin') && (
+                <div className="w-full shrink-0 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200 fill-mode-both">
+                    <AdminToolkit user={authService.getUser()} />
+                </div>
+            )}
 
-            {/* Bottom Split Area */}
-            <div className="flex flex-col xl:flex-row gap-4 xl:gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200 fill-mode-both flex-1 min-h-[400px]">
-                {/* Left: Notice Board */}
-                <div className="w-full xl:w-1/2 flex flex-col h-full">
+            {/* Notice Board (Full Width Now) */}
+                <div className="w-full h-full">
                     <NoticeBoard notices={notices} />
                 </div>
-
-                {/* Right: Recent Resources */}
-                <div className="w-full xl:w-1/2 flex flex-col h-full">
-                    <RecentResourcesList />
-                </div>
-            </div>
 
         </div>
     );

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocation, NavLink } from 'react-router-dom';
-import { Bell, Search, BookOpen, GraduationCap, Calendar, Megaphone, X, CheckCheck, ShieldCheck, Lock } from 'lucide-react';
+import { useLocation, NavLink, useNavigate } from 'react-router-dom';
+import { Bell, Search, BookOpen, GraduationCap, Calendar, Megaphone, X, CheckCheck, ShieldCheck, Lock, Info, Link, ArrowLeft } from 'lucide-react';
 import { authService } from '../../../services/authService';
 import { notificationService } from '../../../services/notificationService';
 
@@ -11,6 +11,7 @@ const TYPE_MAP = {
     account_verified: { icon: ShieldCheck, iconBg: 'bg-emerald-100', iconColor: 'text-emerald-600' },
     password_changed: { icon: Lock, iconBg: 'bg-[#fccc42]/40', iconColor: 'text-amber-600' },
     announcement: { icon: Megaphone, iconBg: 'bg-[#ff5734]/10', iconColor: 'text-[#ff5734]' },
+    lms_invite: { icon: Link, iconBg: 'bg-indigo-100', iconColor: 'text-indigo-600' },
 };
 
 const DEFAULT_TYPE = { icon: Bell, iconBg: 'bg-slate-100', iconColor: 'text-slate-500' };
@@ -27,23 +28,58 @@ const timeAgo = (dateStr) => {
 
 const TopNavbar = ({ user }) => {
     const location = useLocation();
+    const navigate = useNavigate();
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedNotif, setSelectedNotif] = useState(null);
     const notifRef = useRef(null);
 
     const unreadCount = notifications.filter(n => !n.isRead).length;
 
     const getPageContext = (path) => {
-        if (path.includes('/dashboard')) return { title: 'Dashboard', subtitle: "Here's what's happening today." };
-        if (path.includes('/academics')) return { title: 'Academic Growth', subtitle: 'Track your performance and grades.' };
-        if (path.includes('/learning')) return { title: 'Resource Center', subtitle: 'Access your study materials.' };
-        if (path.includes('/profile')) return { title: 'Settings & Profile', subtitle: 'Manage your account preferences.' };
-        return { title: 'Student Portal', subtitle: 'Welcome back.' };
+        const p = path.toLowerCase();
+        if (p.includes('/dashboard')) return { title: 'Dashboard', subtitle: "Here's what's happening today." };
+        if (p.includes('/notices')) return { title: 'Faculty Notices', subtitle: 'Official updates and announcements.' };
+        if (p.includes('/schedule')) return { title: 'Deadline Companion', subtitle: 'Academic task timeline.' };
+        if (p.includes('/academics')) return { title: 'Academic Growth', subtitle: 'Track your performance and grades.' };
+        if (p.includes('/learning')) return { title: 'Resource Center', subtitle: 'Access your study materials.' };
+        if (p.includes('/profile')) return { title: 'Settings & Profile', subtitle: 'Manage your account preferences.' };
+        return { title: 'Student Workspace', subtitle: 'Welcome back.' };
     };
 
     const context = getPageContext(location.pathname);
+
+    // Resolve a notification link to the correct routed path.
+    // Bare paths like /profile, /settings?section=lms become /:studentId/path?query etc.
+    const resolveLink = (link) => {
+        if (!link) return null
+        
+        // Try to get the student ID from the current URL first (most reliable)
+        const pathSegments = location.pathname.split('/')
+        let currentId = pathSegments[1]
+        
+        // Fallback if we're not on a student-prefixed page
+        if (!currentId || currentId === 'admin' || currentId === 'login' || currentId === 'messages') {
+            currentId = user?.studentRef?.registrationNumber || user?.username
+        }
+
+        if (!currentId) return link
+        
+        // If the link already starts with the registration number, return as is
+        if (link.startsWith(`/${currentId}/`)) return link
+        
+        // Split path from query string before prefixing
+        const [path, qs] = link.split('?')
+        const bare = path.startsWith('/') ? path.slice(1) : path
+        
+        // Special case: if it's already a full path with an ID, don't re-prefix
+        const firstSegment = bare.split('/')[0]
+        if (/^[A-Z]\d+$/i.test(firstSegment)) return link
+
+        return `/${currentId}/${bare}${qs ? `?${qs}` : ''}`
+    }
 
     // Fetch real notifications on mount
     useEffect(() => {
@@ -101,19 +137,61 @@ const TopNavbar = ({ user }) => {
         setNotifications(prev => prev.map(n => n._id === id ? { ...n, isRead: true } : n));
     };
 
+    const handleNotificationClick = (notif) => {
+        markRead(notif._id);
+        
+        // Trigger special handling for LMS requests
+        if (notif.refModel === 'LmsRequest') {
+            window.dispatchEvent(new CustomEvent('open-lms-modal', { 
+                detail: { requestId: notif.refId } 
+            }));
+            setIsNotificationsOpen(false);
+            return;
+        } 
+        
+        // Check if it has a valid link
+        if (notif.link && notif.link !== '#' && notif.link !== '') {
+            const dest = resolveLink(notif.link);
+            if (dest) {
+                const targetPath = dest.split('?')[0];
+                const currentPath = location.pathname.split('?')[0];
+                
+                if (targetPath === currentPath) {
+                    navigate(`${dest}${dest.includes('?') ? '&' : '?'}t=${Date.now()}`);
+                } else {
+                    navigate(dest);
+                }
+                setIsNotificationsOpen(false);
+                return;
+            }
+        }
+        
+        // If no link or specifically requested, show as popup (Reminder)
+        setSelectedNotif(notif);
+        setIsNotificationsOpen(false);
+    }
+
     return (
         <header className="
             sticky top-0 z-40 font-['Kodchasan']
             flex flex-row items-center justify-between w-full
-            px-4 lg:px-6 py-3 lg:py-4
+            px-4 lg:px-6 py-2 lg:py-2.5
             bg-white/70 dark:bg-[#1c1c1c]/70 backdrop-blur-xl
             border-b border-white/60 dark:border-white/5
             shadow-sm shadow-black/[0.03]
-            mb-4
+            mb-3
         ">
 
             {/* Title */}
-            <div className="flex-1 min-w-0 mr-3">
+            <div className="flex-1 min-w-0 mr-3 flex items-center gap-3">
+                {!location.pathname.includes('/dashboard') && (
+                    <button 
+                        onClick={() => navigate(-1)}
+                        className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5 flex items-center justify-center text-slate-400 hover:text-[#ff5734] hover:bg-white transition-all shadow-sm"
+                    >
+                        <ArrowLeft size={18} strokeWidth={2.5} />
+                    </button>
+                )}
                 {location.pathname.includes('/dashboard') ? (
                     <h1 className="text-base md:text-xl font-medium text-slate-500 truncate">
                         Welcome to <span className="text-[#ff5734] font-bold">fasnet.online</span>
@@ -219,7 +297,7 @@ const TopNavbar = ({ user }) => {
                                         return (
                                             <div
                                                 key={notif._id}
-                                                onClick={() => markRead(notif._id)}
+                                                onClick={() => handleNotificationClick(notif)}
                                                 className={`flex gap-3 px-4 py-3.5 cursor-pointer transition-all hover:bg-slate-50 relative
                                                     ${isUnread ? 'bg-[#ff5734]/[0.02]' : ''}`}
                                             >
@@ -290,13 +368,15 @@ const TopNavbar = ({ user }) => {
                                     <p className="font-black text-[#151313] text-sm">{displayName}</p>
                                     <p className="text-xs text-slate-400 font-medium">{displayHandle}</p>
                                 </div>
-                                <NavLink
-                                    to={`${user?.studentRef?.registrationNumber ? '/' + user.studentRef.registrationNumber : ''}/profile`}
-                                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 font-semibold transition-colors"
-                                    onClick={() => setIsProfileMenuOpen(false)}
+                                <button
+                                    onClick={() => {
+                                        navigate(resolveLink('/profile'));
+                                        setIsProfileMenuOpen(false);
+                                    }}
+                                    className="w-full text-left flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 font-semibold transition-colors"
                                 >
                                     My Profile
-                                </NavLink>
+                                </button>
                                 <button
                                     onClick={handleLogout}
                                     className="flex items-center gap-2.5 w-full text-left px-4 py-2.5 text-sm text-[#ff5734] hover:bg-[#ff5734]/5 font-semibold transition-colors"
@@ -308,6 +388,63 @@ const TopNavbar = ({ user }) => {
                     )}
                 </div>
             </div>
+
+            {/* Notification Detail Modal (Reminder) */}
+            {selectedNotif && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="w-full max-w-md overflow-hidden rounded-[2.5rem] border border-white/20 shadow-2xl animate-in zoom-in-95 duration-300 bg-white/90 dark:bg-[#1c1c1c]/90 backdrop-blur-xl">
+                        <div className="p-8">
+                            <div className="flex justify-between items-start mb-6">
+                                <div className="w-12 h-12 rounded-2xl bg-[#ff5734]/10 flex items-center justify-center">
+                                    <Bell className="w-6 h-6 text-[#ff5734]" />
+                                </div>
+                                <button 
+                                    onClick={() => setSelectedNotif(null)}
+                                    className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+                                >
+                                    <X className="w-5 h-5 text-slate-400" />
+                                </button>
+                            </div>
+
+                            <h3 className="text-xl font-black text-[#151313] dark:text-white mb-2 tracking-tight">
+                                {selectedNotif.title || 'Notification'}
+                            </h3>
+                            
+                            <div className="flex items-center gap-2 text-[10px] text-slate-400 mb-6 font-bold uppercase tracking-widest">
+                                <Info className="w-3.5 h-3.5" />
+                                {new Date(selectedNotif.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
+                            </div>
+
+                            <div className="bg-slate-50 dark:bg-white/5 rounded-3xl p-6 border border-slate-100 dark:border-white/5 mb-8">
+                                <p className="text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap text-sm font-medium">
+                                    {selectedNotif.body}
+                                </p>
+                            </div>
+
+                            <div className="flex gap-3">
+                                {selectedNotif.link && selectedNotif.link !== '#' && (
+                                    <button
+                                        onClick={() => {
+                                            const dest = resolveLink(selectedNotif.link)
+                                            setSelectedNotif(null)
+                                            if (dest) navigate(dest)
+                                        }}
+                                        className="flex-1 py-4 bg-[#ff5734] text-white font-black rounded-2xl hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-[#ff5734]/20"
+                                    >
+                                        Take Action
+                                    </button>
+                                )}
+                                <button
+                                    onClick={() => setSelectedNotif(null)}
+                                    className={`py-4 px-8 font-black rounded-2xl border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 transition-all text-[#151313] dark:text-white ${selectedNotif.link ? 'flex-shrink-0' : 'flex-1 bg-[#ff5734] text-white'}`}
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </header>
     );
 };

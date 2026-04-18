@@ -16,8 +16,10 @@ import {
     Moon,
     Shield,
     Database,
-    X,
-    Menu
+    Menu,
+    Megaphone,
+    Activity,
+    Link2
 } from 'lucide-react'
 import { authService } from '../services/authService'
 import { hasPermission, isSuperAdmin, PERMISSIONS } from '../utils/permissions'
@@ -52,8 +54,14 @@ function buildLinks(user) {
     if (!superAdmin && user?.roles?.includes('admin')) {
         links.push({ label: 'Resources', path: '/admin/resources', icon: BookOpen })
     }
+    if (superAdmin || hasPermission(user, PERMISSIONS.MANAGE_NOTICES)) {
+        links.push({ label: 'Notices', path: '/admin/notices', icon: Megaphone })
+    }
+    if (superAdmin) {
+        links.push({ label: 'LMS Hub', path: '/admin/lms', icon: Link2 })
+    }
     if (superAdmin || hasPermission(user, PERMISSIONS.SYSTEM_SETTINGS)) {
-        links.push({ label: 'Admin', path: '/admin', icon: Settings })
+        links.push({ label: 'Settings', path: '/admin', icon: Settings })
     }
 
     return links
@@ -298,6 +306,8 @@ function getPageTitle(path) {
     if (path.startsWith('/admin/bulk-combination')) return 'Bulk Combination'
     if (path.startsWith('/admin/users')) return 'User Management'
     if (path.startsWith('/admin/resources')) return 'Resource Manager'
+    if (path.startsWith('/admin/lms')) return 'LMS Sync Hub'
+    if (path.startsWith('/admin/notices')) return 'Notice Manager'
     if (path.startsWith('/admin')) return 'Admin Settings'
     if (path.startsWith('/profile-requests')) return 'Profile Requests'
     return 'Admin Portal'
@@ -310,6 +320,8 @@ function getPageSubtitle(path) {
     if (path.startsWith('/birthdays')) return 'Upcoming student birthdays'
     if (path.startsWith('/register-students')) return 'Bulk import via Excel / CSV'
     if (path.startsWith('/update-students')) return 'Bulk update student data'
+    if (path.startsWith('/admin/lms')) return 'Monitor and control Moodle LMS synchronisation'
+    if (path.startsWith('/admin/notices')) return 'Automated notice scraping and AI rewriting'
     if (path.startsWith('/admin')) return 'System configuration and settings'
     return ''
 }

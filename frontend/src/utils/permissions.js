@@ -46,5 +46,6 @@ export const PERMISSIONS = {
     MANAGE_USERS: 'manage_users',
     SYSTEM_SETTINGS: 'system_settings',
     BULK_IMPORT: 'bulk_import',
-    BULK_UPDATE: 'bulk_update'
+    BULK_UPDATE: 'bulk_update',
+    MANAGE_NOTICES: 'manage_notices'
 }

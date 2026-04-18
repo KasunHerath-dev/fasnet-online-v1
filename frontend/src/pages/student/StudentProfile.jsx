@@ -1,12 +1,144 @@
 import UnifiedPageLoader from '../../components/loaders/UnifiedPageLoader';
-
-// ... (imports)
+import React, { useState, useEffect } from 'react';
+import {
+    User, TrendingUp, BookOpen, Award, Target, Layers, Lock, Bell, Shield,
+    Edit, Clock, X, Info, Settings, Link2, Unlink, RefreshCw, CheckCircle, AlertCircle, Eye, EyeOff
+} from 'lucide-react';
+import { authService, academicService } from '../../services/authService';
+import api from '../../services/api';
+import lmsService from '../../services/lmsService';
 
 export default function StudentProfile() {
-    // ... (state)
+    const [loading, setLoading] = useState(true);
+    const [student, setStudent] = useState(null);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [pendingRequest, setPendingRequest] = useState(null);
+    const [formData, setFormData] = useState({});
+    const [requestReason, setRequestReason] = useState('');
+
+    // LMS state
+    const [lmsLinked, setLmsLinked] = useState(false);
+    const [lmsUsername, setLmsUsername] = useState('');
+    const [lmsLastSync, setLmsLastSync] = useState(null);
+    const [lmsLoading, setLmsLoading] = useState(true);
+    const [showLmsForm, setShowLmsForm] = useState(false);
+    const [lmsPassword, setLmsPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [lmsSyncing, setLmsSyncing] = useState(false);
+    const [lmsMsg, setLmsMsg] = useState(null); // { type: 'success'|'error', text }
+
+    useEffect(() => {
+        const loadProfile = async () => {
+            try {
+                const currentUser = authService.getUser();
+                if (currentUser?.studentRef) {
+                    const studentId = currentUser.studentRef._id || currentUser.studentRef;
+                    const res = await academicService.getStudentDashboard(studentId);
+                    setStudent(res.data?.student || null);
+                    // load pending request
+                    try {
+                        const reqRes = await api.get('/profile-requests/my');
+                        if (reqRes.data?.request?.status === 'pending') setPendingRequest(reqRes.data.request);
+                    } catch { /* no pending request */ }
+                }
+            } catch (err) {
+                console.error('Profile load error', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        const loadLmsStatus = async () => {
+            try {
+                const res = await lmsService.getAssignments();
+                setLmsLinked(res.data.lmsLinked);
+                setLmsUsername(res.data.lmsUsername || '');
+                setLmsLastSync(res.data.lastSync);
+            } catch { /* silent */ } finally {
+                setLmsLoading(false);
+            }
+        };
+
+        loadProfile();
+        loadLmsStatus();
+    }, []);
+
+    const handleEditClick = () => {
+        if (student) {
+            setFormData({
+                firstName: student.name?.split(' ')[0] || '',
+                lastName: student.name?.split(' ').slice(1).join(' ') || '',
+                email: student.email || '',
+                contactNumber: student.contactNumber || '',
+                whatsapp: student.whatsapp || '',
+                address: student.address || '',
+                nearestCity: student.nearestCity || '',
+                district: student.district || '',
+            });
+        }
+        setShowEditModal(true);
+    };
+
+    const handleSubmitRequest = async (e) => {
+        e.preventDefault();
+        try {
+            await api.post('/profile-requests', { changes: formData, reason: requestReason });
+            setShowEditModal(false);
+            setRequestReason('');
+        } catch (err) {
+            console.error('Profile request error', err);
+        }
+    };
+
+    // ── LMS handlers ────────────────────────────────────────────────────────
+    const handleLmsLink = async (e) => {
+        e.preventDefault();
+        setLmsMsg(null);
+        try {
+            const currentUser = authService.getUser();
+            const regNo = currentUser?.username || '';
+            await lmsService.saveCredentials(lmsUsername || regNo, lmsPassword);
+            setLmsLinked(true);
+            setLmsUsername(lmsUsername || regNo);
+            setLmsPassword('');
+            setShowLmsForm(false);
+            setLmsMsg({ type: 'success', text: 'LMS account linked! Your deadlines will sync shortly.' });
+            // Auto-trigger first sync
+            lmsService.triggerSync().catch(() => {});
+        } catch (err) {
+            setLmsMsg({ type: 'error', text: err.response?.data?.error?.message || 'Failed to save credentials.' });
+        }
+    };
+
+    const handleLmsUnlink = async () => {
+        if (!confirm('Remove LMS credentials? Your synced deadlines will also be deleted.')) return;
+        try {
+            await lmsService.removeCredentials();
+            setLmsLinked(false);
+            setLmsUsername('');
+            setLmsLastSync(null);
+            setLmsMsg({ type: 'success', text: 'LMS account unlinked.' });
+        } catch {
+            setLmsMsg({ type: 'error', text: 'Failed to unlink account.' });
+        }
+    };
+
+    const handleLmsSync = async () => {
+        setLmsSyncing(true);
+        setLmsMsg(null);
+        try {
+            await lmsService.triggerSync();
+            setLmsMsg({ type: 'success', text: 'Sync started! Deadlines will update in a few seconds.' });
+        } catch (err) {
+            setLmsMsg({ type: 'error', text: err.response?.data?.error?.message || 'Sync failed. Is LMS reachable?' });
+        } finally {
+            setLmsSyncing(false);
+        }
+    };
+
 
     if (loading) return <UnifiedPageLoader />;
-    if (!student) return <div className="p-8 text-center">Student record not found.</div>
+    if (!student) return <div className="p-8 text-center">Student record not found.</div>;
 
     const InfoField = ({ label, value, isMissing }) => (
         <div className="group">
@@ -205,43 +337,171 @@ export default function StudentProfile() {
                         </div>
                     </div>
 
-                    {/* Right Column: Account & Settings */}
-                    <div className="bg-white/60 backdrop-blur-md rounded-2xl p-6 shadow-sm border border-white/50 h-fit">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="p-2 bg-slate-100 rounded-lg">
-                                <Settings className="w-5 h-5 text-slate-600" />
+                    {/* Right Column: Account & Settings + LMS */}
+                    <div className="space-y-5">
+
+                        {/* Account Settings card */}
+                        <div className="bg-white/60 backdrop-blur-md rounded-2xl p-6 shadow-sm border border-white/50">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="p-2 bg-slate-100 rounded-lg">
+                                    <Settings className="w-5 h-5 text-slate-600" />
+                                </div>
+                                <h2 className="text-xl font-black text-slate-800">Account Settings</h2>
                             </div>
-                            <h2 className="text-xl font-black text-slate-800">Account Settings</h2>
+
+                            <div className="space-y-4">
+                                <button className="w-full flex items-center justify-between p-4 rounded-xl bg-white/50 hover:bg-white border border-white/50 transition-all group">
+                                    <div className="flex items-center gap-3">
+                                        <Lock className="w-5 h-5 text-slate-400 group-hover:text-moccaccino-500 transition-colors" />
+                                        <span className="font-bold text-slate-700">Change Password</span>
+                                    </div>
+                                    <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
+                                        <Edit className="w-4 h-4 text-slate-400" />
+                                    </div>
+                                </button>
+
+                                <button className="w-full flex items-center justify-between p-4 rounded-xl bg-white/50 hover:bg-white border border-white/50 transition-all group">
+                                    <div className="flex items-center gap-3">
+                                        <Bell className="w-5 h-5 text-slate-400 group-hover:text-moccaccino-500 transition-colors" />
+                                        <span className="font-bold text-slate-700">Notifications</span>
+                                    </div>
+                                    <div className="px-2 py-1 bg-moccaccino-100 text-moccaccino-700 text-xs font-bold rounded-lg">Enabled</div>
+                                </button>
+
+                                <button className="w-full flex items-center justify-between p-4 rounded-xl bg-white/50 hover:bg-white border border-white/50 transition-all group">
+                                    <div className="flex items-center gap-3">
+                                        <Shield className="w-5 h-5 text-slate-400 group-hover:text-moccaccino-500 transition-colors" />
+                                        <span className="font-bold text-slate-700">Privacy Settings</span>
+                                    </div>
+                                </button>
+                            </div>
                         </div>
 
-                        <div className="space-y-4">
-                            <button className="w-full flex items-center justify-between p-4 rounded-xl bg-white/50 hover:bg-white border border-white/50 transition-all group">
-                                <div className="flex items-center gap-3">
-                                    <Lock className="w-5 h-5 text-slate-400 group-hover:text-moccaccino-500 transition-colors" />
-                                    <span className="font-bold text-slate-700">Change Password</span>
+                        {/* ── LMS Account card ─────────────────────────────── */}
+                        <div className="bg-white/60 backdrop-blur-md rounded-2xl p-6 shadow-sm border border-white/50">
+                            <div className="flex items-center gap-3 mb-5">
+                                <div className="p-2 bg-indigo-50 rounded-lg">
+                                    <Link2 className="w-5 h-5 text-indigo-600" />
                                 </div>
-                                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
-                                    <Edit className="w-4 h-4 text-slate-400" />
+                                <div>
+                                    <h2 className="text-xl font-black text-slate-800">LMS Account</h2>
+                                    <p className="text-xs text-slate-500">Sync Moodle deadlines automatically</p>
                                 </div>
-                            </button>
+                            </div>
 
-                            <button className="w-full flex items-center justify-between p-4 rounded-xl bg-white/50 hover:bg-white border border-white/50 transition-all group">
-                                <div className="flex items-center gap-3">
-                                    <Bell className="w-5 h-5 text-slate-400 group-hover:text-moccaccino-500 transition-colors" />
-                                    <span className="font-bold text-slate-700">Notifications</span>
+                            {/* Feedback message */}
+                            {lmsMsg && (
+                                <div className={`flex items-start gap-2 p-3 rounded-xl mb-4 text-sm font-medium ${
+                                    lmsMsg.type === 'success'
+                                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                        : 'bg-red-50 text-red-700 border border-red-200'
+                                }`}>
+                                    {lmsMsg.type === 'success'
+                                        ? <CheckCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                                        : <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                                    }
+                                    <span>{lmsMsg.text}</span>
                                 </div>
-                                <div className="px-2 py-1 bg-moccaccino-100 text-moccaccino-700 text-xs font-bold rounded-lg">
-                                    Enabled
-                                </div>
-                            </button>
+                            )}
 
-                            <button className="w-full flex items-center justify-between p-4 rounded-xl bg-white/50 hover:bg-white border border-white/50 transition-all group">
-                                <div className="flex items-center gap-3">
-                                    <Shield className="w-5 h-5 text-slate-400 group-hover:text-moccaccino-500 transition-colors" />
-                                    <span className="font-bold text-slate-700">Privacy Settings</span>
+                            {lmsLoading ? (
+                                <div className="h-12 rounded-xl bg-slate-100 animate-pulse" />
+                            ) : lmsLinked ? (
+                                /* ── Linked state ── */
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+                                        <div className="flex items-center gap-2">
+                                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                            <span className="text-sm font-bold text-emerald-800">Connected</span>
+                                            <span className="text-xs text-emerald-600 font-mono">{lmsUsername}</span>
+                                        </div>
+                                    </div>
+
+                                    {lmsLastSync && (
+                                        <p className="text-xs text-slate-500 flex items-center gap-1.5">
+                                            <Clock className="w-3 h-3" />
+                                            Last synced: {new Date(lmsLastSync).toLocaleString('en-GB', {
+                                                day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+                                            })}
+                                        </p>
+                                    )}
+
+                                    <div className="flex gap-2 pt-1">
+                                        <button
+                                            onClick={handleLmsSync}
+                                            disabled={lmsSyncing}
+                                            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-all disabled:opacity-50"
+                                        >
+                                            <RefreshCw className={`w-4 h-4 ${lmsSyncing ? 'animate-spin' : ''}`} />
+                                            {lmsSyncing ? 'Syncing...' : 'Sync Now'}
+                                        </button>
+                                        <button
+                                            onClick={handleLmsUnlink}
+                                            className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-red-50 text-red-600 text-sm font-bold hover:bg-red-100 border border-red-200 transition-all"
+                                        >
+                                            <Unlink className="w-4 h-4" />
+                                            Unlink
+                                        </button>
+                                    </div>
                                 </div>
-                            </button>
+                            ) : showLmsForm ? (
+                                /* ── Link form ── */
+                                <form onSubmit={handleLmsLink} className="space-y-3">
+                                    <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-3 flex gap-2 text-xs text-indigo-700">
+                                        <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                                        Your LMS username is the same as your registration number (lowercase). Only your password is needed.
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-600 mb-1">LMS Username</label>
+                                        <input
+                                            type="text"
+                                            value={lmsUsername}
+                                            onChange={e => setLmsUsername(e.target.value)}
+                                            placeholder={authService.getUser()?.username || 'e.g. s242074'}
+                                            className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all"
+                                        />
+                                    </div>
+                                    <div className="relative">
+                                        <label className="block text-xs font-bold text-slate-600 mb-1">LMS Password <span className="text-red-500">*</span></label>
+                                        <input
+                                            type={showPassword ? 'text' : 'password'}
+                                            value={lmsPassword}
+                                            onChange={e => setLmsPassword(e.target.value)}
+                                            placeholder="Your Moodle password"
+                                            required
+                                            className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all pr-10"
+                                        />
+                                        <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-8 text-slate-400 hover:text-slate-600">
+                                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                        </button>
+                                    </div>
+                                    <p className="text-[11px] text-slate-400">🔒 Your password is encrypted with AES-256 and never stored in plain text.</p>
+                                    <div className="flex gap-2 pt-1">
+                                        <button type="submit" className="flex-1 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-all">
+                                            Link Account
+                                        </button>
+                                        <button type="button" onClick={() => { setShowLmsForm(false); setLmsMsg(null); }} className="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-sm font-bold hover:bg-slate-200 transition-all">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </form>
+                            ) : (
+                                /* ── Not linked state ── */
+                                <div className="text-center py-4 space-y-3">
+                                    <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center mx-auto">
+                                        <Link2 className="w-6 h-6 text-indigo-400" />
+                                    </div>
+                                    <p className="text-sm text-slate-500">Connect your Moodle account to sync assignment deadlines to your dashboard.</p>
+                                    <button
+                                        onClick={() => setShowLmsForm(true)}
+                                        className="w-full py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-bold hover:opacity-90 transition-all shadow-md shadow-indigo-200"
+                                    >
+                                        Connect LMS Account
+                                    </button>
+                                </div>
+                            )}
                         </div>
+
                     </div>
                 </div>
             </div>

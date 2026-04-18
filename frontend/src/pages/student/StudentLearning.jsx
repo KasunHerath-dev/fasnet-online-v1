@@ -1,16 +1,80 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, Book, AlertCircle, RefreshCw } from 'lucide-react';
 import { academicService, resourceService, authService } from '../../services/authService';
 import UnifiedPageLoader from '../../components/loaders/UnifiedPageLoader';
-import ScrollReveal from '../../components/ui/ScrollReveal';
+import { 
+    BookOpen, WarningCircle, ArrowsClockwise, 
+    MagnifyingGlass, X, Funnel, FileText, 
+    Monitor, Download, BookmarkSimple, CaretDown,
+    ListChecks, GraduationCap, Lightning, Quotes
+} from '@phosphor-icons/react';
 import ResourceCard from './StudentLearning/ResourceCard';
-import Dropdown from '../../components/Dropdown';
 import DocumentViewerModal from '../../components/ui/DocumentViewerModal';
 import { toast } from 'react-hot-toast';
+import { useNavigate, useParams } from 'react-router-dom';
+import Dropdown from '../../components/Dropdown';
 
+const WUSL_MODULES = [
+    // Level 1
+    { code: 'CMIS 1113', title: 'Introduction to Computers', level: 1, semester: 1 },
+    { code: 'CMIS 1123', title: 'Computer Programming I', level: 1, semester: 1 },
+    { code: 'CMIS 1131', title: 'Practical Computing I', level: 1, semester: 1 },
+    { code: 'ELTN 1112', title: 'Fundamentals of Electricity', level: 1, semester: 1 },
+    { code: 'ELTN 1122', title: 'Intro to Semiconductors', level: 1, semester: 1 },
+    { code: 'ELTN 1132', title: 'Basic Digital Electronics', level: 1, semester: 1 },
+    { code: 'MATH 1112', title: 'Introduction to Mathematics I', level: 1, semester: 1 },
+    { code: 'STAT 1113', title: 'Intro to Prob & Stats I', level: 1, semester: 1 },
+    { code: 'IMGT 1112', title: 'Principles of Management', level: 1, semester: 1 },
+    { code: 'CMIS 1212', title: 'Computer Programming II', level: 1, semester: 2 },
+    { code: 'MATH 1222', title: 'Differential Equations', level: 1, semester: 2 },
+    { code: 'STAT 1213', title: 'Intro to Prob & Stats II', level: 1, semester: 2 },
+    
+    // Level 2
+    { code: 'CMIS 2113', title: 'Object-oriented Programming', level: 2, semester: 1 },
+    { code: 'CMIS 2123', title: 'Database Management Systems', level: 2, semester: 1 },
+    { code: 'MATH 2114', title: 'Linear Algebra I', level: 2, semester: 1 },
+    { code: 'STAT 2112', title: 'Statistical Inference I', level: 2, semester: 1 },
+    { code: 'CMIS 2214', title: 'Data Structures & Algorithms', level: 2, semester: 2 },
+    { code: 'ELTN 2232', title: 'Analogue Electronics', level: 2, semester: 2 },
+    { code: 'MATH 2213', title: 'Linear Algebra II', level: 2, semester: 2 },
+    { code: 'STAT 2222', title: 'Regression Analysis', level: 2, semester: 2 },
 
+    // Level 3
+    { code: 'CMIS 3114', title: 'Data Comm & Computer Networks', level: 3, semester: 1 },
+    { code: 'CMIS 3122', title: 'Rapid Application Development', level: 3, semester: 1 },
+    { code: 'CMIS 3134', title: 'Computer Architecture', level: 3, semester: 1 },
+    { code: 'CMIS 3153', title: 'Advanced Database Systems', level: 3, semester: 1 },
+    { code: 'STAT 3124', title: 'Time Series Analysis', level: 3, semester: 1 },
+    { code: 'CMIS 3214', title: 'Software Engineering', level: 3, semester: 2 },
+    { code: 'CMIS 3224', title: 'Web Designing and e-commerce', level: 3, semester: 2 },
+    { code: 'CMIS 3253', title: 'Data Mining', level: 3, semester: 2 },
+    { code: 'MMOD 3214', title: 'Numerical Methods', level: 3, semester: 2 },
+
+    // Level 4
+    { code: 'CMIS 4114', title: 'Artificial Intelligence', level: 4, semester: 1 },
+    { code: 'CMIS 4134', title: 'Cloud Computing', level: 4, semester: 1 },
+    { code: 'CMIS 4142', title: 'Image Processing', level: 4, semester: 1 },
+    { code: 'ELTN 4114', title: 'Communication Theory', level: 4, semester: 1 },
+    { code: 'CMIS 4216', title: 'Industrial Training', level: 4, semester: 2 },
+    { code: 'ELTN 4213', title: 'Digital Signal Processing', level: 4, semester: 2 }
+];
+
+const LEVEL_OPTIONS = [
+    { value: 'All', label: 'All Levels' },
+    { value: '1', label: 'Level 1' },
+    { value: '2', label: 'Level 2' },
+    { value: '3', label: 'Level 3' },
+    { value: '4', label: 'Level 4' }
+];
+
+const SEMESTER_OPTIONS = [
+    { value: 'All', label: 'All Semesters' },
+    { value: '1', label: 'Semester 1' },
+    { value: '2', label: 'Semester 2' }
+];
 
 const StudentLearning = () => {
+    const navigate = useNavigate();
+    const { id } = useParams();
     const [user] = useState(authService.getUser());
     const [isLoading, setIsLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
@@ -20,8 +84,8 @@ const StudentLearning = () => {
 
     // Filter States
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedLevel, setSelectedLevel] = useState('All');
-    const [selectedSemester, setSelectedSemester] = useState('All');
+    const [selectedLevel, setSelectedLevel] = useState('1');
+    const [selectedSemester, setSelectedSemester] = useState('1');
     const [selectedModule, setSelectedModule] = useState('All');
     const [selectedType, setSelectedType] = useState('All');
     const [selectedPreview, setSelectedPreview] = useState(null);
@@ -78,18 +142,40 @@ const StudentLearning = () => {
         });
     }, [resources, searchTerm, selectedLevel, selectedSemester, selectedModule, selectedType]);
 
-    const filterOptions = useMemo(() => {
-        const levels = [...new Set(modules.map(m => m.level))].sort();
-        const semesters = [...new Set(modules.map(m => m.semester))].sort();
-        return { levels, semesters };
+    const filterOptions = {
+        levels: ['1', '2', '3', '4'],
+        semesters: ['1', '2']
+    };
+
+    const displayModules = useMemo(() => {
+        // Merge fetched modules with static ones, ensuring no duplicates
+        const merged = [...WUSL_MODULES];
+        modules.forEach(m => {
+            if (!merged.find(wm => wm.code === m.code)) {
+                merged.push(m);
+            }
+        });
+        return merged.sort((a, b) => a.code.localeCompare(b.code));
     }, [modules]);
 
-    const typeFilters = [
-        { id: 'All', label: 'All courses' },
-        { id: 'past_paper', label: 'Past Papers' },
-        { id: 'tutorial', label: 'Tutorials' },
-        { id: 'assignment', label: 'Assignments' },
-        { id: 'book', label: 'Books' }
+    const moduleOptions = useMemo(() => {
+        const filtered = displayModules.filter(m => 
+            (selectedLevel === 'All' || m.level?.toString() === selectedLevel) &&
+            (selectedSemester === 'All' || m.semester?.toString() === selectedSemester)
+        );
+        
+        return [
+            { value: 'All', label: `All ${selectedLevel !== 'All' ? 'L' + selectedLevel : ''} Modules` },
+            ...filtered.map(m => ({ value: m.code, label: `${m.code} — ${m.title}` }))
+        ];
+    }, [displayModules, selectedLevel, selectedSemester]);
+
+    const typeOptions = [
+        { value: 'All', label: 'All Materials' },
+        { value: 'past_paper', label: 'Past Papers' },
+        { value: 'lecture_note', label: 'Lecture Notes' },
+        { value: 'tutorial', label: 'Tutorials' },
+        { value: 'assignment', label: 'Assignments' }
     ];
 
     const typeCounts = useMemo(() => ({
@@ -100,10 +186,50 @@ const StudentLearning = () => {
         book: resources.filter(r => r.type === 'book').length,
     }), [resources]);
 
-    if (isLoading) return <UnifiedPageLoader />;
+    // ── Skeleton Loader Component ──
+    const Skeleton = ({ className }) => (
+        <div className={`bg-slate-100 animate-pulse rounded-2xl ${className}`} />
+    );
+
+    if (isLoading) return (
+        <div className="flex flex-col gap-8 animate-in fade-in duration-500">
+            {/* Unified Filter Bento Skeleton */}
+            <div className="bg-white rounded-[3rem] p-6 md:p-8 border border-slate-200 shadow-sm flex flex-col gap-8">
+                <Skeleton className="h-14 w-full rounded-[2rem]" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    {[1, 2, 3, 4].map(i => (
+                        <div key={i} className="flex flex-col gap-2">
+                            <Skeleton className="h-3 w-20 px-2" />
+                            <Skeleton className="h-12 w-full" />
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Grid Skeleton */}
+            <div className="bg-white rounded-[2.5rem] p-6 md:p-8 border border-slate-200 shadow-sm min-h-[400px]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {[1, 2, 3, 4, 5, 6].map(i => (
+                        <div key={i} className="bg-slate-50/50 rounded-3xl p-5 border border-slate-100 flex flex-col gap-4">
+                            <div className="flex items-start justify-between">
+                                <Skeleton className="w-12 h-12 rounded-2xl" />
+                                <Skeleton className="w-20 h-5" />
+                            </div>
+                            <Skeleton className="h-5 w-3/4" />
+                            <Skeleton className="h-3 w-1/2" />
+                            <div className="mt-auto pt-4 flex gap-2">
+                                <Skeleton className="flex-1 h-10" />
+                                <Skeleton className="w-10 h-10" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
 
     return (
-        <div className="w-full mx-auto min-h-full pb-10 pt-4 font-['Kodchasan'] tracking-wide">
+        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both">
             
             <DocumentViewerModal 
                 isOpen={!!selectedPreview} 
@@ -111,147 +237,123 @@ const StudentLearning = () => {
                 resource={selectedPreview} 
             />
 
-            {/* ── SINGLE UNIFIED CARD: filters + content ── */}
-            <div className="bg-white rounded-[2rem] border border-slate-200/70 shadow-sm overflow-visible">
-
-                {/* ── ROW 1: Dropdowns ── */}
-                <div className="flex flex-wrap items-center gap-2 px-5 pt-5 pb-3">
-                    <Dropdown
-                        value={selectedLevel}
-                        onChange={(e) => { setSelectedLevel(e.target.value); setSelectedModule('All'); }}
-                        options={[
-                            { value: 'All', label: 'All Levels' },
-                            ...filterOptions.levels.map(l => ({ value: String(l), label: `Level ${l}` }))
-                        ]}
-                        className="w-32 sm:w-36"
+            {/* ── Unified Filter Bento Box ── */}
+            <div className="bg-white rounded-[3rem] p-6 md:p-8 border border-slate-200 shadow-sm flex flex-col gap-8 transition-all duration-500 hover:shadow-md">
+                
+                {/* Search Bar (Top Priority) */}
+                <div className="relative group">
+                    <MagnifyingGlass size={22} weight="bold" className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-[#ff5734] transition-colors" />
+                    <input
+                        type="text"
+                        placeholder="Find resources or specific modules..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full pl-16 pr-14 py-5 rounded-[2rem] bg-slate-50 border border-slate-100 text-slate-800 placeholder-slate-400 text-sm md:text-base font-medium focus:outline-none focus:ring-4 focus:ring-[#ff5734]/10 focus:border-[#ff5734]/30 transition-all duration-300"
                     />
-                    <Dropdown
-                        value={selectedSemester}
-                        onChange={(e) => { setSelectedSemester(e.target.value); setSelectedModule('All'); }}
-                        options={[
-                            { value: 'All', label: 'All Semesters' },
-                            ...filterOptions.semesters.map(s => ({ value: String(s), label: `Semester ${s}` }))
-                        ]}
-                        className="w-36 sm:w-40"
-                    />
-                    <Dropdown
-                        value={selectedModule}
-                        onChange={(e) => setSelectedModule(e.target.value)}
-                        options={[
-                            { value: 'All', label: 'All Modules' },
-                            ...modules
-                                .filter(m => (selectedLevel === 'All' || m.level?.toString() === selectedLevel) &&
-                                    (selectedSemester === 'All' || m.semester?.toString() === selectedSemester))
-                                .map(m => ({ value: m.code, label: m.code }))
-                        ]}
-                        className="w-36 sm:w-40"
-                    />
-                    <span className="text-xs text-slate-400 font-semibold ml-1">
-                        {filteredResources.length} resource{filteredResources.length !== 1 ? 's' : ''}
-                    </span>
-                </div>
-
-                {/* ── ROW 2: Search + Refresh — always full width ── */}
-                <div className="flex items-center gap-2 px-5 pb-4 border-b border-slate-100">
-                    <div className="relative flex-1">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" strokeWidth={2.5} />
-                        <input
-                            type="text"
-                            placeholder="Search resources..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-[#151313] outline-none placeholder:text-slate-400 focus:border-slate-300 transition-all"
-                        />
-                    </div>
-                    <button
-                        onClick={fetchLearningData}
-                        disabled={isRefreshing}
-                        title="Refresh"
-                        className="w-9 h-9 shrink-0 flex items-center justify-center rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 transition-all"
-                    >
-                        <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} strokeWidth={2.5} />
-                    </button>
-                </div>
-
-                {/* ── ROW 2: Tab bar ── */}
-                <div className="flex items-center gap-0 px-4 overflow-x-auto border-b border-slate-100" style={{ scrollbarWidth: 'none' }}>
-                    {typeFilters.map(type => (
-                        <button
-                            key={type.id}
-                            onClick={() => setSelectedType(type.id)}
-                            className={`flex items-center gap-1.5 px-4 py-3.5 text-xs font-black whitespace-nowrap border-b-2 -mb-px transition-all
-                                ${selectedType === type.id
-                                    ? 'border-[#ff5734] text-[#151313]'
-                                    : 'border-transparent text-slate-400 hover:text-[#151313] hover:border-slate-200'
-                                }`}
-                        >
-                            {type.label}
-                            <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-md ${selectedType === type.id
-                                ? 'bg-[#ff5734]/10 text-[#ff5734]'
-                                : 'bg-slate-100 text-slate-400'
-                                }`}>
-                                {typeCounts[type.id] ?? 0}
-                            </span>
+                    {searchTerm && (
+                        <button onClick={() => setSearchTerm('')} className="absolute right-5 top-1/2 -translate-y-1/2 p-2 hover:bg-slate-200 rounded-xl transition-colors">
+                            <X size={16} weight="bold" className="text-slate-400" />
                         </button>
-                    ))}
-                </div>
-
-                {/* ── CONTENT AREA ── */}
-                <div className="p-5 sm:p-6">
-                    {error ? (
-                        <div className="bg-rose-50 border border-rose-200 rounded-2xl p-10 flex flex-col items-center justify-center text-center">
-                            <AlertCircle className="w-10 h-10 text-rose-400 mb-3" />
-                            <h3 className="text-lg font-black text-rose-900 mb-1">Error Loading Data</h3>
-                            <p className="text-rose-700/80 mb-5 font-bold text-sm">{error}</p>
-                            <button
-                                onClick={fetchLearningData}
-                                className="px-6 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-black rounded-full transition-colors text-sm"
-                            >
-                                Try Again
-                            </button>
-                        </div>
-                    ) : filteredResources.length > 0 ? (
-                        /* Resources grid
-                           Mobile: 1 col | Tablet: 2 col | Desktop: 3 col */
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-                            {filteredResources.map((resource) => (
-                                <ResourceCard
-                                    key={resource._id}
-                                    resource={resource}
-                                    moduleCode={resource.moduleObj?.code}
-                                    onPreview={(res) => setSelectedPreview(res)}
-                                />
-                            ))}
-                        </div>
-                    ) : (
-                        /* Empty state */
-                        <div className="py-16 flex flex-col items-center justify-center text-center">
-                            <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-4 border border-slate-100">
-                                <Book className="w-7 h-7 text-slate-300" />
-                            </div>
-                            <h3 className="text-lg font-black text-[#151313] mb-2">No resources found</h3>
-                            <p className="text-sm font-medium text-slate-400 max-w-xs">
-                                {searchTerm || selectedLevel !== 'All' || selectedSemester !== 'All' || selectedModule !== 'All' || selectedType !== 'All'
-                                    ? "No resources match your current filters."
-                                    : "No resources have been uploaded for your enrolled modules yet."}
-                            </p>
-                            {(searchTerm || selectedLevel !== 'All' || selectedSemester !== 'All' || selectedModule !== 'All' || selectedType !== 'All') && (
-                                <button
-                                    onClick={() => {
-                                        setSearchTerm('');
-                                        setSelectedLevel('All');
-                                        setSelectedSemester('All');
-                                        setSelectedModule('All');
-                                        setSelectedType('All');
-                                    }}
-                                    className="mt-5 px-6 py-2 rounded-full border border-slate-200 text-sm font-black text-slate-600 hover:bg-slate-50 transition-all"
-                                >
-                                    Clear Filters
-                                </button>
-                            )}
-                        </div>
                     )}
                 </div>
+
+                {/* Filter Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    
+                    {/* Level Selection */}
+                    <div className="flex flex-col gap-2">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Academic Level</span>
+                        <Dropdown 
+                            variant="premium-light"
+                            value={selectedLevel}
+                            onChange={(e) => { setSelectedLevel(e.target.value); setSelectedModule('All'); }}
+                            options={LEVEL_OPTIONS}
+                            placeholder="Select Level"
+                            icon={<GraduationCap size={18} weight="bold" />}
+                        />
+                    </div>
+
+                    {/* Semester Selection */}
+                    <div className="flex flex-col gap-2">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Semester</span>
+                        <Dropdown 
+                            variant="premium-light"
+                            value={selectedSemester}
+                            onChange={(e) => { setSelectedSemester(e.target.value); setSelectedModule('All'); }}
+                            options={SEMESTER_OPTIONS}
+                            placeholder="Select Semester"
+                            icon={<ListChecks size={18} weight="bold" />}
+                        />
+                    </div>
+
+                    {/* Module Selection */}
+                    <div className="flex flex-col gap-2">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Target Module</span>
+                        <Dropdown 
+                            variant="premium-light"
+                            value={selectedModule}
+                            onChange={(e) => setSelectedModule(e.target.value)}
+                            options={moduleOptions}
+                            placeholder="Select Module"
+                            icon={<BookOpen size={18} weight="bold" />}
+                        />
+                    </div>
+
+                    {/* Content Type Selection */}
+                    <div className="flex flex-col gap-2">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Material Type</span>
+                        <Dropdown 
+                            variant="premium-light"
+                            value={selectedType}
+                            onChange={(e) => setSelectedType(e.target.value)}
+                            options={typeOptions}
+                            placeholder="Select Material"
+                            icon={<Lightning size={18} weight="bold" />}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* ── Content Grid ── */}
+            <div className="bg-white rounded-[2.5rem] p-6 md:p-8 border border-slate-200 shadow-sm min-h-[400px]">
+                {error ? (
+                    <div className="text-center py-16">
+                        <WarningCircle size={40} weight="duotone" className="mx-auto text-red-400 mb-4" />
+                        <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-1">Access Error</h3>
+                        <p className="text-xs text-slate-400 mb-6">{error}</p>
+                        <button onClick={fetchLearningData} className="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-[10px] font-black rounded-xl transition-all uppercase tracking-widest">
+                            Retry Connection
+                        </button>
+                    </div>
+                ) : filteredResources.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                        {filteredResources.map((resource, index) => (
+                            <ResourceCard
+                                key={resource._id}
+                                resource={resource}
+                                moduleCode={resource.moduleObj?.code}
+                                onPreview={(res) => setSelectedPreview(res)}
+                                index={index}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center py-24 bg-slate-50/50 rounded-[2.5rem] border-2 border-dashed border-slate-200/60 transition-all duration-500 hover:border-[#ff5734]/20">
+                        <div className="w-20 h-20 bg-white rounded-3xl shadow-sm border border-slate-100 flex items-center justify-center mx-auto mb-6">
+                            <MagnifyingGlass size={32} weight="duotone" className="text-slate-300" />
+                        </div>
+                        <h3 className="text-lg font-black text-[#151313] uppercase tracking-widest mb-2">No Resources Found</h3>
+                        <p className="text-sm text-slate-400 max-w-xs mx-auto leading-relaxed">
+                            We couldn't find any resources matching your current filters. Try adjusting your search or selection.
+                        </p>
+                        <button 
+                            onClick={() => { setSearchTerm(''); setSelectedModule('All'); setSelectedType('All'); setSelectedLevel('All'); setSelectedSemester('All'); }}
+                            className="mt-8 px-8 py-3 bg-[#151313] text-white text-[11px] font-black rounded-2xl hover:bg-[#ff5734] transition-all uppercase tracking-[0.2em] shadow-lg shadow-black/10"
+                        >
+                            Reset All Filters
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

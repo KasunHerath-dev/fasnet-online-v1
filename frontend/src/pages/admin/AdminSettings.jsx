@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { authService, studentService, systemService } from '../../services/authService'
+import { authService, studentService, systemService, batchYearService } from '../../services/authService'
 import resourceService from '../../services/resourceService'
+import { noticeService } from '../../services/noticeService'
 import BatchYearManagement from '../../components/admin/BatchYearManagement'
 import AssessmentManagement from '../../components/admin/AssessmentManagement'
 import ResourceManagement from '../../components/admin/ResourceManagement'
@@ -34,8 +35,58 @@ import {
   Bell,
   Calendar,
   Cloud,
-  Trash2
+  Trash2,
+  ShieldAlert,
+  Brain,
+  Send,
+  Globe
 } from 'lucide-react'
+import SecurityConfirmationModal from '../../components/admin/SecurityConfirmationModal'
+
+const WUSL_COMBINATIONS = [
+  {
+    group: "Level 1 & 2 Core Combinations",
+    options: [
+      { id: "COMB1", label: "COMB 1: MATH & STAT + CMIS + ELTN" },
+      { id: "COMB2", label: "COMB 2: MATH & STAT + ELTN + IMGT" },
+      { id: "COMB3", label: "COMB 3: MATH & STAT + IMGT + CMIS" }
+    ]
+  },
+  {
+    group: "Level 3 General Sub-Combinations",
+    options: [
+      { id: "COMB1A", label: "COMB 1A (MATH + CMIS + ELTN)" },
+      { id: "COMB1B", label: "COMB 1B (STAT + CMIS + ELTN)" },
+      { id: "COMB1C", label: "COMB 1C (MATH + STAT + CMIS)" },
+      { id: "COMB2A", label: "COMB 2A (MATH + ELTN + IMGT)" },
+      { id: "COMB2B", label: "COMB 2B (STAT + ELTN + IMGT)" },
+      { id: "COMB2C", label: "COMB 2C (MATH + STAT + IMGT)" },
+      { id: "COMB3A", label: "COMB 3A (MATH + IMGT + CMIS)" },
+      { id: "COMB3B", label: "COMB 3B (STAT + IMGT + CMIS)" },
+      { id: "COMB3C", label: "COMB 3C (MATH + STAT + IMGT)" }
+    ]
+  },
+  {
+    group: "B.Sc. Joint Major Degrees",
+    options: [
+      { id: "JM-1A", label: "1A: CMIS (Major) + ELTN (Major)" },
+      { id: "JM-1B", label: "1B: CMIS (Major) + MMST (Major)" },
+      { id: "JM-2A", label: "2A: ELTN (Major) + CMIS (Major)" },
+      { id: "JM-2B", label: "2B: ELTN (Major) + MMST (Major)" },
+      { id: "JM-3A", label: "3A: IMGT (Major) + ELTN (Major)" },
+      { id: "JM-3B", label: "3B: IMGT (Major) + MMST (Major)" }
+    ]
+  },
+  {
+    group: "B.Sc. Special (Honours) Degrees",
+    options: [
+      { id: "SP-CS", label: "Special in Computer Science" },
+      { id: "SP-AE", label: "Special in Applied Electronics" },
+      { id: "SP-IM", label: "Special in Industrial Management" },
+      { id: "SP-MATH", label: "Special in Mathematics with Statistics" }
+    ]
+  }
+];
 
 export default function AdminPage() {
   const navigate = useNavigate()
@@ -46,11 +97,117 @@ export default function AdminPage() {
   })
   const [isLoading, setIsLoading] = useState(true)
   const [user, setUser] = useState(null)
+  
+
+  
+  // Custom Confirmation Modal State
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    confirmText: '',
+    onConfirm: () => {},
+    loading: false
+  })
+
+  const [lockStatus, setLockStatus] = useState({
+    show: false,
+    count: 0
+  })
+
+  // AI Configuration State
+  const [aiConfig, setAiConfig] = useState({
+    apiKey: '',
+    maskedKey: '',
+    hasKey: false,
+    updatedAt: null,
+    isTesting: false,
+    testResult: null,
+    isSaving: false,
+    countdown: 0
+  })
+
+  // Timer Ref for countdown
+  const timerRef = useRef(null)
+
+  // Scraper State
+  const [isScraping, setIsScraping] = useState(false)
+  const [scraperConfig, setScraperConfig] = useState({
+    targetUrl: 'https://fas.wyb.ac.lk/notices/',
+    cronSchedule: '*/15 * * * *',
+    autoPublish: true,
+    aiModel: 'gemini'
+  })
+  const [scraperStatus, setScraperStatus] = useState({
+    status: 'idle',
+    message: 'Awaiting sync...',
+    lastRun: null,
+    nextRun: null,
+    schedule: '*/15 * * * *'
+  })
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current)
+    }
+  }, [])
+
+  const startCountdown = (seconds) => {
+    if (timerRef.current) clearInterval(timerRef.current)
+    setAiConfig(prev => ({ ...prev, countdown: seconds }))
+    
+    timerRef.current = setInterval(() => {
+      setAiConfig(prev => {
+        if (prev.countdown <= 1) {
+          clearInterval(timerRef.current)
+          return { ...prev, countdown: 0 }
+        }
+        return { ...prev, countdown: prev.countdown - 1 }
+      })
+    }, 1000)
+  }
 
   useEffect(() => {
     setUser(authService.getUser())
     fetchStats()
+    fetchAiConfig()
+    fetchScraperData()
   }, [])
+
+  const fetchScraperData = async () => {
+    try {
+      const res = await noticeService.getSettings()
+      if (res.data) setScraperConfig(prev => ({ ...prev, ...res.data }))
+      if (res.status) setScraperStatus(prev => ({ ...prev, ...res.status }))
+    } catch (err) {
+      console.warn('[scraper] Failed to fetch settings')
+    }
+  }
+
+  const handleTriggerScrape = async () => {
+    try {
+      setIsScraping(true)
+      await noticeService.triggerScrape()
+      toast.success('Scraper triggered successfully!')
+      // Refresh status after a short delay
+      setTimeout(fetchScraperData, 2000)
+    } catch (err) {
+      toast.error('Failed to trigger scraper')
+    } finally {
+      setIsScraping(false)
+    }
+  }
+
+
+
+  const fetchAiConfig = async () => {
+    try {
+      const res = await systemService.getGeminiConfig()
+      setAiConfig(prev => ({ ...prev, ...res.data }))
+    } catch (err) {
+      console.warn('[settings] Failed to load AI config')
+    }
+  }
 
   const fetchStats = async () => {
     try {
@@ -65,28 +222,68 @@ export default function AdminPage() {
     }
   }
 
-  const handleResetData = async () => {
-    if (window.confirm('⚠️ DANGER: Are you sure you want to DELETE ALL STUDENTS? This action cannot be undone!')) {
-      if (window.confirm('⚠️ DOUBLE CHECK: This will wipe the entire student database. Confirm?')) {
+  const handleResetData = () => {
+    setConfirmModal({
+      isOpen: true,
+      title: 'Nuclear Reset',
+      message: 'This will PERMANENTLY DELETE all student records from the database. This action is terminal and cannot be reversed.',
+      confirmText: 'DELETE ALL',
+      onConfirm: async () => {
         try {
+          setConfirmModal(prev => ({ ...prev, loading: true }))
           await studentService.deleteAll()
-          alert('✅ All student data has been reset.')
+          toast.success('All student data has been purged successfully.')
+          fetchStats()
         } catch (err) {
-          alert('❌ ' + (err.response?.data?.error?.message || 'Reset failed'))
+          toast.error(err.response?.data?.error?.message || 'Purge failed')
+        } finally {
+          setConfirmModal(prev => ({ ...prev, isOpen: false, loading: false }))
         }
       }
-    }
+    })
   }
 
-  const handleSyncUsers = async () => {
-    if (!window.confirm('This will create user accounts for all students who do not have one. Continue?')) return;
-    try {
-      const res = await studentService.createMissingUsers();
-      alert(res.data.message);
-      fetchStats();
-    } catch (err) {
-      alert('Error: ' + (err.response?.data?.error?.message || err.message));
-    }
+  const handleMassAccountReset = () => {
+    setConfirmModal({
+      isOpen: true,
+      title: 'Security Lockdown',
+      message: 'This will LOCK all student accounts and INVALIDATE their passwords. Every student must re-verify their identity to gain access.',
+      confirmText: 'RESET ALL',
+      onConfirm: async () => {
+        try {
+          setConfirmModal(prev => ({ ...prev, loading: true }))
+          const res = await authService.lockAllUsers()
+          setLockStatus({ show: true, count: res.data.count })
+          fetchStats()
+        } catch (err) {
+          toast.error(err.response?.data?.error?.message || 'Reset failed')
+        } finally {
+          setConfirmModal(prev => ({ ...prev, isOpen: false, loading: false }))
+        }
+      }
+    })
+  }
+
+  const handleSyncUsers = () => {
+    setConfirmModal({
+      ...confirmModal,
+      isOpen: true,
+      title: 'Sync Accounts',
+      message: 'This will automatically create user accounts for all students who do not already have one. This helps students who are not yet in the system.',
+      confirmText: 'SYNC',
+      onConfirm: async () => {
+        try {
+          setConfirmModal(prev => ({ ...prev, loading: true }))
+          const res = await studentService.createMissingUsers()
+          toast.success(res.data.message)
+          fetchStats()
+        } catch (err) {
+          toast.error(err.response?.data?.error?.message || 'Sync failed')
+        } finally {
+          setConfirmModal(prev => ({ ...prev, isOpen: false, loading: false }))
+        }
+      }
+    })
   }
 
   const handleChangePassword = async () => {
@@ -108,7 +305,10 @@ export default function AdminPage() {
     { id: 'general', label: 'Overview', icon: BarChart3 },
     { id: 'academic', label: 'Academic', icon: GraduationCap },
     { id: 'resources', label: 'Resources', icon: Database },
+    { id: 'lms', label: 'LMS Center', icon: Activity },
+    { id: 'scraper', label: 'Scraper', icon: Zap },
     { id: 'users', label: 'Users', icon: Users },
+    { id: 'ai', label: 'AI Config', icon: Sparkles },
     { id: 'system', label: 'System', icon: Settings }
   ]
 
@@ -395,7 +595,7 @@ export default function AdminPage() {
                     </div>
                   </div>
 
-                  {/* API Response Card - Ash */}
+                   {/* API Response Card - Ash */}
                   <div className="bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-white/10 rounded-2xl sm:rounded-3xl p-6 sm:p-8 relative">
                     <div className="relative">
                       <div className="flex items-center justify-between mb-4">
@@ -406,6 +606,8 @@ export default function AdminPage() {
                       <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">API Response</p>
                     </div>
                   </div>
+
+
                 </div>
               </div>
 
@@ -471,6 +673,151 @@ export default function AdminPage() {
                     })}
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* LMS Monitor Tab - NEW REARRANGED */}
+          {activeTab === 'lms' && (
+            <div className="space-y-6 sm:space-y-8">
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
+                <div className="flex items-center gap-3 font-['Kodchasan']">
+                   <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-200 dark:bg-white/10 flex items-center justify-center">
+                    <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-slate-900 dark:text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white">LMS Ecosystem Hub</h2>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Automated synchronization & student academic mirror</p>
+                  </div>
+                </div>
+                
+                {/* Mode Selector - Sub Navigation */}
+                <div className="hidden lg:flex items-center gap-2 bg-slate-100 dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                  {[
+                    { id: 'fleet', label: 'Fleet Management', icon: Users },
+                    { id: 'requests', label: 'Connection Requests', icon: Send },
+                    { id: 'deadlines', label: 'Global Deadlines', icon: Calendar },
+                    { id: 'preview', label: 'Student Mirror', icon: Eye }
+                  ].map(m => (
+                    <button
+                      key={m.id}
+                      onClick={() => setLmsSubTab(m.id)}
+                      className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${lmsSubTab === m.id ? 'bg-white dark:bg-slate-800 text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                    >
+                      <m.icon className="w-3.5 h-3.5" />
+                      {m.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Status Banner - Real-time Progress */}
+              {lmsStatus.isScanning && (
+                <div className="bg-slate-900 text-white p-6 rounded-[2.5rem] border border-white/5 shadow-2xl animate-in slide-in-from-top-4">
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="flex-1 space-y-2">
+                       <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                        <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Sync in Progress...</span>
+                      </div>
+                      <p className="text-lg font-black">{lmsStatus.currentAccount || 'Initializing engine...'}</p>
+                      <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                        <div className="h-full bg-blue-500 transition-all duration-500" style={{ width: `${lmsStatus.progress}%` }} />
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-10">
+                      <div className="text-center">
+                         <p className="text-2xl font-black">{lmsStatus.progress}%</p>
+                         <p className="text-[9px] font-bold opacity-40 uppercase">Completion</p>
+                      </div>
+                      <div className="text-center">
+                         <p className="text-2xl font-black text-emerald-500">{lmsStatus.success}</p>
+                         <p className="text-[9px] font-bold opacity-40 uppercase">Linked</p>
+                      </div>
+                      <div className="text-center">
+                         <p className="text-2xl font-black text-rose-500">{lmsStatus.errors}</p>
+                         <p className="text-[9px] font-bold opacity-40 uppercase">Breaks</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Dynamic Mode Content */}
+              <div className="animate-fadeIn">
+                {lmsSubTab === 'fleet' && (
+                  <LmsFleetManagement 
+                    accounts={lmsAccounts}
+                    filteredAccounts={lmsAccounts.filter(a => a.label.toLowerCase().includes(searchTerm.toLowerCase()))}
+                    searchTerm={searchTerm}
+                    setSearchTerm={setSearchTerm}
+                    handleResend={handleResend}
+                    handleDelete={handleDeleteAccount}
+                    handleUniversalSync={handleTriggerLmsSync}
+                    isUniversalSyncing={lmsStatus.isScanning}
+                    isDeepSyncing={false} 
+                    fetchAccounts={fetchAllLmsData}
+                    fetchStats={fetchStats}
+                    fetchDeadlines={fetchLmsRecent}
+                    fetchAiCoverage={() => {}}
+                    toast={toast}
+                  />
+                )}
+
+                {lmsSubTab === 'requests' && (
+                  <LmsRequestManagement 
+                    requests={lmsRequests}
+                    studentSearch={studentSearch}
+                    setStudentSearch={setStudentSearch}
+                    combinationFilter={combinationFilter}
+                    setCombinationFilter={setCombinationFilter}
+                    batchFilter={batchFilter}
+                    setBatchFilter={setBatchFilter}
+                    batches={batches}
+                    WUSL_COMBINATIONS={WUSL_COMBINATIONS}
+                    searchResults={searchResults}
+                    searchingStudents={searchingStudents}
+                    suggestedFleet={suggestedFleet}
+                    handleSuggestFleet={handleSuggestFleet}
+                    handleSendRequest={handleSendRequest}
+                    isSendingId={isSendingId}
+                    sentIds={sentIds}
+                    handleApprove={handleApprove}
+                    approvingId={approvingId}
+                    handleDeleteRequest={handleDeleteRequest}
+                    isSuggesting={isSuggesting}
+                  />
+                )}
+
+                {lmsSubTab === 'deadlines' && (
+                  <LmsDeadlineManagement 
+                    deadlines={lmsDeadlines}
+                    filteredDeadlines={lmsDeadlines.filter(dl => dl.name.toLowerCase().includes(searchTerm.toLowerCase()))}
+                    searchTerm={searchTerm}
+                    setSearchTerm={setSearchTerm}
+                    moduleFilter={moduleFilter}
+                    setModuleFilter={setModuleFilter}
+                    getUniqueModules={() => {
+                       const mods = new Set();
+                       lmsDeadlines.forEach(d => d.moduleCode && mods.add(d.moduleCode));
+                       return Array.from(mods).sort();
+                    }}
+                    showPastDeadlines={showPastDeadlines}
+                    setShowPastDeadlines={setShowPastDeadlines}
+                    handleNotifyStudent={handleNotifyStudent}
+                    notifyingId={notifyingId}
+                    handleDeleteDeadline={handleDeleteDeadline}
+                    handleClearDeadlineNotifications={handleClearDeadlineNotifications}
+                    fetchDeadlines={fetchAllLmsData}
+                    deadlinesLoading={deadlinesLoading}
+                    onUploadIcs={handleUploadIcs}
+                    isUploadingIcs={isUploadingIcs}
+                  />
+                )}
+
+                {lmsSubTab === 'preview' && (
+                  <LmsDashboardPreview accounts={lmsAccounts} />
+                )}
               </div>
             </div>
           )}
@@ -782,6 +1129,32 @@ export default function AdminPage() {
                     </div>
                   </div>
                 </button>
+
+                {/* Mass Account Reset Card - Red/Danger - Ash */}
+                <button
+                  onClick={handleMassAccountReset}
+                  className="group relative overflow-hidden bg-red-50 border-2 border-red-200 hover:border-red-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 transition-all duration-200 hover:shadow-xl hover:-translate-y-1"
+                >
+                  <div className="absolute top-0 right-0 p-4 opacity-10">
+                    <AlertTriangle className="w-24 h-24 text-red-600" />
+                  </div>
+                  <div className="relative">
+                    <div className="flex items-start justify-between mb-6">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-red-600 flex items-center justify-center shadow-lg shadow-red-200">
+                        <Lock className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+                      </div>
+                      <ChevronRight className="w-6 h-6 text-red-600" />
+                    </div>
+                    <h3 className="text-2xl sm:text-3xl font-black text-red-600 mb-3 uppercase tracking-tight">Security Reset</h3>
+                    <p className="text-red-700 font-bold text-sm sm:text-base mb-6">Mass Lock & Password Invalidation</p>
+                    <div className="p-4 bg-white/60 rounded-xl border border-red-200 backdrop-blur-sm">
+                      <p className="text-xs text-red-900 font-black flex items-center gap-2">
+                        <Shield className="w-3 h-3" />
+                        FORCED RE-VERIFICATION REQUIRED
+                      </p>
+                    </div>
+                  </div>
+                </button>
               </div>
 
               {/* Missing Students - Ash */}
@@ -936,8 +1309,403 @@ export default function AdminPage() {
               </div>
             </div>
           )}
+
+          {/* AI Configuration Tab */}
+          {activeTab === 'ai' && (
+            <div className="space-y-6 sm:space-y-8 animate-fadeIn">
+              <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #7c3aed, #2563eb)', boxShadow: '0 4px 12px rgba(124,58,237,0.25)' }}>
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white">AI Configuration</h2>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Manage Gemini AI Studio credentials</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+                {/* Gemini Setup Card */}
+                <div className="bg-white dark:bg-black border border-slate-300 dark:border-white/10 rounded-2xl sm:rounded-3xl p-6 sm:p-8">
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-slate-200 dark:bg-white/10 flex items-center justify-center">
+                      <Zap className="w-6 h-6 sm:w-7 sm:h-7 text-slate-900 dark:text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Google Gemini AI</h3>
+                      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Used for LMS analysis & resource summaries</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-sm font-bold text-slate-900 dark:text-white mb-2">
+                        Gemini API Key
+                      </label>
+                      <div className="relative group">
+                        <input
+                          type="password"
+                          value={aiConfig.apiKey}
+                          onChange={(e) => setAiConfig(prev => ({ ...prev, apiKey: e.target.value }))}
+                          placeholder={aiConfig.hasKey ? `Current: ${aiConfig.maskedKey}` : "Enter Gemini API Key..."}
+                          className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-slate-900 dark:focus:border-white transition-all pr-12"
+                        />
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                          <Lock className="w-4 h-4 text-slate-400" />
+                        </div>
+                      </div>
+                      <p className="mt-2 text-[10px] sm:text-xs text-slate-500 italic flex items-center gap-1">
+                        <Shield className="w-3 h-3" />
+                        Key is stored securely and masked in the UI.
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-3">
+                      <button
+                        onClick={async () => {
+                          try {
+                            // If the key is already masked, we don't need to save
+                            if (aiConfig.apiKey.includes('...') && aiConfig.apiKey.length < 25) {
+                                toast.info('Key is already saved.')
+                                setAiConfig(prev => ({ ...prev, apiKey: '' }))
+                                return
+                            }
+
+                            setAiConfig(prev => ({ ...prev, isSaving: true }))
+                            const res = await systemService.updateGeminiConfig(aiConfig.apiKey)
+                            
+                            if (res.data.skipped) {
+                                toast.info(res.data.message)
+                            } else {
+                                toast.success('Gemini API Key updated successfully!')
+                            }
+
+                            setAiConfig(prev => ({ ...prev, apiKey: '', hasKey: true }))
+                            // Refresh config to get new masked key and timestamp
+                            const newConfig = await systemService.getGeminiConfig()
+                            setAiConfig(prev => ({ ...prev, ...newConfig.data }))
+                          } catch (err) {
+                            toast.error(err.response?.data?.error?.message || 'Update failed')
+                          } finally {
+                            setAiConfig(prev => ({ ...prev, isSaving: false }))
+                          }
+                        }}
+                        disabled={!aiConfig.apiKey || aiConfig.isSaving || (aiConfig.apiKey.includes('...') && aiConfig.apiKey.length < 25)}
+                        className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all ${!aiConfig.apiKey || aiConfig.isSaving || (aiConfig.apiKey.includes('...') && aiConfig.apiKey.length < 25) ? 'bg-slate-200 text-slate-500 cursor-not-allowed' : 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:shadow-lg'}`}
+                      >
+                        {aiConfig.isSaving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
+                        Save Settings
+                      </button>
+
+                      <button
+                        onClick={async () => {
+                          try {
+                            setAiConfig(prev => ({ ...prev, isTesting: true, testResult: null }))
+                            const res = await systemService.testGeminiConfig(aiConfig.apiKey)
+                            setAiConfig(prev => ({ ...prev, testResult: { success: true, message: res.data.message } }))
+                            toast.success(res.data.message)
+                          } catch (err) {
+                            const errorData = err.response?.data?.error;
+                            const msg = errorData?.message || err.response?.data?.message || 'Connection failed';
+                            
+                            // Check for 429 specifically and extract retry time
+                            if (err.response?.status === 429) {
+                                const retryMatch = msg.match(/retry in ([\d\.]+)s/);
+                                if (retryMatch) {
+                                    startCountdown(Math.ceil(parseFloat(retryMatch[1])));
+                                }
+                            }
+
+                            setAiConfig(prev => ({ ...prev, testResult: { success: false, message: msg } }))
+                            toast.error(msg)
+                          } finally {
+                            setAiConfig(prev => ({ ...prev, isTesting: false }))
+                          }
+                        }}
+                        disabled={aiConfig.isTesting || aiConfig.countdown > 0}
+                        className={`flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-300 dark:border-white/10 font-bold text-sm transition-all ${aiConfig.countdown > 0 ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 border-amber-200' : 'text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                      >
+                        {aiConfig.isTesting ? (
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                        ) : aiConfig.countdown > 0 ? (
+                          <Clock className="w-4 h-4" />
+                        ) : (
+                          <Activity className="w-4 h-4" />
+                        )}
+                        {aiConfig.countdown > 0 ? `Retry in ${aiConfig.countdown}s` : 'Test Connection'}
+                      </button>
+                    </div>
+
+                    {aiConfig.testResult && (
+                      <div className={`p-4 rounded-xl border ${aiConfig.testResult.success ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800'} text-xs font-medium animate-fadeIn flex items-center gap-3`}>
+                        {aiConfig.testResult.success ? <CheckCircle className="w-4 h-4" /> : <AlertTriangle className="w-4 h-4" />}
+                        {aiConfig.testResult.message}
+                      </div>
+                    )}
+
+                    {aiConfig.updatedAt && (
+                      <div className="text-[10px] sm:text-xs text-slate-500 flex items-center gap-1.5 opacity-60">
+                        <Clock className="w-3.5 h-3.5" />
+                        Last modified: {new Date(aiConfig.updatedAt).toLocaleString()}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Info Card */}
+                <div className="space-y-6">
+                  <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-white/5 rounded-2xl sm:rounded-3xl p-6 sm:p-8">
+                    <h3 className="text-slate-900 dark:text-white font-bold text-base mb-4 flex items-center gap-2">
+                       <ShieldAlert className="w-5 h-5 text-violet-500" />
+                       Why is this required?
+                    </h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed space-y-4">
+                      The academic monitoring system uses **Gemini 1.5/2.0 Flash** to perform deep analysis of your Moodle data. 
+                      This automated enrichment helps extract module codes, verify instructions, and categorize assignments 
+                      without manual data entry. You can get an API key for free from the [Google AI Studio](https://aistudio.google.com/app/apikey).
+                    </p>
+                    <ul className="mt-4 space-y-2.5">
+                      {[
+                        'Summarize complex assignment instructions',
+                        'Auto-detect Academic Module Codes',
+                        'Assign priority levels to deadlines',
+                        'Verify student login attempts via Vision AI'
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-center gap-2.5 text-xs text-slate-600 dark:text-slate-400">
+                          <CheckCircle className="w-3.5 h-3.5 text-green-500" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <a 
+                    href="https://aistudio.google.com/app/apikey" 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="flex items-center justify-between p-5 bg-violet-600 hover:bg-violet-700 text-white rounded-2xl transition-all group"
+                  >
+                    <div>
+                      <span className="block font-bold text-sm">Need a key?</span>
+                      <span className="text-[11px] opacity-80">Generate one at Google AI Studio</span>
+                    </div>
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Notice Scraper Tab */}
+          {activeTab === 'scraper' && (
+            <div className="space-y-6 sm:space-y-8 animate-fadeIn">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 sm:mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #7c3aed, #2563eb)', boxShadow: '0 4px 12px rgba(124,58,237,0.25)' }}>
+                    <Zap className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white">Notice Scraper</h2>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Automated faculty notice aggregation</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                   <button
+                    onClick={handleTriggerScrape}
+                    disabled={isScraping || scraperStatus.status === 'running'}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all ${isScraping || scraperStatus.status === 'running' ? 'bg-slate-200 text-slate-500' : 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:shadow-lg'}`}
+                  >
+                    {isScraping || scraperStatus.status === 'running' ? <RefreshCw className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+                    Sync Now
+                  </button>
+                </div>
+              </div>
+
+              {/* Status Banner */}
+              <div className={`relative overflow-hidden p-6 sm:p-8 rounded-[2rem] border transition-all ${scraperStatus.status === 'running' ? 'bg-blue-600 border-blue-500 shadow-blue-200/50' : scraperStatus.status === 'error' ? 'bg-rose-600 border-rose-500' : 'bg-slate-900 border-white/5'} shadow-2xl`}>
+                <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-2.5 h-2.5 rounded-full ${scraperStatus.status === 'running' ? 'bg-white animate-pulse' : 'bg-emerald-500'}`} />
+                      <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/60">System Engine Status</span>
+                    </div>
+                    <h3 className="text-3xl sm:text-4xl font-black text-white italic tracking-tighter">
+                      {scraperStatus.status === 'running' ? 'SYNCHRONIZING...' : scraperStatus.status === 'error' ? 'SYSTEM INTERRUPTED' : 'ENGINE READY'}
+                    </h3>
+                    <p className="text-white/70 font-medium max-w-md leading-relaxed">
+                      {scraperStatus.message || 'The automated notice harvester is standing by for the next scheduled deployment.'}
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 lg:gap-12 py-6 lg:py-0 border-t lg:border-t-0 lg:border-l border-white/10 lg:pl-12">
+                    <div>
+                      <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Last Run</p>
+                      <p className="text-white font-black text-lg">{scraperStatus.lastRun ? new Date(scraperStatus.lastRun).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Never'}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Next Run</p>
+                      <p className="text-white font-black text-lg">{scraperStatus.nextRun ? new Date(scraperStatus.nextRun).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Pending'}</p>
+                    </div>
+                    <div className="col-span-2 sm:col-span-1">
+                      <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Schedule</p>
+                      <p className="text-white font-black text-lg">{scraperStatus.schedule || '*/15 * * * *'}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Visual Accent */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+                {/* Configuration Card */}
+                <div className="lg:col-span-2 space-y-6">
+                  <div className="bg-white dark:bg-black border border-slate-300 dark:border-white/10 rounded-2xl sm:rounded-3xl p-6 sm:p-8">
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                       <Settings className="w-5 h-5 text-slate-400" />
+                       Engine Configuration
+                    </h3>
+                    
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Target Notice URL</label>
+                          <input 
+                            type="text" 
+                            value={scraperConfig.targetUrl}
+                            onChange={(e) => setScraperConfig(prev => ({ ...prev, targetUrl: e.target.value }))}
+                            className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-slate-900 transition-all"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Cron Schedule</label>
+                          <input 
+                            type="text" 
+                            value={scraperConfig.cronSchedule}
+                            onChange={(e) => setScraperConfig(prev => ({ ...prev, cronSchedule: e.target.value }))}
+                            className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-slate-900 transition-all font-mono"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-white/5">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${scraperConfig.autoPublish ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-200 text-slate-500'}`}>
+                            <Globe className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-slate-900 dark:text-white">Auto-Publish Notices</p>
+                            <p className="text-[10px] text-slate-500">Automatically make new notices visible to students</p>
+                          </div>
+                        </div>
+                        <button 
+                          onClick={() => setScraperConfig(prev => ({ ...prev, autoPublish: !prev.autoPublish }))}
+                          className={`w-12 h-6 rounded-full transition-all relative ${scraperConfig.autoPublish ? 'bg-emerald-500' : 'bg-slate-300'}`}
+                        >
+                          <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${scraperConfig.autoPublish ? 'right-1' : 'left-1'}`} />
+                        </button>
+                      </div>
+
+                       <div className="pt-4 mt-4 border-t border-slate-100 dark:border-white/5 flex justify-end">
+                        <button
+                          onClick={async () => {
+                            try {
+                              setScraperConfig(prev => ({ ...prev, isSaving: true }))
+                              await noticeService.updateSettings(scraperConfig)
+                              toast.success('Configuration saved successfully!')
+                            } catch (err) {
+                              toast.error('Failed to save settings')
+                            } finally {
+                              setScraperConfig(prev => ({ ...prev, isSaving: false }))
+                            }
+                          }}
+                          disabled={scraperConfig.isSaving}
+                          className="px-8 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold rounded-xl text-sm hover:shadow-lg transition-all"
+                        >
+                          {scraperConfig.isSaving ? 'Saving...' : 'Save Configuration'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Info Card */}
+                <div className="space-y-6">
+                  <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-3xl p-8">
+                    <h3 className="text-slate-900 dark:text-white font-black text-xl mb-4 italic tracking-tight uppercase">System Logic</h3>
+                    <div className="space-y-4">
+                      <div className="flex gap-4">
+                        <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center shrink-0 font-bold text-xs">1</div>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Harvester visits the faculty URL defined and identifies new articles via DOM selectors.</p>
+                      </div>
+                      <div className="flex gap-4">
+                        <div className="w-8 h-8 rounded-lg bg-violet-100 dark:bg-violet-900/30 text-violet-600 flex items-center justify-center shrink-0 font-bold text-xs">2</div>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Each new entry is analyzed by **Vision AI** to perform content rewriting and sentiment tagging.</p>
+                      </div>
+                      <div className="flex gap-4">
+                        <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 flex items-center justify-center shrink-0 font-bold text-xs">3</div>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Metadata and local download links are securely mirrored for high-speed student access.</p>
+                      </div>
+                    </div>
+                    
+                    <button 
+                      onClick={() => navigate('/admin/notices')}
+                      className="w-full mt-8 py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/5 text-slate-900 dark:text-white font-bold rounded-2xl text-xs uppercase tracking-widest hover:border-slate-900 transition-all flex items-center justify-center gap-2"
+                    >
+                      <Eye className="w-4 h-4" /> View Notice Database
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
       </div>
+
+      {/* High-Fidelity Themed Confirmation Modal */}
+      <SecurityConfirmationModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={confirmModal.onConfirm}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        confirmText={confirmModal.confirmText}
+        loading={confirmModal.loading}
+      />
+
+      {/* Security Lockdown Success Overlay */}
+      {lockStatus.show && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 font-['Kodchasan'] tracking-wide">
+          <div className="absolute inset-0 bg-[#151313]/98 backdrop-blur-3xl animate-in fade-in duration-700"></div>
+          
+          <div className="relative w-full max-w-lg text-center animate-in zoom-in-95 duration-500 delay-100">
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-emerald-500/20 rounded-3xl mb-8 relative">
+              <CheckCircle size={48} className="text-emerald-500" />
+              <div className="absolute inset-0 bg-emerald-500 animate-ping rounded-3xl opacity-20"></div>
+            </div>
+            
+            <h2 className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em] mb-4">Verification Active</h2>
+            <h3 className="text-4xl sm:text-5xl font-black text-white mb-6 uppercase leading-tight">
+              Security<br />Lockdown
+            </h3>
+            
+            <div className="p-8 bg-white/5 border border-white/10 rounded-3xl backdrop-blur-md mb-10">
+              <p className="text-slate-400 font-bold mb-2">Systems successfully updated for:</p>
+              <p className="text-5xl font-black text-white tabular-nums tracking-tighter">
+                {lockStatus.count} <span className="text-lg text-slate-500">Accounts</span>
+              </p>
+            </div>
+
+            <button
+              onClick={() => setLockStatus({ show: false, count: 0 })}
+              className="px-10 h-16 bg-white text-[#151313] rounded-2xl font-black uppercase tracking-widest hover:scale-105 transition-transform"
+            >
+              Acknowledged
+            </button>
+          </div>
+        </div>
+      )}
 
       <style>{`
         @keyframes fadeIn {

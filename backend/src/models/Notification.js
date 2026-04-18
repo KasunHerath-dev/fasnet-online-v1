@@ -19,7 +19,7 @@ const notificationSchema = new mongoose.Schema({
 
     type: {
         type: String,
-        enum: ['resource_added', 'account_verified', 'password_changed', 'grade_published', 'announcement'],
+        enum: ['resource_added', 'account_verified', 'password_changed', 'grade_published', 'announcement', 'security', 'lms_deadline', 'lms_invite'],
         required: true,
     },
 
@@ -41,7 +41,6 @@ const notificationSchema = new mongoose.Schema({
         default: null,
     },
 
-    // Reference to a related document (resource, result, etc.)
     refModel: {
         type: String,
         enum: ['Resource', 'SemesterResult', 'User', null],

@@ -6,9 +6,16 @@ const noticeSchema = new mongoose.Schema({
         required: [true, 'Please provide a notice title'],
         trim: true
     },
+    originalTitle: {
+        type: String,
+        trim: true
+    },
+    content: {
+        type: String,
+        trim: true
+    },
     subtext: {
         type: String,
-        required: [true, 'Please provide notice subtext'],
         trim: true
     },
     type: {
@@ -18,17 +25,46 @@ const noticeSchema = new mongoose.Schema({
     },
     date: {
         type: String,
-        required: [true, 'Please provide a display date (e.g. "Today, 10:30 AM")']
+        required: [true, 'Please provide a display date']
     },
+    sourceUrl: {
+        type: String,
+        trim: true
+    },
+    hash: {
+        type: String,
+        unique: true,
+        sparse: true // Allow null/missing for old notices
+    },
+    attachments: [{
+        filename: String,
+        url: String,
+        localPath: String,
+        mimeType: String,
+        sizeBytes: Number
+    }],
+    status: {
+        type: String,
+        enum: ['published', 'draft'],
+        default: 'published' // Default to published for manual/old entries
+    },
+    publishedAt: {
+        type: Date
+    },
+    tags: [String],
     isActive: {
         type: Boolean,
         default: true
+    },
+    aiProcessed: {
+        type: Boolean,
+        default: false   // true = AI rewrote this; false = original content used
     }
 }, {
     timestamps: true
 });
 
-// Auto-delete notices after 60 days
-noticeSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 * 24 * 60 * 60 });
+// Auto-delete notices after 180 days (increased from 60 to keep archive)
+noticeSchema.index({ createdAt: 1 }, { expireAfterSeconds: 180 * 24 * 60 * 60 });
 
 module.exports = mongoose.model('Notice', noticeSchema);

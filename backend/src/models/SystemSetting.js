@@ -13,16 +13,9 @@ const SystemSettingSchema = new mongoose.Schema({
     },
     description: {
         type: String
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now
     }
-});
-
-SystemSettingSchema.pre('save', function (next) {
-    this.updatedAt = Date.now();
-    next();
+}, { 
+    timestamps: true 
 });
 
 module.exports = mongoose.model('SystemSetting', SystemSettingSchema);
