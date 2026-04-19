@@ -13,6 +13,7 @@ router.get('/students/unlinked',                        ctrl.getUnlinkedStudents
 router.get('/assignments',                              ctrl.getAssignments);
 router.get('/service/health',                           ctrl.getServiceHealth);
 router.post('/sync/all',                                ctrl.syncAll);
+router.post('/sync/system-audit',                       ctrl.runSystemAudit);
 router.post('/sync/:studentId',                         ctrl.syncStudent);
 router.post('/invite',                                  ctrl.sendInvite);
 router.delete('/students/:studentId/credentials',       ctrl.removeStudentCredentials);

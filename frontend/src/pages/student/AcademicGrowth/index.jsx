@@ -97,6 +97,7 @@ const AcademicGrowth = () => {
     const [combinationInfo, setCombinationInfo] = useState({ combination: '', description: '' });
     const [selectedLevel, setSelectedLevel] = useState(1);
     const [selectedSemester, setSelectedSemester] = useState(1);
+    const [error, setError] = useState(null);
 
     // Resizable split state
     const [splitPct, setSplitPct] = useState(65);
@@ -172,9 +173,8 @@ const AcademicGrowth = () => {
                     });
                 }
             } catch (err) {
-                // Don't use console.error here to avoid React Error Overlay triggering on Axios 401
-                console.warn('Academic data could not be fetched (likely unauthorized)');
-
+                console.error('❌ Academic Data Error:', err);
+                setError(err.response?.data?.message || 'Failed to sync your academic records');
             } finally {
                 setLoading(false);
             }
@@ -262,6 +262,25 @@ const AcademicGrowth = () => {
 
     if (loading) return <UnifiedPageLoader />;
 
+    if (error) {
+        return (
+            <div className="flex-1 flex items-center justify-center p-6">
+                <div className="w-full max-w-md bg-white rounded-[2.5rem] border border-slate-200 p-12 text-center shadow-sm">
+                    <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <BookOpen className="w-8 h-8 text-amber-500" />
+                    </div>
+                    <h3 className="text-xl font-black text-[#151313] mb-3 tracking-tight">Academic Records</h3>
+                    <p className="text-slate-500 font-bold text-sm leading-relaxed mb-8">{error}</p>
+                    <button 
+                        onClick={() => window.location.reload()}
+                        className="px-8 py-3 bg-[#151313] text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-black transition-all"
+                    >
+                        Retry Sync
+                    </button>
+                </div>
+            </div>
+        );
+    }
     return (
         <div className="flex flex-col gap-4 w-full font-['Kodchasan'] tracking-wide flex-1 min-h-0 overflow-hidden">
 

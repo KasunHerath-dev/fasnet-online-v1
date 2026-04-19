@@ -132,6 +132,42 @@ app.post('/sync/all', requireSecret, async (req, res) => {
   }
 });
 
+// ── Trigger full system audit (All students sync + Coverage check) ─────────
+// POST /sync/system-audit
+app.post('/sync/system-audit', requireSecret, async (req, res) => {
+  logger.info(`🚨 Manual System Audit triggered: ${new Date().toISOString()}`);
+  
+  // Respond immediately
+  res.json({ message: 'Full system sync and coverage audit started in background.' });
+
+  try {
+    const response = await axios.get(
+      `${MAIN_BACKEND_URL}/api/internal/students/lms-credentials`,
+      {
+        headers: { 'x-internal-secret': MAIN_BACKEND_SECRET },
+        timeout: 10000,
+      }
+    );
+
+    const students = response.data?.students || [];
+    if (students.length > 0) {
+      await syncAllStudents(students);
+    }
+
+    // Run coverage check
+    await axios.post(
+      `${MAIN_BACKEND_URL}/api/internal/lms-coverage-check`,
+      {},
+      {
+        headers: { 'x-internal-secret': MAIN_BACKEND_SECRET },
+        timeout: 15000,
+      }
+    );
+  } catch (err) {
+    logger.error(`Manual System Audit failed: ${err.message}`);
+  }
+});
+
 // ── Test endpoint: parse a local ICS file (dev/debug only) ───────────────────
 //
 // POST /debug/parse-ics
@@ -170,13 +206,33 @@ cron.schedule(SYNC_CRON, async () => {
     const students = response.data?.students || [];
     if (students.length === 0) {
       logger.info('Cron: No students to sync.');
-      return;
+    } else {
+      logger.info(`Cron: Syncing ${students.length} student(s)...`);
+      await syncAllStudents(students);
     }
-
-    logger.info(`Cron: Syncing ${students.length} student(s)...`);
-    await syncAllStudents(students);
   } catch (err) {
     logger.error(`Cron sync failed: ${err.message}`);
+  }
+
+  // ── Coverage check: alert admins for combinations with zero LMS accounts ──
+  // Runs regardless of whether any sync happened — catches totally uncovered groups.
+  try {
+    const coverageRes = await axios.post(
+      `${MAIN_BACKEND_URL}/api/internal/lms-coverage-check`,
+      {},
+      {
+        headers: { 'x-internal-secret': MAIN_BACKEND_SECRET },
+        timeout: 15000,
+      }
+    );
+    const { checked, uncovered, alertsSent } = coverageRes.data;
+    if (alertsSent > 0) {
+      logger.warn(`[Coverage] ${alertsSent} combination(s) with 0 LMS accounts — admins alerted. Uncovered: ${uncovered.join(', ')}`);
+    } else {
+      logger.info(`[Coverage] All ${checked} combination(s) have ≥1 LMS account linked. ✅`);
+    }
+  } catch (coverageErr) {
+    logger.error(`[Coverage] Check failed: ${coverageErr.message}`);
   }
 });
 

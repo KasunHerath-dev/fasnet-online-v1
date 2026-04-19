@@ -28,6 +28,15 @@ exports.getStats = async (req, res) => {
       isCompleted: false,
     });
 
+    const totalUnlinked = await Student.countDocuments({
+      $or: [
+        { 'lmsCredentials.username': { $exists: false } },
+        { 'lmsCredentials.username': '' },
+        { lmsCredentials: { $exists: false } },
+      ],
+      status: 'Active'
+    });
+
     // Get students sorted by most recent sync
     const recentSyncs = await Student.find(
       { 'lmsCredentials.lastSync': { $exists: true, $ne: null } },
@@ -41,6 +50,29 @@ exports.getStats = async (req, res) => {
       serviceOnline = health.status === 200;
     } catch { serviceOnline = false; }
 
+    // ── Coverage check for Dashboard alert ──
+    const allStudents = await Student.find({ status: 'Active' })
+      .select('combination level currentSemester lmsCredentials')
+      .lean();
+
+    const groups = {};
+    for (const s of allStudents) {
+      const key = s.combination || `L${s.level}S${s.currentSemester}`;
+      if (!groups[key]) {
+        groups[key] = { 
+          label: s.combination || `Level ${s.level} Sem ${s.currentSemester}`, 
+          hasLms: false,
+          count: 0
+        };
+      }
+      groups[key].count++;
+      if (s.lmsCredentials?.username) groups[key].hasLms = true;
+    }
+
+    const uncoveredGroups = Object.values(groups)
+      .filter(g => !g.hasLms)
+      .map(g => ({ label: g.label, studentCount: g.count }));
+
     res.json({
       success: true,
       data: {
@@ -51,6 +83,8 @@ exports.getStats = async (req, res) => {
         overdueAssignments,
         serviceOnline,
         recentSyncs,
+        uncoveredGroups,
+        totalUnlinked, // 🚨 Added this
       }
     });
   } catch (err) {
@@ -126,6 +160,24 @@ exports.syncAll = async (req, res) => {
   } catch (err) {
     const msg = err.response?.data?.error || err.message || 'Sync service unreachable';
     logger.error('lmsAdmin.syncAll error:', msg);
+    res.status(503).json({ error: { message: msg, code: 'SYNC_SERVICE_UNREACHABLE' } });
+  }
+};
+
+// ── POST /api/v1/admin/lms/sync/system-audit ──────────────────────────────────
+// Trigger full sync + coverage check (cron logic) manually.
+exports.runSystemAudit = async (req, res) => {
+  try {
+    const response = await axios.post(
+      `${LMS_SYNC_URL}/sync/system-audit`,
+      {},
+      { headers: { 'x-internal-secret': BACKEND_SECRET }, timeout: 10000 }
+    );
+    logger.info('[LMS Admin] Manual System Audit triggered');
+    res.json({ success: true, message: 'Full system audit and sync started.', data: response.data });
+  } catch (err) {
+    const msg = err.response?.data?.error || err.message || 'Sync service unreachable';
+    logger.error('lmsAdmin.runSystemAudit error:', msg);
     res.status(503).json({ error: { message: msg, code: 'SYNC_SERVICE_UNREACHABLE' } });
   }
 };

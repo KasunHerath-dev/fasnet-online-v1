@@ -150,16 +150,16 @@ const StudentDashboard = () => {
                     </div>
                 </div>
 
-                {/* FACULTY NOTICES - Light Bento */}
-                <div className="lg:col-span-8 rounded-[3rem] bg-white border border-slate-200 p-6 md:p-8 shadow-sm flex flex-col min-h-0 h-fit transition-all hover:shadow-xl hover:border-[#ff5734]/10 group/notices">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                {/* FACULTY NOTICES - White Premium Bento */}
+                <div className="lg:col-span-8 rounded-[3rem] bg-white border border-slate-200/80 p-6 md:p-8 shadow-sm flex flex-col min-h-0 h-fit hover:shadow-xl hover:border-slate-300 transition-all group/notices">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-[1.5rem] bg-slate-50 flex items-center justify-center text-[#ff5734] border border-slate-100 group-hover/notices:bg-[#ff5734] group-hover/notices:text-white transition-all flex-shrink-0">
-                                <Bell size={26} weight="duotone" />
+                            <div className="w-12 h-12 rounded-[1.5rem] bg-[#ff5734]/10 flex items-center justify-center text-[#ff5734] flex-shrink-0 group-hover/notices:bg-[#ff5734] group-hover/notices:text-white transition-all">
+                                <Bell size={24} weight="duotone" />
                             </div>
                             <div>
                                 <h3 className="text-sm font-black text-[#151313] uppercase tracking-[0.3em] leading-none">Faculty Notices</h3>
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2 flex items-center gap-2">
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1.5 flex items-center gap-2">
                                     <span className="w-1.5 h-1.5 rounded-full bg-[#ff5734] animate-ping" />
                                     Live Official Stream
                                 </p>
@@ -167,22 +167,20 @@ const StudentDashboard = () => {
                         </div>
                         <button 
                             onClick={() => navigate(`/${id}/notices`)}
-                            className="group flex items-center justify-center gap-3 px-6 py-3 rounded-2xl bg-slate-50 text-[10px] font-black text-slate-800 uppercase tracking-widest hover:bg-[#151313] hover:text-white transition-all border border-slate-100 w-full sm:w-auto"
+                            className="group flex items-center justify-center gap-2 px-6 py-2.5 rounded-2xl bg-[#151313] text-white text-[10px] font-black uppercase tracking-widest hover:bg-[#ff5734] transition-all w-full sm:w-auto"
                         >
-                            Explore All <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
+                            Explore All <ArrowRight size={13} weight="bold" className="group-hover:translate-x-0.5 transition-transform" />
                         </button>
                     </div>
                     
-                    <div className="overflow-y-auto no-scrollbar -mx-2 px-2 min-h-0">
+                    <div className="overflow-y-auto no-scrollbar min-h-0">
                         <NoticeBoard isDashboard={true} isDark={false} />
                     </div>
                 </div>
 
-                {/* LMS DEADLINES - Light Bento */}
-                <div className="lg:col-span-4 rounded-[3rem] bg-white shadow-sm overflow-hidden flex flex-col min-h-0 h-fit border border-slate-200 transition-all hover:shadow-xl hover:border-[#ff5734]/10">
-                    <div className="opacity-100">
-                        <LmsDeadlineCard isDark={false} />
-                    </div>
+                {/* LMS DEADLINES - White Clean */}
+                <div className="lg:col-span-4 rounded-[3rem] bg-white border border-slate-200/80 overflow-hidden flex flex-col min-h-0 h-fit shadow-sm hover:shadow-xl transition-all">
+                    <LmsDeadlineCard />
                 </div>
 
             </div>

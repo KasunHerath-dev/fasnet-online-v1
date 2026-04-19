@@ -61,11 +61,14 @@ async function refreshStatus(isRunning = false, message = 'Idle') {
     if (!currentSchedule) return;
     
     try {
-        // Handle different export patterns for cron-parser
-        const parseFunc = parser.parseExpression || parser.default?.parseExpression || (typeof parser === 'function' ? parser : null);
+        // Robustly get parseExpression from cron-parser
+        let parseFunc = parser.parseExpression;
+        if (!parseFunc && parser.default) {
+            parseFunc = parser.default.parseExpression;
+        }
         
         if (!parseFunc) {
-            console.error('[status] Could not find parseExpression function. Check cron-parser import.');
+            console.error('[status] Could not find parseExpression function. parser type:', typeof parser);
             return;
         }
         

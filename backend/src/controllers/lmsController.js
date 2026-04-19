@@ -140,7 +140,8 @@ exports.triggerSync = async (req, res) => {
 };
 
 // ── GET /api/v1/lms/assignments ───────────────────────────────────────────────
-// Return all saved LMS assignments for the logged-in student.
+// Return upcoming LMS deadlines for the logged-in student's combination.
+// Merges assignments from all LMS-synced students in the same combination.
 exports.getAssignments = async (req, res) => {
   try {
     const user = req.user;
@@ -149,25 +150,82 @@ exports.getAssignments = async (req, res) => {
     }
 
     const studentId = user.studentRef._id || user.studentRef;
-    const student = await Student.findById(studentId).select('lmsCredentials');
+    const student = await Student.findById(studentId)
+      .select('lmsCredentials level currentSemester combination')
+      .lean();
 
-    const assignments = await LmsAssignment.find({ student: studentId })
+    const ownLmsLinked = !!(student?.lmsCredentials?.username);
+
+    // ── Build the pool of students to pull deadlines from ──────────────────
+    // Always include the logged-in student.
+    // If they have a combination set, also include all LMS-synced peers in that combination.
+    let studentIds = [studentId];
+
+    if (student?.combination) {
+      const peers = await Student.find({
+        combination: student.combination,
+        _id: { $ne: studentId },
+        'lmsCredentials.username': { $exists: true, $ne: null },
+        'lmsCredentials.syncEnabled': true,
+      }).select('_id').lean();
+
+      studentIds = [studentId, ...peers.map(p => p._id)];
+    } else if (student?.level && student?.currentSemester) {
+      // Fallback: match by level + semester if combination not set
+      const peers = await Student.find({
+        level: student.level,
+        currentSemester: student.currentSemester,
+        _id: { $ne: studentId },
+        'lmsCredentials.username': { $exists: true, $ne: null },
+        'lmsCredentials.syncEnabled': true,
+      }).select('_id').lean();
+
+      studentIds = [studentId, ...peers.map(p => p._id)];
+    }
+
+    // ── Fetch all upcoming assignments from the pool ────────────────────────
+    const raw = await LmsAssignment.find({
+      student: { $in: studentIds },
+      isCompleted: false,
+      $or: [
+        { dueDate: null },
+        { dueDate: { $gte: new Date(Date.now() - 86400000) } }, // include "due yesterday" as overdue
+      ],
+    })
       .sort({ dueDate: 1 })
       .lean();
 
+    // ── Deduplicate by moduleCode + title + day ────────────────────────────
+    // If two students share the same assignment, only show it once.
+    const seen = new Set();
+    const deduplicated = [];
+    for (const a of raw) {
+      const dayKey = a.dueDate ? new Date(a.dueDate).toISOString().slice(0, 10) : 'null';
+      const key = `${(a.moduleCode || '').toUpperCase()}|${a.title.toLowerCase().trim()}|${dayKey}`;
+      // Prefer the logged-in student's own record (so isCompleted toggle works)
+      if (!seen.has(key)) {
+        seen.add(key);
+        deduplicated.push(a);
+      }
+    }
+
     res.json({
       success: true,
-      lmsLinked: !!(student?.lmsCredentials?.username),
+      lmsLinked: ownLmsLinked,
       syncEnabled: !!(student?.lmsCredentials?.syncEnabled),
       lastSync: student?.lmsCredentials?.lastSync || null,
       lmsUsername: student?.lmsCredentials?.username || null,
-      data: assignments,
+      combination: student?.combination || null,
+      level: student?.level || null,
+      semester: student?.currentSemester || null,
+      data: deduplicated,
     });
   } catch (err) {
     logger.error('getAssignments error', { error: err.message });
     res.status(500).json({ error: { message: 'Failed to fetch assignments', code: 'FETCH_FAILED' } });
   }
 };
+
 
 // ── PATCH /api/v1/lms/assignments/:id/complete ───────────────────────────────
 // Toggle completed status for an assignment.

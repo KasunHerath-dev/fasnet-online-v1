@@ -4,7 +4,7 @@ import {
   RefreshCw, Users, BookOpen, Zap, Activity, Trash2, Play,
   CheckCircle, XCircle, AlertTriangle, Search, Clock, Link2,
   TrendingUp, ChevronRight, MoreVertical, Wifi, WifiOff,
-  Send, UserPlus, MessageSquare, CheckSquare, Square
+  Send, UserPlus, MessageSquare, CheckSquare, Square, Shield
 } from 'lucide-react';
 
 // ── API helpers ───────────────────────────────────────────────────────────────
@@ -14,6 +14,7 @@ const lmsAdmin = {
   getUnlinked:       (p) => api.get('/admin/lms/students/unlinked', { params: p }),
   getAssignments:    (p) => api.get('/admin/lms/assignments', { params: p }),
   syncAll:           () => api.post('/admin/lms/sync/all'),
+  runSystemAudit:    () => api.post('/admin/lms/sync/system-audit'),
   syncStudent:       (id) => api.post(`/admin/lms/sync/${id}`),
   removeCredentials: (id) => api.delete(`/admin/lms/students/${id}/credentials`),
   sendInvite:        (studentIds, message) => api.post('/admin/lms/invite', { studentIds, message }),
@@ -144,6 +145,17 @@ export default function LmsAdminPage() {
     } finally { setSyncing(false); }
   };
 
+  const handleRunAudit = async () => {
+    setSyncing(true);
+    try {
+      await lmsAdmin.runSystemAudit();
+      showToast('Full system audit and sync started in background.');
+      setTimeout(loadStats, 3000);
+    } catch (err) {
+      showToast(err.response?.data?.error?.message || 'LMS Sync Service unreachable.', 'error');
+    } finally { setSyncing(false); }
+  };
+
   const handleSyncStudent = async (studentId, name) => {
     setSyncingId(studentId);
     try {
@@ -225,14 +237,25 @@ export default function LmsAdminPage() {
             <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight">LMS Sync Hub</h1>
             <p className="text-white/50 text-sm mt-1">Monitor, manage, and trigger Moodle calendar synchronisation</p>
           </div>
-          <button
-            onClick={handleSyncAll}
-            disabled={syncing}
-            className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/20 border border-white/30 text-white font-bold text-sm hover:bg-white/30 transition-all disabled:opacity-50 flex-shrink-0"
-          >
-            <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
-            {syncing ? 'Syncing All...' : 'Sync All Students'}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleRunAudit}
+              disabled={syncing}
+              title="Full system sync + Coverage check"
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/10 border border-white/20 text-white font-bold text-sm hover:bg-white/20 transition-all disabled:opacity-50 flex-shrink-0"
+            >
+              <Shield className={`w-4 h-4 ${syncing ? 'animate-pulse' : ''}`} />
+              System Audit
+            </button>
+            <button
+              onClick={handleSyncAll}
+              disabled={syncing}
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/20 border border-white/30 text-white font-bold text-sm hover:bg-white/30 transition-all disabled:opacity-50 flex-shrink-0"
+            >
+              <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
+              {syncing ? 'Syncing All...' : 'Sync All Students'}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -257,7 +280,7 @@ export default function LmsAdminPage() {
           { id: 'overview',    label: 'Recent Syncs' },
           { id: 'students',    label: 'Students' },
           { id: 'assignments', label: 'All Deadlines' },
-          { id: 'invite',      label: `Invite (${stats?.totalLinked !== undefined ? '?' : '…'})` },
+          { id: 'invite',      label: `Invite (${stats?.totalUnlinked ?? '…'})` },
         ].map(t => (
           <button
             key={t.id}
@@ -278,35 +301,98 @@ export default function LmsAdminPage() {
 
       {/* ── Overview Tab ── */}
       {tab === 'overview' && (
-        <div className="rounded-3xl bg-white/5 border border-white/8 overflow-hidden">
-          <div className="px-6 py-4 border-b border-white/8 flex items-center justify-between">
-            <h3 className="text-white font-black text-sm">Recent Syncs</h3>
-            <button onClick={loadStats} className="text-slate-500 hover:text-white transition-colors">
-              <RefreshCw className="w-4 h-4" />
-            </button>
-          </div>
-          {!stats?.recentSyncs?.length ? (
-            <div className="p-12 text-center text-slate-500 text-sm">No syncs yet — trigger a sync to get started.</div>
-          ) : (
-            <div className="divide-y divide-white/5">
-              {stats.recentSyncs.map((s, i) => (
-                <div key={i} className="flex items-center justify-between px-6 py-4 hover:bg-white/3 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
-                      <span className="text-indigo-400 text-xs font-black">{s?.lmsCredentials?.username?.charAt(0)?.toUpperCase()}</span>
-                    </div>
-                    <div>
-                      <p className="text-white font-bold text-sm font-mono">{s?.lmsCredentials?.username}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                    <Clock className="w-3 h-3" />
-                    {fmtTime(s?.lmsCredentials?.lastSync)}
-                  </div>
-                </div>
-              ))}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          {/* Recent Syncs */}
+          <div className="lg:col-span-2 rounded-3xl bg-white/5 border border-white/8 overflow-hidden h-fit">
+            <div className="px-6 py-4 border-b border-white/8 flex items-center justify-between">
+              <h3 className="text-white font-black text-sm">Recent Activity</h3>
+              <button onClick={loadStats} className="text-slate-500 hover:text-white transition-colors">
+                <RefreshCw className="w-4 h-4" />
+              </button>
             </div>
-          )}
+            {!stats?.recentSyncs?.length ? (
+              <div className="p-12 text-center text-slate-500 text-sm">No syncs yet — trigger a sync to get started.</div>
+            ) : (
+              <div className="divide-y divide-white/5">
+                {stats.recentSyncs.map((s, i) => (
+                  <div key={i} className="flex items-center justify-between px-6 py-4 hover:bg-white/3 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+                        <span className="text-indigo-400 text-xs font-black">{s?.lmsCredentials?.username?.charAt(0)?.toUpperCase()}</span>
+                      </div>
+                      <div>
+                        <p className="text-white font-bold text-sm font-mono">{s?.lmsCredentials?.username}</p>
+                        <p className="text-[10px] text-slate-500 mt-0.5">Automated Sync Completed</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                      <Clock className="w-3 h-3" />
+                      {fmtTime(s?.lmsCredentials?.lastSync)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Coverage Alerts */}
+          <div className="space-y-4">
+            <div className="rounded-3xl bg-white/5 border border-white/8 p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <AlertTriangle className="w-4 h-4 text-orange-400" />
+                <h3 className="text-white font-black text-sm uppercase tracking-wider">Coverage Alerts</h3>
+              </div>
+              
+              {!stats?.uncoveredGroups?.length ? (
+                <div className="flex flex-col items-center py-6 text-center">
+                  <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center mb-3">
+                    <CheckCircle className="w-6 h-6 text-emerald-500" />
+                  </div>
+                  <p className="text-white font-bold text-sm">Full Coverage!</p>
+                  <p className="text-xs text-slate-500 mt-1">Every combination has at least one student syncing LMS.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <p className="text-xs text-slate-500 leading-relaxed mb-4">
+                    The following groups have <span className="text-orange-400 font-bold underline">ZERO</span> students linked. 
+                    Deadlines for these modules will NOT be updated.
+                  </p>
+                  {stats.uncoveredGroups.map((g, i) => (
+                    <div key={i} className="p-3 rounded-2xl bg-orange-500/5 border border-orange-500/20 flex items-center justify-between group">
+                      <div>
+                        <p className="text-white font-bold text-xs">{g.label}</p>
+                        <p className="text-[10px] text-slate-500 font-mono mt-0.5">{g.studentCount} students unlinked</p>
+                      </div>
+                      <button 
+                        onClick={() => {
+                          setTab('invite');
+                          setUnlinkedSearch(g.label);
+                        }}
+                        className="p-1.5 rounded-lg bg-orange-500/10 text-orange-400 opacity-0 group-hover:opacity-100 transition-all hover:bg-orange-500/20"
+                      >
+                        <UserPlus className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                  <button 
+                    onClick={() => setTab('invite')}
+                    className="w-full mt-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-xs font-bold hover:bg-white/10 transition-all flex items-center justify-center gap-2"
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                    Open Inviter
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Quick Tips */}
+            <div className="rounded-3xl bg-indigo-600/10 border border-indigo-500/20 p-6">
+              <h4 className="text-indigo-300 font-bold text-xs uppercase tracking-wider mb-2">Sync Intelligence</h4>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                We only need <span className="text-white font-bold">one student</span> per combination to sync for the entire group to see updated deadlines.
+              </p>
+            </div>
+          </div>
         </div>
       )}
 
