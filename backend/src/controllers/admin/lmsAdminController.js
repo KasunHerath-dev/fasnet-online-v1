@@ -150,17 +150,18 @@ exports.getStudents = async (req, res) => {
 // Trigger sync for ALL enabled students via lms-sync-service.
 exports.syncAll = async (req, res) => {
   try {
-    const response = await axios.post(
+    // Fire-and-forget: Respond immediately, let it run in BG
+    axios.post(
       `${LMS_SYNC_URL}/sync/all`,
       {},
-      { headers: { 'x-internal-secret': BACKEND_SECRET }, timeout: 10000 }
-    );
-    logger.info('[LMS Admin] Triggered sync/all');
-    res.json({ success: true, message: 'Sync triggered for all enabled students.', data: response.data });
+      { headers: { 'x-internal-secret': BACKEND_SECRET }, timeout: 5000 }
+    ).catch(err => logger.error('[LMS Admin] syncAll background failure:', err.message));
+
+    logger.info('[LMS Admin] Triggered sync/all (fire-and-forget)');
+    res.json({ success: true, message: 'Batch sync started for all enabled students.' });
   } catch (err) {
-    const msg = err.response?.data?.error || err.message || 'Sync service unreachable';
-    logger.error('lmsAdmin.syncAll error:', msg);
-    res.status(503).json({ error: { message: msg, code: 'SYNC_SERVICE_UNREACHABLE' } });
+    logger.error('lmsAdmin.syncAll error:', err.message);
+    res.status(500).json({ error: { message: 'Failed to initiate batch sync' } });
   }
 };
 
@@ -168,17 +169,18 @@ exports.syncAll = async (req, res) => {
 // Trigger full sync + coverage check (cron logic) manually.
 exports.runSystemAudit = async (req, res) => {
   try {
-    const response = await axios.post(
+    // Fire-and-forget: Respond immediately
+    axios.post(
       `${LMS_SYNC_URL}/sync/system-audit`,
       {},
-      { headers: { 'x-internal-secret': BACKEND_SECRET }, timeout: 10000 }
-    );
-    logger.info('[LMS Admin] Manual System Audit triggered');
-    res.json({ success: true, message: 'Full system audit and sync started.', data: response.data });
+      { headers: { 'x-internal-secret': BACKEND_SECRET }, timeout: 5000 }
+    ).catch(err => logger.error('[LMS Admin] runSystemAudit background failure:', err.message));
+
+    logger.info('[LMS Admin] Manual System Audit triggered (fire-and-forget)');
+    res.json({ success: true, message: 'Full system audit and sync started in background.' });
   } catch (err) {
-    const msg = err.response?.data?.error || err.message || 'Sync service unreachable';
-    logger.error('lmsAdmin.runSystemAudit error:', msg);
-    res.status(503).json({ error: { message: msg, code: 'SYNC_SERVICE_UNREACHABLE' } });
+    logger.error('lmsAdmin.runSystemAudit error:', err.message);
+    res.status(500).json({ error: { message: 'Failed to initiate system audit' } });
   }
 };
 
