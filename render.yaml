@@ -1,24 +1,5 @@
 services:
-  # 1. Main MERN Backend
-  - type: web
-    name: fasnet-backend
-    env: node
-    rootDir: backend
-    buildCommand: npm install
-    startCommand: npm start
-    envVars:
-      - key: NODE_ENV
-        value: production
-
-  # 2. React Frontend (Vite)
-  - type: static
-    name: fasnet-frontend
-    env: static
-    rootDir: frontend
-    buildCommand: npm install && npm run build
-    publishDir: dist
-
-  # 3. Notice Scraper (Playwright)
+  # 1. Notice Scraper (Playwright)
   - type: worker
     name: fasnet-scraper
     env: node
@@ -29,7 +10,7 @@ services:
       - key: NODE_ENV
         value: production
 
-  # 4. LMS Sync Service (Puppeteer)
+  # 2. LMS Sync Service (Puppeteer)
   - type: worker
     name: lms-sync-service
     env: node
