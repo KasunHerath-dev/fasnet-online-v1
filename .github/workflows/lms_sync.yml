@@ -44,9 +44,13 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install dependencies
-        run: cd lms-sync-service && npm ci
+        run: |
+          cd lms-sync-service
+          npm ci
+          npx puppeteer browsers install chrome
         env:
           PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: false
+          PUPPETEER_CACHE_DIR: ${{ github.workspace }}/.puppeteer-cache
 
       - name: Run LMS Sync
         env:
