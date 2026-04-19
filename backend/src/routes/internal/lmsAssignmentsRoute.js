@@ -20,7 +20,7 @@ function requireInternalSecret(req, res, next) {
   if (!INTERNAL_SECRET || secret === INTERNAL_SECRET) {
     return next();
   }
-  logger.warn(`Internal secret mismatch from ${req.ip}`);
+  logger.warn(`Internal secret mismatch from ${req.ip}. Expected len: ${INTERNAL_SECRET.length}, Received len: ${secret?.length || 0}`);
   return res.status(401).json({ error: 'Unauthorized' });
 }
 
