@@ -271,7 +271,7 @@ router.post('/lms-coverage-check', requireInternalSecret, async (req, res) => {
 
       // Rate-limit: skip if an identical alert was sent in the last 24 h
       const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
-      const Notification = require('../models/Notification');
+      const Notification = require('../../models/Notification');
       const alreadyAlerted = await Notification.findOne({
         type: 'lms_no_coverage',
         body: { $regex: group.label, $options: 'i' },
