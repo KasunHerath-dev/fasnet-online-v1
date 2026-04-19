@@ -33,10 +33,10 @@ const MAIN_BACKEND_SECRET = process.env.MAIN_BACKEND_SECRET || '';
     }
 
     // 2. Otherwise, fetch all students with credentials from the database
-    logger.info('No ENV credentials found. Fetching all students from database...');
+    logger.info(`Fetching credentials from: ${MAIN_BACKEND_URL}/api/internal/students/lms-credentials`);
     
     if (!MAIN_BACKEND_SECRET) {
-      logger.error('MAIN_BACKEND_SECRET is missing. Cannot fetch from database.');
+      logger.error('MAIN_BACKEND_SECRET is missing. Cannot authorize with backend.');
       process.exit(1);
     }
 
