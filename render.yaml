@@ -1,0 +1,45 @@
+services:
+  # 1. Main MERN Backend
+  - type: web
+    name: fasnet-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+  # 2. React Frontend (Vite)
+  - type: static
+    name: fasnet-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    publishDir: dist
+
+  # 3. Notice Scraper (Playwright)
+  - type: worker
+    name: fasnet-scraper
+    env: node
+    rootDir: scraper
+    buildCommand: npm install && npx playwright install chromium
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+  # 4. LMS Sync Service (Puppeteer)
+  - type: worker
+    name: lms-sync-service
+    env: node
+    rootDir: lms-sync-service
+    buildCommand: ./render-build.sh
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PUPPETEER_SKIP_DOWNLOAD
+        value: "true"
+      - key: PUPPETEER_EXECUTABLE_PATH
+        value: /opt/render/project/src/.cache/puppeteer/chrome/linux-114.0.5735.133/chrome-linux64/chrome
