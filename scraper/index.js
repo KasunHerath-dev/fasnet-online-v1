@@ -2,8 +2,20 @@ import 'dotenv/config';
 import mongoose from 'mongoose';
 import cron from 'node-cron';
 import parser from 'cron-parser';
+import express from 'express';
 import { runPipeline } from './pipeline.js';
 import SystemSetting from './SystemSetting.js';
+
+// ── Render Health Check Server ──────────────────────────────────────────────
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.get('/', (req, res) => res.send('Scraper Service is running!'));
+app.get('/health', (req, res) => res.status(200).json({ status: 'ok', service: 'notice-scraper' }));
+
+app.listen(PORT, () => {
+    console.log(`[startup] Health check server listening on port ${PORT}`);
+});
 
 const MONGODB_URI = process.env.MONGODB_URI;
 const RUN_ONCE = process.argv.includes('--once');

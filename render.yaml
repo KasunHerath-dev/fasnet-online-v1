@@ -1,6 +1,6 @@
 services:
-  # 1. Notice Scraper (Playwright)
-  - type: worker
+  # 1. Notice Scraper (Playwright) - Free Tier Web Service
+  - type: web
     name: fasnet-scraper
     env: node
     rootDir: scraper
@@ -10,8 +10,8 @@ services:
       - key: NODE_ENV
         value: production
 
-  # 2. LMS Sync Service (Puppeteer)
-  - type: worker
+  # 2. LMS Sync Service (Puppeteer) - Free Tier Web Service
+  - type: web
     name: lms-sync-service
     env: node
     rootDir: lms-sync-service
