@@ -38,12 +38,9 @@ exports.saveCredentials = async (req, res) => {
       return res.status(404).json({ error: { message: 'Student not found', code: 'STUDENT_NOT_FOUND' } });
     }
 
-    // Encrypt password before saving
-    const encryptedPassword = encrypt(lmsPassword);
-
     student.lmsCredentials = {
       username: lmsUsername.trim().toLowerCase(),
-      password: encryptedPassword,
+      password: lmsPassword, // Automatically encrypted by Student model pre-save hook
       syncEnabled: true,
       lastSync: student.lmsCredentials?.lastSync || null,
     };

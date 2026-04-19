@@ -184,20 +184,29 @@ const encryptedFields = [
   'email'
 ];
 
-// Encrypt before saving
+// Helper to get/set nested values
+const getNested = (obj, path) => path.split('.').reduce((o, i) => (o ? o[i] : undefined), obj);
+const setNested = (obj, path, val) => {
+  const parts = path.split('.');
+  const last = parts.pop();
+  const target = parts.reduce((o, i) => (o[i] = o[i] || {}), obj);
+  target[last] = val;
+};
+
 // Encrypt before saving
 studentSchema.pre('save', async function () {
   try {
+    // Standard fields
     encryptedFields.forEach(field => {
-      // Only encrypt if modified and not already encrypted (naive check or assume clean state from app)
-      // Mongoose isModified handles if the field was actually set/changed.
-      if (this.isModified(field) && this[field]) {
-        // Check if already in encrypted format to avoid double encryption during some updates
-        // Our encrypt function returns "iv:content". 
-        // If we are strictly inputting plain text from API, we just encrypt.
+      if (this.isModified(field) && this[field] && !this[field].includes(':')) {
         this[field] = encrypt(this[field]);
       }
     });
+
+    // LMS Password (Nested)
+    if (this.isModified('lmsCredentials.password') && this.lmsCredentials?.password && !this.lmsCredentials.password.includes(':')) {
+      this.lmsCredentials.password = encrypt(this.lmsCredentials.password);
+    }
   } catch (error) {
     throw error;
   }
@@ -206,13 +215,18 @@ studentSchema.pre('save', async function () {
 // Decrypt on retrieval
 studentSchema.post('init', function (doc) {
   try {
+    // Standard fields
     encryptedFields.forEach(field => {
-      if (doc[field]) {
+      if (doc[field] && doc[field].includes(':')) {
         doc[field] = decrypt(doc[field]);
       }
     });
+
+    // LMS Password (Nested)
+    if (doc.lmsCredentials?.password && doc.lmsCredentials.password.includes(':')) {
+      doc.lmsCredentials.password = decrypt(doc.lmsCredentials.password);
+    }
   } catch (error) {
-    // If decryption fails, we might just leave it (legacy data or error)
     console.error('Decryption error on init', error);
   }
 });
