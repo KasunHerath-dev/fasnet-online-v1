@@ -16,8 +16,9 @@ jobs:
         run: cd lms-sync-service && npm install
       - name: Run LMS Sync
         env:
-          MONGODB_URI: ${{ secrets.MONGODB_URI }}
           LMS_USERNAME: ${{ secrets.LMS_USERNAME }}
           LMS_PASSWORD: ${{ secrets.LMS_PASSWORD }}
+          MAIN_BACKEND_URL: ${{ secrets.MAIN_BACKEND_URL }}
+          MAIN_BACKEND_SECRET: ${{ secrets.MAIN_BACKEND_SECRET }}
           ICS_DOWNLOAD_DIR: /tmp
         run: cd lms-sync-service && node src/syncNow.js
